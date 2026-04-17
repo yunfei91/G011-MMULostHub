@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from report.models import Feedback
 
 # Create your views here.
 def admin_feedback_view(request):
