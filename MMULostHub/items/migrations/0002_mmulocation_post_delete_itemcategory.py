@@ -49,7 +49,7 @@ def location_categories(apps, schema_editor):
         ('nea', 'NEA'),
         ('eaa', 'EAA'),
         ('eab', 'EAB'),
-        ('guest house', 'MMUGuest House'),
+        ('guest house', 'MMU Guest House'),
     ]
 
     for code, name in LOCATIONS:

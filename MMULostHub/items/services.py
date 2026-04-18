@@ -9,7 +9,8 @@ def create_post (post_data, user):
     if post_type == "found" and not location:
         raise ValueError("Location is required for Found Posts. Please state where did you found this item. ^-^")
     
-    location = None
+    item_location = None
+    
     if location:
         try:
             item_location = MMULocation.objects.get(id = location)
