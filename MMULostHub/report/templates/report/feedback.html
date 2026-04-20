@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="'UTF-8">
+        <meta charset="UTF-8">
         <title>MMU Lost Hub - Feedback</title>
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="style.css"> 
     </head>
     <body>
         <div class="container">
@@ -17,7 +17,9 @@
                     <h2>Feedback / Report</h2>
                     <p>Leave your comments / suggestions here!</p>
 
-                    <form id="FeedbackForm">
+                    <form id="FeedbackForm" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %} 
+
                         <label for="comments">Your feedback:</label>
                         <textarea id="comments"  name="comments" placeholder="Please enter your feedback here..." rows="10"></textarea>
 
