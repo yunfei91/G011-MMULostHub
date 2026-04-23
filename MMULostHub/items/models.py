@@ -59,6 +59,12 @@ class Post (models.Model):
 
     post_datetime = models.DateTimeField()
 
+    post_image = models.ImageField(
+        upload_to = 'userposts_images/',
+        null = False,
+        blank = False,
+    )
+
     # Dropdown menu to choose category
     post_itemcategory = models.CharField(
         max_length = 100,
