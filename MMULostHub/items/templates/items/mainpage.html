@@ -34,10 +34,19 @@
             <button type="submit"> Search </button>
         </div>
 
-        <div class="posts">
-            <p>
-                Post will be shown here
-            </p>
+        <div class="post-list">
+            {% for post in Post %}
+                <div class = "post-box">
+                    <h4> {{ post.post_type }} </h4>
+                    <p> Date Time :{{ post.post_datetime }} </p>
+                    <p> Item Category :{{ post.post_itemcategory }} </p>
+                    <p> Location :{{ post.post_location }} </p>
+                </div>
+            {% empty %}
+                <div class = "no-post">
+                    <p> No posts available. </p>
+                </div>
+            {% endfor %}
         </div>
 
         <div class="create-post">
