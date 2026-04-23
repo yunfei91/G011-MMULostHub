@@ -4,8 +4,11 @@
     <head> 
         <title> 
             MMU Lost Hub
-            {% load static %}
         </title>
+
+        {% load static %}
+
+        <script src="{% static 'items/js/createpost.js' %}" defer></script>                <!-- differ = load complete html then load java -->
     </head>
 
     <body>
@@ -34,10 +37,10 @@
                 CREATE POST
             </h2>
 
-            <form method = "POST" encytype = 'multipart/form-data'>      <!-- encytype add to upload photo -->
+            <form method = "POST" enctype = 'multipart/form-data'>      <!-- enctype add to upload photo -->
                 {% csrf_token %}                <!-- Django security protection code -->
                 
-                <label> Type: </lable>
+                <label> Type: </label>
                 <select name = "post_type">
                     <option value = ""> Select Post Type </option>
                     <option value = "lost"> Lost Post </option>
@@ -51,8 +54,12 @@
 
                 <br><br> 
 
-                <lable> Upload Item Image </lable>
-                <input type = "file" name = "userposts_images">
+                <label> Upload Item Image: </label>
+                <input type = "file" id = "post_image" name = "userposts_images" accept = "image/*" >                 <!-- Input image field / accept = "image/* (limit oni can choose photo) / id is for java-->
+                
+                <br><br>
+
+                <img id = 'image_preview' width = '200' style = "display:none;" />            <!-- Display photo uploaded -->
 
                 <br><br>
 
