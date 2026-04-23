@@ -61,8 +61,8 @@ class Post (models.Model):
 
     post_image = models.ImageField(
         upload_to = 'userposts_images/',
-        null = False,
-        blank = False,
+        null = True,
+        blank = True,
     )
 
     # Dropdown menu to choose category

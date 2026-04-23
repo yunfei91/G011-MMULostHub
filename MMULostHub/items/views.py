@@ -12,6 +12,7 @@ def createPost(request):
             create_post({
                 'post_type': request.POST.get('post_type'),
                 'post_datetime': request.POST.get('post_datetime'),
+                'userposts_images' : request.FILES.get('userposts_images'),
                 'post_itemcategory': request.POST.get('post_itemcategory'),
                 'post_location': request.POST.get('post_location'),
                 'post_description': request.POST.get('post_description'),

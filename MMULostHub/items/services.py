@@ -22,6 +22,7 @@ def create_post (post_data, user):
         post_user = user,
         post_type = post_type,
         post_datetime = post_data.get('post_datetime'),
+        post_image = post_data.get('userposts_images'),
         post_itemcategory = post_data.get('post_itemcategory'),
         post_location = item_location,
         post_description = post_data.get('post_description'),

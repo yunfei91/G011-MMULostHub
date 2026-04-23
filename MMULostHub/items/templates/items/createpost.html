@@ -34,7 +34,7 @@
                 CREATE POST
             </h2>
 
-            <form method = "POST">
+            <form method = "POST" encytype = 'multipart/form-data'>      <!-- encytype add to upload photo -->
                 {% csrf_token %}                <!-- Django security protection code -->
                 
                 <label> Type: </lable>
@@ -50,6 +50,11 @@
                 <input type = "datetime-local" name = "post_datetime">
 
                 <br><br> 
+
+                <lable> Upload Item Image </lable>
+                <input type = "file" name = "userposts_images">
+
+                <br><br>
 
                 <label> Item Category: </label>
                 <select name = "post_itemcategory">
