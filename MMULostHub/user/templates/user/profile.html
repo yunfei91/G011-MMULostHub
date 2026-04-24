@@ -4,6 +4,8 @@
         <title>MMU Lost Hub</title>
         {% load static %}
         <link rel="stylesheet" type="text/css" href="{% static 'user/css/profile.css' %}">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" rel="stylesheet"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
     </head>
 
 <body>
@@ -12,19 +14,38 @@
             <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class="mmu-logo">
         </header>
 
-        <h1>My Profile</h1>
+        <div class="dropdown-nav">
+            <nav>
+                Menu Button
+            </nav>
+            
+            <div class="dropdown-content">
+                <a href="{% url 'mainPage' %}"> Home </a>
+                <a href="#"> Lost Post </a>                 <!-- yt lost post link -->
+                <a href="#"> Found Post </a>                <!-- yt found post link -->
+                <a href="{% url 'profile' %}"> Profile </a>                   <!-- yt profile link -->       
+                <a href="{% url 'feedback_form' %}"> Feedback/Report </a>  <!-- zinc feedback link -->
+                <a href="#"> Logout </a>                    <!-- yt logout link -->
+            </div>
+        </div>
         
+        <h1>My Profile</h1>
+
         {% if profile.avatar %}
             <img src="{{ profile.avatar.url }}" width="150" height="150" style="border-radius:50%; object-fit:cover;">
         {% else %}
             <img src="{% static 'images/default.png' %}" width="150" height="150" style="border-radius:50%; object-fit:cover;">
         {% endif %}
 
-        <form method="POST" action="{% url 'update_avatar'%}" enctype="multipart/form-data">
-            {% csrf_token%}
-            <input type="file" name="avatar">
-            <button type="submit">Upload</button>
-        </form>
+        <br><input type="file" id="imageInput">
+
+        <div>
+            <img id="preview" style="max-width:100%; max-height:400px;">
+        </div>
+
+        <button onclick="cropImage()">Crop & Upload</button>
+
+        {% csrf_token%}
 
         <div class="profile-info">
             <p><b>Name:</b> {{ user.first_name }}</p>
@@ -54,6 +75,65 @@
             function hideEdit() {
                 document.getElementById("bioForm").style.display = "none";
                 document.getElementById("bioText").style.display = "block";
+            }
+
+            let cropper;
+
+            function getCSRFToken() {
+                return document.querySelector('[name=csrfmiddlewaretoken]').value;
+            }
+
+            document.getElementById('imageInput').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const image = document.getElementById('preview');
+
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+
+                const url = URL.createObjectURL(file);
+                image.src = url;
+
+                setTimeout(() => {
+                    cropper = new Cropper(image, {
+                        aspectRatio: 1,
+                        viewMode: 1
+                    });
+
+                    console.log("cropped created:", cropper);
+                }, 200);
+            });
+
+            function cropImage() {
+                if (!cropper) {
+                    alert("Select an image first");
+                    return;
+                }
+
+                const canvas = cropper.getCroppedCanvas({
+                    width: 300,
+                    height: 300
+                });
+
+                canvas.toBlob(function(blob) {
+                    const file = new File([blob], "avatar.jpg");
+
+                    const formData = new FormData();
+                    formData.append("avatar", file);
+
+                    fetch("{% url 'update_avatar' %}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": getCSRFToken()
+                        },
+                        body: formData
+                    }).then(() => {
+                        location.reload();
+                    });
+                });
             }
         </script>
 
