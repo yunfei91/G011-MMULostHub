@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MMU Lost Hub</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'user/css/user-login.css' %}">
+</head>
+<body>
+    <div class="whole-page">
+        <header>
+            <a href="{% url 'beginning' %}">
+                <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class="mmu-logo">
+            </a>
+        </header>
+
+        <div class="content">
+            <div class="banner">
+                <div class="web-logo">
+                    <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
+                </div>
+
+                <div class="slogan">
+                    <p>
+                        What's lost can be found,<br>
+                    and found can find its way back.
+                    </p>
+
+                    <h2>Welcome to MMU Lost Hub</h2>
+                    <h3>User Login</h3>
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <input type="text" id="email" name="email" placeholder="MMU Email" oninput="validateEmail()">
+                        <p id="email-status"></p>
+                        {% if email_error %}
+                            <p style="color:red;">{{ email_error }}</p>
+                        {% endif %}
+                        <!--Password-->
+                        <div class="password-box">
+                            <input type="password" id="password" name="password" placeholder="Password" oninput="checkPassword()">
+                            <span class="show-password" onclick="showPassword('password', this)">🙈</span>
+                        </div>
+                        {% if password_error %}
+                            <p style="color:red;">{{ password_error }}</p>
+                        {% endif %}
+
+                        {% if user_login_error %}
+                            <p style="color:red;">{{ user_login_error }}</p>
+                        {% endif %}
+
+                        <button type="submit" id="loginBtn" disabled>Login</button>
+                    </form>
+                    
+                    <p>Don't have an account?</p>
+                    <a href="{% url 'register' %}">Register Here</a>
+
+                    <p>Are you an admin?</p>
+                    <a href="{% url 'admin-login' %}">Login as Admin</a>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2026 MMU Lost Hub<br>
+            <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
+        </footer>
+    </div>
+
+    <script>
+        let emailValid = false;
+        let passwordValid = false;
+
+        /* Email */
+        function validateEmail() {
+            let email = document.getElementById("email").value.trim();
+            let status = document.getElementById("email-status");
+
+            let pattern = /^[A-Za-z0-9._%+-]+@(mmu\.edu\.my|student\.mmu\.edu\.my)$/;
+
+            if (!email) {
+                status.innerHTML = "";
+                emailValid = false;
+                updateBtn();
+                return;
+            }
+
+            if (!pattern.test(email)) {
+                status.innerHTML = "Invalid MMU email";
+                status.style.color = "red";
+                emailValid = false;
+            } else {
+                status.innerHTML = "";
+                emailValid = true;
+            }
+
+            updateBtn();
+        }
+
+        /* Check Password */
+        function checkPassword() {
+            let password = document.getElementById("password").value;
+
+            passwordValid = password.length > 0;
+            updateBtn();
+        }
+
+        /* Show Password */
+        function showPassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.textContent = "🙉";
+            } else {
+                input.type = "password";
+                icon.textContent = "🙈";
+            }
+        }
+
+        /* Button Control */
+        function updateBtn() {
+            document.getElementById("loginBtn").disabled =!(emailValid && passwordValid);
+        }
+    </script>
+</body>
+</html>
