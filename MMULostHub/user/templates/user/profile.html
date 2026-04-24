@@ -12,9 +12,21 @@
             <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class="mmu-logo">
         </header>
 
-        <div class="profile-info">
-            <h1>My Profile</h1>
+        <h1>My Profile</h1>
+        
+        {% if profile.avatar %}
+            <img src="{{ profile.avatar.url }}" width="150" height="150" style="border-radius:50%; object-fit:cover;">
+        {% else %}
+            <img src="{% static 'images/default.png' %}" width="150" height="150" style="border-radius:50%; object-fit:cover;">
+        {% endif %}
 
+        <form method="POST" action="{% url 'update_avatar'%}" enctype="multipart/form-data">
+            {% csrf_token%}
+            <input type="file" name="avatar">
+            <button type="submit">Upload</button>
+        </form>
+
+        <div class="profile-info">
             <p><b>Name:</b> {{ user.first_name }}</p>
             <p><b>Email:</b> {{ user.email }}</p>
         </div>

@@ -175,3 +175,14 @@ def update_bio(request):
         return redirect('profile')
 
     return redirect('profile')
+
+def update_avatar(request):
+    if request.method == 'POST' and request.FILES.get('avatar'):
+        profile, created = Profile.objects.get_or_create(user=request.user)
+
+        if profile.avatar:
+            profile.avatar.delete(save=False)
+            
+        profile.avatar = request.FILES['avatar']
+        profile.save()
+    return redirect('profile')
