@@ -48,7 +48,7 @@ def user_login(request):
             })
         
         login(request, user)
-        return redirect('beginning')
+        return redirect('mainPage')
     
     return render(request, 'user/user-login.html')
 

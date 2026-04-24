@@ -21,6 +21,7 @@ from django.contrib import admin
 
 urlpatterns = [
     # yt urls
+    path('', views.beginning, name='beginning'),
     path("user/", include("user.urls")),
 
     # yf urls
