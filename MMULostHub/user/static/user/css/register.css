@@ -1,12 +1,3 @@
-.valid {
-    color: green;
-    font-weight: bold;
-}
-
-.invalid {
-    color: red;
-}
-
 .checklist p {
     position: relative;
     padding-left: 20px;
