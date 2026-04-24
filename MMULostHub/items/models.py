@@ -57,7 +57,7 @@ class Post (models.Model):
     # Dropdown menu to choose category
     post_itemcategory = models.CharField(
         max_length = 100,
-        choices = ItemCategory.CATEGORY_CHOICES,
+        choices = CATEGORY_CHOICES,
     )
 
     post_location = models.ForeignKey(

@@ -47,7 +47,7 @@ def user_login(request):
             })
         
         login(request, user)
-        return redirect('profile')
+        return redirect('mainPage')
     
     return render(request, 'user/user-login.html')
 
@@ -77,7 +77,7 @@ def admin_login(request):
         next_url = request.GET.get('next')
         if next_url:
             return redirect(next_url)
-        return redirect('mainpage')
+        return redirect('mainPage')
 
     return render(request, 'user/admin-login.html')
 
@@ -140,15 +140,22 @@ def check_email(request):
     return JsonResponse({'exists': exists})
 
 from django.contrib.auth.decorators import login_required
-#from items.models import Post
+from items.models import Post
 @login_required
 def profile(request):
 
     user = request.user
-    profile = Profile.objects.get(user=user)
+    profile, created = Profile.objects.get_or_create(user=user)
 
-    lost_posts = []
-    found_posts = []
+    lost_posts = Post.objects.filter(
+        post_user=user,
+        post_type='lost'
+    ).order_by('-id')
+
+    found_posts = Post.objects.filter(
+        post_user=user,
+        post_type='found'
+    ).order_by('-id')
 
     return render(request, 'user/profile.html', {
         'user': user,
