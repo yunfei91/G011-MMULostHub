@@ -1,6 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-# yf-storage (Items Categories)
 
 # ('storage name inside sqlite', 'display name on website')
 CATEGORY_CHOICES = [
@@ -49,6 +49,11 @@ class MMULocation (models.Model):
 
 # Lost and Found Post Model  
 class Post (models.Model):
+
+    post_user = models.ForeignKey(
+        User,
+        on_delete = models.CASCADE,                             # if user deleted , all related post or data also will be deleted
+    )
     
     post_type = models.CharField(choices=[('lost','Lost'),('found','Found')])
 
@@ -70,4 +75,6 @@ class Post (models.Model):
     post_description = models.TextField()
 
     def __str__(self):
-        return self.post_title
+        return f"{self.post_type}: {self.post_itemcategory}"
+
+
