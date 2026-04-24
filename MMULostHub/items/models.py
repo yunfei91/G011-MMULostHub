@@ -44,7 +44,7 @@ class MMULocation (models.Model):
     # Display name of the item on the admin page
     # Contoh : √ Laptop ✗ Item Obeject 1
     def __str__(self):
-        return self.location_code
+        return self.location_name
 
 
 # Lost and Found Post Model  
