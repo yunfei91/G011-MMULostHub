@@ -2,30 +2,29 @@
 <html>
     <head> 
         <title> 
+            {% load static %}
             MMU Lost Hub 
         </title>
     </head>
 
     <body>
         <header>
-            <h1>
-                MMU Logo
-            </h1>
-            <h1>
-                Lost Hub Logo
-            </h1>
+            <img src="{% static 'images/MMU Logo.png' %}" alt="MMU Logo" class = "mmu-logo">
+
+            <img src="{% static 'images/Web Logo.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
         </header>
 
         <div class="dropdown-nav">
             <nav>
-                Menu
+                Menu Button
             </nav>
+            
             <div class="dropdown-content">
                 <a href="{% url 'mainPage' %}"> Home </a>
                 <a href="#"> Lost Post </a>                 <!-- yt lost post link -->
                 <a href="#"> Found Post </a>                <!-- yt found post link -->
                 <a href="#"> Profile </a>                   <!-- yt profile link -->
-                <a href="#"> Feedback/Report </a>           <!-- zinc feedback link -->
+                <a href="{% url 'feedback' %}"> Feedback/Report </a> 
                 <a href="#"> Logout </a>                    <!-- yt logout link -->
             </div>
         </div>
@@ -35,21 +34,35 @@
             <button type="submit"> Search </button>
         </div>
 
-        <div class="posts">
-            <p>
-                Post will be shown here
-            </p>
+        <div class="post-list">
+            {% for post in Post %}
+                <div class = "post-box">
+                    <h4> {{ post.post_type }} </h4>
+                    <p> Date Time :{{ post.post_datetime }} </p>
+                    <p> Item Category :{{ post.post_itemcategory }} </p>
+                    <p> Location :{{ post.post_location }} </p>
+                </div>
+            {% empty %}
+                <div class = "no-post">
+                    <p> No posts available. </p>
+                </div>
+            {% endfor %}
         </div>
 
         <div class="create-post">
             <button type="button">
-                Create Post Button
+                <a href="{% url 'createPost' %}"> 
+                    Create Post 
+                </a>
             </button>
         </div>
 
         <footer>
-            &copy; 2026 MMU Lost Hub. All rights reserved.
+            <p>
+                © 2026 MMU Lost Hub
+                <br>
+                Designed by: Kho Yee Theng / Tan Yun Fee / Lim Tze Ying
+            </p>
         </footer>
-
     </body>
 </html>
