@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            MMU Lost Hub
+        </title>
+    </head>
+
+    <body>
+        <header>
+            <h1>
+                MMU Logo
+            </h1>
+            <h1>
+                Lost Hub Logo
+            </h1>
+        </header>
+        <div class="dropdown-nav">
+            <nav>
+                Menu
+            </nav>
+            <div class="dropdown-content">
+                <a href="#">Home</a>
+                <a href="#">Lost Post</a>
+                <a href="#">Found Post</a>
+                <a href="#">View User</a>                       <!--zinc view user link-->
+                <a href="#">View Feedback / Report</a>          <!--zinc feedback/report link-->
+                <a href="#">Logout</a>                          <!--yt logout link-->
+            </div>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search for feedback...">
+            <button type="submit">Search</button>
+        </div>
+        <!--feedback/report view demo-->
+        <div class="post-list">
+            {% for feedback in feedback %}
+            <div class="feedback-card">
+                <p><strong>User:</strong>{{ feedback.user.username }}</p>
+                <p><strong>Content:</strong>{{ feedback.comments }}</p>
+                <p><strong>Image:</strong><br>
+                    {% if feedback.image %}
+                    <img src="{{ feedback.image.url }}" alt="Feedback Photo" style="max-width: 300px;">
+                    {% else %}
+                    No Image Provided
+                    {% endif %}
+                </p>
+                <p><strong>Date:</strong>{{ feedback.created_at }}</p>
+                <p><strong>Status:</strong>{{ feedback.status }}</p>
+                <hr>
+            </div>
+            {% empty %}
+            <p>No feedback / Report yet</p>
+            {% endfor %}
+        </div>
+        <footer>
+            &copy; 2026 MMU Lost Hub. All rights reserved.
+        </footer>
+    </body>
+</html>
