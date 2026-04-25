@@ -28,27 +28,30 @@
                 <a href="#"> Logout </a>                    <!-- yt logout link -->
             </div>
         </div>
-        
+
         <h1>My Profile</h1>
 
         {% if profile.avatar %}
-            <img src="{{ profile.avatar.url }}" width="150" height="150" style="border-radius:50%; object-fit:cover;">
+            <img id="avatarImage" src="{{ profile.avatar.url }}?v={{ now|date:'U' }}" 
+            width="150" height="150" style="border-radius:50%; object-fit:cover; cursor:pointer;">
         {% else %}
-            <img src="{% static 'images/default.png' %}" width="150" height="150" style="border-radius:50%; object-fit:cover;">
+            <img id="avatarImage"  src="{% static 'images/default.png' %}?v={{ now|date:'U' }}" 
+            width="150" height="150" style="border-radius:50%; object-fit:cover; cursor:pointer;">
         {% endif %}
 
-        <br><input type="file" id="imageInput">
+        <div id="editor" style="display:none;">
+            <input type="file" id="imageInput">
 
-        <div>
-            <img id="preview" style="max-width:100%; max-height:400px;">
+            <div>
+                <img id="preview" style="max-width:100%; max-height:400px;">
+            </div>
+
+            <button onclick="cropImage()">Crop & Upload</button>
         </div>
-
-        <button onclick="cropImage()">Crop & Upload</button>
-
         {% csrf_token%}
 
         <div class="profile-info">
-            <p><b>Name:</b> {{ user.first_name }}</p>
+            <p><b>Name:</b> {{ user.username }}</p>
             <p><b>Email:</b> {{ user.email }}</p>
         </div>
 
@@ -78,33 +81,53 @@
             }
 
             let cropper;
+            const avatar = document.getElementById('avatarImage');
+            const preview = document.getElementById('preview');
+            const editor = document.getElementById('editor');
 
             function getCSRFToken() {
                 return document.querySelector('[name=csrfmiddlewaretoken]').value;
             }
 
-            document.getElementById('imageInput').addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
+            avatar.addEventListener('click', function() {
 
-                const image = document.getElementById('preview');
+                editor.style.display = "block";
 
                 if (cropper) {
                     cropper.destroy();
                     cropper = null;
                 }
 
-                const url = URL.createObjectURL(file);
-                image.src = url;
+                preview.src = avatar.src;
 
-                setTimeout(() => {
-                    cropper = new Cropper(image, {
+                preview.onload = function () {
+                    cropper = new Cropper(preview, {
                         aspectRatio: 1,
                         viewMode: 1
                     });
+                };
+            });
 
-                    console.log("cropped created:", cropper);
-                }, 200);
+            document.getElementById('imageInput').addEventListener('change', function(e) {
+
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const url = URL.createObjectURL(file);
+
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+
+                preview.src = url;
+
+                preview.onload = function () {
+                    cropper = new Cropper(preview, {
+                        aspectRatio: 1,
+                        viewMode: 1
+                    });
+                };
             });
 
             function cropImage() {
@@ -119,10 +142,9 @@
                 });
 
                 canvas.toBlob(function(blob) {
-                    const file = new File([blob], "avatar.jpg");
 
                     const formData = new FormData();
-                    formData.append("avatar", file);
+                    formData.append("avatar", blob, "avatar.jpg");
 
                     fetch("{% url 'update_avatar' %}", {
                         method: "POST",
@@ -130,9 +152,13 @@
                             "X-CSRFToken": getCSRFToken()
                         },
                         body: formData
-                    }).then(() => {
+                    })
+                    .then(res => res.text())
+                    .then(data => {
+                        console.log("UPLOAD SUCCESS:", data);
                         location.reload();
-                    });
+                    })
+                    .catch(err => console.error(err));
                 });
             }
         </script>
