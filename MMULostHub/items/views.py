@@ -3,7 +3,8 @@ from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post
 
 def mainPage(request):
-    return render(request, 'items/mainpage.html')
+    post_box = Post.objects.all().order_by('-id')       #newest post on top # display all post in main page and order by datetime (latest post will be on top)
+    return render(request, 'items/mainpage.html', {'posts': post_box})
 
 def createPost(request):
     if request.method == "POST":
