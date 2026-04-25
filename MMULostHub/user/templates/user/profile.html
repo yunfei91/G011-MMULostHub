@@ -4,6 +4,8 @@
         <title>MMU Lost Hub</title>
         {% load static %}
         <link rel="stylesheet" type="text/css" href="{% static 'user/css/profile.css' %}">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" rel="stylesheet"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
     </head>
 
 <body>
@@ -14,8 +16,9 @@
 
         <div class="dropdown-nav">
             <nav>
-                Menu
+                Menu Button
             </nav>
+            
             <div class="dropdown-content">
                 <a href="{% url 'mainPage' %}"> Home </a>
                 <a href="#"> Lost Post </a>                 <!-- yt lost post link -->
@@ -27,9 +30,30 @@
         </div>
 
         <div class="profile-info">
-            <h1>My Profile</h1>
 
-            <p><b>Name:</b> {{ user.first_name }}</p>
+        <h1>My Profile</h1>
+
+        {% if profile.avatar %}
+            <img id="avatarImage" src="{{ profile.avatar.url }}?v={{ now|date:'U' }}" 
+            width="150" height="150" style="border-radius:50%; object-fit:cover; cursor:pointer;">
+        {% else %}
+            <img id="avatarImage"  src="{% static 'images/default.png' %}?v={{ now|date:'U' }}" 
+            width="150" height="150" style="border-radius:50%; object-fit:cover; cursor:pointer;">
+        {% endif %}
+
+        <div id="editor" style="display:none;">
+            <input type="file" id="imageInput">
+
+            <div>
+                <img id="preview" style="max-width:100%; max-height:400px;">
+            </div>
+
+            <button onclick="cropImage()">Crop & Upload</button>
+        </div>
+        {% csrf_token%}
+
+        <div class="profile-info">
+            <p><b>Name:</b> {{ user.username }}</p>
             <p><b>Email:</b> {{ user.email }}</p>
         </div>
 
@@ -56,6 +80,88 @@
             function hideEdit() {
                 document.getElementById("bioForm").style.display = "none";
                 document.getElementById("bioText").style.display = "block";
+            }
+
+            let cropper;
+            const avatar = document.getElementById('avatarImage');
+            const preview = document.getElementById('preview');
+            const editor = document.getElementById('editor');
+
+            function getCSRFToken() {
+                return document.querySelector('[name=csrfmiddlewaretoken]').value;
+            }
+
+            avatar.addEventListener('click', function() {
+
+                editor.style.display = "block";
+
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+
+                preview.src = avatar.src;
+
+                preview.onload = function () {
+                    cropper = new Cropper(preview, {
+                        aspectRatio: 1,
+                        viewMode: 1
+                    });
+                };
+            });
+
+            document.getElementById('imageInput').addEventListener('change', function(e) {
+
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const url = URL.createObjectURL(file);
+
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+
+                preview.src = url;
+
+                preview.onload = function () {
+                    cropper = new Cropper(preview, {
+                        aspectRatio: 1,
+                        viewMode: 1
+                    });
+                };
+            });
+
+            function cropImage() {
+                if (!cropper) {
+                    alert("Select an image first");
+                    return;
+                }
+
+                const canvas = cropper.getCroppedCanvas({
+                    width: 300,
+                    height: 300
+                });
+
+                canvas.toBlob(function(blob) {
+
+                    const formData = new FormData();
+                    formData.append("avatar", blob, "avatar.jpg");
+
+                    fetch("{% url 'update_avatar' %}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": getCSRFToken()
+                        },
+                        body: formData
+                    })
+                    .then(res => res.text())
+                    .then(data => {
+                        console.log("UPLOAD SUCCESS:", data);
+                        location.reload();
+                    })
+                    .catch(err => console.error(err));
+                });
             }
         </script>
 

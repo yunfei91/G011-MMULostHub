@@ -9,32 +9,6 @@ from .models import Profile
 def beginning(request):
     return render(request, 'user/beginning.html')
 
-def admin_login(request):
-    if request.method == 'POST':
-        email = (request.POST.get('email') or '').strip().lower()
-        password = request.POST.get('password') or ''
-
-        login_error = ""
-
-        user = authenticate(request, username=email, password=password)
-
-        if user is None:
-            login_error = "Invalid email or password."
-            return render(request, 'user/admin-login.html', {
-                'login_error': login_error
-            })
-
-        if not user.is_staff:
-            login_error = "You are not authorized as admin."
-            return render(request, 'user/admin-login.html', {
-                'login_error': login_error
-            })
-
-        login(request, user)
-        return redirect('admin_feedback')
-
-    return render(request, 'user/admin-login.html')
-
 def user_login(request):
     if request.method == 'POST':
         email = (request.POST.get('email') or '').strip().lower()
@@ -63,7 +37,7 @@ def user_login(request):
                 'email': email,
             })
         
-        user = authenticate(request, username=email, password=password)
+        user = User.objects.filter(email=email).first()
 
         if user is None:
             user_login_error = "Invalid email or password."
@@ -72,10 +46,57 @@ def user_login(request):
                 'email': email,
             })
         
+        user = authenticate(request, username=user.username, password=password)
+
+        if user is None:
+            user_login_error = "Invalid email or password."
+            return render(request, 'user/user-login.html', {
+                'user_login_error': user_login_error,
+                'email': email,
+            })
+
         login(request, user)
         return redirect('mainPage')
     
     return render(request, 'user/user-login.html')
+
+def admin_login(request):
+    if request.method == 'POST':
+        email = (request.POST.get('email') or '').strip().lower()
+        password = request.POST.get('password') or ''
+
+        login_error = ""
+
+        user = User.objects.filter(email=email).first()
+
+        if user is None:
+            login_error = "Invalid email or password."
+            return render(request, 'user/admin-login.html', {
+                'login_error': login_error,
+            })
+        
+        user = authenticate(request, username=user.username, password=password)
+
+        if user is None:
+            login_error = "Invalid email or password."
+            return render(request, 'user/admin-login.html', {
+                'login_error': login_error,
+            })
+
+        if not user.is_staff:
+            login_error = "You are not authorized as admin."
+            return render(request, 'user/admin-login.html', {
+                'login_error': login_error
+            })
+
+        login(request, user)
+
+        next_url = request.GET.get('next')
+        if next_url:
+            return redirect(next_url)
+        return redirect('admin_feedback')
+
+    return render(request, 'user/admin-login.html')
 
 def register(request):
     if request.method == 'POST':
@@ -100,7 +121,7 @@ def register(request):
             re.match(r'^[A-Za-z0-9._%+-]+@student\.mmu\.edu\.my$',email)
         ):
             email_error = "Please enter a valid MMU email."
-        elif User.objects.filter(username=email).exists():
+        elif User.objects.filter(email=email).exists():
             email_error = "MMU Email already registered."
 
         if not password:
@@ -132,7 +153,7 @@ def register(request):
 
 def check_email(request):
     email = (request.GET.get('email') or '').strip().lower()
-    exists = User.objects.filter(username=email).exists()
+    exists = User.objects.filter(email=email).exists()
 
     return JsonResponse({'exists': exists})
 
@@ -146,7 +167,6 @@ def user_logout(request):
 
 from django.contrib.auth.decorators import login_required
 from items.models import Post
-
 @login_required
 def profile(request):
 
@@ -179,5 +199,22 @@ def update_bio(request):
         profile.save()
 
         return redirect('profile')
+
+    return redirect('profile')
+
+def update_avatar(request):
+    print("FILES:", request.FILES)
+
+    if request.method == 'POST':
+        avatar = request.FILES.get('avatar')
+
+        if avatar:
+            profile, created = Profile.objects.get_or_create(user=request.user)
+
+            if profile.avatar:
+                profile.avatar.delete(save=False)
+
+            profile.avatar = avatar
+            profile.save()
 
     return redirect('profile')

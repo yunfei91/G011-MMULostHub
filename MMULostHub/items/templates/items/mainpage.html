@@ -2,24 +2,23 @@
 <html>
     <head> 
         <title> 
+            {% load static %}
             MMU Lost Hub 
         </title>
     </head>
 
     <body>
         <header>
-            <h1>
-                MMU Logo
-            </h1>
-            <h1>
-                Lost Hub Logo
-            </h1>
+            <img src="{% static 'images/MMU Logo.png' %}" alt="MMU Logo" class = "mmu-logo">
+
+            <img src="{% static 'images/Web Logo.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
         </header>
 
         <div class="dropdown-nav">
             <nav>
-                Menu
+                Menu Button
             </nav>
+            
             <div class="dropdown-content">
                 <a href="{% url 'mainPage' %}"> Home </a>
                 <a href="#"> Lost Post </a>                 <!-- yt lost post link -->
@@ -30,41 +29,40 @@
             </div>
         </div>
 
-        <div class="search-bar">                                        <!-- after need to be changed when starting to do search feature -->
+        <div class="search_bar">                                        <!-- after need to be changed when starting to do search feature -->
             <input type="text" placeholder="Search for items...">
             <button type="submit"> Search </button>
         </div>
 
-
-        <!-- post view demo -->
-        <div class="post-list">
+        <div class="post_list">
             {% for post in posts %}
-                <div class="post-card">
-                    <p><strong>User:</strong> {{ post.post_user.username }}</p>
-                    <p><strong>Type:</strong> {{ post.post_type }}</p>
-                    <p><strong>Category:</strong> {{ post.post_itemcategory }}</p>
-                    <p><strong>Location:</strong> {{ post.post_location }}</p>
-                    <p><strong>Description:</strong> {{ post.post_description }}</p>
-                    <hr>
+                <div class = "post_box">
+                    <h4> {{ post.post_type }} </h4>
+                    <p> Date Time :{{ post.post_datetime }} </p>
+                    <p> Item Category :{{ post.post_itemcategory }} </p>
+                    <p> Location :{{ post.post_location }} </p>
                 </div>
             {% empty %}
-                <p>No posts yet</p>
+                <div class = "no_post">
+                    <p> No posts available. </p>
+                </div>
             {% endfor %}
         </div>
 
-
-
-        <div class="create-post">
-            <a href="{% url 'create_post_view' %}">
-                <button type="button">
-                    Create Post Button
-                </button>
-            </a>
+        <div class="create_post">
+            <button type="button">
+                <a href="{% url 'createPost' %}"> 
+                    Create Post 
+                </a>
+            </button>
         </div>
 
         <footer>
-            &copy; 2026 MMU Lost Hub. All rights reserved.
+            <p>
+                © 2026 MMU Lost Hub
+                <br>
+                Designed by: Kho Yee Theng / Tan Yun Fee / Lim Tze Ying
+            </p>
         </footer>
-
     </body>
 </html>
