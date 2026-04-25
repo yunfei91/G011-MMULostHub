@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MMU Lost Hub</title>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'user/css/beginning.css' %}">
+    </head>
+
+<body>
+    <div class="whole-page">
+        <header>
+            <img src="{% static 'images/MMU Logo.png' %}" alt="MMU Logo" class="mmu-logo">
+        </header>
+
+        <div class="content">
+            <div class="banner">
+                <div class="web-logo">
+                    <img src="{% static 'images/Web Logo.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
+                </div>
+
+                <div class="slogan">
+                    <p>
+                        What's lost can be found,<br>
+                    and found can find its way back.
+                    </p>
+
+                    <nav>
+                        <div class="beginning-page-action-button">
+                            <a href="{% url 'user-login' %}">User Login</a>
+                            <a href="{% url 'admin-login' %}">Admin Login</a>
+                            <a href="{% url 'register' %}">Register</a>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2026 MMU Lost Hub<br>
+            <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
+        </footer>
+    </div>
+</body>
+</html>

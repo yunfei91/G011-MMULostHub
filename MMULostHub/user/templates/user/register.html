@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MMU Lost Hub</title>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'user/css/register.css' %}">
+    </head>
+
+<body>
+    <div class="whole-page">
+        <header>
+            <img src="{% static 'images/MMU Logo.png' %}" alt="MMU Logo" class="mmu-logo">
+        </header>
+
+        <div class="content">
+            <div class="banner">
+                <div class="web-logo">
+                    <img src="{% static 'images/Web Logo.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
+                </div>
+
+                <div class="slogan">
+                    <p>
+                        What's lost can be found,<br>
+                    and found can find its way back.
+                    </p>
+
+                    <h2>Welcome to MMU Lost Hub</h2>
+                    <h3>Register</h3>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <!--Name-->
+                        <input type="text" name="name" placeholder="Name" value="{{ name }}">
+                        <p style="color:red;">{{ name_error }}</p>
+                        <!--Email-->
+                        <input type="text" id="email" name="email" placeholder="MMU Email" oninput="checkEmail()">
+                        <p id="email-status"></p>
+                        {% if email_error %}
+                            <p style="color:red;">{{ email_error }}</p>
+                        {% endif %}
+                        <!--Password-->
+                        <div class="password-box">
+                            <input type="password" id="password" name="password" placeholder="Password" oninput="checkPassword()">
+                            <span class="show-password" onclick="showPassword('password', this)">🙈</span>
+                        </div>
+                        {% if password_error %}
+                        <p style="color:red;">{{ password_error }}</p>
+                        {% endif %}
+
+                        <!-- Checklist -->
+                        <div class="checklist">
+                            <p id="letter" class="invalid">At least 1 letter</p>
+                            <p id="number" class="invalid">At least 1 number</p>
+                            <p id="symbol" class="invalid">At least 1 symbol (@#$*.)</p>
+                            <p id="length" class="invalid">At least 8 characters</p>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="password-box">
+                            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" oninput="checkPassword()">
+                            <span class="show-password" onclick="showPassword('confirm_password', this)">🙈</span>
+                        </div>
+                        <p id="match-text"></p>
+                        {% if confirm_password_error %}
+                        <p style="color:red;">{{ confirm_password_error }}</p>
+                        {% endif %}
+
+                        <button type="submit" id="submitBtn" disabled>Register</button>
+
+                    </form>
+
+                    <p>Already have an account?</p>
+                    <a href="{% url 'user-login' %}">Login Here</a>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2026 MMU Lost Hub<br>
+            <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
+        </footer>
+    </div>
+
+    <script>
+        let emailValid = false;
+        let passwordValid = false;
+        let match = false;
+
+        const submitBtn = document.getElementById("submitBtn");
+        const checkEmailUrl = "{% url 'check_email'%}";
+        /*----------Email----------*/
+        let emailTimeout;
+        let currentEmail = "";
+
+            function checkEmail() {
+                clearTimeout(emailTimeout);
+
+                let email = document.getElementById("email").value.trim();
+                let status = document.getElementById("email-status");
+                
+                currentEmail = email;
+
+                status.innerHTML = "";
+                emailValid = false;
+                updateButton();
+
+                if (!email) return;
+
+                if (!email.includes("@")) return;
+
+                status.innerHTML = "Checking...";
+                status.style.color = "gray";
+
+                emailTimeout = setTimeout(() => {
+
+                    let pattern = /^[A-Za-z0-9._%+-]+@(mmu\.edu\.my|student\.mmu\.edu\.my)$/;
+                    
+                    if (!pattern.test(email)) {
+                        status.innerHTML = "Invalid email format";
+                        status.style.color = "red";
+                        return;
+                    }
+
+                    fetch(`${checkEmailUrl}?email=${encodeURIComponent(email)}`)
+                    .then(res => res.json())
+                    .then(data => {
+
+                        if (email !== currentEmail) return;
+
+                        if (data.exists) {
+                            status.innerHTML = "Email already exists";
+                            status.style.color = "red";
+                            emailValid = false;
+                        } else {
+                            status.innerHTML = "Email available";
+                            status.style.color = "green";
+                            emailValid = true;
+                        }
+
+                        updateButton();
+                    })
+                    .catch(error => {
+                        console.error("Full Error:", error);
+                        status.innerHTML = "Error checking email";
+                        status.style.color = "red";
+                    });
+                }, 1000);
+            }
+        /*----------Password----------*/
+        function checkPassword() {
+            let password = document.getElementById("password").value;
+            let confirm = document.getElementById("confirm_password").value;
+            
+            let validCount = 0;
+
+            /* letter */
+            if (/[A-Za-z]/.test(password)) {
+                document.getElementById("letter").style.color = "green";
+                validCount++;
+            } else {
+                document.getElementById("letter").style.color = "red";
+            }
+
+            /* number */
+            if (/[0-9]/.test(password)) {
+                document.getElementById("number").style.color = "green";
+                validCount++;
+            } else {
+                document.getElementById("number").style.color = "red";
+            }
+
+            /* symbol */
+            if (/[@#$*.]/.test(password)) {
+                document.getElementById("symbol").style.color = "green";
+                validCount++;
+            } else {
+                document.getElementById("symbol").style.color = "red";
+            }
+
+            /* length */
+            if (password.length >= 8) {
+                document.getElementById("length").style.color = "green";
+                validCount++;
+            } else {
+                document.getElementById("length").style.color = "red";
+            }
+
+            passwordValid = (validCount === 4);
+            /* Confirm Password */
+            if (!confirm.length) {
+                match = false;
+                document.getElementById("match-text").innerHTML = "";
+                updateButton();
+                return;
+            }
+
+            if (password === confirm) {
+                document.getElementById("match-text").innerHTML = "Password match";
+                document.getElementById("match-text").style.color = "green";
+                match = true;
+            } else {
+                document.getElementById("match-text").innerHTML = "Password not match";
+                document.getElementById("match-text").style.color = "red";
+                match = false;
+            }
+
+            updateButton();
+        }
+        /* Show Password Button */
+        function showPassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.textContent = "🙉";
+            } else {
+                input.type = "password";
+                icon.textContent = "🙈";
+            }
+        }
+        /* Button Control */
+        function updateButton() {
+            submitBtn.disabled =!(emailValid && passwordValid && match);
+        }
+    </script>
+</body>
+</html>
