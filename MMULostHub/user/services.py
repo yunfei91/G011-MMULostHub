@@ -1,9 +1,12 @@
 from django.contrib.auth.models import User
 
-def create_user_account(name,email,password):
-    return User.objects.create_user(
-        first_name=name,
-        username=email,
+def create_user_account(username, email, password):
+    if User.objects.filter(username=username).exits():
+        username = username + email.split("@")[0]
+        
+    user = User.objects.create_user(
+        username=username,
         email=email,
         password=password
     )
+    return user
