@@ -37,16 +37,7 @@ def user_login(request):
                 'email': email,
             })
         
-        user = User.objects.filter(email=email).first()
-
-        if user is None:
-            user_login_error = "Invalid email or password."
-            return render(request, 'user/user-login.html', {
-                'user_login_error': user_login_error,
-                'email': email,
-            })
-        
-        user = authenticate(request, username=user.username, password=password)
+        user = authenticate(request, username=email, password=password)
 
         if user is None:
             user_login_error = "Invalid email or password."
@@ -67,15 +58,7 @@ def admin_login(request):
 
         login_error = ""
 
-        user = User.objects.filter(email=email).first()
-
-        if user is None:
-            login_error = "Invalid email or password."
-            return render(request, 'user/admin-login.html', {
-                'login_error': login_error,
-            })
-        
-        user = authenticate(request, username=user.username, password=password)
+        user = authenticate(request, username=email, password=password)
 
         if user is None:
             login_error = "Invalid email or password."
@@ -121,7 +104,7 @@ def register(request):
             re.match(r'^[A-Za-z0-9._%+-]+@student\.mmu\.edu\.my$',email)
         ):
             email_error = "Please enter a valid MMU email."
-        elif User.objects.filter(email=email).exists():
+        elif User.objects.filter(username=email).exists():
             email_error = "MMU Email already registered."
 
         if not password:
@@ -153,7 +136,7 @@ def register(request):
 
 def check_email(request):
     email = (request.GET.get('email') or '').strip().lower()
-    exists = User.objects.filter(email=email).exists()
+    exists = User.objects.filter(username=email).exists()
 
     return JsonResponse({'exists': exists})
 
