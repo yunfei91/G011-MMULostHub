@@ -9,13 +9,15 @@
 <body>
     <div class="whole-page">
         <header>
-            <img src="{% static 'images/MMU Logo.png' %}" alt="MMU Logo" class="mmu-logo">
+            <a href="{% url 'beginning' %}">
+                <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class="mmu-logo">
+            </a>
         </header>
 
         <div class="content">
             <div class="banner">
                 <div class="web-logo">
-                    <img src="{% static 'images/Web Logo.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
+                    <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
                 </div>
 
                 <div class="slogan">
@@ -44,7 +46,7 @@
                             <span class="show-password" onclick="showPassword('password', this)">🙈</span>
                         </div>
                         {% if password_error %}
-                        <p style="color:red;">{{ password_error }}</p>
+                            <p style="color:red;">{{ password_error }}</p>
                         {% endif %}
 
                         <!-- Checklist -->
@@ -62,7 +64,7 @@
                         </div>
                         <p id="match-text"></p>
                         {% if confirm_password_error %}
-                        <p style="color:red;">{{ confirm_password_error }}</p>
+                            <p style="color:red;">{{ confirm_password_error }}</p>
                         {% endif %}
 
                         <button type="submit" id="submitBtn" disabled>Register</button>
@@ -71,6 +73,9 @@
 
                     <p>Already have an account?</p>
                     <a href="{% url 'user-login' %}">Login Here</a>
+
+                    <p>Are you an admin?</p>
+                    <a href="{% url 'admin-login' %}">Login as Admin</a>
                 </div>
             </div>
         </div>
@@ -87,6 +92,7 @@
         let match = false;
 
         const submitBtn = document.getElementById("submitBtn");
+        const checkEmailUrl = "{% url 'check_email'%}";
         /*----------Email----------*/
         let emailTimeout;
         let currentEmail = "";
@@ -107,7 +113,7 @@
 
                 if (!email.includes("@")) return;
 
-                status.innerHTML = "Typing...";
+                status.innerHTML = "Checking...";
                 status.style.color = "gray";
 
                 emailTimeout = setTimeout(() => {
@@ -119,13 +125,11 @@
                         status.style.color = "red";
                         return;
                     }
-                    
-                    status.innerHTML = "Checking...";
-                    status.style.color = "gray";
 
-                    fetch(`/check-email/?email=${encodeURIComponent(email)}`)
-                    .then(response => response.json())
+                    fetch(`${checkEmailUrl}?email=${encodeURIComponent(email)}`)
+                    .then(res => res.json())
                     .then(data => {
+
                         if (email !== currentEmail) return;
 
                         if (data.exists) {
@@ -138,7 +142,12 @@
                             emailValid = true;
                         }
 
-                        updateButton()
+                        updateButton();
+                    })
+                    .catch(error => {
+                        console.error("Full Error:", error);
+                        status.innerHTML = "Error checking email";
+                        status.style.color = "red";
                     });
                 }, 1000);
             }

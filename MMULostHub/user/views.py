@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth.models import User
+from .services import create_user_account
 from django.contrib.auth import authenticate, login, logout
 import re
 
@@ -8,6 +9,47 @@ def beginning(request):
     return render(request, 'user/beginning.html')
 
 def user_login(request):
+
+    
+    if request.method == 'POST':
+        email = (request.POST.get('email') or '').strip().lower()
+        password = request.POST.get('password') or ''
+
+        email_error = ""
+        password_error = ""
+        user_login_error = ""
+
+        if not email:
+            email_error = "Please enter your MMU email."
+        elif not (
+            re.match(r'^[A-Za-z0-9._%+-]+@mmu\.edu\.my$',email)
+            or
+            re.match(r'^[A-Za-z0-9._%+-]+@student\.mmu\.edu\.my$',email)
+        ):
+            email_error = "Please enter a valid MMU email."
+
+        if not password:
+            password_error = "Please enter your password."
+
+        if email_error or password_error:
+            return render(request, 'user/user-login.html', {
+                'email_error': email_error,
+                'password_error': password_error,
+                'email': email,
+            })
+        
+        user = authenticate(request, username=email, password=password)
+
+        if user is None:
+            user_login_error = "Invalid email or password."
+            return render(request, 'user/user-login.html', {
+                'user_login_error': user_login_error,
+                'email': email,
+            })
+        
+        login(request, user)
+        return redirect('mainPage')
+    
     return render(request, 'user/user-login.html')
 
 def admin_login(request):
@@ -43,7 +85,7 @@ def register(request):
             password_error = "Please enter a password."
         
         if not confirm_password:
-            confirm_password_error = "Please confirm ypur password."
+            confirm_password_error = "Please confirm your password."
         elif password != confirm_password:
             confirm_password_error = "Passwords do not match."
 
@@ -57,12 +99,8 @@ def register(request):
                 'email': email,
                 'confirm_password': confirm_password,
             })
-        
-        User.objects.create_user(
-            username=email,
-            email=email,
-            password=password
-        )
+
+        create_user_account(name,email, password)
 
         return redirect('user-login')
     
