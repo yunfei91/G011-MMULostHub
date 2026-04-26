@@ -127,7 +127,6 @@ def register(request):
             })
 
         user = create_user_account(name, email, password)
-        Profile.objects.create(user=user)
 
         return redirect('user-login')
     
@@ -142,6 +141,19 @@ def check_email(request):
 from django.contrib.auth.decorators import login_required
 from items.models import Post
 @login_required
+def update_name(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+
+        request.user.first_name = name
+        request.user.save()
+
+        profile = request.user.profile
+        profile.name = name
+        profile.save()
+        
+    return redirect('profile')
+
 def profile(request):
 
     user = request.user

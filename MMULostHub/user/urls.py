@@ -10,6 +10,7 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('update-bio/', views.update_bio, name='update_bio'),
     path('update-avatar/', views.update_avatar, name='update_avatar'),
+    path('update-name/', views.update_name, name='update_name'),
 ]
 
 from django.conf import settings

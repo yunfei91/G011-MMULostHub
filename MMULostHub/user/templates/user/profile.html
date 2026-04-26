@@ -51,7 +51,17 @@
         {% csrf_token%}
 
         <div class="profile-info">
-            <p><b>Name:</b> {{ user.first_name|default:user.username }}</p>
+            <p id="nameText">{{ profile.name|default:user.first_name|default:user.username }}</p>
+
+            <button onclick="showNameEdit()">Edit Name</button>
+
+            <form id="nameForm" method="POST" action="{% url 'update_name' %}" style="display:none;">
+                {% csrf_token %}
+                <input type="text" name="name" value="{{ profile.name }}">
+                <button type="submit">Save</button>
+                <button type="button" onclick="hideNameEdit()">Cancel</button>
+            </form>
+
             <p><b>Email:</b> {{ user.email }}</p>
         </div>
 
@@ -59,23 +69,33 @@
 
         <p id="bioText">{{ profile.bio }}</p>
 
-        <button onclick="showEdit()">Edit</button>
+        <button onclick="showBioEdit()">Edit</button>
 
         <form id="bioForm" method="POST" action="{% url 'update_bio' %}" style="display:none;">
             {% csrf_token %}
             <textarea name="bio" rows="4" cols="50">{{ profile.bio }}</textarea>
             <br>
             <button type="submit">Save</button>
-            <button type="button" onclick="hideEdit()">Cancel</button>
+            <button type="button" onclick="hideBioEdit()">Cancel</button>
         </form>
 
         <script>
-            function showEdit() {
+            function showNameEdit() {
+                document.getElementById("nameForm").style.display = "block";
+                document.getElementById("nameText").style.display = "none";
+            }
+
+            function hideNameEdit() {
+                document.getElementById("nameForm").style.display = "none";
+                document.getElementById("nameText").style.display = "block";
+            }
+
+            function showBioEdit() {
                 document.getElementById("bioForm").style.display = "block";
                 document.getElementById("bioText").style.display = "none";
             }
 
-            function hideEdit() {
+            function hideBioEdit() {
                 document.getElementById("bioForm").style.display = "none";
                 document.getElementById("bioText").style.display = "block";
             }
