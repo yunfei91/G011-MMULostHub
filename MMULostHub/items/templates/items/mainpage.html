@@ -23,33 +23,33 @@
                 <a href="{% url 'mainPage' %}"> Home </a>
                 <a href="#"> Lost Post </a>                 <!-- yt lost post link -->
                 <a href="#"> Found Post </a>                <!-- yt found post link -->
-                <a href="#"> Profile </a>                   <!-- yt profile link -->
-                <a href="{% url 'feedback' %}"> Feedback/Report </a> 
+                <a href="{% url 'profile' %}"> Profile </a>                   <!-- yt profile link -->       
+                <a href="{% url 'feedback_form' %}"> Feedback/Report </a>  <!-- zinc feedback link -->
                 <a href="#"> Logout </a>                    <!-- yt logout link -->
             </div>
         </div>
 
-        <div class="search-bar">                                        <!-- after need to be changed when starting to do search feature -->
+        <div class="search_bar">                                        <!-- after need to be changed when starting to do search feature -->
             <input type="text" placeholder="Search for items...">
             <button type="submit"> Search </button>
         </div>
 
-        <div class="post-list">
-            {% for post in Post %}
-                <div class = "post-box">
+        <div class="post_list">
+            {% for post in posts %}
+                <div class = "post_box">
                     <h4> {{ post.post_type }} </h4>
                     <p> Date Time :{{ post.post_datetime }} </p>
                     <p> Item Category :{{ post.post_itemcategory }} </p>
                     <p> Location :{{ post.post_location }} </p>
                 </div>
             {% empty %}
-                <div class = "no-post">
+                <div class = "no_post">
                     <p> No posts available. </p>
                 </div>
             {% endfor %}
         </div>
 
-        <div class="create-post">
+        <div class="create_post">
             <button type="button">
                 <a href="{% url 'createPost' %}"> 
                     Create Post 

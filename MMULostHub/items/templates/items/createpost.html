@@ -7,7 +7,7 @@
         </title>
 
         {% load static %}
-
+        <link rel="stylesheet" href="{% static 'items/css/createpost.css' %}">
         <script src="{% static 'items/js/createpost.js' %}" defer></script>                <!-- differ = load complete html then load java -->
     </head>
 
@@ -87,8 +87,27 @@
 
                 <br><br>
 
+                <p>CLick Map to choose location: </p>
+                <div class = "map_box">
+                    <img src="{% static 'images/map-img.jpg' %}" id="smallMap" class="smallMap">
+
+                    <div id = "smallMap_maker" class = "smallMap-marker"> 📍 </div>
+                </div>
+
                 <label> Item Description: </label>
                 <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ "></textarea>
+
+                <div id ="map_modal" class = "map_modal">
+                    <div class = "mapmodal_content">
+
+                        <span id = "close_map" class = "close_button">&times;</span>
+
+                        <img src="{% static 'images/map-img.jpg' %}" id = "bigMap" class = "bigMap">
+
+                        <div id = "bigMap_marker" class = "bigMap-marker">📍</div>   
+                    
+                    </div>
+                </div>
 
                 <br><br>
 
@@ -112,3 +131,4 @@
 </html>
 
 
+ 
