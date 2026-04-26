@@ -79,135 +79,164 @@
             <button type="button" onclick="hideBioEdit()">Cancel</button>
         </form>
 
-        <script>
-            function showNameEdit() {
-                document.getElementById("nameForm").style.display = "block";
-                document.getElementById("nameText").style.display = "none";
-            }
+        <div style="margin-top:20px;">
+            <button onclick="showAll()">All</button>
+            <button onclick="showLost()">Lost</button>
+            <button onclick="showFound()">Found</button>
+        </div>
 
-            function hideNameEdit() {
-                document.getElementById("nameForm").style.display = "none";
-                document.getElementById("nameText").style.display = "block";
-            }
+        <div id="lostSection">
+            <h2>Lost Posts</h2>
+            {% for post in lost_posts %}
+                <div class="lost-item">
+                    <p><b>Category:</b> {{ post.post_itemcategory }}</p>
+                    <p><b>Description:</b> {{ post.post_description }}</p>
+                    <p><b>Location:</b> {{ post.post_location }}</p>
+                    <p><b>Date:</b> {{ post.post_datetime }}</p>
+                    <p>————————————————————————————————————————————————————————</p>
+                </div>
+            {% empty %}
+                <p>No lost posts</p>
+            {% endfor %}
+        </div>
 
-            function showBioEdit() {
-                document.getElementById("bioForm").style.display = "block";
-                document.getElementById("bioText").style.display = "none";
-            }
-
-            function hideBioEdit() {
-                document.getElementById("bioForm").style.display = "none";
-                document.getElementById("bioText").style.display = "block";
-            }
-
-            let cropper;
-            const avatar = document.getElementById('avatarImage');
-            const preview = document.getElementById('preview');
-            const editor = document.getElementById('editor');
-
-            function getCSRFToken() {
-                return document.querySelector('[name=csrfmiddlewaretoken]').value;
-            }
-
-            avatar.addEventListener('click', function() {
-
-                editor.style.display = "block";
-
-                if (cropper) {
-                    cropper.destroy();
-                    cropper = null;
-                }
-
-                preview.src = avatar.src;
-
-                preview.onload = function () {
-                    cropper = new Cropper(preview, {
-                        aspectRatio: 1,
-                        viewMode: 1
-                    });
-                };
-            });
-
-            document.getElementById('imageInput').addEventListener('change', function(e) {
-
-                const file = e.target.files[0];
-                if (!file) return;
-
-                const url = URL.createObjectURL(file);
-
-                if (cropper) {
-                    cropper.destroy();
-                    cropper = null;
-                }
-
-                preview.src = url;
-
-                preview.onload = function () {
-                    cropper = new Cropper(preview, {
-                        aspectRatio: 1,
-                        viewMode: 1
-                    });
-                };
-            });
-
-            function cropImage() {
-                if (!cropper) {
-                    alert("Select an image first");
-                    return;
-                }
-
-                const canvas = cropper.getCroppedCanvas({
-                    width: 300,
-                    height: 300
-                });
-
-                canvas.toBlob(function(blob) {
-
-                    const formData = new FormData();
-                    formData.append("avatar", blob, "avatar.jpg");
-
-                    fetch("{% url 'update_avatar' %}", {
-                        method: "POST",
-                        headers: {
-                            "X-CSRFToken": getCSRFToken()
-                        },
-                        body: formData
-                    })
-                    .then(res => res.text())
-                    .then(data => {
-                        console.log("UPLOAD SUCCESS:", data);
-                        location.reload();
-                    })
-                    .catch(err => console.error(err));
-                });
-            }
-        </script>
-
-        <h2>Lost Items</h2>
-        {% for post in lost_posts %}
-            <div>
-                <p><b>Category:</b> {{ post.post_itemcategory }}</p>
-                <p><b>Description:</b> {{ post.post_description }}</p>
-                <p><b>Location:</b> {{ post.post_location }}</p>
-                <p><b>Date:</b> {{ post.post_datetime }}</p>
-                <p>————————————————————————————————————————————————————————</p>
-            </div>
-        {% empty %}
-            <p>No lost posts</p>
-        {% endfor %}
-
-        <h2>Found Items</h2>
-        {% for post in found_posts %}
-            <div>
-                <p><b>Category:</b> {{ post.post_itemcategory }}</p>
-                <p><b>Description:</b> {{ post.post_description }}</p>
-                <p><b>Location:</b> {{ post.post_location }}</p>
-                <p><b>Date:</b> {{ post.post_datetime }}</p>
-                <p>————————————————————————————————————————————————————————</p>
-            </div>
-        {% empty %}
-            <p>No found posts</p>
-        {% endfor %}
+        <div id="foundSection">
+            <h2>Found Posts</h2>
+            {% for post in found_posts %}
+                <div class="found-item">
+                    <p><b>Category:</b> {{ post.post_itemcategory }}</p>
+                    <p><b>Description:</b> {{ post.post_description }}</p>
+                    <p><b>Location:</b> {{ post.post_location }}</p>
+                    <p><b>Date:</b> {{ post.post_datetime }}</p>
+                    <p>————————————————————————————————————————————————————————</p>
+                </div>
+            {% empty %}
+                <p>No found posts</p>
+            {% endfor %}
+        </div>
     </div>
+
+    <script>
+        let cropper;
+        const avatar = document.getElementById('avatarImage');
+        const preview = document.getElementById('preview');
+        const editor = document.getElementById('editor');
+
+        function getCSRFToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+
+        avatar.addEventListener('click', function() {
+
+            editor.style.display = "block";
+
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+
+            preview.src = avatar.src;
+
+            preview.onload = function () {
+                cropper = new Cropper(preview, {
+                    aspectRatio: 1,
+                    viewMode: 1
+                });
+            };
+        });
+
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const url = URL.createObjectURL(file);
+
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+
+            preview.src = url;
+
+            preview.onload = function () {
+                cropper = new Cropper(preview, {
+                    aspectRatio: 1,
+                    viewMode: 1
+                });
+            };
+        });
+
+        function cropImage() {
+            if (!cropper) {
+                alert("Select an image first");
+                return;
+            }
+
+            const canvas = cropper.getCroppedCanvas({
+                width: 300,
+                height: 300
+            });
+
+            canvas.toBlob(function(blob) {
+
+                const formData = new FormData();
+                formData.append("avatar", blob, "avatar.jpg");
+
+                fetch("{% url 'update_avatar' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": getCSRFToken()
+                    },
+                    body: formData
+                })
+                .then(res => res.text())
+                .then(data => {
+                    console.log("UPLOAD SUCCESS:", data);
+                    location.reload();
+                })
+                .catch(err => console.error(err));
+            });
+        }
+
+        function showNameEdit() {
+            document.getElementById("nameForm").style.display = "block";
+            document.getElementById("nameText").style.display = "none";
+        }
+
+        function hideNameEdit() {
+            document.getElementById("nameForm").style.display = "none";
+            document.getElementById("nameText").style.display = "block";
+        }
+
+        function showBioEdit() {
+            document.getElementById("bioForm").style.display = "block";
+            document.getElementById("bioText").style.display = "none";
+        }
+
+        function hideBioEdit() {
+            document.getElementById("bioForm").style.display = "none";
+            document.getElementById("bioText").style.display = "block";
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            showAll();
+        });
+
+        function showAll() {
+            document.getElementById("lostSection").style.display = "block";
+            document.getElementById("foundSection").style.display = "block";
+        }
+
+        function showLost() {
+            document.getElementById("lostSection").style.display = "block";
+            document.getElementById("foundSection").style.display = "none";
+        }
+
+        function showFound() {
+            document.getElementById("lostSection").style.display = "none";
+            document.getElementById("foundSection").style.display = "block";
+        }
+    </script>
 </body>
 </html>
