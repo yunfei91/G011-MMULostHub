@@ -134,6 +134,12 @@ def register(request):
     
     return render(request, 'user/register.html')
 
+def check_name(request):
+    name = (request.GET.get('name') or '').strip()
+    exists = Profile.objects.filter(name=name).exists()
+
+    return JsonResponse({'exists': exists})
+
 def check_email(request):
     email = (request.GET.get('email') or '').strip().lower()
     exists = User.objects.filter(username=email).exists()
@@ -141,11 +147,16 @@ def check_email(request):
     return JsonResponse({'exists': exists})
 
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from items.models import Post
 @login_required
 def update_name(request):
     if request.method == "POST":
-        name = request.POST.get("name")
+        name = request.POST.get("name").strip()
+
+        if Profile.objects.filter(name=name).exclude(user=request.user).exists():
+            messages.error(request, "Name already taken.")
+            return redirect('profile')
 
         request.user.first_name = name
         request.user.save()

@@ -64,6 +64,12 @@
                 <button type="button" onclick="hideNameEdit()">Cancel</button>
             </form>
 
+            {% if messages %}
+                {% for message in messages %}
+                    <p style="color:red;">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+
             <p><b>Email:</b> {{ user.email }}</p>
         </div>
 
