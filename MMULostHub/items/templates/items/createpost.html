@@ -37,6 +37,10 @@
                 CREATE POST
             </h2>
 
+            {% if error %}
+                <p style="color:red;">{{ error }}</p>
+            {% endif %}
+
             <form method = "POST" enctype = 'multipart/form-data'>      <!-- enctype add to upload photo -->
                 {% csrf_token %}                <!-- Django security protection code -->
                 
@@ -75,12 +79,12 @@
                 <br><br>
 
                 <label> Location: </label>
-                <select name = "post_location">
+                <select name = "post_location" id = "post_location">
 
                     <option value =""> Select Location </option>
 
                     {% for loc in locations %}                                              <!-- loc=data inside locations = item in location(loop code) -->
-                        <option value = "{{loc.id}}"> {{loc.location_name}} </option>
+                        <option value = "{{loc.location_code}}"> {{loc.location_name}} </option>
                     {% endfor %}
 
                 </select>
@@ -94,26 +98,50 @@
                     <div id = "smallMap_marker" class = "smallMap-marker"> 📍 </div>
                 </div>
 
+                <br><br>
+
                 <label> Item Description: </label>
                 <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ "></textarea>
 
-                <div id ="map_modal" class = "map_modal">
-                    <div class = "mapmodal_content">
+                <div id="map_modal" class="map_modal">
 
-                        <span id = "close_map" class = "close_button">&times;</span>
+                    <div class="mapmodal_content">
 
-                        <img src="{% static 'images/map-img.jpg' %}" id = "bigMap" class = "bigMap">
+                        <!-- Close button -->
+                        <span id="close_map" class="close_button">
+                            &times;
+                        </span>
 
-                        <div id = "bigMap_marker" class = "bigMap-marker">📍</div>   
-                    
+                        <!-- Scroll container -->
+                        <div class="map-scroll-container">
+
+                            <div id = "location_label" class = "location_label"></div>
+
+                            <div class="big-map-box">
+    
+                                <img
+                                    src="{% static 'images/map-img.jpg' %}"
+                                    id="bigMap"
+                                    class="bigMap"
+                                    alt="MMU Big Map"
+                                >
+
+                                <div id="bigMap_marker" class="bigMap-marker">
+                                    📍
+                                </div>
+
+                            </div>
+
+                        </div>
+
                     </div>
+
                 </div>
 
                 <br><br>
 
                 <button type = "submit">
                         Create Post 
-                    </a>
                 </button>
 
             </form>

@@ -22,16 +22,16 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
 
     const locationSelect = document.getElementById("post_location");
 
+    const locationLabel = document.getElementById("location_label");
+
     const regions = [
         {
             code: "fci",
+            name: "FCI Building",
             type: "rectangle",
 
-            x1: 782,
-            x2: 612,
-
-            y1: 1289,
-            y2: 1568,
+            x1:617,y1:1296,
+            x2:785,y2:1573
         },
 
         {
@@ -39,9 +39,9 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             type: "polygon",
 
             points: [
-                [841, 836],
-                [599, 1211],
-                [827, 1284],
+                [420,520],
+                [520,420],
+                [610,720]
             ]
         },
     ];
@@ -54,29 +54,52 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
     //close map modal
     closeBtn.addEventListener("click", function(){
         modal.style.display = "none";
+        locationLabel.style.display = "none";
     });
+
+    if (!mapBig.complete) return;
 
     //click big map
     mapBig.addEventListener("click", function(event){
+
         const rect = mapBig.getBoundingClientRect();
 
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
+        const scaleX = mapBig.naturalWidth / mapBig.clientWidth;
+        const scaleY = mapBig.naturalHeight / mapBig.clientHeight;
+
+        const x = (event.clientX - rect.left) * scaleX;
+        const y = (event.clientY - rect.top) * scaleY;
 
         console.log("Clicked Position:", x, y);
 
-        //big map marker
+        console.log(
+            "natural:",
+            mapBig.naturalWidth,
+            mapBig.naturalHeight
+        );
+
+        console.log(
+            "client:",
+            mapBig.clientWidth,
+            mapBig.clientHeight
+        );
+
+
         bigMarker.style.display = "block";
-        bigMarker.style.left = x + "px";
-        bigMarker.style.top = y + "px";
+        bigMarker.style.left = (event.clientX - rect.left) + "px";
+        bigMarker.style.top = (event.clientY - rect.top) + "px";
 
-        //small map marker
-        const scaleX = mapSmall.clientWidth / mapBig.clientWidth;
-        const scaleY = mapSmall.clientHeight / mapBig.clientHeight;
+        const scaleSmallX = mapSmall.clientWidth / mapBig.clientWidth;
+        const scaleSmallY = mapSmall.clientHeight / mapBig.clientHeight;
 
-        smallMarker.style.display = "block"; 
-        smallMarker.style.left = (x * scaleX) + "px"; 
-        smallMarker.style.top = (y * scaleY) + "px";
+        smallMarker.style.display = "block";
+        smallMarker.style.left =
+            (event.clientX - rect.left) * scaleSmallX + "px";
+
+        smallMarker.style.top =
+            (event.clientY - rect.top) * scaleSmallY + "px";
+
+
 
         //auto detect location
         let foundLocation = false;
@@ -92,6 +115,9 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
                     y <= region.y2
                 ){
                     selectLocation(region.code);
+                    locationLabel.style.display = "block";
+                    locationLabel.innerText = "Selected Location: " + region.name;
+
                     foundLocation = true;
                     break;
                 }
@@ -108,6 +134,9 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
                     )
                 ){
                     selectLocation(region.code);
+                    locationLabel.style.display = "block";
+                    locationLabel.innerText = "Selected Location: " + region.name;
+                    
                     foundLocation = true;
                     break;
                 }                
@@ -169,4 +198,53 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
         return inside;
     }
 
+    locationSelect.addEventListener("change", function(){
+
+        const selectedCode = this.value;
+
+        for (let region of regions){
+
+            if(region.code === selectedCode){
+
+                placeMarkerFromRegion(region);
+                break;
+            }
+        }
+
+    });
+
+    function placeMarkerFromRegion(region){
+
+        let centerX, centerY;
+
+        // rectangle center
+        if(region.type === "rectangle"){
+            centerX = (region.x1 + region.x2) / 2;
+            centerY = (region.y1 + region.y2) / 2;
+        }
+
+        // polygon center
+        if(region.type === "polygon"){
+
+            let sumX = 0;
+            let sumY = 0;
+
+            for(let point of region.points){
+                sumX += point[0];
+                sumY += point[1];
+            }
+
+            centerX = sumX / region.points.length;
+            centerY = sumY / region.points.length;
+        }
+
+        // 转换到 small map
+        const scaleX = mapSmall.clientWidth / mapBig.naturalWidth;
+        const scaleY = mapSmall.clientHeight / mapBig.naturalHeight;
+
+        smallMarker.style.display = "block";
+        smallMarker.style.left = (centerX * scaleX) + "px";
+        smallMarker.style.top  = (centerY * scaleY) + "px";
+
+    }
 });

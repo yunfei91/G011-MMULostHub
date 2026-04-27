@@ -13,7 +13,7 @@ def create_post (post_data, user):
     
     if location:
         try:
-            item_location = MMULocation.objects.get(id = location)
+            item_location = MMULocation.objects.get(location_code = location)
         
         except MMULocation.DoesNotExist:
             raise ValueError("Invalid location. Please select a location from the dropdown menu.")
