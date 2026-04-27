@@ -65,6 +65,9 @@ def register(request):
     
     return render(request, 'user/register.html')
 
+def check_name(request):
+    name = (request.GET.get('name') or '').strip()
+
 def check_email(request):
     email = (request.GET.get('email') or '').strip().lower()
     exists = User.objects.filter(username=email).exists()
