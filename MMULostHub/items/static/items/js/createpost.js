@@ -57,8 +57,6 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
         locationLabel.style.display = "none";
     });
 
-    if (!mapBig.complete) return;
-
     //click big map
     mapBig.addEventListener("click", function(event){
 
