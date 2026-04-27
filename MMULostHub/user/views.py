@@ -95,6 +95,8 @@ def register(request):
 
         if not name:
             name_error = "Please enter your name."
+        elif Profile.objects.filter(name=name).exists():
+            name_error = "Name already taken."
 
         if not email:
             email_error = "Please enter your MMU email."
