@@ -55,7 +55,10 @@ class Post (models.Model):
         on_delete = models.CASCADE,                             # if user deleted , all related post or data also will be deleted
     )
     
-    post_type = models.CharField(choices=[('lost','Lost'),('found','Found')])
+    post_type = models.CharField(
+        max_length = 10,
+        choices = [('lost','Lost'), ('found','Found')]
+    )
 
     post_datetime = models.DateTimeField()
 

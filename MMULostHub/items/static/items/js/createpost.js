@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
 
         {
             code: "fom",
+            name: "FOM Building",
             type: "polygon",
 
             points: [

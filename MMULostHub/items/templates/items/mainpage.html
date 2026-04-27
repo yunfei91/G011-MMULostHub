@@ -35,7 +35,7 @@
         </div>
 
         <div class="post-list">
-            {% for post in Post  %}
+            {% for post in posts %}
                 <div class = "post-box">
                     <h4> {{ post.post_type|upper }} POST </h4>
                     {% if post.post_image %}
