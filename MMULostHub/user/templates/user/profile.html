@@ -71,7 +71,7 @@
 
         <p id="bioText">{{ profile.bio }}</p>
 
-        <button onclick="showBioEdit()">Edit</button>
+        <button onclick="showBioEdit()">Edit Bio</button>
 
         <form id="bioForm" method="POST" action="{% url 'update_bio' %}" style="display:none;">
             {% csrf_token %}
