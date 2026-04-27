@@ -4,6 +4,7 @@
         <title>MMU Lost Hub</title>
         {% load static %}
         <link rel="stylesheet" type="text/css" href="{% static 'user/css/profile.css' %}">
+        <!-- Import Cropper.js library for image cropping -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" rel="stylesheet"/>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
     </head>
@@ -31,6 +32,8 @@
 
         <h1>My Profile</h1>
 
+        <!-- Display user's uploaded avatar or default avatar if user has none with-->
+        <!-- now = current time ; |date:'U' = convert time to Unix timestamp(second) ; Force to reload image instead of using cache -->
         {% if profile.avatar %}
             <img id="avatarImage" src="{{ profile.avatar.url }}?v={{ now|date:'U' }}" 
             width="150" height="150" style="border-radius:50%; object-fit:cover; cursor:pointer;">
@@ -39,20 +42,21 @@
             width="150" height="150" style="border-radius:50%; object-fit:cover; cursor:pointer;">
         {% endif %}
 
-        <div id="editor" style="display:none;">
-            <input type="file" id="imageInput">
+        <div id="editor" style="display:none;"> <!-- Hide edit button -->
+            <input type="file" id="imageInput"> <!-- File input for image upload -->
 
             <div>
-                <img id="preview" style="max-width:100%; max-height:400px;">
+                <img id="preview" style="max-width:100%; max-height:400px;"> <!-- Preview selected image -->
             </div>
 
             <button onclick="cropImage()">Crop & Upload</button>
 
             <button onclick="cancelCrop()">Cancel</button>
         </div>
-        {% csrf_token%}
+        {% csrf_token%} <!-- Security token to prevent CSRF attack -->
 
-        <div class="profile-info">
+        <div class="profile-info"> 
+            <!-- Show name (User and Admin not the same) -->
             <p id="nameText">{{ profile.name|default:user.first_name|default:user.username }}</p>
 
             <button onclick="showNameEdit()">Edit Name</button>
@@ -80,7 +84,8 @@
         <button onclick="showBioEdit()">Edit Bio</button>
 
         <form id="bioForm" method="POST" action="{% url 'update_bio' %}" style="display:none;">
-            {% csrf_token %}
+            {% csrf_token %} <!-- Security token to prevent CSRF attack -->
+            <!-- Bio box to input -->
             <textarea name="bio" rows="4" cols="50">{{ profile.bio }}</textarea>
             <br>
             <button type="submit">Save</button>
@@ -122,30 +127,38 @@
                 <p>No found posts</p>
             {% endfor %}
         </div>
+
+        <footer>
+            <p>© 2026 MMU Lost Hub<br>
+            <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
+        </footer>
     </div>
 
     <script>
-        let cropper;
-        const avatar = document.getElementById('avatarImage');
-        const preview = document.getElementById('preview');
-        const editor = document.getElementById('editor');
+        let cropper; // Save cropper object for later use
+        const avatar = document.getElementById('avatarImage'); // Get avatar element
+        const preview = document.getElementById('preview'); // Image preview area
+        const editor = document.getElementById('editor'); // Image editor container
 
+        // Get CSRF token from page
         function getCSRFToken() {
             return document.querySelector('[name=csrfmiddlewaretoken]').value;
         }
 
+        // Open image editor when avatar is clicked
         avatar.addEventListener('click', function() {
-
             editor.style.display = "block";
 
+            // Remove previous cropper
             if (cropper) {
                 cropper.destroy();
                 cropper = null;
             }
 
-            preview.src = avatar.src;
+            preview.src = avatar.src; // Load current avantar
 
             preview.onload = function () {
+                // Initialize cropper with square ratio
                 cropper = new Cropper(preview, {
                     aspectRatio: 1,
                     viewMode: 1
@@ -153,13 +166,15 @@
             };
         });
 
+        // Detect user selected image file
         document.getElementById('imageInput').addEventListener('change', function(e) {
 
             const file = e.target.files[0];
-            if (!file) return;
+            if (!file) return; // Get selected file
 
-            const url = URL.createObjectURL(file);
+            const url = URL.createObjectURL(file); // Create temporary image URL
 
+            // Reset cropper
             if (cropper) {
                 cropper.destroy();
                 cropper = null;
@@ -176,11 +191,13 @@
         });
 
         function cropImage() {
+            // Ensure image exists to crop
             if (!cropper) {
                 alert("Select an image first");
                 return;
             }
 
+            // Get cropped image
             const canvas = cropper.getCroppedCanvas({
                 width: 300,
                 height: 300
@@ -189,32 +206,35 @@
             canvas.toBlob(function(blob) {
 
                 const formData = new FormData();
-                formData.append("avatar", blob, "avatar.jpg");
+                formData.append("avatar", blob, "avatar.jpg"); // Prepare image for upload
 
+                // Send cropped image to Django backend
                 fetch("{% url 'update_avatar' %}", {
                     method: "POST",
                     headers: {
-                        "X-CSRFToken": getCSRFToken()
+                        "X-CSRFToken": getCSRFToken() // Include CSRF token in fetch request
                     },
                     body: formData
                 })
+                // Reload page after upload
                 .then(res => res.text())
                 .then(data => {
                     console.log("UPLOAD SUCCESS:", data);
-                    location.reload();
+                    location.reload(); // Refresh page
                 })
                 .catch(err => console.error(err));
             });
         }
 
         function cancelCrop() {
-            document.getElementById("editor").style.display = "none";
+            document.getElementById("editor").style.display = "none"; // Hide editor
 
             const preview = document.getElementById("preview");
-            preview.src = "";
+            preview.src = ""; // Clear preview
 
-            document.getElementById("imageInput").value ="";
+            document.getElementById("imageInput").value =""; // Reset file input
 
+            // Destroy cropper
             if (cropper) {
                 cropper.destroy();
                 cropper = null;
@@ -240,15 +260,16 @@
             document.getElementById("bioText").style.display = "block";
         }
 
+        // Run when page is ready
         document.addEventListener("DOMContentLoaded", function () {
             showAll();
         });
-
+        // Show all lost and found posts
         function showAll() {
             document.getElementById("lostSection").style.display = "block";
             document.getElementById("foundSection").style.display = "block";
         }
-
+        
         function showLost() {
             document.getElementById("lostSection").style.display = "block";
             document.getElementById("foundSection").style.display = "none";
