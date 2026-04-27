@@ -13,9 +13,9 @@
 
     <body>
         <header>
-            <img src="{% static 'images/MMU Logo.png' %}" alt="MMU Logo" class = "mmu-logo">
+            <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class = "mmu-logo">
 
-            <img src="{% static 'images/Web Logo.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
+            <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
         </header>
 
         <div class = "dropdown-nav">
@@ -27,7 +27,7 @@
                 <a href = "#"> Lost Post </a>                 <!-- yt lost post link -->
                 <a href = "#"> Found Post </a>                <!-- yt found post link -->
                 <a href = "#"> Profile </a>                   <!-- yt profile link -->
-                <a href = "{% url 'feedback' %}"> Feedback/Report </a>
+                <a href = "{% url 'feedback_form' %}"> Feedback/Report </a>
                 <a href = "#"> Logout </a>                    <!-- yt logout link -->
             </div>
         </div>
@@ -91,7 +91,7 @@
                 <div class = "map_box">
                     <img src="{% static 'images/map-img.jpg' %}" id="smallMap" class="smallMap">
 
-                    <div id = "smallMap_maker" class = "smallMap-marker"> 📍 </div>
+                    <div id = "smallMap_marker" class = "smallMap-marker"> 📍 </div>
                 </div>
 
                 <label> Item Description: </label>

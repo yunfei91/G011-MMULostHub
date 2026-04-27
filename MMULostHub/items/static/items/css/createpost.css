@@ -1,0 +1,68 @@
+
+.smallMap,
+.bigMap {
+    position: relative;
+    display: inline-block;
+}
+
+.smallMap-marker,
+.bigMap-marker {
+    position: absolute;
+    font-size: 30px; 
+    transform: translate(-50%, -100%);
+    pointer-events: none; 
+    z-index: 10;
+    display: none; 
+}
+
+.map_modal {
+    display: none; 
+    position: fixed; 
+    z-index: 999; 
+    inset: 0; 
+    background: white;
+}
+
+.smallMap { 
+    width: 400px; 
+    cursor: pointer; 
+    border: 2px solid #cccccc; 
+    border-radius: 10px; 
+    transition: 0.2s; 
+} 
+
+.smallMap:hover {
+    transform: scale(1.02); 
+}
+
+/* Big popup map */ 
+.bigMap { 
+    width: 500px; 
+    height: auto;
+    max-width: 100%; 
+    cursor: crosshair; 
+    border-radius: 10px; 
+}
+
+/* White popup box */ 
+.mapmodal_content { 
+    background: white; 
+    width: 90%; 
+    max-width: 1000px; 
+    margin: 40px auto; 
+    padding: 30px; 
+    border-radius: 15px; 
+    position: relative; 
+    text-align: center; 
+}
+
+/* Close button X */ 
+.close_button { 
+    position: absolute; 
+    top: 15px; 
+    right: 25px; 
+    font-size: 35px; 
+    font-weight: bold; 
+    cursor: pointer; 
+}
+
