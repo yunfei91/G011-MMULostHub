@@ -4,15 +4,18 @@
     <head> 
         <title> 
             MMU Lost Hub
-            {% load static %}
         </title>
+
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'items/css/createpost.css' %}">
+        <script src="{% static 'items/js/createpost.js' %}" defer></script>                <!-- differ = load complete html then load java -->
     </head>
 
     <body>
         <header>
-            <img src="{% static 'images/MMU Logo.png' %}" alt="MMU Logo" class = "mmu-logo">
+            <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class = "mmu-logo">
 
-            <img src="{% static 'images/Web Logo.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
+            <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
         </header>
 
         <div class = "dropdown-nav">
@@ -24,7 +27,7 @@
                 <a href = "#"> Lost Post </a>                 <!-- yt lost post link -->
                 <a href = "#"> Found Post </a>                <!-- yt found post link -->
                 <a href = "#"> Profile </a>                   <!-- yt profile link -->
-                <a href = "{% url 'feedback' %}"> Feedback/Report </a>
+                <a href = "{% url 'feedback_form' %}"> Feedback/Report </a>
                 <a href = "#"> Logout </a>                    <!-- yt logout link -->
             </div>
         </div>
@@ -34,10 +37,14 @@
                 CREATE POST
             </h2>
 
-            <form method = "POST">
+            {% if error %}
+                <p style="color:red;">{{ error }}</p>
+            {% endif %}
+
+            <form method = "POST" enctype = 'multipart/form-data'>      <!-- enctype add to upload photo -->
                 {% csrf_token %}                <!-- Django security protection code -->
                 
-                <label> Type: </lable>
+                <label> Type: </label>
                 <select name = "post_type">
                     <option value = ""> Select Post Type </option>
                     <option value = "lost"> Lost Post </option>
@@ -51,6 +58,15 @@
 
                 <br><br> 
 
+                <label> Upload Item Image: </label>
+                <input type = "file" id = "post_image" name = "userposts_images" accept = "image/*" >                 <!-- Input image field / accept = "image/* (limit oni can choose photo) / id is for java-->
+                
+                <br><br>
+
+                <img id = 'image_preview' width = '200' style = "display:none;" />            <!-- Display photo uploaded -->
+
+                <br><br>
+
                 <label> Item Category: </label>
                 <select name = "post_itemcategory">
                     <option value = ""> Select Category </option>
@@ -63,22 +79,69 @@
                 <br><br>
 
                 <label> Location: </label>
-                <select name = "post_location">
-                    <option value = " "> Select Location </option>
+                <select name = "post_location" id = "post_location">
+
+                    <option value =""> Select Location </option>
+
+                    {% for loc in locations %}                                              <!-- loc=data inside locations = item in location(loop code) -->
+                        <option value = "{{loc.location_code}}"> {{loc.location_name}} </option>
+                    {% endfor %}
 
                 </select>
+
+                <br><br>
+
+                <p>Click Map to choose location: </p>
+                <div class = "map_box">
+                    <img src="{% static 'images/map-img.jpg' %}" id="smallMap" class="smallMap">
+
+                    <div id = "smallMap_marker" class = "smallMap-marker"> 📍 </div>
+                </div>
 
                 <br><br>
 
                 <label> Item Description: </label>
                 <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ "></textarea>
 
+                <div id="map_modal" class="map_modal">
+
+                    <div class="mapmodal_content">
+
+                        <!-- Close button -->
+                        <span id="close_map" class="close_button">
+                            &times;
+                        </span>
+
+                        <!-- Scroll container -->
+                        <div class="map-scroll-container">
+
+                            <div id = "location_label" class = "location_label"></div>
+
+                            <div class="big-map-box">
+    
+                                <img
+                                    src="{% static 'images/map-img.jpg' %}"
+                                    id="bigMap"
+                                    class="bigMap"
+                                    alt="MMU Big Map"
+                                >
+
+                                <div id="bigMap_marker" class="bigMap-marker">
+                                    📍
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
                 <br><br>
 
                 <button type = "submit">
-                    <a href = "{% url 'mainPage' %}"> 
                         Create Post 
-                    </a>
                 </button>
 
             </form>
@@ -95,3 +158,4 @@
 </html>
 
 
+ 

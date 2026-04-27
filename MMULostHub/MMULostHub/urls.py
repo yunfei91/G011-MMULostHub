@@ -19,14 +19,13 @@ from django.urls import path
 from django.urls import include
 from user import views
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     # yt urls
     path('', views.beginning, name='beginning'),
-    path('user-login/', views.user_login, name='user-login'),
-    path('admin-login/', views.admin_login, name='admin-login'),
-    path('register/', views.register, name='register'),
-    path('check-email/', views.check_email, name='check_email'),
+    path("user/", include("user.urls")),
 
     # yf urls
     path('items/', include('items.urls')),
@@ -34,5 +33,6 @@ urlpatterns = [
     # ty urls
     path('report/',include('report.urls')),
     path('admin/', admin.site.urls),
-]
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -1,0 +1,72 @@
+
+.smallMap,
+.bigMap {
+    position: relative;
+}
+
+.smallMap-marker,
+.bigMap-marker {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    pointer-events: none;                               /* marker won't block mouse click */
+    z-index: 10;                                        /* marker will be on the upper pic */
+    display: none;                                      /* cannot see without clicking first */
+}
+
+.map_modal {
+    display: none; 
+    position: fixed;                                    /* fixed position wont move with the */
+    z-index: 999; 
+    inset: 0;                                           /* full screen */
+}
+
+.smallMap { 
+    width: 400px; 
+} 
+
+/* Big popup map */ 
+.bigMap { 
+    width: 950px;
+    height: auto;
+}
+
+/* White popup box */ 
+.mapmodal_content { 
+    width: 100%; 
+    max-width: 950px;                                       /* = bigmap img width */
+    margin: 10px auto; 
+    padding: 30px; 
+    position: relative;                                     /* relative to close button position */
+}
+
+/* Close button X */ 
+.close_button { 
+    position: absolute; 
+    top: 15px; 
+    right: 25px; 
+    font-size: 35px; 
+    font-weight: bold; 
+    cursor: pointer; 
+}
+
+/* ========================= */
+/* MAP SCROLL AREA */
+/* ========================= */
+
+.map-scroll-container {
+    max-height: 800px;
+    overflow: auto;                                             /* scroll line  */
+    margin-top: 20px;
+}
+
+.big-map-box{
+    position: relative;                                         /* relative to marker(absolute) */
+}
+
+.map_box{
+    position: relative;
+}
+
+.location_label{
+    display:none;
+}

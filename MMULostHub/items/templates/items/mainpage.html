@@ -9,9 +9,9 @@
 
     <body>
         <header>
-            <img src="{% static 'images/MMU Logo.png' %}" alt="MMU Logo" class = "mmu-logo">
+            <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class = "mmu-logo">
 
-            <img src="{% static 'images/Web Logo.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
+            <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
         </header>
 
         <div class="dropdown-nav">
@@ -23,36 +23,36 @@
                 <a href="{% url 'mainPage' %}"> Home </a>
                 <a href="#"> Lost Post </a>                 <!-- yt lost post link -->
                 <a href="#"> Found Post </a>                <!-- yt found post link -->
-                <a href="#"> Profile </a>                   <!-- yt profile link -->
-                <a href="{% url 'feedback' %}"> Feedback/Report </a> 
+                <a href="#"> Profile </a>                   <!-- yt profile link -->       
+                <a href="{% url 'feedback_form' %}"> Feedback/Report </a>  <!-- zinc feedback link -->
                 <a href="#"> Logout </a>                    <!-- yt logout link -->
             </div>
         </div>
 
-        <div class="search-bar">                                        <!-- after need to be changed when starting to do search feature -->
+        <div class="search_bar">                                        <!-- after need to be changed when starting to do search feature -->
             <input type="text" placeholder="Search for items...">
             <button type="submit"> Search </button>
         </div>
 
         <div class="post-list">
-            {% for post in Post  %}
+            {% for post in posts %}
                 <div class = "post-box">
                     <h4> {{ post.post_type|upper }} POST </h4>
                     {% if post.post_image %}
-                        <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image">
+                        <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image" required>
                     {% endif %}
                     <p> Date Time :{{ post.post_datetime }} </p>
                     <p> Item Category :{{ post.get_post_itemcategory_display }} </p>
                     <p> Location :{{ post.post_location.location_name }} </p>
                 </div>
             {% empty %}
-                <div class = "no-post">
+                <div class = "no_post">
                     <p> No posts available. </p>
                 </div>
             {% endfor %}
         </div>
 
-        <div class="create-post">
+        <div class="create_post">
             <button type="button">
                 <a href="{% url 'createPost' %}"> 
                     Create Post 
