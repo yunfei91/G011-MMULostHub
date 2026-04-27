@@ -47,6 +47,8 @@
             </div>
 
             <button onclick="cropImage()">Crop & Upload</button>
+
+            <button onclick="cancelCrop()">Cancel</button>
         </div>
         {% csrf_token%}
 
@@ -199,6 +201,19 @@
             });
         }
 
+        function cancelCrop() {
+            document.getElementById("editor").style.display = "none";
+
+            const preview = document.getElementById("preview");
+            preview.src = "";
+
+            document.getElementById("imageInput").value ="";
+
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+        }
         function showNameEdit() {
             document.getElementById("nameForm").style.display = "block";
             document.getElementById("nameText").style.display = "none";
