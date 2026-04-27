@@ -5,6 +5,7 @@ def create_post (post_data, user):
 
     post_type = post_data.get('post_type')
     location = post_data.get('post_location')
+    image = post_data.get('userposts_images')
 
     if post_type == "found" and not location:
         raise ValueError("Location is required for Found Posts. Please state where did you found this item. ^-^")
@@ -17,6 +18,9 @@ def create_post (post_data, user):
         
         except MMULocation.DoesNotExist:
             raise ValueError("Invalid location. Please select a location from the dropdown menu.")
+        
+    if not image:
+        raise ValueError("Please Upload an imange about the item ^^")
     
     new_post = Post.objects.create(
         post_user = user,
