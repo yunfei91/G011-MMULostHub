@@ -31,7 +31,7 @@
                     <form method="POST">
                         {% csrf_token %}
 
-                        <input type="text" id="email" name="email" placeholder="MMU Email" oninput="validateEmail()">
+                        <input type="text" id="email" name="email" placeholder="Email" oninput="validateEmail()">
                         <p id="email-status"></p>
                         {% if email_error %}
                             <p style="color:red;">{{ email_error }}</p>
@@ -76,7 +76,7 @@
             let email = document.getElementById("email").value.trim();
             let status = document.getElementById("email-status");
 
-            let pattern = /^[A-Za-z0-9._%+-]+@(mmu\.edu\.my|student\.mmu\.edu\.my)$/;
+            let pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
             if (!email) {
                 status.innerHTML = "";
@@ -86,7 +86,7 @@
             }
 
             if (!pattern.test(email)) {
-                status.innerHTML = "Invalid MMU email";
+                status.innerHTML = "Invalid email";
                 status.style.color = "red";
                 emailValid = false;
             } else {

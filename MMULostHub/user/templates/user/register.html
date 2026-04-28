@@ -36,7 +36,7 @@
                         <p id="name-status"></p>
                         <p style="color:red;">{{ name_error }}</p>
                         <!--Email-->
-                        <input type="text" id="email" name="email" placeholder="MMU Email" oninput="checkEmail()">
+                        <input type="text" id="email" name="email" placeholder="Email" oninput="checkEmail()">
                         <p id="email-status"></p>
                         {% if email_error %}
                             <p style="color:red;">{{ email_error }}</p>
@@ -129,7 +129,7 @@
                     updateButton();
                 })
                 .catch(error => {
-                    console.error(errror);
+                    console.error(error);
                     status.innerHTML = "Error checking name";
                     status.style.color = "red";
                 });
@@ -166,7 +166,7 @@
 
                 emailTimeout = setTimeout(() => {
 
-                    let pattern = /^[A-Za-z0-9._%+-]+@(mmu\.edu\.my|student\.mmu\.edu\.my)$/;
+                    let pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     
                     if (!pattern.test(email)) {
                         status.innerHTML = "Invalid email format";
