@@ -21,7 +21,11 @@ def user_login(request):
 
         if not email:
             email_error = "Please enter your MMU email." # Empty check
-        elif not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', email):
+        elif not (
+            re.match(r'^[A-Za-z0-9._%+-]+@mmu\.edu\.my$',email)
+            or
+            re.match(r'^[A-Za-z0-9._%+-]+@student\.mmu\.edu\.my$',email)
+        ):
             email_error = "Please enter a valid email."
 
         if not password:
@@ -79,10 +83,6 @@ def admin_login(request):
             })
 
         login(request, user)
-
-        next_url = request.GET.get('next')
-        if next_url:
-            return redirect(next_url)
         return redirect('mainPage')
 
     return render(request, 'user/admin-login.html')
@@ -111,7 +111,7 @@ def register(request):
             email_error = "Please enter a valid email."
         elif User.objects.filter(username=email).exists(): # Check email exists
             email_error = "Email already registered."
-
+    
         if not password:
             password_error = "Please enter a password."
         
@@ -130,9 +130,8 @@ def register(request):
                 'email': email,
                 'confirm_password': confirm_password,
             })
-
-        user = create_user_account(name, email, password) # Call custom function
-
+        
+        user = create_user_account(name, email, password) # Call custom function    
         return redirect('user-login')
     
     return render(request, 'user/register.html')
