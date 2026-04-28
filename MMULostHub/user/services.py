@@ -2,11 +2,10 @@ from django.contrib.auth.models import User
 from .models import Profile
 
 def create_user_account(name, email, password):
-    
-    username=email
 
+    username = email
     if User.objects.filter(username=username).exists():
-        username = username + email.split("@")[0]
+        return None
         
     user = User.objects.create_user(
         username=username,
@@ -15,7 +14,9 @@ def create_user_account(name, email, password):
         first_name=name
     )
 
-    profile = Profile.objects.get(user=user)
+    Profile.objects.get_or_create(user=user)
+
+    profile = user.profile
     profile.name = name
     profile.save()
     

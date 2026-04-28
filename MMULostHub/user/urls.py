@@ -7,11 +7,15 @@ urlpatterns = [
     path('admin-login/', views.admin_login, name='admin-login'),
     path('register/', views.register, name='register'),
     path('check-email/', views.check_email, name='check_email'),
+    path('check-name/', views.check_name, name='check_name'),
+    path('verify/', views.verify_email, name='verify_email'),
+
     path('profile/', views.profile, name='profile'),
     path('update-bio/', views.update_bio, name='update_bio'),
     path('update-avatar/', views.update_avatar, name='update_avatar'),
     path('update-name/', views.update_name, name='update_name'),
-    path('check-name/', views.check_name, name='check_name'),
+
+    path('logout/', views.user_logout, name='logout'),
 ]
 
 from django.conf import settings

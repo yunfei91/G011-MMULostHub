@@ -7,6 +7,8 @@ import re # Regular expression for validation
 from .models import Profile
 
 def beginning(request):
+    if request.user.is_authenticated:
+        return redirect('mainPage')
     return render(request, 'user/beginning.html')
 
 def user_login(request):
@@ -20,12 +22,8 @@ def user_login(request):
         user_login_error = ""
 
         if not email:
-            email_error = "Please enter your MMU email." # Empty check
-        elif not (
-            re.match(r'^[A-Za-z0-9._%+-]+@mmu\.edu\.my$',email)
-            or
-            re.match(r'^[A-Za-z0-9._%+-]+@student\.mmu\.edu\.my$',email)
-        ):
+            email_error = "Please enter your email." # Empty check
+        elif not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', email):
             email_error = "Please enter a valid email."
 
         if not password:
@@ -57,7 +55,7 @@ def admin_login(request):
         email = (request.POST.get('email') or '').strip().lower()
         password = request.POST.get('password') or ''
 
-        login_error = ""
+        admin_login_error = ""
         email_error = ""
 
         if not email:
@@ -70,16 +68,16 @@ def admin_login(request):
         user = authenticate(request, username=email, password=password)
 
         if user is None:
-            login_error = "Invalid email"
+            admin_login_error = "Invalid email"
             return render(request, 'user/admin-login.html', {
-                'admin_login_error': login_error,
+                'admin_login_error': admin_login_error,
             })
 
         # Check admin permission
         if not user.is_staff:
-            login_error = "You are not authorized as admin."
+            admin_login_error = "You are not authorized as admin."
             return render(request, 'user/admin-login.html', {
-                'login_error': login_error
+                'admin_login_error': admin_login_error
             })
 
         login(request, user)
@@ -87,6 +85,10 @@ def admin_login(request):
 
     return render(request, 'user/admin-login.html')
 
+from django.core.mail import send_mail
+from django.conf import settings
+import time
+import random
 def register(request):
     # Handle form submission
     if request.method == 'POST':
@@ -131,8 +133,28 @@ def register(request):
                 'confirm_password': confirm_password,
             })
         
-        user = create_user_account(name, email, password) # Call custom function    
-        return redirect('user-login')
+        otp = str(random.randint(100000, 999999))
+
+        request.session['register_data'] = {
+            'name': name,
+            'email': email,
+            'password': password,
+            'otp': otp,
+            'otp_time': time.time()
+        }
+        
+        send_mail(
+            'Your Verification Code',
+            f'Your OTP is: {otp}',
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
+
+        if request.session.get('otp_used'):
+            return redirect('user-login')
+        
+        return redirect('verify_email')
     
     return render(request, 'user/register.html')
 
@@ -148,13 +170,50 @@ def check_email(request):
 
     return JsonResponse({'exists': exists})
 
+def verify_email(request):
+        data = request.session.get('register_data')
+
+        if not data:
+            return redirect('register')
+        
+        if request.method == 'POST':
+            user_otp = request.POST.get('otp')
+
+            if time.time() - data['otp_time'] > 300:
+                return render(request, 'user/verify.html', {
+                    'error': "OTP expired"
+                })
+            
+            if user_otp == data['otp']:
+                if User.objects.filter(username=data['email']).exists():
+                    return redirect('user-login')
+                
+                create_user_account(
+                    data['name'],
+                    data['email'],
+                    data['password']
+                )
+
+                del request.session['register_data']
+                return redirect('user-login')
+        
+            return render(request, 'user/verify.html', {
+                'error': "Invalid OTP"
+            })
+
+        return render(request, 'user/verify.html')
+
+def user_logout(request):
+    logout(request)
+    return redirect('beginning')
+
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from items.models import Post
 @login_required # Must login first
 def update_name(request):
     if request.method == "POST":
-        name = request.POST.get("name").strip()
+        name = (request.POST.get("name") or "").strip()
 
         if Profile.objects.filter(name=name).exclude(user=request.user).exists(): # Check duplicate name except self
             messages.error(request, "Name already taken.")
@@ -163,12 +222,13 @@ def update_name(request):
         request.user.first_name = name # Update Django User
         request.user.save()
 
-        profile = request.user.profile
+        profile, _ = Profile.objects.get_or_create(user=request.user)
         profile.name = name # Update profile
         profile.save()
         
     return redirect('profile')
 
+@login_required
 def profile(request):
 
     user = request.user
@@ -190,7 +250,7 @@ def profile(request):
         'lost_posts': lost_posts,
         'found_posts': found_posts
     })
-
+@login_required
 def update_bio(request):
     if request.method == 'POST':
         bio = request.POST.get('bio', '')
@@ -203,6 +263,7 @@ def update_bio(request):
 
     return redirect('profile')
 
+@login_required
 def update_avatar(request):
     print("FILES:", request.FILES)
 
