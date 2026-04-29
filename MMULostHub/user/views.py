@@ -200,7 +200,7 @@ def verify_email(request):
 
         if expired:
             context['error'] = "OTP expired"
-            return render(request,'user/verify.html', context)
+            return render(request,'user/email-verify.html', context)
         
         if user_otp == data['otp']:
             create_user_account(
@@ -213,9 +213,9 @@ def verify_email(request):
             return redirect('user-login')
     
         context['error'] = "Invalid OTP"
-        return render(request,'user/verify.html', context)
+        return render(request,'user/email-verify.html', context)
     
-    return render(request, 'user/verify.html', context)
+    return render(request, 'user/email-verify.html', context)
 
 def resend_otp(request):
     data = request.session.get('register_data')
