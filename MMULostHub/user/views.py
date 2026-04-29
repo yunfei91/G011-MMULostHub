@@ -141,20 +141,30 @@ def register(request):
             'otp_time': time.time()
         }
         
-        send_mail(
-            'Your Verification Code',
-            f'Your OTP is: {otp}',
-            settings.DEFAULT_FROM_EMAIL,
-            [email],
-            fail_silently=False,
-        )
+        send_otp_email(email, otp)
 
-        if request.session.get('otp_used'):
-            return redirect('user-login')
-        
         return redirect('verify_email')
     
     return render(request, 'user/register.html')
+
+def send_otp_email(email, otp):
+
+    html_content =render_to_string("email/otp_email.html", {
+        "otp": otp,
+        "email": email
+    })
+
+    text_content = strip_tags(html_content)
+
+    email_msg = EmailMultiAlternatives(
+        subject = "MMU Lost Hub - Email Verification Code",
+        body = text_content,
+        from_email = settings.DEFAULT_FROM_EMAIL,
+        to = [email]
+    )
+
+    email_msg.attach_alternative(html_content, "text/html")
+    email_msg.send()
 
 def check_name(request):
     name = (request.GET.get('name') or '').strip()
@@ -184,40 +194,43 @@ def verify_email(request):
     resend_remaining = int(resend_cooldown - (now-data['otp_time']))
     resend_remaining = max(0, resend_remaining)
 
-
-    can_resend = resend_remaining == 0
-    expired = otp_remaining == 0
-
     context = {
         'otp_remaining': otp_remaining,
         'resend_remaining': resend_remaining,
-        'can_resend': can_resend,
-        'expired': expired
+        'can_resend': resend_remaining == 0,
+        'expired': otp_remaining == 0
     }
 
     if request.method == 'POST':
-        user_otp = request.POST.get('otp')
+        user_otp = request.POST.get('otp', '')
 
-        if expired:
+        if context['expired']:
             context['error'] = "OTP expired"
             return render(request,'user/email-verify.html', context)
         
-        if user_otp == data['otp']:
-            create_user_account(
-                data['name'],
-                data['email'],
-                data['password']
-            )
+        if user_otp != data['otp']:
+            context['error'] = "Invalid OTP"
+            return render(request, 'user/email-verify.html', context)
+        
+        create_user_account(
+            data['name'],
+            data['email'],
+            data['password']
+        )
 
-            del request.session['register_data']
-            return redirect('user-login')
-    
-        context['error'] = "Invalid OTP"
-        return render(request,'user/email-verify.html', context)
+        request.session.pop('register_data', None)
+
+        return redirect('user-login')
     
     return render(request, 'user/email-verify.html', context)
 
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 def resend_otp(request):
+    if request.method != "POST":
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+    
     data = request.session.get('register_data')
 
     if not data:
@@ -225,8 +238,7 @@ def resend_otp(request):
     
     now = time.time()
     
-    resend_cooldown = 30
-    if now - data['otp_time'] < resend_cooldown:
+    if now - data['otp_time'] < 30:
         return JsonResponse({
             'error': 'Please wait before requesting a new OTP.'
         }, status=400)
@@ -234,22 +246,18 @@ def resend_otp(request):
     otp = str(random.randint(100000, 999999))
 
     data['otp'] = otp
-    data['otp_time'] = time.time()
+    data['otp_time'] = now
+
     request.session['register_data'] = data
     request.session.modified = True
 
-    send_mail(
-        'MMU Lost Hub Verification Code',
-        f'This is your OTP is: {otp}',
-        settings.DEFAULT_FROM_EMAIL,
-        [data['email']],
-        fail_silently=False,
-    )
+    try:
+        send_otp_email(data['email'], otp)
+    except Exception as e:
+        print("EMAIL ERROR:", e)
+        return JsonResponse({'error': 'Failed to resend OTP'}, status=500)
 
-    return JsonResponse({
-        'success': True,
-        'message': 'OTP resent successfully'
-    })
+    return JsonResponse({'success': True})
 
 def user_logout(request):
     logout(request)

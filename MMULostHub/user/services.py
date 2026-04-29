@@ -3,20 +3,19 @@ from .models import Profile
 
 def create_user_account(name, email, password):
 
-    username = email
-    if User.objects.filter(username=username).exists():
-        return None
-        
-    user = User.objects.create_user(
-        username=username,
-        email=email,
-        password=password,
-        first_name=name
+    user, created = User.objects.get_or_create(
+        username=email,
+        defaults={
+            "email": email,
+            "first_name": name
+        }
     )
 
-    Profile.objects.get_or_create(user=user)
+    if created:
+        user.set_password(password)
+        user.save()
 
-    profile = user.profile
+    profile, _ = Profile.objects.get_or_create(user=user)
     profile.name = name
     profile.save()
     

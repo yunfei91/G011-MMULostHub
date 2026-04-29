@@ -203,8 +203,10 @@
             fetch("{% url 'resend_otp' %}", {
                 method: "POST",
                 headers: {
-                    "X-CSRFToken": getCookie('csrftoken')
-                }
+                    "X-CSRFToken": getCookie('csrftoken'),
+                    "Content-Type": "application/json"
+                },
+                credentials: "same-origin"
             })
             .then(res => res.json())
             .then(data => {
