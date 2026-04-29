@@ -181,7 +181,7 @@ def verify_email(request):
     otp_remaining = max(0, otp_remaining)
 
     resend_cooldown = 30
-    resend_remaining = int(resend_cooldown - now-data['otp_time'])
+    resend_remaining = int(resend_cooldown - (now-data['otp_time']))
     resend_remaining = max(0, resend_remaining)
 
 
@@ -221,22 +221,15 @@ def resend_otp(request):
     data = request.session.get('register_data')
 
     if not data:
-        return redirect('register')
+        return JsonResponse({'error': 'Session expired'}, status=400)
     
     now = time.time()
-    remaining_time = int(30 - (now-data['otp_time']))
-    remaining_time = max(0, remaining_time)
     
-    can_resend = (now - data['otp_time']) >= 30
-    expired = remaining_time <= 0
-
-    if not can_resend:
-        return render(request, 'user/verify.html', {
-            'error': "Please wait before requesting a new OTP.",
-            'can_resend': can_resend,
-            'expired': expired,
-            'remaining_time': remaining_time
-        })
+    resend_cooldown = 30
+    if now - data['otp_time'] < resend_cooldown:
+        return JsonResponse({
+            'error': 'Please wait before requesting a new OTP.'
+        }, status=400)
     
     otp = str(random.randint(100000, 999999))
 
@@ -253,7 +246,10 @@ def resend_otp(request):
         fail_silently=False,
     )
 
-    return redirect('verify_email')
+    return JsonResponse({
+        'success': True,
+        'message': 'OTP resent successfully'
+    })
 
 def user_logout(request):
     logout(request)
