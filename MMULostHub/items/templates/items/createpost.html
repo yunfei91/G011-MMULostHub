@@ -46,15 +46,23 @@
                 
                 <label> Type: </label>
                 <select name = "post_type">
+
                     <option value = ""> Select Post Type </option>
-                    <option value = "lost"> Lost Post </option>
-                    <option value = "found"> Found Post </option>
+
+                    <option value = "lost" {% if post_data.post_type == "lost" %} selected {% endif %}> 
+                        Lost Post 
+                    </option>
+
+                    <option value = "found" {% if post_data.post_type == "found" %} selected {% endif %}> 
+                        Found Post 
+                    </option>
+
                 </select>
 
                 <br><br>
 
                 <label> Date Time: </label>
-                <input type = "datetime-local" name = "post_datetime">
+                <input type = "datetime-local" name = "post_datetime" value = "{{ post_data.post_datetime }}">
 
                 <br><br> 
 
@@ -71,8 +79,10 @@
                 <select name = "post_itemcategory">
                     <option value = ""> Select Category </option>
 
-                    {% for value, label in item_categories %}                       <!-- (value, label) mcm inside model-->
-                        <option value = "{{ value }}"> {{ label }} </option>
+                    {% for value, label in item_categories %}
+                        <option value="{{ value }}" {% if post_data.post_itemcategory == value %} selected {% endif %}>
+                            {{ label }}
+                        </option>
                     {% endfor %}
                 </select>
 
@@ -83,8 +93,10 @@
 
                     <option value =""> Select Location </option>
 
-                    {% for loc in locations %}                                              <!-- loc=data inside locations = item in location(loop code) -->
-                        <option value = "{{loc.location_code}}"> {{loc.location_name}} </option>
+                    {% for loc in locations %}
+                        <option value="{{loc.location_code}}" {% if post_data.post_location == loc.location_code %} selected {% endif %}>
+                            {{loc.location_name}}
+                        </option>
                     {% endfor %}
 
                 </select>
@@ -101,7 +113,9 @@
                 <br><br>
 
                 <label> Item Description: </label>
-                <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ "></textarea>
+                <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ ">
+                    {{ post_data.post_description }}
+                </textarea>
 
                 <div id="map_modal" class="map_modal">
 

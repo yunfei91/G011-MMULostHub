@@ -1,6 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import MMULocation, Post, CATEGORY_CHOICES
-from .services import create_post
+from .services import create_post, edit_post
 
 def mainPage(request):
     post_box = Post.objects.all().order_by('-id')       #newest post on top # display all post in main page and order by datetime (latest post will be on top)
@@ -32,6 +32,7 @@ def createPost(request):
     return render(request, 'items/createpost.html', {
         'item_categories': CATEGORY_CHOICES,
         'locations': MMULocation.objects.all(),
+        'post_data': {},
     })
 
 
