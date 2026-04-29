@@ -26,9 +26,11 @@ def createPost(request):
                 'error': str(e),                                 # e string and display in html
                 'item_categories': CATEGORY_CHOICES,
                 'locations': MMULocation.objects.all(),
+                'post_data': request.POST,
             })
         
     return render(request, 'items/createpost.html', {
         'item_categories': CATEGORY_CHOICES,
         'locations': MMULocation.objects.all(),
+        'post_data': {},
     })
