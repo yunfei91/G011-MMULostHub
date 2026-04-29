@@ -7,8 +7,6 @@ import re # Regular expression for validation
 from .models import Profile
 
 def beginning(request):
-    if request.user.is_authenticated:
-        return redirect('mainPage')
     return render(request, 'user/beginning.html')
 
 def user_login(request):
@@ -171,37 +169,91 @@ def check_email(request):
     return JsonResponse({'exists': exists})
 
 def verify_email(request):
-        data = request.session.get('register_data')
+    data = request.session.get('register_data')
 
-        if not data:
-            return redirect('register')
+    if not data:
+        return redirect('register')
+    
+    now = time.time()
+    
+    otp_valid_seconds = 60
+    otp_remaining = int(otp_valid_seconds - (now - data['otp_time']))
+    otp_remaining = max(0, otp_remaining)
+
+    resend_cooldown = 30
+    resend_remaining = int(resend_cooldown - now-data['otp_time'])
+    resend_remaining = max(0, resend_remaining)
+
+
+    can_resend = resend_remaining == 0
+    expired = otp_remaining == 0
+
+    context = {
+        'otp_remaining': otp_remaining,
+        'resend_remaining': resend_remaining,
+        'can_resend': can_resend,
+        'expired': expired
+    }
+
+    if request.method == 'POST':
+        user_otp = request.POST.get('otp')
+
+        if expired:
+            context['error'] = "OTP expired"
+            return render(request,'user/verify.html', context)
         
-        if request.method == 'POST':
-            user_otp = request.POST.get('otp')
+        if user_otp == data['otp']:
+            create_user_account(
+                data['name'],
+                data['email'],
+                data['password']
+            )
 
-            if time.time() - data['otp_time'] > 300:
-                return render(request, 'user/verify.html', {
-                    'error': "OTP expired"
-                })
-            
-            if user_otp == data['otp']:
-                if User.objects.filter(username=data['email']).exists():
-                    return redirect('user-login')
-                
-                create_user_account(
-                    data['name'],
-                    data['email'],
-                    data['password']
-                )
+            del request.session['register_data']
+            return redirect('user-login')
+    
+        context['error'] = "Invalid OTP"
+        return render(request,'user/verify.html', context)
+    
+    return render(request, 'user/verify.html', context)
 
-                del request.session['register_data']
-                return redirect('user-login')
-        
-            return render(request, 'user/verify.html', {
-                'error': "Invalid OTP"
-            })
+def resend_otp(request):
+    data = request.session.get('register_data')
 
-        return render(request, 'user/verify.html')
+    if not data:
+        return redirect('register')
+    
+    now = time.time()
+    remaining_time = int(30 - (now-data['otp_time']))
+    remaining_time = max(0, remaining_time)
+    
+    can_resend = (now - data['otp_time']) >= 30
+    expired = remaining_time <= 0
+
+    if not can_resend:
+        return render(request, 'user/verify.html', {
+            'error': "Please wait before requesting a new OTP.",
+            'can_resend': can_resend,
+            'expired': expired,
+            'remaining_time': remaining_time
+        })
+    
+    otp = str(random.randint(100000, 999999))
+
+    data['otp'] = otp
+    data['otp_time'] = time.time()
+    request.session['register_data'] = data
+    request.session.modified = True
+
+    send_mail(
+        'MMU Lost Hub Verification Code',
+        f'This is your OTP is: {otp}',
+        settings.DEFAULT_FROM_EMAIL,
+        [data['email']],
+        fail_silently=False,
+    )
+
+    return redirect('verify_email')
 
 def user_logout(request):
     logout(request)

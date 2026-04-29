@@ -3,7 +3,6 @@
     <head>
         <title>MMU Lost Hub</title>
         {% load static %}
-        <link rel="stylesheet" type="text/css" href="{% static 'user/css/beginning.css' %}">
     </head>
 
 <body>
@@ -23,6 +22,7 @@
                         What's lost can be found,<br>
                     and found can find its way back.
                     </p>
+                </div>
 
                     <form method="POST">
                         {% csrf_token %}
@@ -33,7 +33,12 @@
                             <p style="color:red;">{{ error }}</p>
                         {% endif %}
                     </form>
-                </div>
+                    
+                    <form action="{% url 'resend_otp' %}" method="post">
+                        {% csrf_token %}
+                        <button id="ableBtn" {% if not can_resend %}disabled{% endif %}>Resend OTP</button>
+
+                    <p id="timer"></p>
             </div>
         </div>
 
@@ -42,5 +47,38 @@
             <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
         </footer>
     </div>
+
+    {{ remaining_time|json_script:"otp-time" }}
+
+    <script>
+        let timeLeft = 0;
+        try{
+            timeLeft = JSON.parse(document.getElementById("otp-time").textContent);
+        } catch (e) {
+            timeLeft = 0;
+        }
+
+        function updateTimer() {
+            let seconds = timeLeft % 60;
+
+            document.getElementById("timer").innerText =
+                "OTP expires in: " + seconds + "s";
+
+            if (timeLeft > 0) {
+                timeLeft--;
+                setTimeout(updateTimer, 1000);
+            } else {
+                document.getElementById("timer").innerText = "OTP expired";
+                location.reload();
+                
+                let btn = document.getElementById("ableBtn");
+                if (btn) {
+                    btn.disabled = false;
+                }
+            }
+        }
+
+        updateTimer();
+    </script>
 </body>
 </html>

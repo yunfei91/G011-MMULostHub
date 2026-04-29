@@ -8,7 +8,9 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('check-email/', views.check_email, name='check_email'),
     path('check-name/', views.check_name, name='check_name'),
+
     path('verify/', views.verify_email, name='verify_email'),
+    path('resend-otp/', views.resend_otp, name='resend_otp'),
 
     path('profile/', views.profile, name='profile'),
     path('update-bio/', views.update_bio, name='update_bio'),
