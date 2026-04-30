@@ -4,6 +4,11 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def feedback_form_view(request):
+    profile = request.user.profile
+
+    if not profile.is_mmu_verified:
+        return redirect('mmu_pending')
+    
     if request.method == "POST":
         comments = request.POST.get('comments')
         image = request.FILES.get('image-upload') 

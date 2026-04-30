@@ -31,7 +31,7 @@
 
         {% if user.is_authenticated and not user.profile.is_mmu_verified %}
             <p style="color:red;">
-                Your MMU verification is pending. You cannot create posts.
+                Your MMU email verification is pending. You cannot create posts.
             </p>
         {% endif %}
 
