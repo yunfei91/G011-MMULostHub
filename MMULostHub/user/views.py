@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect # render = return HTML page ; redirect = jump to another URL
 from django.http import JsonResponse # Return JSON data to frontend
 from django.contrib.auth.models import User
+
 from .services import create_user_account
 from django.contrib.auth import authenticate, login, logout
 import re # Regular expression for validation
@@ -212,17 +213,58 @@ def verify_email(request):
             context['error'] = "Invalid OTP"
             return render(request, 'user/email-verify.html', context)
         
-        create_user_account(
+        user = create_user_account(
             data['name'],
             data['email'],
             data['password']
         )
 
+        login(request, user)
+
         request.session.pop('register_data', None)
 
-        return redirect('user-login')
+        return redirect('mmu_verify')
     
     return render(request, 'user/email-verify.html', context)
+
+from django.contrib.auth.decorators import login_required
+@login_required
+def mmu_verify(request):
+    profile = request.user.profile
+
+    if profile.submitted_for_verification:
+        return redirect('mmu_pending')
+    
+    if request.method == 'POST':
+        mmu_email = request.POST.get('mmu_email', '').strip()
+        proof = request.FILES.get('proof')
+
+        error = ""
+
+        if not mmu_email.endswith(("@student.mmu.edu.my", "@mmu.edu.my")):
+            error = "Please use a valid MMU email"
+
+        if not proof:
+            error = "Please upload student or staff id card"
+
+        if error:
+            return render(request, 'user/mmu_verify.html', {
+                'error': error
+            })
+
+        profile.mmu_email = mmu_email
+        profile.mmu_proof = proof
+        profile.submitted_for_verification = True
+        profile.is_mmu_verified = False
+        profile.save()
+
+        return redirect('mmu_pending')
+    
+    return render(request, 'user/mmu_verify.html')
+
+@login_required
+def mmu_pending(request):
+    return render(request, 'user/mmu_pending.html')
 
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -263,7 +305,6 @@ def user_logout(request):
     logout(request)
     return redirect('beginning')
 
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from items.models import Post
 @login_required # Must login first

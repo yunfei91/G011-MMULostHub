@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MMU Verification</title>
+</head>
+<body>
+
+<h2>Verify Your MMU Account</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <label>MMU Email:</label><br>
+    <input type="email" name="mmu_email"><br><br>
+
+    <label>Upload Proof (Student Card / Screenshot):</label><br>
+    <input type="file" name="proof"><br><br>
+
+    <button type="submit">Submit</button>
+
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+</form>
+
+</body>
+</html>

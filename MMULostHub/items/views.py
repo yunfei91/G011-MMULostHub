@@ -1,12 +1,19 @@
 from django.shortcuts import render, redirect
 from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post
+from django.contrib.auth.decorators import login_required
 
 def mainPage(request):
     post_box = Post.objects.all().order_by('-id')       #newest post on top # display all post in main page and order by datetime (latest post will be on top)
     return render(request, 'items/mainpage.html', {'posts': post_box})
 
+@login_required
 def createPost(request):
+    profile = request.user.profile
+
+    if not profile.is_mmu_verified:
+        return redirect('mmu_pending')
+    
     if request.method == "POST":
         try:
             create_post({

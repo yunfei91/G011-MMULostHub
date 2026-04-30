@@ -29,6 +29,12 @@
             </div>
         </div>
 
+        {% if user.is_authenticated and not user.profile.is_mmu_verified %}
+            <p style="color:red;">
+                Your MMU verification is pending. You cannot create posts.
+            </p>
+        {% endif %}
+
         <div class="search_bar">                                        <!-- after need to be changed when starting to do search feature -->
             <input type="text" placeholder="Search for items...">
             <button type="submit"> Search </button>
@@ -50,11 +56,17 @@
         </div>
 
         <div class="create_post">
-            <button type="button">
-                <a href="{% url 'createPost' %}"> 
-                    Create Post 
+            {% if user.profile.is_mmu_verified %}
+                <a href="{% url 'createPost' %}">
+                    <button type="button">Create Post</button>
                 </a>
-            </button>
+            {% else %}
+                <a href="{% url 'mmu_pending' %}">
+                    <button type="button" disabled>
+                        Create Post (Locked)
+                    </button>
+                </a>
+            {% endif %}
         </div>
 
         <footer>

@@ -8,5 +8,11 @@ class Profile(models.Model):
     bio = models.CharField(max_length=255, blank=True, null=True, default="")
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
 
+    mmu_email = models.EmailField(blank=True, null=True)
+    mmu_proof = models.ImageField(upload_to='mmu_proof/', blank=True, null=True)
+
+    is_mmu_verified = models.BooleanField(default=False)
+    submitted_for_verification = models.BooleanField(default=False)
+    
     def __str__(self):
         return self.name if self.name else self.user.username
