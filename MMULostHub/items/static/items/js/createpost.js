@@ -1,5 +1,9 @@
-document.addEventListener("DOMContentLoaded", function () {                 //  DOMContentLoaded = wait html to load first then load js file to avoid cannot get element by id        
+function confirmEdit() {
+    return confirm("Are you sure you want to update this post?");
+}
 
+document.addEventListener("DOMContentLoaded", function () {                 //  DOMContentLoaded = wait html to load first then load js file to avoid cannot get element by id    
+    
     /* ============================================== 
             Create Post Upload Image and Preview       
      =============================================== */
@@ -149,8 +153,6 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
         smallMarker.style.left = (event.clientX - rect.left) * scaleSmallX + "px";
         smallMarker.style.top = (event.clientY - rect.top) * scaleSmallY + "px";
 
-
-
         /* =================================================================== 
                 Auto choose Loaction Dropdown after choosing are in Map        
         ====================================================================== */
@@ -294,6 +296,19 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
 
     });
 
+    window.addEventListener("load", function () {
+        const selectedCode = locationSelect.value;
+
+        if (selectedCode) {
+            for (let region of regions) {
+                if (region.code === selectedCode) {
+                    placeMarkerFromRegion(region);
+                    break;
+                }
+            }
+        }
+    });
+
     // function to put marker when selected dropdown location
     function placeMarkerFromRegion(region){
 
@@ -331,4 +346,6 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
         smallMarker.style.top  = (centerY * scaleY) + "px";
 
     }
+
+
 });

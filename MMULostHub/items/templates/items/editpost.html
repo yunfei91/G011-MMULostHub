@@ -1,101 +1,124 @@
 <!DOCTYPE html>
 <html>
-    <head> 
-        <title> 
-            MMU Lost Hub
-        </title>
+    {% load static %}
 
-        {% load static %}
+    <head>
+        <title>MMU Lost Hub</title>
+        
         <link rel="stylesheet" href="{% static 'items/css/createpost.css' %}">
         <script src="{% static 'items/js/createpost.js' %}" defer></script>
     </head>
 
     <body>
-        <header>
-            <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class = "mmu-logo">
 
+        <header>
+            <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class="mmu-logo">
             <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
         </header>
 
-        <div class = "dropdown-nav">
-            <nav>
-                Menu button
-            </nav>
-            <div class = "dropdown-content">
-                <a href = "{% url 'mainPage' %}"> Home </a>
-                <a href = "#"> Lost Post </a>                 <!-- yt lost post link -->
-                <a href = "#"> Found Post </a>                <!-- yt found post link -->
-                <a href = "#"> Profile </a>                   <!-- yt profile link -->
-                <a href = "{% url 'feedback_form' %}"> Feedback/Report </a>
-                <a href = "#"> Logout </a>                    <!-- yt logout link -->
+        <!-- NAV -->
+        <div class="dropdown-nav">
+            <nav>Menu button</nav>
+            <div class="dropdown-content">
+                <a href="{% url 'mainPage' %}">Home</a>
+                <a href="#">Lost Post</a>
+                <a href="#">Found Post</a>
+                <a href="#">Profile</a>
+                <a href="{% url 'feedback_form' %}">Feedback/Report</a>
+                <a href="#">Logout</a>
             </div>
         </div>
 
-        <div class = "editpost-box">
-            <h2>
-                EDIT POST
-            <h2>
+        <!-- EDIT FORM -->
+        <div class="editpost-box">
 
-            <form method = "POST" enctype = "multipart/form-data">
+            <h2>EDIT POST</h2>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <script>
+                        alert("{{ message }}");
+                    </script>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                <label> Type: </label>
-                <select name = "post_type">
+                <!-- TYPE -->
+                <label>Type:</label>
+                <select name="post_type">
+                    <option value="">Select Post Type</option>
 
-                    <option value = ""> Select Post Type </option>
-
-                    <option value = "lost" {% if post_data.post_type == "lost" or post_data.post_type == "lost" %} selected {% endif %}> 
-                        Lost Post 
+                    <option value="lost"
+                        {% if post_data.post_type|default:post.post_type == "lost" %} selected {% endif %}>
+                        Lost Post
                     </option>
 
-                    <option value = "found" {% if post_data.post_type == "found" or post_data.post_type == "found" %} selected {% endif %}> 
-                        Found Post 
+                    <option value="found"
+                        {% if post_data.post_type|default:post.post_type == "found" %} selected {% endif %}>
+                        Found Post
                     </option>
-
                 </select>
 
                 <br><br>
 
-                <label> Date Time: </label>
-                <input 
-                type = "datetime-local" 
-                name = "post_datetime" 
-                value = "{{ post_data.post_datetime | default:post.post_datetime | date:'Y-m-d\\TH:i' }}"
+                <!-- DATETIME -->
+                <label>Date Time:</label>
+                <input
+                    type="datetime-local"
+                    name="post_datetime"
+                    value="{% if post_data.post_datetime %}{{ post_data.post_datetime }}{% else %}{{ post.post_datetime|date:'Y-m-d\\TH:i' }}{% endif %}"
                 >
 
-                <br><br> 
+                <br><br>
 
-                <label> Upload Item Image: </label>
+                <!-- IMAGE -->
+                <label>Upload Item Image:</label>
 
-                {% if post.post_image %}
-                    <br>
-                    <img src="{{ post.post_image.url }}" width="200">
-                    <br><br>
-                {% endif %}
+                <img
+                    id="image_preview"
+                    src="{% if post.post_image %}{{ post.post_image.url }}{% endif %}"
+                    width="200"
+                    style="{% if not post.post_image %}display: none;{% endif %}"
+                >
 
-                <input type = "file" id = "post_image" name = "userposts_images" accept = "image/*" >                 <!-- Input image field / accept = "image/* (limit oni can choose photo) / id is for java-->
+                <input type="file"
+                    id="post_image"
+                    name="userposts_images"
+                    accept="image/*">
 
-                <label> Item Category: </label>
-                <select name = "post_itemcategory">
-                    <option value = ""> Select Category </option>
+                <br><br>
+
+                <!-- CATEGORY -->
+                <label>Item Category:</label>
+                <select name="post_itemcategory">
+
+                    <option value="">Select Category</option>
 
                     {% for value, label in item_categories %}
-                        <option value="{{ value }}" {% if post_data.post_itemcategory == value or post_data.post_itemcategory == value %} selected {% endif %}>
+                        <option value="{{ value }}"
+                            {% if post_data.post_itemcategory|default:post.post_itemcategory == value %} selected {% endif %}>
                             {{ label }}
                         </option>
                     {% endfor %}
+
                 </select>
 
                 <br><br>
 
-                <label> Location: </label>
-                <select name = "post_location" id = "post_location">
+                <!-- LOCATION -->
+                <label>Location:</label>
+                <select name="post_location" id="post_location">
 
-                    <option value =""> Select Location </option>
+                    <option value="">Select Location</option>
 
                     {% for loc in locations %}
-                        <option value="{{loc.location_code}}" {% if post_data.post_location == loc.location_code or post_data.post_location == loc.location_code %} selected {% endif %}>
-                            {{loc.location_name}}
+                        <option value="{{ loc.location_code }}"
+                            {% if post_data.post_location|default:post.post_location.location_code == loc.location_code %}
+                                selected
+                            {% endif %}>
+                            {{ loc.location_name }}
                         </option>
                     {% endfor %}
 
@@ -103,19 +126,22 @@
 
                 <br><br>
 
-                <p>Click Map to choose location: </p>
-                <div class = "map_box">
-                    <img src="{% static 'images/map-img.jpg' %}" id="smallMap" class="smallMap">
+                <!-- MAP -->
+                <p>Click Map to choose location:</p>
 
-                    <div id = "smallMap_marker" class = "smallMap-marker"> 📍 </div>
+                <div class="map_box">
+                    <img src="{% static 'images/map-img.jpg' %}" id="smallMap" class="smallMap">
+                    <div id="smallMap_marker" class="smallMap-marker">📍</div>
                 </div>
 
                 <br><br>
 
-                <label> Item Description: </label>
-                <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ ">
-                    {{ post_data.post_description | default:post.post_description }}
-                </textarea>
+                <!-- DESCRIPTION -->
+                <label>Item Description:</label>
+                <textarea name="post_description"
+                        placeholder="Describe the item or give it a name ^-^">{{ post_data.post_description|default:post.post_description }}</textarea>
+
+                <br><br>
 
                 <div id="map_modal" class="map_modal">
 
@@ -154,12 +180,13 @@
 
                 <br><br>
 
-                <button type = "submit">
-                        Create Post 
+                <button type="submit" onclick="return confirmEdit()">
+                    Update Post
                 </button>
 
             </form>
         </div>
+
     </body>
 
     <footer>
@@ -169,4 +196,5 @@
             Designed by: Kho Yee Theng / Tan Yun Fee / Lim Tze Ying
         </p>
     </footer>
+
 </html>

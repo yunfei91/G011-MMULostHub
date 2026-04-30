@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post, edit_post
+from django.contrib import messages
 
 def mainPage(request):
     post_box = Post.objects.all().order_by('-id')       #newest post on top # display all post in main page and order by datetime (latest post will be on top)
@@ -38,7 +39,11 @@ def createPost(request):
 
 def editPost(request,post_id):
 
-    post = get_object_or_404(Post, id = post_id)
+    post = get_object_or_404(
+        Post, 
+        id = post_id, 
+        post_user = request.user
+    )
 
     if request.method == "POST":
         try:
@@ -51,18 +56,22 @@ def editPost(request,post_id):
                 'post_description': request.POST.get('post_description'),
             })
 
+            messages.success(request, "Post updated successfully!")
             return redirect('mainPage')
-        
+                    
         except ValueError as e:
+            messages.error(request, str(e))
+
             return render(request, 'items/editpost.html',{
-                'error': str(e),
                 'post': post,
+                'post_data': request.POST,
                 'item_categories': CATEGORY_CHOICES,
                 'locations': MMULocation.objects.all(),
             })
     
-    return render(request, 'items/editpoat.html', {
+    return render(request, 'items/editpost.html', {
         'post': post,
+        'post_data': {},
         'item_categories': CATEGORY_CHOICES,
         'locations': MMULocation.objects.all(),
     })
