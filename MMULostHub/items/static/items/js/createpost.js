@@ -2,6 +2,63 @@ function confirmEdit() {
     return confirm("Are you sure you want to update this post?");
 }
 
+function confirmCreate(event) {
+
+    event.preventDefault();
+
+    const form = document.querySelector("form");
+
+    const postType = form.querySelector("[name='post_type']").value;
+    const category = form.querySelector("[name='post_itemcategory']").value;
+    const image = form.querySelector("[name='userposts_images']").files[0];
+    const datetime = form.querySelector("[name='post_datetime']").value;
+    const location = form.querySelector("[name='post_location']").value;
+
+    if (!postType) {
+        Swal.fire("Error", "Please choose Lost or Found.", "error");
+        return;
+    }
+    if (postType === "found" && !location) {
+        Swal.fire("Error", "Location is required for Found Posts.", "error");
+        return;
+    }
+
+    if (!datetime) {
+        Swal.fire("Error", "Please select date & time.", "error");
+        return;
+    }
+    const selectedDate = new Date(datetime);
+    const now = new Date();
+
+    if (selectedDate > now) {
+        Swal.fire("Error", "Datetime cannot be in the future.", "error");
+        return;
+    }
+    
+    if (!category) {
+        Swal.fire("Error", "Please choose a category.", "error");
+        return;
+    }
+    
+    if (!image) {
+        Swal.fire("Error", "Please upload an image.", "error");
+        return;
+    }
+
+    Swal.fire({
+        title: "CONFIRMATION",
+        text: "Do you want to create this post?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "No"
+    }).then((result) => {
+        if (result.isConfirmed){
+            form.submit();
+        }
+    });
+}
+
 document.addEventListener("DOMContentLoaded", function () {                 //  DOMContentLoaded = wait html to load first then load js file to avoid cannot get element by id    
     
     /* ============================================== 
@@ -42,7 +99,10 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             type: "rectangle",
 
             x1:620, y1:1300,
-            x2:785, y2:1580
+            x2:785, y2:1580,
+
+            markerX: 705,
+            markerY: 1432
         },
 
         {
@@ -53,8 +113,11 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             points: [
                 [850,840],
                 [605,1215],
-                [835,1288]
-            ]
+                [835,1288],
+            ],
+
+            markerX: 752,
+            markerY: 1124
         },
 
         {
@@ -73,8 +136,11 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
                 [903,2102],
                 [833,2150],
                 [770,2044],
-                [756,2100]
-            ]
+                [756,2100],
+            ],
+
+            markerX: 778,
+            markerY: 1996
         },
 
         {
@@ -90,8 +156,11 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
                 [1290,1989],
                 [1342,2048],
                 [1142,2192],
-                [1003,2025]
-            ]
+                [1003,2025],
+            ],
+
+            markerX: 1128,
+            markerY: 2040
         },
     ];
 
@@ -312,30 +381,9 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
     // function to put marker when selected dropdown location
     function placeMarkerFromRegion(region){
 
-        let centerX, centerY;
-
-        // find RECTANGLE center to mark
-        if(region.type === "rectangle"){
-            centerX = (region.x1 + region.x2) / 2;
-            centerY = (region.y1 + region.y2) / 2;
-        }
-
-        // find POLYGON center to mark
-        if(region.type === "polygon"){
-
-            let sumX = 0;
-            let sumY = 0;
-
-            // sum all x and y | [0]=x \ [1]=y
-            for(let point of region.points){
-                sumX += point[0];
-                sumY += point[1];
-            }
-
-            // x y average = center
-            centerX = sumX / region.points.length;
-            centerY = sumY / region.points.length;
-        }
+        // take coordinate from data above markerX and marker
+        let centerX = region.markerX;
+        let centerY = region.markerY;
 
         // change to smallMap coordinate to mark
         const scaleX = mapSmall.clientWidth / mapBig.naturalWidth;
