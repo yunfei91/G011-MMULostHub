@@ -35,11 +35,31 @@ def create_post (post_data, user):
     if not post_datetime_str:
         raise ValueError("Please select a date and time.")
 
-    post_datetime = datetime.fromisoformat(post_datetime_str)
+    try:
+    # 把 HTML datetime-local 转成 Python datetime
+        post_datetime = datetime.strptime(
+            post_datetime_str,
+            "%Y-%m-%dT%H:%M"
+        )
 
+    except ValueError:
+        raise ValueError("Invalid date format.")
+
+    # 转成 timezone-aware（Django 时区）
     post_datetime = timezone.make_aware(post_datetime)
 
-    if post_datetime > timezone.now():
+    # 去掉秒数和微秒，避免误判 future datetime
+    post_datetime = post_datetime.replace(
+        second=0,
+        microsecond=0
+    )
+
+    now = timezone.now().replace(
+        second=0,
+        microsecond=0
+    )
+
+    if post_datetime > now:
         raise ValueError("Datetime cannot be in the future.")
     
 
@@ -47,7 +67,7 @@ def create_post (post_data, user):
     new_post = Post.objects.create(
         post_user = user,
         post_type = post_type,
-        post_datetime = post_datetime_str,
+        post_datetime = post_datetime,
         post_image = post_image,
         post_itemcategory = post_category,
         post_location = item_location,

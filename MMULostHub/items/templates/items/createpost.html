@@ -123,9 +123,7 @@
                 <br><br>
 
                 <label> Item Description: </label>
-                <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ ">
-                    {{ post_data.post_description }}
-                </textarea>
+                <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ ">{{ post_data.post_description }}</textarea>
 
                 <div id="map_modal" class="map_modal">
 
@@ -164,7 +162,7 @@
 
                 <br><br>
 
-                <button type = "submit" onclick = "confirmCreate(event)">
+                <button type = "button" onclick = "confirmCreate(event)">
                         Create Post 
                 </button>
 

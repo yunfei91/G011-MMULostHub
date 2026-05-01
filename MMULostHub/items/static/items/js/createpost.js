@@ -19,18 +19,17 @@ function confirmCreate(event) {
         return;
     }
 
-    if (!datetime) {
-        Swal.fire("Error", "Please select date & time.", "error");
-        return;
-    }
-    const selectedDate = new Date(datetime);
+    const selectedDate = new Date(datetime + ":00");
     const now = new Date();
+
+    selectedDate.setSeconds(0, 0);
+    now.setSeconds(0, 0);
 
     if (selectedDate > now) {
         Swal.fire("Error", "Datetime cannot be in the future.", "error");
         return;
     }
-    
+        
     if (!category) {
         Swal.fire("Error", "Please choose a category.", "error");
         return;
@@ -50,7 +49,7 @@ function confirmCreate(event) {
         cancelButtonText: "No"
     }).then((result) => {
         if (result.isConfirmed){
-            form.submit();
+            form.requestSubmit();
         }
     });
 }
