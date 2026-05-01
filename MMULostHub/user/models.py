@@ -16,3 +16,8 @@ class Profile(models.Model):
     
     def __str__(self):
         return self.name if self.name else self.user.username
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['mmu_email'], name='unique_mmu_email')
+        ]

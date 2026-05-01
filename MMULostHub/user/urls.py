@@ -13,7 +13,6 @@ urlpatterns = [
     path('resend-otp/', views.resend_otp, name='resend_otp'),
 
     path('mmu-verify/', views.mmu_verify, name='mmu_verify'),
-    path('mmu-pending/', views.mmu_pending, name='mmu_pending'),
 
     path('profile/', views.profile, name='profile'),
     path('update-bio/', views.update_bio, name='update_bio'),

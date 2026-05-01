@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 def mainPage(request):
     post_box = Post.objects.all().order_by('-id')       #newest post on top # display all post in main page and order by datetime (latest post will be on top)
@@ -12,7 +13,12 @@ def createPost(request):
     profile = request.user.profile
 
     if not profile.is_mmu_verified:
-        return redirect('mmu_pending')
+        messages.error(request, "You have not verified your MMU account. Please verify before creating a post.")
+        return redirect('mainPage')
+    
+    if not profile.is_mmu_verified:
+        messages.error(request, "You must complete MMU verification first.")
+        return redirect('profile')
     
     if request.method == "POST":
         try:

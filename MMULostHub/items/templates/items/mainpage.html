@@ -1,8 +1,8 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head> 
         <title> 
-            {% load static %}
             MMU Lost Hub 
         </title>
     </head>
@@ -24,16 +24,13 @@
                 <a href="#"> Lost Post </a>                 <!-- yt lost post link -->
                 <a href="#"> Found Post </a>                <!-- yt found post link -->
                 <a href="{% url 'profile' %}"> Profile </a>                   <!-- yt profile link -->       
-                <a href="{% url 'feedback_form' %}"> Feedback/Report </a>  <!-- zinc feedback link -->
+                <a href="#" class="feedback-btn"
+                    data-verified="{{ user.profile.is_mmu_verified|yesno:'true,false' }}">
+                    Feedback/Report 
+                </a>  <!-- zinc feedback link -->
                 <a href="#"> Logout </a>                    <!-- yt logout link -->
             </div>
         </div>
-
-        {% if user.is_authenticated and not user.profile.is_mmu_verified %}
-            <p style="color:red;">
-                Your MMU email verification is pending. You cannot create posts.
-            </p>
-        {% endif %}
 
         <div class="search_bar">                                        <!-- after need to be changed when starting to do search feature -->
             <input type="text" placeholder="Search for items...">
@@ -56,17 +53,11 @@
         </div>
 
         <div class="create_post">
-            {% if user.profile.is_mmu_verified %}
-                <a href="{% url 'createPost' %}">
-                    <button type="button">Create Post</button>
-                </a>
-            {% else %}
-                <a href="{% url 'mmu_pending' %}">
-                    <button type="button" disabled>
-                        Create Post (Locked)
-                    </button>
-                </a>
-            {% endif %}
+            <button type="button"
+                    class="create-btn"
+                    data-verified="{{ user.profile.is_mmu_verified|yesno:'true,false' }}">
+                Create Post
+            </button>
         </div>
 
         <footer>
@@ -77,4 +68,31 @@
             </p>
         </footer>
     </body>
+
+    <script>
+        document.querySelector(".create-btn").addEventListener("click", function () {
+            let isVerified = this.dataset.verified === "true";
+
+            if (!isVerified) {
+                alert("You haven't verified your MMU account yet. Please verify first.");
+                return;
+            }
+
+            window.location.href = "{% url 'createPost' %}";
+        });
+
+        document.querySelector(".feedback-btn").addEventListener("click", function (e) {
+            e.preventDefault();
+
+            let isVerified = this.dataset.verified === "true";
+
+            if (!isVerified) {
+                alert("You haven't verified MMU account yet. You cannot submit feedback.");
+                return;
+            }
+
+            window.location.href = "{% url 'feedback_form' %}";
+        });
+    </script>
+
 </html>

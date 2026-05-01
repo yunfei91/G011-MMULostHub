@@ -7,21 +7,79 @@
 
 <h2>Verify Your MMU Account</h2>
 
-<form method="POST" enctype="multipart/form-data">
+<div id="messageBox" style="display:none; padding:10px; margin:10px 0;"></div>
+
+<form id="verifyForm" enctype="multipart/form-data">
     {% csrf_token %}
 
     <label>MMU Email:</label><br>
-    <input type="email" name="mmu_email"><br><br>
+    <input type="email" name="mmu_email" required><br><br>
 
     <label>Upload Proof (Student Card / Screenshot):</label><br>
-    <input type="file" name="proof"><br><br>
+    <input type="file" name="proof" id="proofInput" accept="image/*" required><br><br>
+
+    <img id="preview" style="max-width:300px; display:none; border:1px solid #ccc; margin-top:10px;"><br><br>
 
     <button type="submit">Submit</button>
+</form>
+</body>
 
     {% if error %}
-        <p style="color:red;">{{ error }}</p>
+    <script>
+        alert("{{ error }}");
+    </script>
     {% endif %}
-</form>
 
-</body>
+<script>
+    const input = document.getElementById("proofInput");
+    const preview = document.getElementById("preview");
+
+    input.addEventListener("change", function () {
+        const file = this.files[0];
+
+        if (!file) {
+            preview.style.display = "none";
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+            preview.style.display = "block";
+        };
+
+        reader.readAsDataURL(file);
+    });
+
+    const form = document.getElementById("verifyForm");
+
+form.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+
+    fetch("", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert("✅ Submitted!");
+
+            window.location.href = data.redirect_url;
+        } else {
+            alert(data.error);
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Something went wrong");
+    });
+});
+</script>
 </html>

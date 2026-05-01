@@ -228,29 +228,28 @@ def verify_email(request):
     return render(request, 'user/email-verify.html', context)
 
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 @login_required
 def mmu_verify(request):
     profile = request.user.profile
 
-    if profile.submitted_for_verification:
-        return redirect('mmu_pending')
-    
     if request.method == 'POST':
         mmu_email = request.POST.get('mmu_email', '').strip()
         proof = request.FILES.get('proof')
 
         error = ""
 
+        if not mmu_email:
+            return JsonResponse({'success': False, 'error': "Please enter MMU email"})
+
         if not mmu_email.endswith(("@student.mmu.edu.my", "@mmu.edu.my")):
-            error = "Please use a valid MMU email"
+            return JsonResponse({'success': False, 'error': "Please use a valid MMU email"})
 
         if not proof:
-            error = "Please upload student or staff id card"
+            return JsonResponse({'success': False, 'error': "Please upload student card"})
 
-        if error:
-            return render(request, 'user/mmu_verify.html', {
-                'error': error
-            })
+        if Profile.objects.filter(mmu_email=mmu_email).exclude(user=request.user).exists():
+            return JsonResponse({'success': False, 'error': "This MMU email is already used"})
 
         profile.mmu_email = mmu_email
         profile.mmu_proof = proof
@@ -258,13 +257,12 @@ def mmu_verify(request):
         profile.is_mmu_verified = False
         profile.save()
 
-        return redirect('mmu_pending')
+        return JsonResponse({
+            'success': True,
+            'redirect_url': reverse('mainPage')
+        })
     
     return render(request, 'user/mmu_verify.html')
-
-@login_required
-def mmu_pending(request):
-    return render(request, 'user/mmu_pending.html')
 
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
