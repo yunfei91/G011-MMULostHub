@@ -8,3 +8,20 @@ function pleaseLoginPopup() {
         window.location.href = "/user/user-login/";
     });
 }
+
+function confirmDelete(event, form) {
+    event.preventDefault();
+
+    Swal.fire({
+        title: "CONFIRMATION",
+        text: "Are you sure you want to DELETE this post?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "No"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
+}

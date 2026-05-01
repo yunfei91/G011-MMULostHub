@@ -70,6 +70,18 @@
                                 <a href="{% url 'editPost' post.id %}">
                                     Edit Post
                                 </a>
+
+                                <form
+                                    method = "POST"
+                                    action = "{% url 'deletePost' post.id %}"
+                                    onsubmit = "confirmDelete(event, this)"
+                                >
+                                    {% csrf_token %}
+
+                                    <button type="submit">
+                                        Delete Post
+                                    </button>
+                                </form>
                             {% endif %}
                         </div>
 

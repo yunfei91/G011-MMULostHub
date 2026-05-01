@@ -78,3 +78,18 @@ def editPost(request,post_id):
         'item_categories': CATEGORY_CHOICES,
         'locations': MMULocation.objects.all(),
     })
+
+@login_required
+def deletePost(request, post_id):
+    post = get_object_or_404(
+        Post,
+        id = post_id,
+        post_user = request.user
+    )
+
+    if request.method == "POST":
+        post.delete()
+        messages.success(request, "Post deleted successfully!")
+        return redirect('mainPage')
+    
+    return redirect('mainPage')
