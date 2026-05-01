@@ -1,5 +1,5 @@
-document.addEventListener("DOMContentLoaded", function () {                 //  DOMContentLoaded = wait html to load first then load js file to avoid cannot get element by id    
-    
+document.addEventListener("DOMContentLoaded", function () {                 //  DOMContentLoaded = wait html to load first then load js file to avoid cannot get element by id        
+
     /* ============================================== 
             Create Post Upload Image and Preview       
      =============================================== */
@@ -219,7 +219,15 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
         // User chosen point is not inside any location region
         if(!foundLocation){
             // show pop up
-            alert("This area is not assigned to any MMU places. Please choose another area or choose a location inside the dropdown list.");
+            Swal.fire({
+                icon: "warning",
+                title: "Invalid Area",
+                text: "This area is not assigned to any MMU places. Please choose another area or choose a location inside the dropdown list.",
+                timer: 1000,
+                timerProgressBar: false,
+                showConfirmButton: false,
+            });
+
            
             // auto change te dropdown list to default
             selectLocation("");
@@ -302,19 +310,6 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             }
         }
 
-    });
-
-    window.addEventListener("load", function () {
-        const selectedCode = locationSelect.value;
-
-        if (selectedCode) {
-            for (let region of regions) {
-                if (region.code === selectedCode) {
-                    placeMarkerFromRegion(region);
-                    break;
-                }
-            }
-        }
     });
 
     // function to put marker when selected dropdown location
