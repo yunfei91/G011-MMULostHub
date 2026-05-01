@@ -85,7 +85,7 @@ class Post (models.Model):
 
     post_location = models.ForeignKey(
         MMULocation,
-        on_delete = models.CASCADE,
+        on_delete = models.SET_NULL,
         null = True,                            # database can be empty / can set in view.py to diffrentiate between lost and found post
         blank = True,                           # form can be empty
     )

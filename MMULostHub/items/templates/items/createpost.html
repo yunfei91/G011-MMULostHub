@@ -6,6 +6,7 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <link rel="stylesheet" href="{% static 'items/css/createpost.css' %}">
         <script src="{% static 'items/js/createpost.js' %}" defer></script>                <!-- differ = load complete html then load java -->
+        <script src="{% static 'items/js/map.js' %}" defer></script>
 
         <title> 
             MMU Lost Hub
@@ -124,9 +125,7 @@
                 <br><br>
 
                 <label> Item Description: </label>
-                <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ ">
-                    {{ post_data.post_description }}
-                </textarea>
+                <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ ">{{ post_data.post_description }}</textarea>
 
                 <div id="map_modal" class="map_modal">
 
@@ -165,7 +164,7 @@
 
                 <br><br>
 
-                <button type = "submit" onclick = "confirmCreate(event)">
+                <button type = "button" onclick = "confirmCreate(event)">
                         Create Post 
                 </button>
 
