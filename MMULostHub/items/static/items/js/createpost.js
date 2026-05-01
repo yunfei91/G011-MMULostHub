@@ -19,6 +19,10 @@ function confirmCreate(event) {
         return;
     }
 
+    if (!datetime) {
+        Swal.fire("Error", "Please select date & time.", "error");
+        return;
+    }
     const selectedDate = new Date(datetime + ":00");
     const now = new Date();
 
