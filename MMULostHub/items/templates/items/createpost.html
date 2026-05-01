@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-
 <html>
     <head> 
+        {% load static %}
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <link rel="stylesheet" href="{% static 'items/css/createpost.css' %}">
+        <script src="{% static 'items/js/createpost.js' %}" defer></script>                <!-- differ = load complete html then load java -->
+
         <title> 
             MMU Lost Hub
         </title>
-
-        {% load static %}
-        <link rel="stylesheet" href="{% static 'items/css/createpost.css' %}">
-        <script src="{% static 'items/js/createpost.js' %}" defer></script>                <!-- differ = load complete html then load java -->
     </head>
 
     <body>
@@ -37,8 +37,18 @@
                 CREATE POST
             </h2>
 
-            {% if error %}
-                <p style="color:red;">{{ error }}</p>
+            {% if messages %}
+                <script>
+                    {% for message in messages %}
+
+                        Swal.fire({
+                            icon: "{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}",
+                            title: "{{ message.tags|title }}",
+                            text: "{{ message }}"
+                        });
+
+                    {% endfor %}
+                </script>
             {% endif %}
 
             <form method = "POST" enctype = 'multipart/form-data'>      <!-- enctype add to upload photo -->
@@ -154,7 +164,7 @@
 
                 <br><br>
 
-                <button type = "submit">
+                <button type = "submit" onclick = "confirmCreate(event)">
                         Create Post 
                 </button>
 

@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect
 from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 def mainPage(request):
     post_box = Post.objects.all().order_by('-id')       #newest post on top # display all post in main page and order by datetime (latest post will be on top)
     return render(request, 'items/mainpage.html', {'posts': post_box})
 
+@login_required
 def createPost(request):
     if request.method == "POST":
         try:
@@ -19,14 +22,15 @@ def createPost(request):
             }
             , request.user)
 
+            messages.success(request, "Post created successfully!")
             return redirect('mainPage')
         
         except ValueError as e:                                 # e = error msg from service.py
+            messages.error(request, str(e))
             return render(request, 'items/createpost.html', {
-                'error': str(e),                                 # e string and display in html
                 'item_categories': CATEGORY_CHOICES,
                 'locations': MMULocation.objects.all(),
-                'post_data': request.POST,
+                'post_data': request.POST
             })
         
     return render(request, 'items/createpost.html', {

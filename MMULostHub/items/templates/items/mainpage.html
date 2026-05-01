@@ -1,10 +1,16 @@
 <!DOCTYPE html>
 <html>
     <head> 
+        {% load static %}
+
         <title> 
-            {% load static %}
             MMU Lost Hub 
         </title>
+
+        <script src="{% static 'items/js/mainpage.js' %}" defer></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     </head>
 
     <body>
@@ -29,6 +35,24 @@
             </div>
         </div>
 
+        {% if messages %}
+        <script>
+            {% for message in messages %}
+                Swal.fire({
+                    icon: "{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}",
+                    title: "{{ message.tags|title }}",
+                    text: "{{ message }}",
+
+                    {% if message.tags == "success" %}
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: false
+                    {% endif %}
+                });
+            {% endfor %}
+        </script>
+        {% endif %}
+
         <div class="search_bar">                                        <!-- after need to be changed when starting to do search feature -->
             <input type="text" placeholder="Search for items...">
             <button type="submit"> Search </button>
@@ -37,13 +61,27 @@
         <div class="post-list">
             {% for post in posts %}
                 <div class = "post-box">
-                    <h4> {{ post.post_type|upper }} POST </h4>
-                    {% if post.post_image %}
-                        <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image" required>
-                    {% endif %}
-                    <p> Date Time :{{ post.post_datetime }} </p>
-                    <p> Item Category :{{ post.get_post_itemcategory_display }} </p>
-                    <p> Location :{{ post.post_location.location_name }} </p>
+
+                    <div class = "post">
+                        <h4> {{ post.post_type|upper }} POST </h4>
+                       
+                        <div class = "post-nav">
+                            {% if request.user == post.post_user %}
+                                <a href="#">
+                                    Edit Post
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <p> Posted by: {{ post.post_user.username }} </p>
+
+                        {% if post.post_image %}
+                            <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image" required>
+                        {% endif %}
+                        <p> Date Time: {{ post.post_datetime }} </p>
+                        <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
+                        <p> Location: {{ post.post_location.location_name }} </p>
+                    </div>
                 </div>
             {% empty %}
                 <div class = "no_post">
@@ -53,11 +91,17 @@
         </div>
 
         <div class="create_post">
-            <button type="button">
-                <a href="{% url 'createPost' %}"> 
-                    Create Post 
-                </a>
-            </button>
+            {% if user.is_authenticated %}
+                <button type="button">
+                    <a href="{% url 'createPost' %}"> 
+                        Create Post 
+                    </a>
+                </button>
+            {% else %}
+                <button type="button" onclick="pleaseLoginPopup()">
+                    Create Post
+                </button>
+            {% endif %}
         </div>
 
         <footer>
