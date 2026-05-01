@@ -39,7 +39,7 @@ def createPost(request):
         'post_data': {},
     })
 
-
+@login_required
 def editPost(request,post_id):
 
     post = get_object_or_404(

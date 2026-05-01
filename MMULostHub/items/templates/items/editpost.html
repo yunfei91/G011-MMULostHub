@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html>
-    {% load static %}
 
     <head>
-        <title>MMU Lost Hub</title>
-        
+
+        {% load static %}
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <link rel="stylesheet" href="{% static 'items/css/createpost.css' %}">
         <script src="{% static 'items/js/createpost.js' %}" defer></script>
+
+        <title>MMU Lost Hub</title>
+        
     </head>
 
     <body>
@@ -35,13 +39,19 @@
             <h2>EDIT POST</h2>
 
             {% if messages %}
-                {% for message in messages %}
-                    <script>
-                        alert("{{ message }}");
-                    </script>
-                {% endfor %}
-            {% endif %}
+                <script>
+                    {% for message in messages %}
 
+                        Swal.fire({
+                            icon: "{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}",
+                            title: "{{ message.tags|title }}",
+                            text: "{{ message }}"
+                        });
+
+                    {% endfor %}
+                </script>
+            {% endif %}
+            
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
@@ -180,7 +190,7 @@
 
                 <br><br>
 
-                <button type="submit" onclick="return confirmEdit()">
+                <button type = "submit" onclick = "confirmEdit(event)">
                     Update Post
                 </button>
 
