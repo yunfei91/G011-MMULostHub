@@ -26,7 +26,7 @@
                 <a href="#"> Found Post </a>                <!-- yt found post link -->
                 <a href="{% url 'profile' %}"> Profile </a>                   <!-- yt profile link -->       
                 <a href="{% url 'feedback_form' %}"> Feedback/Report </a>  <!-- zinc feedback link -->
-                <a href="#"> Logout </a>                    <!-- yt logout link -->
+                <a href="{% url 'logout' %}" onclick="return confirmLogout()">Logout</a>                   <!-- yt logout link -->
             </div>
         </div>
 
@@ -278,6 +278,10 @@
         function showFound() {
             document.getElementById("lostSection").style.display = "none";
             document.getElementById("foundSection").style.display = "block";
+        }
+
+        function confirmLogout() {
+            return confirm("Do you want to logout?");
         }
     </script>
 </body>

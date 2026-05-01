@@ -9,6 +9,10 @@ from .models import Profile
 def beginning(request):
     return render(request, 'user/beginning.html')
 
+def user_logout(request):
+    logout(request)
+    return redirect('beginning')
+
 def user_login(request):
     if request.method == 'POST':
         email = (request.POST.get('email') or '').strip().lower() # Get email, remove spaces, lowercase
@@ -46,8 +50,12 @@ def user_login(request):
                 'user_login_error': user_login_error,
                 'email': email,
             })
-
+        
         login(request, user)
+    
+        next_url = request.GET.get('next')
+        if next_url:
+            return redirect(next_url)
         return redirect('mainPage')
     
     return render(request, 'user/user-login.html')
@@ -76,12 +84,7 @@ def admin_login(request):
 
         login(request, user)
 
-        next_url = request.GET.get('next')
-        if next_url:
-            return redirect(next_url)
-        return redirect('mainPage')
-
-    return render(request, 'user/admin-login.html')
+    return redirect('mainPage')
 
 def register(request):
     # Handle form submission
@@ -170,6 +173,7 @@ def update_name(request):
         
     return redirect('profile')
 
+@login_required
 def profile(request):
 
     user = request.user
@@ -192,6 +196,7 @@ def profile(request):
         'found_posts': found_posts
     })
 
+@login_required
 def update_bio(request):
     if request.method == 'POST':
         bio = request.POST.get('bio', '')
@@ -204,6 +209,7 @@ def update_bio(request):
 
     return redirect('profile')
 
+@login_required
 def update_avatar(request):
     print("FILES:", request.FILES)
 

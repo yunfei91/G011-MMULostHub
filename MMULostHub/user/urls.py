@@ -12,6 +12,7 @@ urlpatterns = [
     path('update-avatar/', views.update_avatar, name='update_avatar'),
     path('update-name/', views.update_name, name='update_name'),
     path('check-name/', views.check_name, name='check_name'),
+    path('logout/', views.user_logout, name='logout'),
 ]
 
 from django.conf import settings
