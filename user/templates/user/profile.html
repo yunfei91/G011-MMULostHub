@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MMU Lost Hub</title>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'user/css/profile.css' %}">
+    </head>
+
+<body>
+    <div class="whole-page">
+        <header>
+            <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class="mmu-logo">
+        </header>
+
+        <div class="dropdown-nav">
+            <nav>
+                Menu
+            </nav>
+            <div class="dropdown-content">
+                <a href="{% url 'mainPage' %}"> Home </a>
+                <a href="#"> Lost Post </a>                 <!-- yt lost post link -->
+                <a href="#"> Found Post </a>                <!-- yt found post link -->
+                <a href="{% url 'profile' %}"> Profile </a>                   <!-- yt profile link -->
+                <a href="{% url 'feedback_form' %}"> Feedback/Report </a>           <!-- zinc feedback link -->
+                <a href="{% url 'logout' %}">Logout</a>                  <!-- yt logout link -->
+            </div>
+        </div>
+
+        <div class="profile-info">
+            <h1>My Profile</h1>
+
+            <p><b>Name:</b> {{ user.first_name }}</p>
+            <p><b>Email:</b> {{ user.email }}</p>
+        </div>
+
+        <h2>Bio</h2>
+
+        <p id="bioText">{{ profile.bio }}</p>
+
+        <button onclick="showEdit()">Edit</button>
+
+        <form id="bioForm" method="POST" action="{% url 'update_bio' %}" style="display:none;">
+            {% csrf_token %}
+            <textarea name="bio" rows="4" cols="50">{{ profile.bio }}</textarea>
+            <br>
+            <button type="submit">Save</button>
+            <button type="button" onclick="hideEdit()">Cancel</button>
+        </form>
+
+        <script>
+            function showEdit() {
+                document.getElementById("bioForm").style.display = "block";
+                document.getElementById("bioText").style.display = "none";
+            }
+
+            function hideEdit() {
+                document.getElementById("bioForm").style.display = "none";
+                document.getElementById("bioText").style.display = "block";
+            }
+        </script>
+
+        <h2>Lost Items</h2>
+        {% for post in lost_posts %}
+            <div>
+                <p><b>Category:</b> {{ post.post_itemcategory }}</p>
+                <p><b>Description:</b> {{ post.post_description }}</p>
+                <p><b>Location:</b> {{ post.post_location }}</p>
+                <p><b>Date:</b> {{ post.post_datetime }}</p>
+                <p>————————————————————————————————————————————————————————</p>
+            </div>
+        {% empty %}
+            <p>No lost posts</p>
+        {% endfor %}
+
+        <h2>Found Items</h2>
+        {% for post in found_posts %}
+            <div>
+                <p><b>Category:</b> {{ post.post_itemcategory }}</p>
+                <p><b>Description:</b> {{ post.post_description }}</p>
+                <p><b>Location:</b> {{ post.post_location }}</p>
+                <p><b>Date:</b> {{ post.post_datetime }}</p>
+                <p>————————————————————————————————————————————————————————</p>
+            </div>
+        {% empty %}
+            <p>No found posts</p>
+        {% endfor %}
+    </div>
+</body>
+</html>
