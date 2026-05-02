@@ -1,10 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 
 <html>
     <head> 
         <title> 
             MMU Lost Hub
-            {% load static %}
         </title>
     </head>
 
@@ -25,7 +25,7 @@
                 <a href = "#"> Found Post </a>                <!-- yt found post link -->
                 <a href = "#"> Profile </a>                   <!-- yt profile link -->
                 <a href = "{% url 'feedback_form' %}"> Feedback/Report </a>
-                <a href = "#"> Logout </a>                    <!-- yt logout link -->
+                <a href = "{% url 'logout' %}"> Logout </a>                    <!-- yt logout link -->
             </div>
         </div>
 
@@ -37,7 +37,7 @@
             <form method = "POST">
                 {% csrf_token %}                <!-- Django security protection code -->
                 
-                <label> Type: </lable>
+                <label> Type: </label>
                 <select name = "post_type">
                     <option value = ""> Select Post Type </option>
                     <option value = "lost"> Lost Post </option>
@@ -55,7 +55,7 @@
                 <select name = "post_itemcategory">
                     <option value = ""> Select Category </option>
 
-                    {% for value, label in item_categories %}                       <!-- (value, label) mcm inside model-->
+                    {% for value, label in category_choices %}                       <!-- (value, label) mcm inside model-->
                         <option value = "{{ value }}"> {{ label }} </option>
                     {% endfor %}
                 </select>
@@ -82,7 +82,6 @@
 
                 <button type = "submit">
                         Create Post 
-                    </a>
                 </button>
 
             </form>
@@ -96,4 +95,5 @@
             Designed by: Kho Yee Theng / Tan Yun Fee / Lim Tze Ying
         </p>
     </footer>
+    
 </html>

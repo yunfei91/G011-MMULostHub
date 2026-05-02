@@ -20,16 +20,14 @@
                 Menu
             </nav>
             <div class="dropdown-content">
-                <a href="#">Home</a>
-                <a href="#">Lost Post</a>
-                <a href="#">Found Post</a>
+                <a href="#">Home</a>                         <!--zinc admin home page link-->
                 <a href="#">View User</a>                       <!--zinc view user link-->
                 <a href="#">View Feedback / Report</a>          <!--zinc feedback/report link-->
-                <a href="#">Logout</a>                          <!--yt logout link-->
+                <a href="{% url 'logout' %}">Logout</a>         <!--yt logout link-->
             </div>
         </div>
         <div class="search-bar">
-            <input type="text" placeholder="Search for feedback...">
+            <input type="text" name='q' placeholder="Search for feedback...">
             <button type="submit">Search</button>
         </div>
         <!--feedback/report view demo-->
@@ -47,6 +45,24 @@
                 </p>
                 <p><strong>Date:</strong>{{ feedback.created_at }}</p>
                 <p><strong>Status:</strong>{{ feedback.status }}</p>
+
+                {% if feedback.status == 'Pending' %}
+                <form action="{% url 'update_feedback_status' feedback.id %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">
+                        Mark as Checked
+                    </button>
+                </form>
+                {% endif %}
+
+                {% if feedback.post %}
+                <form actions="{% url 'delete_reported_post' feedback.post.id %}" method="POST" onsubmit="return confirm('Confirm delete post ?');">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
+                {% else %}
+                <span>(Post already deleted)</span>
+                {% endif %}
                 <hr>
             </div>
             {% empty %}

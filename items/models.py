@@ -50,7 +50,7 @@ class Post (models.Model):
         choices=[('lost','Lost'),('found','Found')]
     )
 
-    post_datetime = models.DateTimeField()
+    post_datetime = models.DateTimeField(auto_now_add=True)
 
     # Dropdown menu to choose category
     post_itemcategory = models.CharField(

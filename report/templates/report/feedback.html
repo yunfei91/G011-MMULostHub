@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <head>
-        <meta charset="UTF-8">
         <title>MMU Lost Hub - Feedback</title>
         <link rel="stylesheet" href="style.css"> 
     </head>
@@ -17,7 +16,7 @@
                     <h2>Feedback / Report</h2>
                     <p>Leave your comments / suggestions here!</p>
 
-                    <form id="FeedbackForm" method="POST" enctype="multipart/form-data">
+                    <form actions="{% url 'feedback_form' %}" method="POST" enctype="multipart/form-data">
                         {% csrf_token %} 
 
                         <label for="comments">Your feedback:</label>
@@ -35,5 +34,39 @@
                 </section>
             </main>
         </div>
+    </body>
+</html>
+
+reportform.html
+<html>
+    <body>
+        <h2>Report Post</h2>
+        {% if post %}
+        <p>You are reporting post ID: {{ post.id }} by {{ post.post_user.username }}</p>
+        <p><strong>Type:</strong>{{ post.post_type }}</p>
+        <p><strong>Describe:</strong>{{ post.post_description }}</p>
+        {% endif %}
+
+        <form action="{% url 'submit_report' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if post %}
+            <input type="hidden" name="post_id" value="{{ post.id }}">
+            {% endif %}
+
+            <div>
+                <label for="comments">Reason for reporting:</label><br>
+                <textarea name="comments" id="comments" rows="4" cols="50" required placeholder="Please describe the issue..."></textarea>
+            </div>
+
+            <br>
+            <div>
+                <label for="image-upload">Upload Image (Optional):</label>
+                <input type="file" name="image-upload" id="image-upload">
+            </div>
+            <br>
+            <button type="submit">SUBMIT</button>
+            <a href="{% url 'mainPage' %}">Cancel</a>
+        </form>
     </body>
 </html>

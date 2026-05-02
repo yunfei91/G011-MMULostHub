@@ -39,7 +39,7 @@ def user_login(request):
         
         user = authenticate(request, username=email, password=password)
 
-        if user is None:
+        if not user:
             user_login_error = "Invalid email or password."
             return render(request, 'user/user-login.html', {
                 'user_login_error': user_login_error,
@@ -56,20 +56,31 @@ def admin_login(request):
         email = (request.POST.get('email') or '').strip().lower()
         password = request.POST.get('password') or ''
 
-        login_error = ""
+        email_error = ""
+        password_error = ""
+        admin_login_error = ""
+
+        if not email:
+            email_error = "Please enter email."
+
+        if not password:
+            password_error = "Please enter password."
 
         user = authenticate(request, username=email, password=password)
 
         if user is None:
-            login_error = "Invalid email or password."
+            admin_login_error = "Invalid email or password."
             return render(request, 'user/admin-login.html', {
-                'login_error': login_error,
+                'email_error': email_error,
+                'password_error': password_error,
+                'admin_login_error': admin_login_error,
+                'email': email
             })
 
         if not user.is_staff:
-            login_error = "You are not authorized as admin."
+            admin_login_error = "You are not authorized as admin."
             return render(request, 'user/admin-login.html', {
-                'login_error': login_error
+                'admin_login_error': admin_login_error
             })
 
         login(request, user)
@@ -77,7 +88,7 @@ def admin_login(request):
         next_url = request.GET.get('next')
         if next_url:
             return redirect(next_url)
-        return redirect('admin_feedback')
+        return redirect('admin_mainpage')
 
     return render(request, 'user/admin-login.html')
 
@@ -173,6 +184,7 @@ def profile(request):
         'found_posts': found_posts
     })
 
+@login_required
 def update_bio(request):
     if request.method == 'POST':
         bio = request.POST.get('bio', '')
@@ -185,6 +197,7 @@ def update_bio(request):
 
     return redirect('profile')
 
+@login_required
 def update_avatar(request):
     print("FILES:", request.FILES)
 
