@@ -1,12 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# yf-storage (Items Categories)
 
 # ('storage name inside sqlite', 'display name on website')
 CATEGORY_CHOICES = [
     (   'electronics'  ,    'Electronic Devices'),
-    (   'stationery'   ,    'Stationaries'      ),
+    (   'stationary'   ,    'Stationaries'      ),
     (   'wallet'       ,    'Wallets'           ),
     (   'card'         ,    'Cards'             ),
     (   'bottle'       ,    'Water Bottles'     ),
@@ -43,7 +42,7 @@ class Post (models.Model):
 
     post_user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete = models.CASCADE,                             # if user deleted , all related post or data also will be deleted
     )
     
     post_type = models.CharField(
@@ -61,7 +60,7 @@ class Post (models.Model):
 
     post_location = models.ForeignKey(
         MMULocation,
-        on_delete = models.SET_NULL,
+        on_delete = models.CASCADE,
         null = True,                            # database can be empty / can set in view.py to diffrentiate between lost and found post
         blank = True,                           # form can be empty
     )
@@ -69,4 +68,4 @@ class Post (models.Model):
     post_description = models.TextField()
 
     def __str__(self):
-        return f"{self.post_type} - {self.post_itemcategory}"
+        return f"{self.post_type}: {self.post_itemcategory}"

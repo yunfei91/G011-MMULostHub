@@ -10,4 +10,10 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('update-bio/', views.update_bio, name='update_bio'),
     path('logout/', views.user_logout, name='logout'),
+    path('update-avatar/', views.update_avatar, name='update_avatar'),
 ]
+
+from django.conf import settings
+from django.conf.urls.static import static
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

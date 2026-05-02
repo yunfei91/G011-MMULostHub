@@ -15,39 +15,28 @@
                 Lost Hub Logo
             </h1>
         </header>
-<!--Nav-->
         <div class="dropdown-nav">
             <nav>
                 Menu
             </nav>
             <div class="dropdown-content">
-                <a href="{% url 'admin_mainpage' %}">Home</a>                         <!--zinc admin home page link-->
+                <a href="#">Home</a>
+                <a href="#">Lost Post</a>
+                <a href="#">Found Post</a>
                 <a href="#">View User</a>                       <!--zinc view user link-->
-                <a href="{% url 'admin_feedback' %}">View Feedback</a> <!--zinc feedback/report link-->
-                <a href="{% url 'admin_report' %}">View Report</a> 
-                <a href="{% url 'logout' %}">Logout</a>         <!--yt logout link-->
+                <a href="#">View Feedback / Report</a>          <!--zinc feedback/report link-->
+                <a href="#">Logout</a>                          <!--yt logout link-->
             </div>
         </div>
-<!--Search Bar-->
         <div class="search-bar">
-            <form method="get">
-                <input 
-                     type="text" 
-                     name="q" 
-                     placeholder="Search for feedback..."
-                     value="{{ request.GET.q }}"
-                >
+            <input type="text" placeholder="Search for feedback...">
             <button type="submit">Search</button>
-            </form>
         </div>
-<!--feedback view demo-->
+        <!--feedback/report view demo-->
         <div class="post-list">
-
-<h2>Feedback</h2>
-
-            {% for feedback in feedbacks_data %}
+            {% for feedback in feedback %}
             <div class="feedback-card">
-                <p><strong>User:</strong>{{ feedback.user.username|default:"Deleted User" }}</p>
+                <p><strong>User:</strong>{{ feedback.user.username }}</p>
                 <p><strong>Content:</strong>{{ feedback.comments }}</p>
                 <p><strong>Image:</strong><br>
                     {% if feedback.image %}
@@ -56,17 +45,8 @@
                     No Image Provided
                     {% endif %}
                 </p>
-                <p><strong>Date:</strong>{{ feedback.created_at|date:"Y-m-d H:i" }}</p>
+                <p><strong>Date:</strong>{{ feedback.created_at }}</p>
                 <p><strong>Status:</strong>{{ feedback.status }}</p>
-<!--Status Button-->
-                {% if feedback.status|lower == 'pending' %}
-                <form action="{% url 'update_feedback_status' feedback.id %}" method="POST" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit">
-                        Mark as Checked
-                    </button>
-                </form>
-                {% endif %}
                 <hr>
             </div>
             {% empty %}
