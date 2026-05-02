@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from items.models import Post
 from report.models import Feedback, Report
+from django.db.models import Q
 
 def is_admin(user):
     return user.is_authenticated and (user.is_staff or user.is_superuser)
@@ -14,7 +15,10 @@ def admin_feedback_view(request):
     feedbacks = Feedback.objects.all().order_by('-created_at')
 
     if query:
-        feedbacks = feedbacks.filter(comments__icontains=query) | feedbacks.filter(user__username__icontains=query)
+        feedbacks = feedbacks.filter(
+            Q(comments__icontains=query) | 
+            Q(user__username__icontains=query)
+        )
 
     return render(request, 'my_admin/adminfeedback.html', {
         'feedbacks_data': feedbacks
@@ -22,7 +26,16 @@ def admin_feedback_view(request):
 
 #admin report view
 def admin_report_view(request):
+    #search bar filter
+    query = request.GET.get('q')
+
     reports = Report.objects.all().order_by('-created_at')
+
+    if query:
+        reports = reports.filter(
+            Q(comments__icontains=query) |
+            Q(user__username__icontains=query)
+        )
 
     return render(request, 'my_admin/adminreport.html', {
         'reports': reports

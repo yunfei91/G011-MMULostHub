@@ -31,7 +31,12 @@
 <!--Search Bar-->
         <div class="search-bar">
             <form method="get">
-                <input type="text" name="q" placeholder="Search for feedback...">
+                <input 
+                     type="text" 
+                     name="q" 
+                     placeholder="Search for feedback..."
+                     value="{{ request.GET.q }}"
+                >
             <button type="submit">Search</button>
             </form>
         </div>
