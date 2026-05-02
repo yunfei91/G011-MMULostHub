@@ -1,14 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=divice-width, initial-scale=1.0">
-        <title>MMU Lost Hub - Admin</title>
+        <title>
+            MMU Lost Hub
+        </title>
     </head>
-    <body>
 
+    <body>
         <header>
-            <h1 style="display: inline;">ADMIN</h1>
+            <h1>
+                MMU Logo
+            </h1>
+            <h1>
+                Lost Hub Logo
+            </h1>
         </header>
-    </body>
+        <div class="dropdown-nav">
+            <nav>
+                Menu
+            </nav>
+            <div class="dropdown-content">
+                <a href="{% url 'admin_mainpage' %}">Home</a>                         <!--zinc admin home page link-->
+                <a href="#">View User</a>                       <!--zinc view user link-->
+                <a href="{% url 'admin_feedback' %}">View Feedback</a>          <!--zinc feedback/report link-->
+                <a href="{% url 'admin_report' %}">View Report</a>
+                <a href="{% url 'logout' %}">Logout</a>         <!--yt logout link-->
+            </div>
+        </div>
+    <hr> 
+
+    <main>
+        <br>
+
+        <section>
+            <!-- User Button-->
+            <button type="button">
+                User
+            </button>
+
+            <!-- Feedback Button -->
+            <a href="{% url 'admin_feedback' %}">
+                <button type="button">
+                Feedback
+                </button>
+            </a>
+
+            <!-- Report Button-->
+             <a href="{% url 'admin_report' %}">
+                <button type="button">
+                Report
+                </button>
+            </a>
+            
+        </section>
+    </main>
+
+</body>
 </html>

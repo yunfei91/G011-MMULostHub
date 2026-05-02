@@ -20,19 +20,28 @@
                 Menu
             </nav>
             <div class="dropdown-content">
-                <a href="#">Home</a>                         <!--zinc admin home page link-->
+                <a href="{% url 'admin_mainpage' %}">Home</a>                         <!--zinc admin home page link-->
                 <a href="#">View User</a>                       <!--zinc view user link-->
-                <a href="#">View Feedback / Report</a>          <!--zinc feedback/report link-->
+                <a href="{% url 'admin_feedback' %}">View Feedback</a>          <!--zinc feedback/report link-->
+                <a href="{% url 'admin_report' %}">View Report</a>
                 <a href="{% url 'logout' %}">Logout</a>         <!--yt logout link-->
             </div>
         </div>
+        <!--search bar-->
         <div class="search-bar">
-            <input type="text" name='q' placeholder="Search for feedback...">
-            <button type="submit">Search</button>
+            <form method="GET" class="search-bar">
+                <input type="text" name='q' placeholder="Search for feedback...">
+                <button type="submit">Search</button>
+            </form>
         </div>
-        <!--feedback/report view demo-->
+         <hr>
+        <h2>Feedback</h2>
+
+        <!--feedback view demo-->
         <div class="post-list">
-            {% for feedback in feedback %}
+            
+            {% for feedback in feedbacks %}
+            <hr>
             <div class="feedback-card">
                 <p><strong>User:</strong>{{ feedback.user.username }}</p>
                 <p><strong>Content:</strong>{{ feedback.comments }}</p>
@@ -55,14 +64,6 @@
                 </form>
                 {% endif %}
 
-                {% if feedback.post %}
-                <form actions="{% url 'delete_reported_post' feedback.post.id %}" method="POST" onsubmit="return confirm('Confirm delete post ?');">
-                    {% csrf_token %}
-                    <button type="submit">Delete</button>
-                </form>
-                {% else %}
-                <span>(Post already deleted)</span>
-                {% endif %}
                 <hr>
             </div>
             {% empty %}

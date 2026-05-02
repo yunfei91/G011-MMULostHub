@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 # ('storage name inside sqlite', 'display name on website')
 CATEGORY_CHOICES = [
     (   'electronics'  ,    'Electronic Devices'),
-    (   'stationary'   ,    'Stationaries'      ),
+    (   'stationery'   ,    'Stationaries'      ),
     (   'wallet'       ,    'Wallets'           ),
     (   'card'         ,    'Cards'             ),
     (   'bottle'       ,    'Water Bottles'     ),
@@ -60,7 +60,7 @@ class Post (models.Model):
 
     post_location = models.ForeignKey(
         MMULocation,
-        on_delete = models.CASCADE,
+        on_delete = models.SET_NULL,
         null = True,                            # database can be empty / can set in view.py to diffrentiate between lost and found post
         blank = True,                           # form can be empty
     )

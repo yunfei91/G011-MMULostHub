@@ -16,27 +16,41 @@
                 Menu
             </nav>
             <div class="dropdown-content">
-                <a href="#">Home</a> <!--zinc admin home page link-->
+                <a href="{% url 'admin_mainpage' %}">Home</a> <!--zinc admin home page link-->
                 <a href="#">View User</a> <!--zinc view user link-->
-                <a href="#">View Feedback / Report</a> <!--zinc feedback/report link-->
+                <a href="{% url 'admin_feedback' %}">View Feedback</a> <!--zinc feedback/report link-->
+                <a href="{% url 'admin_report' %}">View Report</a>
                 <a href="{% url 'logout' %}">Logout</a> <!--yt logout link-->
             </div>
         </div>
+        
         <div class="search-bar">
-            <input type="text" name='q' placeholder="Search for Reports...">
-            <button type="submit">Search</button>
+            <form method="GET" class="search-bar">
+                <input type="text" name='q' placeholder="Search for Reports...">
+                <button type="submit">Search</button>
+            </form>
         </div>
         <hr>
-        <h2>Pending Reports & Feedback</h2>
+        <h2>Reports</h2>
 
-        {% for report in report %}
+        <!--report view demo-->
+        <div class="post-list">
+
+        {% for report in reports %}
         <hr>
         <div>
             <p><strong>Reported By:</strong>{{ report.user.username}}</p>
             <p><strong>Reported Reason:</strong>{{ report.comments }}</p>
             <p><strong>Reported Date:</strong>{{ report.created_at }}</p>
+              <p><strong>Image:</strong><br>
+                    {% if report.image %}
+                    <img src="{{ report.image.url }}" alt="Report Photo" style="max-width: 300px;">
+                    {% else %}
+                    No Image Provided
+                    {% endif %}
+                </p>
 
-            <h4>Original Post Content</h4>
+            <h3>Original Post Content:</h3>
             {% if report.post %}
             <p><strong>Post ID:</strong>{{ report.post.post.id }}</p>
             <p><strong>Post Author:</strong>{{ report.post.post_user.username }}</p>
@@ -44,27 +58,48 @@
             <p><strong>Category:</strong>{{ report.post.post_itemcategory }}</p>
             <p><strong>Location:</strong>{{ report.post.post_location }}</p>
             <p><strong>Description:</strong>{{ report.post.post_description }}</p>
+              <p><strong>Image:</strong><br>
+                    {% if report.image %}
+                    <img src="{{ report.image.url }}" alt="Report Photo" style="max-width: 300px;">
+                    {% else %}
+                    No Image Provided
+                    {% endif %}
+                </p>
             {% else %}
             <p><em>Notice: This post has been deleted.</em></p>
             {% endif %}
 
             <p><strong>Status:</strong>{{ report.status }}</p>
 
-            <form action="{% url 'update_reported_status' report.id %}" method="POST">
+            {% if report.status == 'Pending' %}
+            <form action="{% url 'update_report_status' report.id %}" method="POST">
                 {% csrf_token %}
-                <button type="button">Mark as Checked</button>
-            </form>
-
-            {% if report.post %}
-            <form action="{% url 'delete_reported_post' report.post.id %}" method="POST" onsubmit="return confirm('Are you sure you want to delete this post ?');">
-                {% csrf_token %}
-                <button type="submit">Delete</button>
+                <button type="submit">Mark as Checked</button>
             </form>
             {% endif %}
+
+            {% if report.post %}
+            <form action="{% url 'delete_post' report.post.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit">Delete Post</button>
+            </form>
+            {% endif %}
+
             <hr>
         </div>
+
         {% empty %}
         <p>No pending reports to display</p>
         {% endfor %}
+        
     </body>
+
+     <footer>
+        <p>
+            © 2026 MMU Lost Hub
+            <br>
+            Designed by: Kho Yee Theng / Tan Yun Fee / Lim Tze Ying
+        </p>
+    </footer>
+
 </html>

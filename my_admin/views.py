@@ -8,7 +8,7 @@ from report.models import Feedback, Report
 from .email_utils import send_feedback_confirmation, send_report_confirmation
 
 
-# Admin 权限检查
+# Admin 
 def is_admin(user):
     return user.is_authenticated and (user.is_staff or user.is_superuser)
 
@@ -34,7 +34,7 @@ def admin_feedback_view(request):
         )
 
     return render(request, 'my_admin/adminfeedback.html', {
-        'feedbacks_data': feedbacks
+        'feedbacks': feedbacks
     })
 
 
@@ -50,7 +50,7 @@ def admin_report_view(request):
         reports = reports.filter(
             Q(comments__icontains=query) |
             Q(user__username__icontains=query) |
-            Q(post__title__icontains=query)
+            Q(post__post_description__icontains=query)
         )
 
     return render(request, 'my_admin/adminreport.html', {
@@ -60,15 +60,11 @@ def admin_report_view(request):
 
 # Delete Reported Post
 @user_passes_test(is_admin)
-def delete_reported_post(request, post_id):
-    if request.method == 'POST':
+def delete_post(request, post_id):
+    if request.method == "POST":
         post = get_object_or_404(Post, id=post_id)
         post.delete()
-
-        print(f"Deleted post {post_id}")
-
-    return redirect(request.META.get('HTTP_REFERER', 'admin_mainpage'))
-
+    return redirect('admin_report')
 
 # Update Feedback Status
 @user_passes_test(is_admin)

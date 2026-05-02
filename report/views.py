@@ -29,9 +29,9 @@ def submit_report(request):
 
         #keep to database
         Report.objects.create(
-            reporter_email=request.user.email,
-            category='POST',
-            details=comments,
+            user=request.user,
+            post=post_instance,
+            comments=comments,
             image=image
         )
         return redirect('mainPage')
@@ -39,7 +39,8 @@ def submit_report(request):
     #if GET require, turn back mainpage
     post_id = request.GET.get('post_id')
     post = None
+
     if post_id:
         post = get_object_or_404(Post, id=post_id)
 
-    return render(request, 'report/reportform.html', {'post':post})
+    return render(request, 'report/reportfunction.html', {'post':post})
