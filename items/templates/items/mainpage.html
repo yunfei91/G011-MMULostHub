@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head> 
+        <title> 
+            MMU Lost Hub 
+        </title>
+    </head>
+
+    <body>
+        <header>
+            <h1>
+                MMU Logo
+            </h1>
+            <h1>
+                Lost Hub Logo
+            </h1>
+        </header>
+
+        <div class="dropdown-nav">
+            <nav>
+                Menu
+            </nav>
+            <div class="dropdown-content">
+                <a href="{% url 'mainPage' %}"> Home </a>
+                <a href="#"> Lost Post </a>                 <!-- yt lost post link -->
+                <a href="#"> Found Post </a>                <!-- yt found post link -->
+                <a href="{% url 'profile' %}"> Profile </a>                   <!-- yt profile link -->
+                <a href="{% url 'feedback_form' %}"> Feedback/Report </a>           <!-- zinc feedback link -->
+                <a href="{% url 'logout' %}">Logout</a>                  <!-- yt logout link -->
+            </div>
+        </div>
+
+        <div class="search-bar">                                        <!-- after need to be changed when starting to do search feature -->
+            <input type="text" placeholder="Search for items...">
+            <button type="submit"> Search </button>
+        </div>
+
+        <!-- post view demo -->
+        <div class="post-list">
+            {% for post in posts %}
+                <div class="post-card">
+                    <p><strong>User:</strong> {{ post.post_user.username }}</p>
+                    <p><strong>Type:</strong> {{ post.post_type }}</p>
+                    <p><strong>Category:</strong> {{ post.post_itemcategory }}</p>
+                    <p><strong>Location:</strong> {{ post.post_location }}</p>
+                    <p><strong>Description:</strong> {{ post.post_description }}</p>
+                    <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                        <button type="button">Report</button>
+                    </a>
+                    <hr>
+                </div>
+            {% empty %}
+                <p>No posts yet</p>
+            {% endfor %}
+        </div>
+
+
+        <div class="create-post">
+            <a href="{% url 'create_post_view' %}">
+                <button type="button">
+                    Create Post Button
+                </button>
+            </a>
+        </div>
+    </body>
+
+     <footer>
+        <p>
+            © 2026 MMU Lost Hub
+            <br>
+            Designed by: Kho Yee Theng / Tan Yun Fee / Lim Tze Ying
+        </p>
+    </footer>
+    
+</html>
