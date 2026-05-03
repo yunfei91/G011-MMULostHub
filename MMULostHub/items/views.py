@@ -10,16 +10,6 @@ def mainPage(request):
 
 @login_required
 def createPost(request):
-    profile = request.user.profile
-
-    if not profile.is_mmu_verified:
-        messages.error(request, "You have not verified your MMU account. Please verify before creating a post.")
-        return redirect('mainPage')
-    
-    if not profile.is_mmu_verified:
-        messages.error(request, "You must complete MMU verification first.")
-        return redirect('profile')
-    
     if request.method == "POST":
         try:
             create_post({

@@ -24,11 +24,8 @@
                 <a href="#"> Lost Post </a>                 <!-- yt lost post link -->
                 <a href="#"> Found Post </a>                <!-- yt found post link -->
                 <a href="{% url 'profile' %}"> Profile </a>                   <!-- yt profile link -->       
-                <a href="#" class="feedback-btn"
-                    data-verified="{{ user.profile.is_mmu_verified|yesno:'true,false' }}">
-                    Feedback/Report 
-                </a>  <!-- zinc feedback link -->
-                <a href="#"> Logout </a>                    <!-- yt logout link -->
+                <a href="{% url 'feedback_form' %}">Feedback/Report </a>  <!-- zinc feedback link -->
+                <a href="{% url 'logout' %}"> Logout </a>               <!-- yt logout link -->
             </div>
         </div>
 
@@ -53,10 +50,10 @@
         </div>
 
         <div class="create_post">
-            <button type="button"
-                    class="create-btn"
-                    data-verified="{{ user.profile.is_mmu_verified|yesno:'true,false' }}">
-                Create Post
+            <button type="button">
+                <a href="{% url 'createPost' %}"> 
+                    Create Post 
+                </a>
             </button>
         </div>
 
@@ -68,31 +65,4 @@
             </p>
         </footer>
     </body>
-
-    <script>
-        document.querySelector(".create-btn").addEventListener("click", function () {
-            let isVerified = this.dataset.verified === "true";
-
-            if (!isVerified) {
-                alert("You haven't verified your MMU account yet. Please verify first.");
-                return;
-            }
-
-            window.location.href = "{% url 'createPost' %}";
-        });
-
-        document.querySelector(".feedback-btn").addEventListener("click", function (e) {
-            e.preventDefault();
-
-            let isVerified = this.dataset.verified === "true";
-
-            if (!isVerified) {
-                alert("You haven't verified MMU account yet. You cannot submit feedback.");
-                return;
-            }
-
-            window.location.href = "{% url 'feedback_form' %}";
-        });
-    </script>
-
 </html>

@@ -1,11 +1,22 @@
 from django.shortcuts import render, redirect # render = return HTML page ; redirect = jump to another URL
 from django.http import JsonResponse # Return JSON data to frontend
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from .services import create_user_account
-from django.contrib.auth import authenticate, login, logout
-import re # Regular expression for validation
 from .models import Profile
+from items.models import Post
+
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.conf import settings
+
+import time
+import random
+import re # Regular expression for validation
 
 def beginning(request):
     return render(request, 'user/beginning.html')
@@ -21,9 +32,13 @@ def user_login(request):
         user_login_error = ""
 
         if not email:
-            email_error = "Please enter your email." # Empty check
-        elif not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', email):
-            email_error = "Please enter a valid email."
+            email_error = "Please enter your MMU email."
+        elif not (
+            re.match(r'^[A-Za-z0-9._%+-]+@mmu\.edu\.my$',email)
+            or
+            re.match(r'^[A-Za-z0-9._%+-]+@student\.mmu\.edu\.my$',email)
+        ):
+            email_error = "Please enter a valid MMU email."
 
         if not password:
             password_error = "Please enter your password." # Empty check
@@ -58,10 +73,14 @@ def admin_login(request):
         email_error = ""
 
         if not email:
-            email_error = "Please enter your email."
+            email_error = "Please enter your MMU email."
             return render(request, 'user/admin-login.html', {'email_error': email_error}) # Empty check
-        elif not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', email):
-            email_error = "Please enter a valid email."
+        elif not (
+            re.match(r'^[A-Za-z0-9._%+-]+@mmu\.edu\.my$',email)
+            or
+            re.match(r'^[A-Za-z0-9._%+-]+@student\.mmu\.edu\.my$',email)
+        ):
+            email_error = "Please enter a valid MMU email."
             return render(request, 'user/admin-login.html', {'email_error': email_error})
 
         user = authenticate(request, username=email, password=password)
@@ -84,10 +103,6 @@ def admin_login(request):
 
     return render(request, 'user/admin-login.html')
 
-from django.core.mail import send_mail
-from django.conf import settings
-import time
-import random
 def register(request):
     # Handle form submission
     if request.method == 'POST':
@@ -108,10 +123,14 @@ def register(request):
 
         if not email:
             email_error = "Please enter your email."
-        elif not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', email):
-            email_error = "Please enter a valid email."
+        elif not (
+            re.match(r'^[A-Za-z0-9._%+-]+@mmu\.edu\.my$',email)
+            or
+            re.match(r'^[A-Za-z0-9._%+-]+@student\.mmu\.edu\.my$',email)
+        ):
+            email_error = "Please enter a valid MMU email."
         elif User.objects.filter(username=email).exists(): # Check email exists
-            email_error = "Email already registered."
+            email_error = "MMU Email already registered."
     
         if not password:
             password_error = "Please enter a password."
@@ -143,7 +162,6 @@ def register(request):
         }
         
         send_otp_email(email, otp)
-
         return redirect('verify_email')
     
     return render(request, 'user/register.html')
@@ -223,50 +241,10 @@ def verify_email(request):
 
         request.session.pop('register_data', None)
 
-        return redirect('mmu_verify')
+        return redirect('mainPage')
     
     return render(request, 'user/email-verify.html', context)
 
-from django.contrib.auth.decorators import login_required
-from django.urls import reverse
-@login_required
-def mmu_verify(request):
-    profile = request.user.profile
-
-    if request.method == 'POST':
-        mmu_email = request.POST.get('mmu_email', '').strip()
-        proof = request.FILES.get('proof')
-
-        error = ""
-
-        if not mmu_email:
-            return JsonResponse({'success': False, 'error': "Please enter MMU email"})
-
-        if not mmu_email.endswith(("@student.mmu.edu.my", "@mmu.edu.my")):
-            return JsonResponse({'success': False, 'error': "Please use a valid MMU email"})
-
-        if not proof:
-            return JsonResponse({'success': False, 'error': "Please upload student card"})
-
-        if Profile.objects.filter(mmu_email=mmu_email).exclude(user=request.user).exists():
-            return JsonResponse({'success': False, 'error': "This MMU email is already used"})
-
-        profile.mmu_email = mmu_email
-        profile.mmu_proof = proof
-        profile.submitted_for_verification = True
-        profile.is_mmu_verified = False
-        profile.save()
-
-        return JsonResponse({
-            'success': True,
-            'redirect_url': reverse('mainPage')
-        })
-    
-    return render(request, 'user/mmu_verify.html')
-
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 def resend_otp(request):
     if request.method != "POST":
         return JsonResponse({'error': 'Invalid request'}, status=400)

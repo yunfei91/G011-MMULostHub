@@ -25,11 +25,8 @@
                 <a href="#"> Lost Post </a>                 <!-- yt lost post link -->
                 <a href="#"> Found Post </a>                <!-- yt found post link -->
                 <a href="{% url 'profile' %}"> Profile </a>                   <!-- yt profile link -->       
-                <a href="#" class="feedback-btn"
-                    data-verified="{{ user.profile.is_mmu_verified|yesno:'true,false' }}">
-                    Feedback/Report 
-                </a>  <!-- zinc feedback link -->
-                <a href="#"> Logout </a>                    <!-- yt logout link -->
+                <a href="{% url 'feedback_form' %}">Feedback/Report</a>   <!-- zinc feedback link -->
+                <a href="{% url 'logout' %}"> Logout </a>                    <!-- yt logout link -->
             </div>
         </div>
 
@@ -77,25 +74,7 @@
                 {% endfor %}
             {% endif %}
 
-            <p><b>Email:</b> {{ user.email }}</p>
-
-            <p><b>MMU Email:</b> 
-            {% if profile.mmu_email %}
-                {{ profile.mmu_email }}
-            {% else %}
-                <span style="color:red;">Not submitted</span>
-            {% endif %}
-            </p>
-            
-            {% if profile.mmu_email and profile.submitted_for_verification and not profile.is_mmu_verified %}
-                <button disabled>Pending Verification</button>
-
-            {% elif profile.is_mmu_verified %}
-                <button disabled>MMU Verified</button>
-
-            {% else %}
-                <button onclick="goVerifyMMU()">Verify MMU</button>
-            {% endif %}
+            <p><b>MMU Email:</b> {{ user.email }}</p>
         </div>
 
         <h2>Bio</h2>
@@ -156,31 +135,6 @@
     </div>
 
     <script>
-        document.querySelector(".feedback-btn").addEventListener("click", function (e) {
-            e.preventDefault();
-
-            let isVerified = this.dataset.verified === "true";
-
-            if (!isVerified) {
-                alert("You haven't verified MMU account yet. You cannot submit feedback.");
-                return;
-            }
-
-            window.location.href = "{% url 'feedback_form' %}";
-        });
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const isVerified = "{{ profile.is_mmu_verified }}";
-
-            if (isVerified === "True") {
-
-                if (!sessionStorage.getItem("mmu_verified_alert_shown")) {
-                    alert("✔ Your MMU account has been verified!");
-                    sessionStorage.setItem("mmu_verified_alert_shown", "true");
-                }
-            }
-        });
-
         let cropper; // Save cropper object for later use
         const avatar = document.getElementById('avatarImage'); // Get avatar element
         const preview = document.getElementById('preview'); // Image preview area
@@ -284,14 +238,6 @@
             if (cropper) {
                 cropper.destroy();
                 cropper = null;
-            }
-        }
-
-        function goVerifyMMU() {
-            let confirmGo = confirm("You have not submitted MMU verification yet. Go verify now?");
-
-            if (confirmGo) {
-                window.location.href = "{% url 'mmu_verify' %}";
             }
         }
 

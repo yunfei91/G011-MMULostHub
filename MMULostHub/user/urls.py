@@ -12,8 +12,6 @@ urlpatterns = [
     path('email-verify/', views.verify_email, name='verify_email'),
     path('resend-otp/', views.resend_otp, name='resend_otp'),
 
-    path('mmu-verify/', views.mmu_verify, name='mmu_verify'),
-
     path('profile/', views.profile, name='profile'),
     path('update-bio/', views.update_bio, name='update_bio'),
     path('update-avatar/', views.update_avatar, name='update_avatar'),

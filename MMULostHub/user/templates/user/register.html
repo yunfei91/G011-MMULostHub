@@ -166,7 +166,7 @@
 
                 emailTimeout = setTimeout(() => {
 
-                    let pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    let pattern = /^[A-Za-z0-9._%+-]+@(mmu\.edu\.my|student\.mmu\.edu\.my)$/;
                     
                     if (!pattern.test(email)) {
                         status.innerHTML = "Invalid email format";
