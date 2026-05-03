@@ -71,7 +71,7 @@
                 window.location.href = "{% url 'beginning' %}";
             }
         }
-
+        
         let otpTime = 0;
         let resendTime = 0;
         
@@ -211,7 +211,7 @@
         }
 
         resendBtn.addEventListener("click", function () {
-            fetch("{% url 'resend_otp' %}", {
+            fetch("{% url 'resend_reset_otp' %}", {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": getCookie('csrftoken'),

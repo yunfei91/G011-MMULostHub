@@ -42,6 +42,7 @@
                         <div class="password-box">
                             <input type="password" id="password" name="password" placeholder="Password" oninput="checkPassword()">
                             <span class="show-password" onclick="showPassword('password', this)">🙈</span>
+                            <p><a href="{% url 'forgot_pw' %}">Forgot Password?</a></p>
                         </div>
                         {% if password_error %}
                             <p style="color:red;">{{ password_error }}</p>
