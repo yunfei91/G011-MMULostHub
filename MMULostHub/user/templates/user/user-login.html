@@ -25,6 +25,8 @@
                     and found can find its way back.
                     </p>
 
+                    <button onclick="goBack()">Back</button>
+                    
                     <h2>Welcome to MMU Lost Hub</h2>
                     <h3>User Login</h3>
 
@@ -68,6 +70,14 @@
     </div>
 
     <script>
+        function goBack() {
+            if (document.referrer !== "") {
+                window.history.back();
+            } else {
+                window.location.href = "{% url 'beginning' %}";
+            }
+        }
+
         let emailValid = false;
         let passwordValid = false;
 

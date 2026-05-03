@@ -23,6 +23,9 @@
                         What's lost can be found,<br>
                     and found can find its way back.
                     </p>
+
+                <button onclick="goBack()">Back</button>
+
                 </div>
                     <p id="otpTimer"></p>
                     
@@ -61,6 +64,14 @@
     {{ resend_remaining|json_script:"resend-time" }}
 
     <script>
+        function goBack() {
+            if (document.referrer !== "") {
+                window.history.back();
+            } else {
+                window.location.href = "{% url 'beginning' %}";
+            }
+        }
+        
         let otpTime = 0;
         let resendTime = 0;
         
