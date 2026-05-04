@@ -92,9 +92,9 @@ def admin_login(request):
             })
 
         login(request, user)
-        return redirect('mainPage')
+        return redirect('admin_mainpage')
 
-    return render(request, 'my_admin/.html')
+    return render(request, 'user/admin-login.html')
 
 def register(request):
     # Handle form submission

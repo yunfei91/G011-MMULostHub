@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'items',
     'user.apps.UserConfig',
     'report',
+    'my_admin',
     ]
 
 MIDDLEWARE = [

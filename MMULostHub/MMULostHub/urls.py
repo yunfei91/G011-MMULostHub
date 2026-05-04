@@ -18,6 +18,8 @@ from django.urls import path
 from django.urls import include
 from user import views
 from django.contrib import admin
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     # yt urls
@@ -30,9 +32,8 @@ urlpatterns = [
     # ty urls
     path('report/',include('report.urls')),
     path('admin/', admin.site.urls),
+    path('adminfeedback/', include('my_admin.urls')),
 ]
 
-from django.conf import settings
-from django.conf.urls.static import static
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
