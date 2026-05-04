@@ -39,7 +39,12 @@
                 <input type="file" name="image-upload" id="image-upload">
             </div>
             <br>
-            <button type="submit">SUBMIT</button>
+             <button 
+                type="submit"
+                class="btn"
+                onclick="return confirm('Are you sure you want to submit?')">
+                SUBMIT
+            </button>
             <a href="{% url 'mainPage' %}">Cancel</a>
         </form>
     </main>

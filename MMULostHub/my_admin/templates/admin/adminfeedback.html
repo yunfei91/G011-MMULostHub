@@ -58,9 +58,12 @@
                 {% if feedback.status == 'Pending' %}
                 <form action="{% url 'update_feedback_status' feedback.id %}" method="POST" style="display:inline;">
                     {% csrf_token %}
-                    <button type="submit">
-                        Mark as Checked
-                    </button>
+            <button 
+                type="submit"
+                class="btn"
+                onclick="return confirm('Are you sure you want to mark this feedback as checked?')">
+                Mark as Checked
+            </button>
                 </form>
                 {% endif %}
 
