@@ -1,6 +1,6 @@
 from django.contrib import admin
 from report.models import Feedback, Report
-from my_admin.email_utils import send_feedback_confirmation
+# from my_admin.email_utils import send_feedback_confirmation
 
 
 class FeedbackAdmin(admin.ModelAdmin):
