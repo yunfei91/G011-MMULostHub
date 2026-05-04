@@ -41,6 +41,10 @@
                     <p> Date Time :{{ post.post_datetime }} </p>
                     <p> Item Category :{{ post.post_itemcategory }} </p>
                     <p> Location :{{ post.post_location }} </p>
+                        <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                        <button type="button">Report</button>
+                    </a>
+                    <hr>
                 </div>
             {% empty %}
                 <div class = "no_post">
