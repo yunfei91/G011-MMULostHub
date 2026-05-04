@@ -73,15 +73,8 @@ def admin_login(request):
         email_error = ""
 
         if not email:
-            email_error = "Please enter your MMU email."
+            email_error = "Please enter admin email."
             return render(request, 'user/admin-login.html', {'email_error': email_error}) # Empty check
-        elif not (
-            re.match(r'^[A-Za-z0-9._%+-]+@mmu\.edu\.my$',email)
-            or
-            re.match(r'^[A-Za-z0-9._%+-]+@student\.mmu\.edu\.my$',email)
-        ):
-            email_error = "Please enter a valid MMU email."
-            return render(request, 'user/admin-login.html', {'email_error': email_error})
 
         user = authenticate(request, username=email, password=password)
 
@@ -241,7 +234,7 @@ def verify_email(request):
 
         request.session.pop('register_data', None)
 
-        return redirect('mainPage')
+        return redirect('user_login')
     
     return render(request, 'user/email-verify.html', context)
 
