@@ -36,7 +36,6 @@ def create_post (post_data, user):
         raise ValueError("Please select a date and time.")
 
     try:
-    # 把 HTML datetime-local 转成 Python datetime
         post_datetime = datetime.strptime(
             post_datetime_str,
             "%Y-%m-%dT%H:%M"
@@ -45,10 +44,8 @@ def create_post (post_data, user):
     except ValueError:
         raise ValueError("Invalid date format.")
 
-    # 转成 timezone-aware（Django 时区）
     post_datetime = timezone.make_aware(post_datetime)
 
-    # 去掉秒数和微秒，避免误判 future datetime
     post_datetime = post_datetime.replace(
         second=0,
         microsecond=0

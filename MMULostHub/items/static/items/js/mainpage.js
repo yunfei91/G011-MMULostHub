@@ -1,3 +1,4 @@
+// when user not login and want to create post will change to user login page and show popup
 function pleaseLoginPopup() {
     Swal.fire({
         title: "Login Required",
@@ -9,6 +10,7 @@ function pleaseLoginPopup() {
     });
 }
 
+// comfirmation for user DELETE POST
 function confirmDelete(event, form) {
     event.preventDefault();
 
