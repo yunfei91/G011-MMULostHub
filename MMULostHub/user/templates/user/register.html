@@ -26,16 +26,19 @@
                     and found can find its way back.
                     </p>
 
+                    <button onclick="goBack()">Back</button>
+
                     <h2>Welcome to MMU Lost Hub</h2>
                     <h3>Register</h3>
 
                     <form method="POST">
                         {% csrf_token %}
                         <!--Name-->
-                        <input type="text" name="name" placeholder="Name" value="{{ name }}">
+                        <input type="text" id="name" name="name" placeholder="Name" value="{{ name }}" oninput="checkName()">
+                        <p id="name-status"></p>
                         <p style="color:red;">{{ name_error }}</p>
                         <!--Email-->
-                        <input type="text" id="email" name="email" placeholder="MMU Email" oninput="checkEmail()">
+                        <input type="text" id="email" name="email" placeholder="Email" oninput="checkEmail()">
                         <p id="email-status"></p>
                         {% if email_error %}
                             <p style="color:red;">{{ email_error }}</p>
@@ -87,6 +90,61 @@
     </div>
 
     <script>
+        function goBack() {
+            if (document.referrer !== "") {
+                window.history.back();
+            } else {
+                window.location.href = "{% url 'beginning' %}";
+            }
+        }
+        
+        let nameValid = false;
+        let nameTimeout;
+        let currentName = "";
+        const checkNameUrl = "{% url 'check_name' %}";
+
+        function checkName() {
+            clearTimeout(nameTimeout);
+
+            let name = document.getElementById("name").value.trim();
+            let status = document.getElementById("name-status");
+
+            currentName = name;
+
+            status.innerHTML = "";
+            nameValid = false;
+            updateButton();
+
+            if (!name) return;
+
+            status.innerHTML = "Checking...";
+            status.style.color ="gray";
+
+            nameTimeout = setTimeout(() => {
+                fetch(`${checkNameUrl}?name=${encodeURIComponent(name)}`)
+                .then(res => res.json())
+                .then(data => {
+
+                    if (name !== currentName) return;
+
+                    if (data.exists) {
+                        status.innerHTML = "Name already taken";
+                        status.style.color = "red";
+                        nameValid = false;
+                    } else {
+                        status.innerHTML = "Name available";
+                        status.style.color = "green";
+                        nameValid = true;
+                    }
+                    updateButton();
+                })
+                .catch(error => {
+                    console.error(error);
+                    status.innerHTML = "Error checking name";
+                    status.style.color = "red";
+                });
+            }, 1000);
+        }
         let emailValid = false;
         let passwordValid = false;
         let match = false;
@@ -225,7 +283,7 @@
         }
         /* Button Control */
         function updateButton() {
-            submitBtn.disabled =!(emailValid && passwordValid && match);
+            submitBtn.disabled =!(nameValid && emailValid && passwordValid && match);
         }
     </script>
 </body>

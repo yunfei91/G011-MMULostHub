@@ -1,8 +1,8 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head> 
         <title> 
-            {% load static %}
             MMU Lost Hub 
         </title>
     </head>
@@ -23,9 +23,9 @@
                 <a href="{% url 'mainPage' %}"> Home </a>
                 <a href="#"> Lost Post </a>                 <!-- yt lost post link -->
                 <a href="#"> Found Post </a>                <!-- yt found post link -->
-                <a href="#"> Profile </a>                   <!-- yt profile link -->
-                <a href="{% url 'feedback_form' %}"> Feedback/Report </a> 
-                <a href="#"> Logout </a>                    <!-- yt logout link -->
+                <a href="{% url 'profile' %}"> Profile </a>                   <!-- yt profile link -->       
+                <a href="{% url 'feedback_form' %}">Feedback/Report </a>  <!-- zinc feedback link -->
+                <a href="{% url 'logout' %}"> Logout </a>               <!-- yt logout link -->
             </div>
         </div>
 
@@ -41,6 +41,7 @@
                     <p> Date Time :{{ post.post_datetime }} </p>
                     <p> Item Category :{{ post.post_itemcategory }} </p>
                     <p> Location :{{ post.post_location }} </p>
+                    <p> Description:{{ post.post_description }} </p>
                         <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
                         <button type="button">Report</button>
                     </a>
