@@ -5,6 +5,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+
 from .services import create_user_account
 from .models import Profile
 from items.models import Post
@@ -40,8 +43,14 @@ def user_login(request):
         ):
             email_error = "Please enter a valid MMU email."
 
-        if not password:
-            password_error = "Please enter your password." # Empty check
+        if password and not password_error:
+            try:
+                validate_password(password)
+            except ValidationError as e:
+                password_error = e.messages[0]
+
+        if password == email:
+            password_error = "Password cannot be the same as emaul."
 
         if email_error or password_error:
             return render(request, 'user/user-login.html', {
@@ -53,7 +62,7 @@ def user_login(request):
         user = authenticate(request, username=email, password=password) # Check login info
 
         if user is None:
-            user_login_error = "Invalid email"
+            user_login_error = "Invalid email or password."
             return render(request, 'user/user-login.html', {
                 'user_login_error': user_login_error,
                 'email': email,
@@ -100,12 +109,18 @@ def reset_otp_verify(request):
     
     now = time.time()
 
+    resend_cooldown = 30
+    resend_remaining = int(resend_cooldown - (now - data['otp_time']))
+    resend_remaining = max(0, resend_remaining)
+
     otp_valid_seconds = 60
     otp_remaining = int(otp_valid_seconds - (now - data['otp_time']))
     otp_remaining = max(0, otp_remaining)
 
     context = {
         'otp_remaining': otp_remaining,
+        'resend_remaining': resend_remaining,
+        'can_resend': resend_remaining == 0,
         'expired': otp_remaining == 0
     }
 
@@ -114,15 +129,15 @@ def reset_otp_verify(request):
 
         if context['expired']:
             context['error'] = "OTP expired"
-            return render(request, 'user/reset-otp.html', context)
+            return render(request, 'user/resetpw-otp.html', context)
 
         if user_otp != data['otp']:
             context['error'] = "Invalid OTP"
-            return render(request, 'user/reset-otp.html', context)
+            return render(request, 'user/resetpw-otp.html', context)
 
         return redirect('reset_pw')
 
-    return render(request, 'user/reset-otp.html', context)
+    return render(request, 'user/resetpw-otp.html', context)
 
 def resend_reset_otp(request):
     if request.method != "POST":

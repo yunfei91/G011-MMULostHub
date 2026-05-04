@@ -6,8 +6,7 @@
         <link rel="stylesheet" type="text/css" href="{% static 'user/css/register.css' %}">
     </head>
 
-<body>
-    <style>
+<style>
 .popup {
     position: fixed;
     top: 0;
@@ -27,6 +26,7 @@
 }
 </style>
 
+<body>
     <div class="whole-page">
         <header>
             <a href="{% url 'beginning' %}">
@@ -70,6 +70,10 @@
                             <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" oninput="checkPassword()">
                             <span onclick="showPassword('confirm_password', this)">🙈</span>
                         </div>
+
+                        {% if password_error %}
+                            <p style="color:red;">{{ password_error }}</p>
+                        {% endif %}
 
                         <p id="match-text"></p>
 
