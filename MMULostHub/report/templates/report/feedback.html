@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MMU Lost Hub - Feedback</title>
+        <link rel="stylesheet" href="style.css"> 
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <div class="menu-icon"></div>
+            </header>
+
+            <main>
+                 <div class="container">
+            <header>
+                <div class="menu-icon"></div>
+                <h1>MMU Lost Hub</h1>
+            </header>
+                    <h2>Feedback / Report</h2>
+                    <p>Leave your comments / suggestions here!</p>
+
+                    <form actions="{% url 'feedback_form' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %} 
+
+                        <label for="comments">Your feedback:</label>
+                        <textarea id="comments"  name="comments" placeholder="Please enter your feedback here..." rows="10"></textarea>
+
+                        <div class="upload-group" style="margin-top: 15px;">
+                            <label for="image-upload">Upload Image (optional):</label>
+                            <input type="file" id="image-upload" name="image-upload" accept="image/*">
+                        </div> 
+
+                        <div class="button-group">
+                        <button 
+                            type="submit"
+                            class="btn"
+                            onclick="return confirm('Are you sure you want to submit?')">
+                            SUBMIT
+                        </button>
+                        </div>
+                    </form>
+                </section>
+            </main>
+        </div>
+    </body>
+</html>
