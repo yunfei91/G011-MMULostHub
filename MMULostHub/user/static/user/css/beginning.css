@@ -83,7 +83,7 @@ header{
     animation: logoFloat 4s ease-in-out infinite;
 
     filter:
-        drop-shadow(0 8px 14px rgba(0,0,0,0.22)); /* 只保留一个干净阴影 */
+        drop-shadow(0 8px 14px rgba(0,0,0,0.22));
 
     transition: transform 0.3s ease;
 }
@@ -133,9 +133,9 @@ header{
         0 1px 0 #ffffff,
         0 2px 0 #d6dbe8,
         0 3px 0 #c2c8d8,
-        0 6px 10px rgba(0,0,0,0.18);
+        0 6px 10px rgba(0,0,0,0.18); 
 
-    transform: rotate(-2deg) translateY(0);  /* 👈 这里改 */
+    transform: rotate(-2deg) translateY(0);
     transition: all 0.25s ease;
 }
 
@@ -161,7 +161,8 @@ header{
 
 nav{
     display: flex;
-    gap: 20px;
+    gap: 50px;
+    padding-top: 20px;
     padding-left: 80px;
 }
 
@@ -179,9 +180,9 @@ nav a{
     font-size: 14px;
 
     box-shadow:
-    0 1px 0 rgba(255,255,255,0.35) inset,   /* 上面亮一点 */
-    0 -2px 4px rgba(0,0,0,0.10) inset,      /* 内阴影变淡 */
-    0 4px 0 #6a7184,                        /* 底座颜色变浅 + 高度降低 */
+    0 1px 0 rgba(255,255,255,0.35) inset, 
+    0 -2px 4px rgba(0,0,0,0.10) inset,  
+    0 4px 0 #6a7184,                 
     0 6px 12px rgba(0,0,0,0.20);
 
     transform: translateY(0);
@@ -194,8 +195,8 @@ nav a:hover{
     box-shadow:
         0 1px 0 rgba(255,255,255,0.32) inset,
         0 -2px 5px rgba(0,0,0,0.12) inset,
-        0 7px 0 #565c6e,           /* 比之前浅一点但还有厚度 */
-        0 12px 20px rgba(0,0,0,0.28);  /* 阴影稍微加深一点 */
+        0 7px 0 #565c6e,  
+        0 12px 20px rgba(0,0,0,0.28); 
 }
 
 nav a:active{

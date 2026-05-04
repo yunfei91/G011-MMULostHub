@@ -78,7 +78,7 @@
         let emailValid = false;
         let passwordValid = false;
 
-        /* Email */
+        // Email
         function validateEmail() {
             let email = document.getElementById("email").value.trim();
             let status = document.getElementById("email-status");
@@ -104,7 +104,7 @@
             updateBtn();
         }
 
-        /* Check Password */
+        // Check Password
         function checkPassword() {
             let password = document.getElementById("password").value;
 
@@ -112,7 +112,7 @@
             updateBtn();
         }
 
-        /* Show Password */
+        // Show Password
         function showPassword(inputId, icon) {
             const input = document.getElementById(inputId);
 
@@ -125,7 +125,7 @@
             }
         }
 
-        /* Button Control */
+        // Button Control
         function updateBtn() {
             document.getElementById("loginBtn").disabled =!(emailValid && passwordValid);
         }
