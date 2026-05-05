@@ -101,6 +101,613 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             markerX: 1128,
             markerY: 2040
         },
+
+        {
+            code: "clc",
+            name: "CLC",
+            type: "polygon",
+
+            points: [
+                [1024,1570],
+                [1090,1545],
+                [1043,1662],
+                [1117,1664],
+                [1011,1765],
+                [1065,1801],
+            ],
+
+            markerX: 1077,
+            markerY: 1657
+        },
+
+        {
+            code: "mph",
+            name: "MPH / Annex Hall",
+            type: "polygon",
+
+            points: [
+		        [1024,1570],
+                [1090,1545],
+		        [1027,1466],
+		        [985,1520],
+               
+            ],
+
+            markerX: 1037,
+            markerY: 1526
+        },
+
+        {
+            code: "misri-plaza",
+            name: "Misri Plaza",
+            type: "circle",
+
+            centerX: 956,
+            centerY: 1461,
+            radius: 43,
+
+            markerX: 956,
+            markerY: 1461
+        },
+
+        {
+            code: "rimbun-ilmu",
+            name: "Rimbun Ilmu",
+            type: "circle",
+
+            centerX: 951,
+            centerY: 2044,
+            radius: 38,
+
+            markerX: 951,
+            markerY: 2044
+        },
+
+        {
+            code: "dtc",
+            name: "Dewan Tun Canselor",
+            type: "rectangle",
+
+            x1:887, y1:1401,
+            x2:1062, y2:1172,
+
+            markerX: 969,
+            markerY: 1288
+        },
+
+        {
+            code: "chancellery",
+            name: "MMU Chancellery",
+            type: "rectangle",
+
+            x1:922, y1:103,
+            x2:1061, y2:1131,
+
+            markerX: 990,
+            markerY: 1079
+        },
+
+        {
+            code: "stad",
+            name: "STAD Building",
+            type: "polygon",
+
+            points: [
+                [780,2167],
+                [1153,2212],
+                [1153,2313],
+                [780,2268],
+            ],
+
+            markerX: 976,
+            markerY: 2253
+        },
+
+        {
+            code: "ips",
+            name: "IPS / ERU",
+            type: "polygon",
+
+            points: [
+                [1250,1252],
+                [1270,1264],
+                [1176,1419],
+                [1153,1408],               
+            ],
+
+            markerX: 1212,
+            markerY: 1341
+        },
+
+        {
+            code: "library",
+            name: "Library",
+            type: "polygon",
+
+            points: [
+                [865,1541],
+                [939,1582],
+                [917,1663],
+                [933,1739],
+                [867,1775],
+                [834,1665],               
+            ],
+
+            markerX: 879,
+            markerY: 1672
+        },
+
+        {
+            code: "bakery",
+            name: "Bakery",
+            type: "polygon",
+
+            points: [
+                [933,1739],
+                [867,1775],
+                [875,1794],
+                [942,1756],               
+            ],
+
+            markerX: 907,
+            markerY: 1772
+        },
+
+        {
+            code: "haji-tapah",
+            name: "Haji Tapah",
+            type: "polygon",
+
+            points: [
+                [890,1798],
+                [933,1766],
+                [966,1807],
+                [921,1836],               
+            ],
+
+            markerX: 927,
+            markerY: 1808
+        },
+	    
+        {
+            code: "deen",
+            name: "Deen's Cafe",
+            type: "rectangle",
+
+            x1:1155, y1:2209,
+            x2:1212, y2:2310,
+            
+            markerX: 1184,
+            markerY: 2271
+        },
+
+        {
+            code: "starbee",
+            name: "Starbee",
+            type: "rectangle",
+
+            x1:1235, y1:1481,
+            x2:1313, y2:1699,
+            
+            markerX: 1277,
+            markerY: 1600
+        },
+
+        {
+            code: "dapo-sahang",
+            name: "Dapo Sahang",
+            type: "rectangle",
+
+           x1:1815, y1:2142,
+            x2:1999, y2:2198,
+
+            markerX: 1911,
+            markerY: 2176
+        },
+
+        {
+            code: "hb1",
+            name: "Hostel HB1",
+            type: "polygon",
+
+            points: [
+                [1857,2308],
+                [1941,2306],
+                [1943,2364],
+                [2040,2364],
+                [2040,2448],
+                [1945,2448],
+                [1880,2520],
+                [1812,2457],
+                [1862,2405],               
+            ],
+
+            markerX: 1929,
+            markerY: 2409
+        },
+	    
+        {
+            code: "hb2",
+            name: "Hostel HB2",
+            type: "polygon",
+
+            points: [
+                [1671,2207],
+                [1763,2209],
+                [1761,2284],
+                [1835,2277],
+                [1842,2367],
+                [1754,2371],
+                [1684,2436],
+                [1619,2367],
+                [1669,2326],               
+            ],
+
+            markerX: 1727,
+            markerY: 2317
+        },
+	    
+        {
+            code: "hb3",
+            name: "Hostel HB3",
+            type: "polygon",
+
+            points: [
+                [1391,2201],
+                [1472,2201],
+                [1472,2273],
+                [1564,2273],
+                [1567,2370],
+                [1470,2367],
+                [1405,2428],
+                [1349,2367],
+                [1391,2327],               
+            ],
+
+            markerX: 1450,
+            markerY: 2310
+        },
+	    
+        {
+            code: "hb4",
+            name: "Hostel HB4",
+            type: "polygon",
+
+            points: [
+                [1526,1989],
+                [1616,1989],
+                [1616,2070],
+                [1695,2146],
+                [1636,2205],
+                [1580,2149],
+                [1522,2198],
+                [1465,2135],
+                [1526,2079],               
+            ],
+
+            markerX: 1578,
+            markerY: 2097
+        },
+	    
+        {
+            code: "entrance-A",
+            name: "MMU Entrance A",
+            type: "polygon",
+
+            points: [
+                [1100,389],
+                [1133,400],
+                [1102,505],
+                [1066,494],               
+            ],
+
+            markerX: 1103,
+            markerY: 447
+        },
+	    
+        {
+            code: "entrance-B",
+            name: "MMU Entrance B",
+            type: "rectangle",
+
+            x1:981, y1:2846,
+            x2:1012, y2:2938,
+
+            markerX: 996,
+            markerY: 2897
+        },
+	    
+        {
+            code: "bustop-A",
+            name: "Bustop Entrance A",
+            type: "circle",
+
+            centerX: 1439,
+            centerY: 577,
+            radius: 35,
+
+            markerX: 1439,
+            markerY: 577
+        },
+	    
+        {
+            code: "bustop-B",
+            name: "Bustop Entrance B",
+            type: "circle",
+
+            centerX: 1205,
+            centerY: 2942,
+            radius: 39,
+
+            markerX: 1205,
+            markerY: 2942
+        },
+	    
+        {
+            code: "cyberpark",
+            name: "MMU Cyberpark",
+            type: "rectangle",
+
+            x1:1397, y1:901,
+            x2:1815, y2:1313,
+
+            markerX: 1599,
+            markerY: 1126
+        },
+	    
+        {
+            code: "stadium",
+            name: "MMU Stadium",
+            type: "polygon",
+
+            points: [
+                [1466,1382],
+                [1680,1379],
+                [1682,1411],
+                [1857,1411],
+                [1860,1670],
+                [1680,1672],
+                [1680,1770],
+                [1466,1770],               
+            ],
+
+            markerX: 1644,
+            markerY: 1561
+        },
+	    
+        {
+            code: "isc",
+            name: "Indoor Sports Centre",
+            type: "rectangle",
+
+            x1:1227, y1:1721,
+            x2:1340, y2:1818,
+
+            markerX: 1289,
+            markerY: 1774
+        },
+	    
+        {
+            code: "footbal",
+            name: "Football Field",
+            type: "polygon",
+
+            points: [
+                [305,435],
+                [546,292],
+                [737,616],
+                [501,760],               
+            ],
+
+            markerX: 528,
+            markerY: 528
+        },
+	    
+        {
+            code: "rugby",
+            name: "Rugby Field",
+            type: "polygon",
+
+            points: [
+                [569,279],
+                [693,206],
+                [886,528],
+                [762,600],               
+            ],
+
+            markerX: 744,
+            markerY: 416
+        },
+	    
+        {
+            code: "swimming",
+            name: "Swimming Pool",
+            type: "rectangle",
+
+            x1:1387, y1:1341,
+            x2:1441, y2:1478,
+
+            markerX: 1414,
+            markerY: 1415
+        },
+	    
+        {
+            code: "tennis",
+            name: "Tennis Court",
+            type: "rectangle",
+
+            x1:1714, y1:1698,
+            x2:1884, y2:1784,
+
+            markerX: 1801,
+            markerY: 1741
+        },
+	    
+        {
+            code: "basketball",
+            name: "Basketball Court",
+            type: "rectangle",
+
+            x1:1657, y1:1927,
+            x2:1770, y2:2082,
+
+            markerX: 1716,
+            markerY: 2014
+        },
+	    
+        {
+            code: "volleyball",
+            name: "Volleyball Court",
+            type: "polygon",
+
+            points: [
+                [1696,2475],
+                [1687,2596],
+                [1833,2486],
+                [1821,2610],               
+            ],
+
+            markerX: 1777,
+            markerY: 2542
+        },
+
+	{
+            code: "badminton",
+            name: "Badminton Court",
+            type: "polygon",
+
+            points: [
+                [1696,2475],
+                [1687,2596],
+                [1574,2589],
+                [1583,2466],               
+            ],
+
+            markerX: 1628,
+            markerY: 2533
+        },
+
+	    
+        {
+            code: "archery",
+            name: "Archery",
+            type: "polygon",
+
+            points: [
+                [287,818],
+                [213,1061],
+                [478,1140],
+                [550,897], 
+            ],
+
+            markerX: 389,
+            markerY: 987
+        },
+	    
+        {
+            code: "edc",
+            name: "Entrepreneurship Developement Center (EDC)",
+            type: "rectangle",
+
+            x1:816, y1:1319,
+            x2:875, y2:1441,
+
+            markerX: 848,
+            markerY: 1385
+        },
+	    
+        {
+            code: "fmd",
+            name: "Facilities Management Department (FMD)",
+            type: "rectangle",
+
+            x1:218, y1:1605,
+            x2:562, y2:1736,
+
+            markerX: 388,
+            markerY: 1676
+        },
+	    
+        {
+            code: "mosque",
+            name: "Mosque",
+            type: "polygon",
+
+            points: [
+               	[1175,2547],
+               	[1256,2488],
+               	[1241,2641],
+               	[1324,2585],
+            ],
+
+            markerX: 1250,
+            markerY: 2560
+        },
+	    
+        {
+            code: "nea",
+            name: "Non Executive Apartment (NEA)",
+            type: "rectangle",
+
+            x1:1794, y1:1923,
+            x2:1997, y2:2059,
+
+            markerX: 1893,
+            markerY: 1991
+        },
+	    
+        {
+            code: "eaa",
+            name: "Executive Apartment A (EAA)",
+            type: "polygon",
+
+            points: [
+               	[652,2421],
+               	[672,2407],
+               	[652,2373],
+               	[739,2326],
+               	[811,2439],
+               	[726,2490],
+               	[701,2452],
+               	[679,2468],
+               
+            ],
+
+            markerX: 735,
+            markerY: 2413
+        },
+	    
+        {
+            code: "eab",
+            name: "Executive Apartment B (EAB)",
+            type: "polygon",
+
+            points: [
+               	[1435,2706],
+               	[1459,2632],
+               	[1716,2798],
+               	[1741,2724],
+            ],
+
+            markerX: 1582,
+            markerY: 2713
+        },
+	    
+        {
+            code: "guest house",
+            name: "MMU Guest House",
+            type: "polygon",
+
+            points: [
+               	[714,2623],
+               	[786,2664],
+               	[717,2778],
+               	[645,2736],
+            ],
+
+            markerX: 726,
+            markerY: 2702
+        },        
     ];
 
     // open map modal when click small map
@@ -213,6 +820,26 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
                     foundLocation = true;
                     break;
                 }                
+            }
+
+            // Region type = CIRCLE
+            if (region.type === "circle"){
+
+                const dx = x - region.centerX;
+                const dy = y - region.centerY;
+
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance <= region.radius){
+
+                    selectLocation(region.code);
+
+                    locationLabel.style.display = "block";
+                    locationLabel.innerText = "Selected Location: " + region.name;
+
+                    foundLocation = true;
+                    break;
+                }
             }
         }
 
