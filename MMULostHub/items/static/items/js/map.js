@@ -37,8 +37,8 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             name: "FCI Building",
             type: "rectangle",
 
-            x1:620, y1:1300,
-            x2:785, y2:1580,
+            x1:609, y1:1294,
+            x2:786, y2:1580,
 
             markerX: 705,
             markerY: 1432
@@ -50,9 +50,9 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             type: "polygon",
 
             points: [
-                [850,840],
-                [605,1215],
-                [835,1288],
+                [595,1221],
+                [836,1295],
+                [852,835],
             ],
 
             markerX: 752,
@@ -168,8 +168,8 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             name: "Dewan Tun Canselor",
             type: "rectangle",
 
-            x1:887, y1:1401,
-            x2:1062, y2:1172,
+            x1:887, y1:1172,
+            x2:1062, y2:1401,
 
             markerX: 969,
             markerY: 1288
@@ -286,8 +286,8 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             name: "Starbee",
             type: "rectangle",
 
-            x1:1235, y1:1481,
-            x2:1313, y2:1699,
+            x1:1229, y1:1476,
+            x2:1317, y2:1708,
             
             markerX: 1277,
             markerY: 1600
@@ -480,8 +480,8 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             name: "Indoor Sports Centre",
             type: "rectangle",
 
-            x1:1227, y1:1721,
-            x2:1340, y2:1818,
+            x1:1221, y1:1722,
+            x2:1345, y2:1823,
 
             markerX: 1289,
             markerY: 1774
@@ -561,10 +561,10 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             type: "polygon",
 
             points: [
-                [1696,2475],
-                [1687,2596],
-                [1833,2486],
-                [1821,2610],               
+                [1697,2407],
+                [1834,2487],
+                [1823,2617],
+                [1688,2606],               
             ],
 
             markerX: 1777,
@@ -577,10 +577,10 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             type: "polygon",
 
             points: [
-                [1696,2475],
-                [1687,2596],
-                [1574,2589],
-                [1583,2466],               
+                [1508,2465],
+                [1697,2407],
+                [1688,2606],
+                [1562,2604],               
             ],
 
             markerX: 1628,
@@ -634,10 +634,10 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             type: "polygon",
 
             points: [
-               	[1175,2547],
-               	[1256,2488],
-               	[1241,2641],
-               	[1324,2585],
+               	[1168,2544],
+               	[1258,2481],
+               	[1332,2585],
+               	[1242,2648],
             ],
 
             markerX: 1250,
@@ -683,10 +683,10 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             type: "polygon",
 
             points: [
-               	[1435,2706],
-               	[1459,2632],
-               	[1716,2798],
-               	[1741,2724],
+               	[1432,2711],
+               	[1459,2628],
+               	[1744,2724],
+               	[1717,2803],
             ],
 
             markerX: 1582,
@@ -739,16 +739,7 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
 
         // show inside console the accurate coordinate to add to above                                          CONSOLE
         console.log("Clicked Position:", x, y);
-        console.log(
-            "natural:",
-            mapBig.naturalWidth,
-            mapBig.naturalHeight
-        );
-        console.log(
-            "client:",
-            mapBig.clientWidth,
-            mapBig.clientHeight
-        );
+
 
         /* ====================================== 
                         Marker       
