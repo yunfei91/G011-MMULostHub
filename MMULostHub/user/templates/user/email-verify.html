@@ -1,8 +1,8 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head>
         <title>MMU Lost Hub</title>
-        {% load static %}
         <link rel="stylesheet" type="text/css" href="{% static 'user/css/email-verify.css' %}">
     </head>
 
@@ -65,11 +65,7 @@
 
     <script>
         function goBack() {
-            if (document.referrer !== "") {
-                window.history.back(); // Browser back
-            } else {
-                window.location.href = "{% url 'beginning' %}";
-            }
+            window.location.replace("{% url 'beginning' %}")
         }
         
         let otpTime = 0;

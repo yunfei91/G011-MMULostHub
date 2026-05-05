@@ -3,6 +3,8 @@ from django.http import JsonResponse # Return JSON data to frontend
 from django.contrib.auth.models import User # Django built-in user model
 from django.contrib.auth import authenticate, login, logout 
 from django.contrib.auth.decorators import login_required # Only users who are logged in can access this page
+from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import cache_control
 from django.contrib import messages # Show messages system (success/error alerts)
 
 from .services import create_user_account # Custom function for create user
@@ -274,9 +276,18 @@ def resend_otp(request):
 
 def user_logout(request):
     logout(request)
-    return redirect('beginning')
+    request.session.flush()
 
-@login_required # Must login first
+    response = redirect("beginning")
+
+    response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response["Pragma"] = "no-cache"
+    response["Expires"] = "0"
+
+    return response
+
+@login_required(login_url='beginning')
+@never_cache # Must login first
 def update_name(request):
     if request.method == "POST":
         name = (request.POST.get("name") or "").strip()
@@ -294,7 +305,8 @@ def update_name(request):
         
     return redirect('profile')
 
-@login_required
+@login_required(login_url='beginning')
+@never_cache
 def profile(request):
 
     user = request.user
@@ -316,7 +328,9 @@ def profile(request):
         'lost_posts': lost_posts,
         'found_posts': found_posts
     })
-@login_required
+
+@login_required(login_url='beginning')
+@never_cache
 def update_bio(request):
     if request.method == 'POST':
         bio = request.POST.get('bio', '')
@@ -329,7 +343,8 @@ def update_bio(request):
 
     return redirect('profile')
 
-@login_required
+@login_required(login_url='beginning')
+@never_cache
 def update_avatar(request):
     print("FILES:", request.FILES)
 

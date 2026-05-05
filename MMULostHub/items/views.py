@@ -2,13 +2,16 @@ from django.shortcuts import render, redirect
 from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.views.decorators.cache import never_cache
 
+@login_required(login_url='beginning')
+@never_cache
 def mainPage(request):
     post_box = Post.objects.all().order_by('-id')       #newest post on top # display all post in main page and order by datetime (latest post will be on top)
     return render(request, 'items/mainpage.html', {'posts': post_box})
 
-@login_required
+@login_required(login_url='beginning')
+@never_cache
 def createPost(request):
     if request.method == "POST":
         try:
