@@ -90,7 +90,13 @@
                             {% endif %}
                         </div>
 
-                        <p> Posted by: {{ post.post_user.username }} </p>
+                        <!-- yf added -->
+                        <p> 
+                            Posted by: 
+                            <a href="{% url 'userProfile' post.post_user.username %}">
+                                {{ post.post_user.username }}
+                            </a>
+                        </p>
 
                         {% if post.post_image %}
                             <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image" required>
