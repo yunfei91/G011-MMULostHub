@@ -43,18 +43,18 @@
             </h2>
 
             {% if messages %}
-                <script>
+            <script>
+                window.addEventListener("load", function () {
                     {% for message in messages %}
-
-                        Swal.fire({
-                            icon: "{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}",
-                            title: "{{ message.tags|title }}",
-                            text: "{{ message }}"
-                        });
-
+                        {% if message.tags == "success" %}
+                            showPopup("Success", "{{ message }}", true, 2000);
+                        {% else %}
+                            showPopup("Info", "{{ message }}");
+                        {% endif %}
                     {% endfor %}
-                </script>
-            {% endif %}
+                });
+            </script>
+        {% endif %}
 
             <form method = "POST" enctype = 'multipart/form-data'>      <!-- enctype add to upload photo -->
                 {% csrf_token %}                <!-- Django security protection code -->
