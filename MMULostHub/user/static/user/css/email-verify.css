@@ -1,0 +1,36 @@
+.otp-box {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+.otp-digit {
+    width: 45px;
+    height: 55px;
+    font-size: 22px;
+    text-align: center;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+}
+
+.otp-digit:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.shake {
+    animation: shake 0.3s;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+#errorMsg {
+    transition: 0.3s;
+}
