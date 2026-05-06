@@ -13,9 +13,12 @@ urlpatterns = [
     path('resend-otp/', views.resend_otp, name='resend_otp'),
 
     path('profile/', views.profile, name='profile'),
+    path('profile/<int:user_id>/', views.profile, name='view_profile'), #zinc support others view profile
     path('update-bio/', views.update_bio, name='update_bio'),
     path('update-avatar/', views.update_avatar, name='update_avatar'),
     path('update-name/', views.update_name, name='update_name'),
+
+    path('report-user/', views.report_user, name='report_user'), #zinc add
 
     path('logout/', views.user_logout, name='logout'),
 ]

@@ -16,6 +16,7 @@ def createPost(request):
     if request.method == "POST":
         try:
             create_post({
+                'post_user': request.POST.get('post_user'), #zinc
                 'post_type': request.POST.get('post_type'),
                 'post_datetime': request.POST.get('post_datetime'),
                 'post_itemcategory': request.POST.get('post_itemcategory'),

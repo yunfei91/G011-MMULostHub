@@ -21,7 +21,7 @@
             </nav>
             <div class="dropdown-content">
                 <a href="{% url 'admin_mainpage' %}">Home</a>                         <!--zinc admin home page link-->
-                <a href="#">View User</a>                       <!--zinc view user link-->
+                <a href="{% url 'admin_user' %}">View User</a>                       <!--zinc view user link-->
                 <a href="{% url 'admin_feedback' %}">View Feedback</a>          <!--zinc feedback/report link-->
                 <a href="{% url 'admin_report' %}">View Report</a>
                 <a href="{% url 'logout' %}">Logout</a>         <!--yt logout link-->
@@ -34,9 +34,11 @@
 
         <section>
             <!-- User Button-->
-            <button type="button">
+              <a href="{% url 'admin_user' %}">
+                <button type="button">
                 User
-            </button>
+                </button>
+            </a>
 
             <!-- Feedback Button -->
             <a href="{% url 'admin_feedback' %}">

@@ -307,9 +307,13 @@ def update_name(request):
 
 @login_required(login_url='beginning')
 @never_cache
-def profile(request):
+def profile(request, user_id=None): #zinc add if else
 
-    user = request.user
+    if user_id:
+        user = User.objects.get(id=user_id)
+    else:
+        user = request.user
+
     profile, created = Profile.objects.get_or_create(user=user)
 
     lost_posts = Post.objects.filter(
@@ -322,11 +326,15 @@ def profile(request):
         post_type='found'
     ).order_by('-id')
 
+    #zinc add is_owner
+    is_owner = (request.user == user)
+
     return render(request, 'user/profile.html', {
         'user': user,
         'profile': profile,
         'lost_posts': lost_posts,
-        'found_posts': found_posts
+        'found_posts': found_posts,
+        'is_owner': is_owner #zinc add
     })
 
 @login_required(login_url='beginning')
@@ -363,3 +371,21 @@ def update_avatar(request):
             profile.save()
 
     return redirect('profile')
+
+#zinc add def report_user
+@login_required
+def report_user(request):
+    if request.method == "POST":
+        user_id = request.POST.get('user_id')
+
+        # avoid user report by themselves
+        if str(request.user.id) == user_id:
+            return redirect('profile')
+        
+        user = User.objects.get(id=user_id)
+
+        profile, _ = Profile.objects.get_or_create(user=user)
+        profile.is_reported = True
+        profile.save()
+
+    return redirect('view_profile', user_id=user_id)

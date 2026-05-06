@@ -17,7 +17,7 @@ urlpatterns = [
     path('admin-main/update-report/<int:report_id>/', views.update_report_status, name='update_report_status'),
 
     # User View, Delete, Selective Delete
-    path('', views.admin_view_user, name='user_page'),
+    path('', views.admin_view_user, name='admin_user'),
     path('delete/', views.delete_user, name='delete_user'),
     path('delete_selected/', views.delete_selected, name='delete_selected'),
    # path('report/', views.report_user, name='report_user')

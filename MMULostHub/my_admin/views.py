@@ -7,6 +7,9 @@ from report.models import Feedback, Report, User
 
 from .email_utils import send_feedback_confirmation, send_report_confirmation
 
+from user.models import Profile
+from django.contrib.auth.models import User
+
 
 # Admin 
 def is_admin(user):
@@ -107,15 +110,19 @@ def update_report_status(request, report_id):
 
     return redirect('admin_report')
 
+# Admin view user acc
 def admin_view_user(request):
     query = request.GET.get('q')
 
     if query:
-        users = User.objects.fillter(username__icontains=query)
+        users = User.objects.filter(username__icontains=query)
     else:
         users = User.objects.all()
 
-    users = users.order_by('-is_reported', 'username')
+    for user in users:
+        Profile.objects.get_or_create(user=user)
+
+    users = users.select_related('profile').order_by('-profile__is_reported', 'username')
 
     return render(request, 'adminviewuser.html', {'users': users})
 
@@ -129,5 +136,5 @@ def delete_selected(request):
     if request.method == "POST":
         selected_ids = request.POST.getlist('selected_users')
         User.objects.filter(id__in=selected_ids).delete()
-    return redirect('user_page')
+    return redirect('admin_user')
 

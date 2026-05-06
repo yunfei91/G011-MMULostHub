@@ -41,6 +41,7 @@
             {% for post in posts %}
                 <div class = "post_box">
                     <h4> {{ post.post_type }} </h4>
+                    <p> User: {{ post.post_user }}</p> <!--zinc-->
                     <p> Date Time :{{ post.post_datetime }} </p>
                     <p> Item Category :{{ post.post_itemcategory }} </p>
                     <p> Location :{{ post.post_location }} </p>
