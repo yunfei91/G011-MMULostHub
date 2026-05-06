@@ -5,6 +5,30 @@
     <title>MMU Lost Hub</title>
     <link rel="stylesheet" type="text/css" href="{% static 'user/css/user-login.css' %}">
 </head>
+<style>
+.popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #ff4d4f;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.popup.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+</style>
 <body>
     <div class="whole-page">
         <header>
@@ -33,27 +57,28 @@
                     <form method="POST">
                         {% csrf_token %}
 
-                        <input type="text" id="email" name="email" placeholder="Email" value="{{ email }}" oninput="validateEmail()">
+                        <input type="text" id="email" name="email" placeholder="Email" value="{{ email }}">
                         <p id="email-status"></p>
                         {% if email_error %}
                             <p style="color:red;">{{ email_error }}</p>
                         {% endif %}
                         <!--Password-->
                         <div class="password-box">
-                            <input type="password" id="password" name="password" placeholder="Password" oninput="checkPassword()">
+                            <input type="password" id="password" name="password" placeholder="Password">
                             <span class="show-password" onclick="showPassword('password', this)">🙈</span>
+                            <p><a href="{% url 'forgot_pw' %}">Forgot Password?</a></p>
                         </div>
                         {% if password_error %}
                             <p style="color:red;">{{ password_error }}</p>
                         {% endif %}
 
-                        {% if user_login_error %}
-                            <p style="color:red;">{{ user_login_error }}</p>
-                        {% endif %}
-
-                        <button type="submit" id="loginBtn" disabled>Login</button>
+                        <button type="submit">Login</button>
                     </form>
                     
+                    <div id="errorPopup" class="popup">
+                        {{ user_login_error }}
+                    </div>
+
                     <p>Don't have an account?</p>
                     <a href="{% url 'register' %}">Register Here</a>
 
@@ -85,60 +110,19 @@
             window.location.replace("{% url 'beginning' %}")
         }
 
-        let emailValid = false;
-        let passwordValid = false;
+        window.addEventListener("load", () => {
+            let popup = document.getElementById("errorPopup");
 
-        /* Email */
-        function validateEmail() {
-            let email = document.getElementById("email").value.trim();
-            let status = document.getElementById("email-status");
+            if (!popup) return;
 
-            let pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (popup.innerText.trim() !== "") {
+                popup.classList.add("show");
 
-            if (!email) {
-                status.innerHTML = "";
-                emailValid = false;
-                updateBtn();
-                return;
+                setTimeout(() => {
+                    popup.classList.remove("show");
+                }, 3000);
             }
-
-            if (!pattern.test(email)) {
-                status.innerHTML = "Invalid email";
-                status.style.color = "red";
-                emailValid = false;
-            } else {
-                status.innerHTML = "";
-                emailValid = true;
-            }
-
-            updateBtn();
-        }
-
-        /* Check Password */
-        function checkPassword() {
-            let password = document.getElementById("password").value;
-
-            passwordValid = password.length > 0;
-            updateBtn();
-        }
-
-        /* Show Password */
-        function showPassword(inputId, icon) {
-            const input = document.getElementById(inputId);
-
-            if (input.type === "password") {
-                input.type = "text";
-                icon.textContent = "🙉";
-            } else {
-                input.type = "password";
-                icon.textContent = "🙈";
-            }
-        }
-
-        /* Button Control */
-        function updateBtn() {
-            document.getElementById("loginBtn").disabled =!(emailValid && passwordValid);
-        }
+        });
     </script>
 </body>
 </html>

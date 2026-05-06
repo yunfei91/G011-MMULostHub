@@ -9,6 +9,11 @@ urlpatterns = [
     path('check-email/', views.check_email, name='check_email'),
     path('check-name/', views.check_name, name='check_name'),
 
+    path('forgot-pw/', views.forgot_pw, name='forgot_pw'),
+    path('reset-otp-verify/', views.reset_otp_verify, name='reset_otp_verify'),
+    path('reset-pw/', views.reset_pw, name='reset_pw'),
+    path('resend-reset-otp/', views.resend_reset_otp, name='resend_reset_otp'),
+
     path('email-verify/', views.verify_email, name='verify_email'),
     path('resend-otp/', views.resend_otp, name='resend_otp'),
 

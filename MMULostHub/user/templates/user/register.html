@@ -38,7 +38,7 @@
                         <p id="name-status"></p>
                         <p style="color:red;">{{ name_error }}</p>
                         <!--Email-->
-                        <input type="text" id="email" name="email" placeholder="Email" oninput="checkEmail()">
+                        <input type="text" id="email" name="email" placeholder="Email" value="{{ email }}" oninput="checkEmail()">
                         <p id="email-status"></p>
                         {% if email_error %}
                             <p style="color:red;">{{ email_error }}</p>

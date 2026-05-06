@@ -14,6 +14,9 @@ from .services import create_user_account # Custom function for create user
 from .models import Profile 
 from items.models import Post
 
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+
 from django.core.mail import EmailMultiAlternatives # Send email with HTML content
 from django.template.loader import render_to_string # Convert HTML template to string (wording email)
 from django.utils.html import strip_tags # Remove HTML tags to create plain text version of email
@@ -45,8 +48,14 @@ def user_login(request):
         ):
             email_error = "Please enter a valid MMU email."
 
-        if not password:
-            password_error = "Please enter your password." # Empty check
+        if password and not password_error:
+            try:
+                validate_password(password)
+            except ValidationError as e:
+                password_error = e.messages[0]
+
+        if password == email:
+            password_error = "Password cannot be the same as emaul."
 
         if email_error or password_error:
             return render(request, 'user/user-login.html', { # Send errors back to login page
@@ -68,6 +77,132 @@ def user_login(request):
         return redirect('mainPage')
     
     return render(request, 'user/user-login.html')
+
+def forgot_pw(request):
+    if request.method == 'POST':
+        email = (request.POST.get('email') or '').strip().lower()
+
+        if not email:
+            return render(request, 'user/forgot-pw.html', {
+                'error': "Please enter your email."
+            })
+        
+        if not User.objects.filter(username=email).exists():
+            return render(request, 'user/forgot-pw.html', {
+                'error': "Email not registered"
+            })
+
+        otp = str(random.randint(100000, 999999))
+
+        request.session['reset_data'] = {
+            'email': email,
+            'otp': otp,
+            'otp_time': time.time()
+        }
+
+        send_otp_email(email, otp)
+
+        return redirect('reset_otp_verify')
+
+    return render(request, 'user/forgot-pw.html')
+
+def reset_otp_verify(request):
+    data = request.session.get('reset_data')
+
+    if not data:
+        return redirect('forgot_pw')
+    
+    now = time.time()
+
+    resend_cooldown = 30
+    resend_remaining = int(resend_cooldown - (now - data['otp_time']))
+    resend_remaining = max(0, resend_remaining)
+
+    otp_valid_seconds = 60
+    otp_remaining = int(otp_valid_seconds - (now - data['otp_time']))
+    otp_remaining = max(0, otp_remaining)
+
+    context = {
+        'otp_remaining': otp_remaining,
+        'resend_remaining': resend_remaining,
+        'can_resend': resend_remaining == 0,
+        'expired': otp_remaining == 0
+    }
+
+    if request.method == 'POST':
+        user_otp = request.POST.get('otp', '')
+
+        if context['expired']:
+            context['error'] = "OTP expired"
+            return render(request, 'user/resetpw-otp.html', context)
+
+        if user_otp != data['otp']:
+            context['error'] = "Invalid OTP"
+            return render(request, 'user/resetpw-otp.html', context)
+
+        return redirect('reset_pw')
+
+    return render(request, 'user/resetpw-otp.html', context)
+
+def resend_reset_otp(request):
+    if request.method != "POST":
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+    
+    data = request.session.get('reset_data')
+
+    if not data:
+        return JsonResponse({'error': 'Session expired'}, status=400)
+    
+    now = time.time()
+    
+    if now - data['otp_time'] < 30:
+        return JsonResponse({
+            'error': 'Please wait before requesting a new OTP.'
+        }, status=400)
+    
+    otp = str(random.randint(100000, 999999))
+
+    data['otp'] = otp
+    data['otp_time'] = now
+
+    request.session['reset_data'] = data
+    request.session.modified = True
+
+    send_otp_email(data['email'], otp)
+
+    return JsonResponse({'success': True})
+
+def reset_pw(request):
+    data = request.session.get('reset_data')
+
+    if not data:
+        return redirect('forgot_pw')
+
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if not password:
+            return render(request, 'user/reset-pw.html', {
+                'error': "Please enter password"
+            })
+
+        if password != confirm_password:
+            return render(request, 'user/reset-pw.html', {
+                'error': "Passwords do not match"
+            })
+
+        user = User.objects.get(username=data['email'])
+        user.set_password(password)
+        user.save()
+
+        request.session.pop('reset_data', None)
+
+        return render(request, 'user/reset-pw.html', {
+            'success': True
+        })
+
+    return render(request, 'user/reset-pw.html')
 
 def admin_login(request):
     if request.method == 'POST':
