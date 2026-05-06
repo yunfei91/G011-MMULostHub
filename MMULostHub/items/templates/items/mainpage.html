@@ -2,19 +2,26 @@
 <!DOCTYPE html>
 <html>
     <head> 
+        {% load static %}
+
         <title> 
             MMU Lost Hub 
         </title>
+
         <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
         <meta http-equiv="Pragma" content="no-cache">
         <meta http-equiv="Expires" content="0">
+
+        <script src="{% static 'items/js/mainpage.js' %}" defer></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </head>
 
     <body>
         <header>
-            <img src="{% static 'images/MMU Logo.png' %}" alt="MMU Logo" class = "mmu-logo">
+            <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class = "mmu-logo">
 
-            <img src="{% static 'images/Web Logo.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
+            <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
         </header>
 
         <div class="dropdown-nav">
@@ -32,18 +39,66 @@
             </div>
         </div>
 
+        {% if messages %}
+            <script>
+                {% for message in messages %}
+                    Swal.fire({
+                        icon: "{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}",
+                        title: "{{ message.tags|title }}",
+                        text: "{{ message }}",
+
+                        {% if message.tags == "success" %}
+                            timer: 2000,
+                            timerProgressBar: true,
+                            showConfirmButton: false
+                        {% endif %}
+                    });
+                {% endfor %}
+            </script>
+        {% endif %}
+
         <div class="search_bar">                                        <!-- after need to be changed when starting to do search feature -->
             <input type="text" placeholder="Search for items...">
             <button type="submit"> Search </button>
         </div>
 
-        <div class="post_list">
+        <div class="post-list">
             {% for post in posts %}
-                <div class = "post_box">
-                    <h4> {{ post.post_type }} </h4>
-                    <p> Date Time :{{ post.post_datetime }} </p>
-                    <p> Item Category :{{ post.post_itemcategory }} </p>
-                    <p> Location :{{ post.post_location }} </p>
+                <div class = "post-box">
+
+                    <div class = "post">
+                        <h4> {{ post.post_type|upper }} POST </h4>
+                        
+                        <div class = "post-nav">
+                            {% if request.user == post.post_user %}
+                                <a href="{% url 'editPost' post.id %}">
+                                    Edit Post
+                                </a>
+
+                                <form
+                                    method = "POST"
+                                    action = "{% url 'deletePost' post.id %}"
+                                    onsubmit = "confirmDelete(event, this)"
+                                >
+                                    {% csrf_token %}
+
+                                    <button type="submit">
+                                        Delete Post
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+
+                        <p> Posted by: {{ post.post_user.username }} </p>
+
+                        {% if post.post_image %}
+                            <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image" required>
+                        {% endif %}
+                        <p> Date Time: {{ post.post_datetime }} </p>
+                        <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
+                        <p> Location: {{ post.post_location.location_name }} </p>
+
+                    </div>
                 </div>
             {% empty %}
                 <div class = "no_post">
@@ -53,11 +108,17 @@
         </div>
 
         <div class="create_post">
-            <button type="button">
-                <a href="{% url 'createPost' %}"> 
-                    Create Post 
-                </a>
-            </button>
+            {% if user.is_authenticated %}
+                <button type="button">
+                    <a href="{% url 'createPost' %}"> 
+                        Create Post 
+                    </a>
+                </button>
+            {% else %}
+                <button type="button" onclick="pleaseLoginPopup()">
+                    Create Post
+                </button>
+            {% endif %}
         </div>
 
         <footer>
