@@ -18,7 +18,11 @@ urlpatterns = [
     path('update-avatar/', views.update_avatar, name='update_avatar'),
     path('update-name/', views.update_name, name='update_name'),
 
-    path('report-user/', views.report_user, name='report_user'), #zinc add
+    #zinc add to report user
+    path('report-user/', views.report_user, name='report_user'), 
+    
+    # yunfee add to check other user's profile
+    path('profile/<str:username>/', views.userProfile, name='userProfile'),
 
     path('logout/', views.user_logout, name='logout'),
 ]

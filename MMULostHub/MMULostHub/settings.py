@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -122,7 +123,12 @@ LOGIN_URL = 'beginning'
 
 STATIC_URL = 'static/' #Used for css
 
-import os
+
+LOGIN_URL = '/user/user-login/'
+
+TIME_ZONE = 'Asia/Kuala_Lumpur'
+
+# user import post images
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

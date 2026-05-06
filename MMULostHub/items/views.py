@@ -19,23 +19,27 @@ def createPost(request):
                 'post_user': request.POST.get('post_user'), #zinc
                 'post_type': request.POST.get('post_type'),
                 'post_datetime': request.POST.get('post_datetime'),
+                'userposts_images' : request.FILES.get('userposts_images'),
                 'post_itemcategory': request.POST.get('post_itemcategory'),
                 'post_location': request.POST.get('post_location'),
                 'post_description': request.POST.get('post_description'),
             }
             , request.user)
 
+            messages.success(request, "Post created successfully!")
             return redirect('mainPage')
         
         except ValueError as e:                                 # e = error msg from service.py
+            messages.error(request, str(e))
             return render(request, 'items/createpost.html', {
-                'error': str(e),                                 # e string and display in html
                 'item_categories': CATEGORY_CHOICES,
                 'locations': MMULocation.objects.all(),
+                'post_data': request.POST
             })
         
     return render(request, 'items/createpost.html', {
         'item_categories': CATEGORY_CHOICES,
         'locations': MMULocation.objects.all(),
+        'post_data': {},
     })
 

@@ -2,6 +2,11 @@
 <!DOCTYPE html>
 <html>
     <head> 
+        {% load static %}
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <link rel="stylesheet" href="{% static 'items/css/createpost.css' %}">
+        <script src="{% static 'items/js/createpost.js' %}" defer></script>                <!-- differ = load complete html then load java -->
+
         <title> 
             MMU Lost Hub
         </title>
@@ -12,22 +17,22 @@
 
     <body>
         <header>
-            <img src="{% static 'images/MMU Logo.png' %}" alt="MMU Logo" class = "mmu-logo">
+            <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class = "mmu-logo">
 
-            <img src="{% static 'images/Web Logo.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
+            <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
         </header>
 
         <div class = "dropdown-nav">
             <nav>
                 Menu button
             </nav>
-            <div class = "dropdown-content">
-                <a href = "{% url 'mainPage' %}"> Home </a>
-                <a href = "#"> Lost Post </a>                 <!-- yt lost post link -->
-                <a href = "#"> Found Post </a>                <!-- yt found post link -->
-                <a href = "{% url 'profile' %}"> Profile </a>                   <!-- yt profile link -->
-                <a href = "{% url 'feedback_form' %}"> Feedback/Report </a>
-                <a href="{% url 'logout' %}"> Logout </a>                   <!-- yt logout link -->
+            <div class="dropdown-content">
+                <a href="{% url 'mainPage' %}"> Home </a>
+                <a href="#"> Lost Post </a>                 <!-- yt lost post link -->
+                <a href="#"> Found Post </a>                <!-- yt found post link -->
+                <a href="{% url 'profile' %}"> Profile </a>                   <!-- yt profile link -->       
+                <a href="{% url 'feedback_form' %}">Feedback/Report </a>  <!-- zinc feedback link -->
+                <a href="{% url 'logout' %}"> Logout </a>               <!-- yt logout link -->
             </div>
         </div>
 
@@ -36,55 +41,133 @@
                 CREATE POST
             </h2>
 
-            <form method = "POST">
+            {% if messages %}
+                <script>
+                    {% for message in messages %}
+
+                        Swal.fire({
+                            icon: "{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}",
+                            title: "{{ message.tags|title }}",
+                            text: "{{ message }}"
+                        });
+
+                    {% endfor %}
+                </script>
+            {% endif %}
+
+            <form method = "POST" enctype = 'multipart/form-data'>      <!-- enctype add to upload photo -->
                 {% csrf_token %}                <!-- Django security protection code -->
                 
-                <label> Type: </lable>
+                <label> Type: </label>
                 <select name = "post_type">
+
                     <option value = ""> Select Post Type </option>
-                    <option value = "lost"> Lost Post </option>
-                    <option value = "found"> Found Post </option>
+
+                    <option value = "lost" {% if post_data.post_type == "lost" %} selected {% endif %}> 
+                        Lost Post 
+                    </option>
+
+                    <option value = "found" {% if post_data.post_type == "found" %} selected {% endif %}> 
+                        Found Post 
+                    </option>
+
                 </select>
 
                 <br><br>
 
                 <label> Date Time: </label>
-                <input type = "datetime-local" name = "post_datetime">
+                <input type = "datetime-local" name = "post_datetime" value = "{{ post_data.post_datetime }}">
 
                 <br><br> 
+
+                <label> Upload Item Image: </label>
+                <input type = "file" id = "post_image" name = "userposts_images" accept = "image/*" >                 <!-- Input image field / accept = "image/* (limit oni can choose photo) / id is for java-->
+                
+                <br><br>
+
+                <img id = 'image_preview' width = '200' style = "display:none;" />            <!-- Display photo uploaded -->
+
+                <br><br>
 
                 <label> Item Category: </label>
                 <select name = "post_itemcategory">
                     <option value = ""> Select Category </option>
 
-                    {% for value, label in item_categories %}                       <!-- (value, label) mcm inside model-->
-                        <option value = "{{ value }}"> {{ label }} </option>
+                    {% for value, label in item_categories %}
+                        <option value="{{ value }}" {% if post_data.post_itemcategory == value %} selected {% endif %}>
+                            {{ label }}
+                        </option>
                     {% endfor %}
                 </select>
 
                 <br><br>
 
                 <label> Location: </label>
-                <select name = "post_location">
+                <select name = "post_location" id = "post_location">
 
                     <option value =""> Select Location </option>
 
-                    {% for loc in locations %}                                              <!-- loc=data inside locations = item in location(loop code) -->
-                        <option value = "{{loc.id}}"> {{loc.location_name}} </option>
+                    {% for loc in locations %}
+                        <option value="{{loc.location_code}}" {% if post_data.post_location == loc.location_code %} selected {% endif %}>
+                            {{loc.location_name}}
+                        </option>
                     {% endfor %}
 
                 </select>
 
                 <br><br>
 
-                <label> Item Description: </label>
-                <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ "></textarea>
+                <p>Click Map to choose location: </p>
+                <div class = "map_box">
+                    <img src="{% static 'images/map-img.jpg' %}" id="smallMap" class="smallMap">
+
+                    <div id = "smallMap_marker" class = "smallMap-marker"> 📍 </div>
+                </div>
 
                 <br><br>
 
-                <button type = "submit">
+                <label> Item Description: </label>
+                <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ ">{{ post_data.post_description }}</textarea>
+
+                <div id="map_modal" class="map_modal">
+
+                    <div class="mapmodal_content">
+
+                        <!-- Close button -->
+                        <span id="close_map" class="close_button">
+                            &times;
+                        </span>
+
+                        <!-- Scroll container -->
+                        <div class="map-scroll-container">
+
+                            <div id = "location_label" class = "location_label"></div>
+
+                            <div class="big-map-box">
+    
+                                <img
+                                    src="{% static 'images/map-img.jpg' %}"
+                                    id="bigMap"
+                                    class="bigMap"
+                                    alt="MMU Big Map"
+                                >
+
+                                <div id="bigMap_marker" class="bigMap-marker">
+                                    📍
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <br><br>
+
+                <button type = "button" onclick = "confirmCreate(event)">
                         Create Post 
-                    </a>
                 </button>
 
             </form>
@@ -98,4 +181,11 @@
             Designed by: Kho Yee Theng / Tan Yun Fee / Lim Tze Ying
         </p>
     </footer>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+
+
+ 
+>>>>>>> 39f8d28f243a1d17a2a5d2007f541a61803960cb

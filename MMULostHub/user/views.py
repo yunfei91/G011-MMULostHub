@@ -7,6 +7,10 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.cache import cache_control
 from django.contrib import messages # Show messages system (success/error alerts)
 
+# yunfee add to check other user's profile
+# check if the user exists if not then 404
+from django.shortcuts import get_object_or_404
+
 from .services import create_user_account # Custom function for create user
 from .models import Profile 
 from items.models import Post
@@ -372,7 +376,8 @@ def update_avatar(request):
 
     return redirect('profile')
 
-#zinc add def report_user
+
+#zinc add def report_user 
 @login_required
 def report_user(request):
     if request.method == "POST":
@@ -389,3 +394,27 @@ def report_user(request):
         profile.save()
 
     return redirect('view_profile', user_id=user_id)
+
+# yunfee add to check other user's profile
+def userProfile(request, username):
+    user_obj = get_object_or_404(User, username=username)
+
+    profile, created = Profile.objects.get_or_create(user=user_obj)
+
+    lost_posts = Post.objects.filter(
+        post_user = user_obj,
+        post_type = 'lost'
+    ).order_by('-id')
+
+    found_posts = Post.objects.filter(
+        post_user = user_obj,
+        post_type ='found'
+    ).order_by('-id')
+
+    return render(request, 'user/profile.html', {
+        'user': user_obj,
+        'profile': profile,
+        'lost_posts': lost_posts,
+        'found_posts': found_posts
+    })
+

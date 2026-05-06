@@ -53,21 +53,40 @@ class Post (models.Model):
     post_user = models.ForeignKey(
         User,
         on_delete = models.CASCADE,                             # if user deleted , all related post or data also will be deleted
+        null = False,                            
+        blank = False,
     )
     
-    post_type = models.CharField(choices=[('lost','Lost'),('found','Found')])
+    post_type = models.CharField(
+        max_length = 10,
+        choices = [('lost','Lost'), ('found','Found')],
+        null = False,                            
+        blank = False,
+    )
 
-    post_datetime = models.DateTimeField()
+    post_datetime = models.DateTimeField(
+        null = False,                            
+        blank = False,
+    )
+
+#zinc change False to True
+    post_image = models.ImageField(
+        upload_to = 'userposts_images/',
+        null = True,
+        blank = True,
+    )
 
     # Dropdown menu to choose category
     post_itemcategory = models.CharField(
         max_length = 100,
         choices = CATEGORY_CHOICES,
+        null = False,
+        blank = False,
     )
 
     post_location = models.ForeignKey(
         MMULocation,
-        on_delete = models.CASCADE,
+        on_delete = models.SET_NULL,
         null = True,                            # database can be empty / can set in view.py to diffrentiate between lost and found post
         blank = True,                           # form can be empty
     )
