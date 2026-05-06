@@ -55,7 +55,7 @@ def user_login(request):
                 password_error = e.messages[0]
 
         if password == email:
-            password_error = "Password cannot be the same as emaul."
+            password_error = "Password cannot be the same as email."
 
         if email_error or password_error:
             return render(request, 'user/user-login.html', { # Send errors back to login page
