@@ -124,7 +124,7 @@ def admin_view_user(request):
 
     users = users.select_related('profile').order_by('-profile__is_reported', 'username')
 
-    return render(request, 'adminviewuser.html', {'users': users})
+    return render(request, 'admin/adminviewuser.html', {'users': users})
 
 def delete_user(request):
     if request.method == "POST":
