@@ -97,3 +97,22 @@ def deletePost(request, post_id):
         return redirect('mainPage')
     
     return redirect('mainPage')
+
+# yt added for lost posts page
+@login_required(login_url='beginning')
+@never_cache
+def lost_posts(request):
+    lost_posts = Post.objects.filter(post_type='lost').order_by('-id')
+
+    return render(request, 'items/lost-posts.html', {
+        'posts': lost_posts
+    })
+
+@login_required(login_url='beginning')
+@never_cache
+def found_posts(request):
+    found_posts = Post.objects.filter(post_type='found').order_by('-id')
+
+    return render(request, 'items/found-posts.html', {
+        'posts': found_posts
+    })

@@ -26,11 +26,11 @@
             <nav>Menu button</nav>
             <div class="dropdown-content">
                 <a href="{% url 'mainPage' %}">Home</a>
-                <a href="#">Lost Post</a>
-                <a href="#">Found Post</a>
-                <a href="#">Profile</a>
+                <a href="{% url 'lost_posts' %}">Lost Post</a>
+                <a href="{% url 'found_posts' %}">Found Post</a>
+                <a href="{% url 'profile' %}">Profile</a>
                 <a href="{% url 'feedback_form' %}">Feedback/Report</a>
-                <a href="#">Logout</a>
+                <a href="{% url 'logout' %}">Logout</a>
             </div>
         </div>
 

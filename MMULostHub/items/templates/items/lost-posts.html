@@ -62,12 +62,13 @@
             <button type="submit"> Search </button>
         </div>
 
+        <h2>Lost Posts</h2>
+        
         <div class="post-list">
             {% for post in posts %}
                 <div class = "post-box">
 
                     <div class = "post">
-                        <h4> {{ post.post_type|upper }} POST </h4>
                         
                         <div class = "post-nav">
                             {% if request.user == post.post_user %}
