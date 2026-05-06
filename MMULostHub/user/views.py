@@ -5,6 +5,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required # Only users who are logged in can access this page
 from django.contrib import messages # Show messages system (success/error alerts)
 
+# yunfee add to check other user's profile
+# check if the user exists if not then 404
+from django.shortcuts import get_object_or_404
+
 from .services import create_user_account # Custom function for create user
 from .models import Profile 
 from items.models import Post
@@ -348,3 +352,26 @@ def update_avatar(request):
             profile.save()
 
     return redirect('profile')
+
+# yunfee add to check other user's profile
+def userProfile(request, username):
+    user_obj = get_object_or_404(User, username=username)
+
+    profile, created = Profile.objects.get_or_create(user=user_obj)
+
+    lost_posts = Post.objects.filter(
+        post_user = user_obj,
+        post_type = 'lost'
+    ).order_by('-id')
+
+    found_posts = Post.objects.filter(
+        post_user = user_obj,
+        post_type ='found'
+    ).order_by('-id')
+
+    return render(request, 'user/profile.html', {
+        'user': user_obj,
+        'profile': profile,
+        'lost_posts': lost_posts,
+        'found_posts': found_posts
+    })
