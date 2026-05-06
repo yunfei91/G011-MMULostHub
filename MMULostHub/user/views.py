@@ -4,7 +4,6 @@ from django.contrib.auth.models import User # Django built-in user model
 from django.contrib.auth import authenticate, login, logout 
 from django.contrib.auth.decorators import login_required # Only users who are logged in can access this page
 from django.views.decorators.cache import never_cache
-from django.views.decorators.cache import cache_control
 from django.contrib import messages # Show messages system (success/error alerts)
 
 from .services import create_user_account # Custom function for create user
