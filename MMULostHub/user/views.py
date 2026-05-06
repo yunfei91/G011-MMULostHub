@@ -1,30 +1,32 @@
 from django.shortcuts import render, redirect # render = return HTML page ; redirect = jump to another URL
 from django.http import JsonResponse # Return JSON data to frontend
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.contrib.auth.models import User # Django built-in user model
+from django.contrib.auth import authenticate, login, logout 
+from django.contrib.auth.decorators import login_required # Only users who are logged in can access this page
+from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import cache_control
+from django.contrib import messages # Show messages system (success/error alerts)
 
-from .services import create_user_account
-from .models import Profile
+from .services import create_user_account # Custom function for create user
+from .models import Profile 
 from items.models import Post
 
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
+from django.core.mail import EmailMultiAlternatives # Send email with HTML content
+from django.template.loader import render_to_string # Convert HTML template to string (wording email)
+from django.utils.html import strip_tags # Remove HTML tags to create plain text version of email
 from django.conf import settings
 
-import time
-import random
+import time # Handle timestamps
+import random # Generate random OTP for email verification
 import re # Regular expression for validation
 
 def beginning(request):
     return render(request, 'user/beginning.html')
 
 def user_login(request):
-    if request.method == 'POST':
+    if request.method == 'POST': # Form submitted
         email = (request.POST.get('email') or '').strip().lower() # Get email, remove spaces, lowercase
-        password = request.POST.get('password') or ''
+        password = request.POST.get('password') or '' # Use empty string to prevent error when value=None
 
         # Store error messages
         email_error = ""
@@ -32,7 +34,7 @@ def user_login(request):
         user_login_error = ""
 
         if not email:
-            email_error = "Please enter your MMU email."
+            email_error = "Please enter your MMU email." # Empty email
         elif not (
             re.match(r'^[A-Za-z0-9._%+-]+@mmu\.edu\.my$',email)
             or
@@ -44,22 +46,22 @@ def user_login(request):
             password_error = "Please enter your password." # Empty check
 
         if email_error or password_error:
-            return render(request, 'user/user-login.html', {
+            return render(request, 'user/user-login.html', { # Send errors back to login page
                 'email_error': email_error,
                 'password_error': password_error,
                 'email': email,
             })
         
-        user = authenticate(request, username=email, password=password) # Check login info
+        user = authenticate(request, username=email, password=password) # Check user in db
 
         if user is None:
-            user_login_error = "Invalid email"
+            user_login_error = "Invalid email or password"
             return render(request, 'user/user-login.html', {
                 'user_login_error': user_login_error,
                 'email': email,
             })
 
-        login(request, user)
+        login(request, user) # Login success, create session
         return redirect('mainPage')
     
     return render(request, 'user/user-login.html')
@@ -79,13 +81,13 @@ def admin_login(request):
         user = authenticate(request, username=email, password=password)
 
         if user is None:
-            admin_login_error = "Invalid email"
+            admin_login_error = "Invalid email or password"
             return render(request, 'user/admin-login.html', {
                 'admin_login_error': admin_login_error,
             })
 
         # Check admin permission
-        if not user.is_staff:
+        if not user.is_staff: 
             admin_login_error = "You are not authorized as admin."
             return render(request, 'user/admin-login.html', {
                 'admin_login_error': admin_login_error
@@ -144,9 +146,9 @@ def register(request):
                 'confirm_password': confirm_password,
             })
         
-        otp = str(random.randint(100000, 999999))
+        otp = str(random.randint(100000, 999999)) # generate 6-digit code
 
-        request.session['register_data'] = {
+        request.session['register_data'] = { # Save temporary registration data
             'name': name,
             'email': email,
             'password': password,
@@ -154,28 +156,28 @@ def register(request):
             'otp_time': time.time()
         }
         
-        send_otp_email(email, otp)
+        send_otp_email(email, otp) # Send OTP to user's email
         return redirect('verify_email')
     
     return render(request, 'user/register.html')
 
 def send_otp_email(email, otp):
 
-    html_content =render_to_string("email/otp_email.html", {
-        "otp": otp,
+    html_content =render_to_string("email/otp_email.html", { # convert template to word
+        "otp": otp, # Pass data into template
         "email": email
     })
 
-    text_content = strip_tags(html_content)
+    text_content = strip_tags(html_content) # Create plain text version by removing HTML tags
 
-    email_msg = EmailMultiAlternatives(
+    email_msg = EmailMultiAlternatives( # Create email message
         subject = "MMU Lost Hub - Email Verification Code",
         body = text_content,
         from_email = settings.DEFAULT_FROM_EMAIL,
         to = [email]
     )
 
-    email_msg.attach_alternative(html_content, "text/html")
+    email_msg.attach_alternative(html_content, "text/html") # Attach HTML version
     email_msg.send()
 
 def check_name(request):
@@ -191,19 +193,19 @@ def check_email(request):
     return JsonResponse({'exists': exists})
 
 def verify_email(request):
-    data = request.session.get('register_data')
+    data = request.session.get('register_data') # Get session data
 
     if not data:
         return redirect('register')
     
     now = time.time()
     
-    otp_valid_seconds = 60
-    otp_remaining = int(otp_valid_seconds - (now - data['otp_time']))
-    otp_remaining = max(0, otp_remaining)
+    otp_valid_seconds = 60 # OTP valid 60s
+    otp_remaining = int(otp_valid_seconds - (now - data['otp_time'])) # Calculate remaining time for OTP
+    otp_remaining = max(0, otp_remaining) # Cannot be negative
 
-    resend_cooldown = 30
-    resend_remaining = int(resend_cooldown - (now-data['otp_time']))
+    resend_cooldown = 30 # resend limit 30s
+    resend_remaining = int(resend_cooldown - (now-data['otp_time'])) # Calculate resend wait time
     resend_remaining = max(0, resend_remaining)
 
     context = {
@@ -220,19 +222,21 @@ def verify_email(request):
             context['error'] = "OTP expired"
             return render(request,'user/email-verify.html', context)
         
-        if user_otp != data['otp']:
+        if user_otp != data['otp']: # Wrong OTP
             context['error'] = "Invalid OTP"
             return render(request, 'user/email-verify.html', context)
         
-        user = create_user_account(
+        if User.objects.filter(username=data['email']).exists():
+            context['error'] = "Account already exists"
+            return render(request, 'user/email-verify.html', context)
+        
+        create_user_account( # create new user in db
             data['name'],
             data['email'],
             data['password']
         )
 
-        login(request, user)
-
-        request.session.pop('register_data', None)
+        request.session.pop('register_data', None) # Remove data
 
         return redirect('user_login')
     
@@ -240,7 +244,7 @@ def verify_email(request):
 
 def resend_otp(request):
     if request.method != "POST":
-        return JsonResponse({'error': 'Invalid request'}, status=400)
+        return JsonResponse({'error': 'Invalid request'}, status=400) # 400=error, bad request
     
     data = request.session.get('register_data')
 
@@ -249,34 +253,41 @@ def resend_otp(request):
     
     now = time.time()
     
-    if now - data['otp_time'] < 30:
+    if now - data['otp_time'] < 30: # Check if 30 seconds have passed from last OTP generate, prevent spam
         return JsonResponse({
             'error': 'Please wait before requesting a new OTP.'
         }, status=400)
     
     otp = str(random.randint(100000, 999999))
 
-    data['otp'] = otp
+    data['otp'] = otp # Update OTP + time
     data['otp_time'] = now
 
     request.session['register_data'] = data
-    request.session.modified = True
+    request.session.modified = True # force session save
 
     try:
         send_otp_email(data['email'], otp)
-    except Exception as e:
-        print("EMAIL ERROR:", e)
+    except Exception as e: # Catch error
+        print("EMAIL ERROR:", e) # Debug log
         return JsonResponse({'error': 'Failed to resend OTP'}, status=500)
 
     return JsonResponse({'success': True})
 
 def user_logout(request):
     logout(request)
-    return redirect('beginning')
+    request.session.flush()
 
-from django.contrib import messages
-from items.models import Post
-@login_required # Must login first
+    response = redirect("beginning")
+
+    response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response["Pragma"] = "no-cache"
+    response["Expires"] = "0"
+
+    return response
+
+@login_required(login_url='beginning')
+@never_cache # Must login first
 def update_name(request):
     if request.method == "POST":
         name = (request.POST.get("name") or "").strip()
@@ -294,7 +305,8 @@ def update_name(request):
         
     return redirect('profile')
 
-@login_required
+@login_required(login_url='beginning')
+@never_cache
 def profile(request):
 
     user = request.user
@@ -316,7 +328,9 @@ def profile(request):
         'lost_posts': lost_posts,
         'found_posts': found_posts
     })
-@login_required
+
+@login_required(login_url='beginning')
+@never_cache
 def update_bio(request):
     if request.method == 'POST':
         bio = request.POST.get('bio', '')
@@ -329,7 +343,8 @@ def update_bio(request):
 
     return redirect('profile')
 
-@login_required
+@login_required(login_url='beginning')
+@never_cache
 def update_avatar(request):
     print("FILES:", request.FILES)
 

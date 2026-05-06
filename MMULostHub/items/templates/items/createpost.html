@@ -1,11 +1,13 @@
+{% load static %}
 <!DOCTYPE html>
-
 <html>
     <head> 
         <title> 
             MMU Lost Hub
-            {% load static %}
         </title>
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
     </head>
 
     <body>
@@ -23,7 +25,7 @@
                 <a href = "{% url 'mainPage' %}"> Home </a>
                 <a href = "#"> Lost Post </a>                 <!-- yt lost post link -->
                 <a href = "#"> Found Post </a>                <!-- yt found post link -->
-                <a href = "#"> Profile </a>                   <!-- yt profile link -->
+                <a href = "{% url 'profile' %}"> Profile </a>                   <!-- yt profile link -->
                 <a href = "{% url 'feedback_form' %}"> Feedback/Report </a>
                 <a href="{% url 'logout' %}"> Logout </a>                   <!-- yt logout link -->
             </div>
@@ -97,5 +99,3 @@
         </p>
     </footer>
 </html>
-
-

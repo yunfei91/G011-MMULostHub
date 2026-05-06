@@ -1,8 +1,8 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>MMU Lost Hub</title>
-    {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'user/css/user-login.css' %}">
 </head>
 <body>
@@ -33,7 +33,7 @@
                     <form method="POST">
                         {% csrf_token %}
 
-                        <input type="text" id="email" name="email" placeholder="Email" oninput="validateEmail()">
+                        <input type="text" id="email" name="email" placeholder="Email" value="{{ email }}" oninput="validateEmail()">
                         <p id="email-status"></p>
                         {% if email_error %}
                             <p style="color:red;">{{ email_error }}</p>
@@ -70,12 +70,19 @@
     </div>
 
     <script>
-        function goBack() {
-            if (document.referrer !== "") {
-                window.history.back();
-            } else {
-                window.location.href = "{% url 'beginning' %}";
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted) {
+                location.reload();
             }
+        });
+
+        history.replaceState(null, null, location.href);
+        window.onpopstate = function () {
+            window.location.replace("{% url 'beginning' %}");
+        };
+
+        function goBack() {
+            window.location.replace("{% url 'beginning' %}")
         }
 
         let emailValid = false;
