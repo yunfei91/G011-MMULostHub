@@ -12,11 +12,11 @@ function confirmEdit(event) {
                 Check Post Type      
      ====================================== */
     if (!postType) {
-        Swal.fire("Error", "Please choose Lost or Found.", "error");
+        showPopup("Error", "Please choose Lost or Found.");
         return;
     }
     if (postType === "found" && !location) {
-        Swal.fire("Error", "Location is required for Found Posts.", "error");
+        showPopup("Error", "Location is required for Found Posts.");
         return;
     }
 
@@ -24,7 +24,7 @@ function confirmEdit(event) {
                  Check Date Time      
      ====================================== */
     if (!datetime) {
-        Swal.fire("Error", "Please select date & time.", "error");
+        showPopup("Error", "Please select date & time.");
         return;
     }
 
@@ -32,7 +32,7 @@ function confirmEdit(event) {
     const now = new Date();                                 // date time now (mlys)
 
     if (selectedDate > now) {
-        Swal.fire("Error", "Datetime cannot be in the future.", "error");
+        showPopup("Error", "Datetime cannot be in the future.");
         return;
     }
     
@@ -40,7 +40,7 @@ function confirmEdit(event) {
                 Check Category        
      ====================================== */
     if (!category) {
-        Swal.fire("Error", "Please choose a category.", "error");
+        showPopup("Error", "Please choose a category.");
         return;
     }
     
@@ -59,7 +59,7 @@ function confirmEdit(event) {
         existingImage !== "";
 
     if (!image && !hasExistingImage) {
-        Swal.fire("Error", "Please upload an image.", "error");                     // if no new img and no old image 
+        showPopup("Error", "Please upload an image.");                     // if no new img and no old image 
         return;
     }
 
@@ -67,16 +67,7 @@ function confirmEdit(event) {
     /* ====================================== 
             Confirmation to edit post        
      ====================================== */
-    Swal.fire({
-        title: "CONFIRMATION",
-        text: "Are you sure you want to update this post?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Yes",
-        cancelButtonText: "No"
-    }).then((result) => {
-        if (result.isConfirmed){
-            form.submit();
-        }
+    showConfirmPopup("Confirm", "Are you sure you want to edit this post?", () => {
+        form.requestSubmit();
     });
 }
