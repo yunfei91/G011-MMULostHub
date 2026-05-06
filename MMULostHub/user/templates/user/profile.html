@@ -103,33 +103,23 @@
             <button onclick="showFound()">Found</button>
         </div>
 
-        <div id="lostSection">
-            <h2>Lost Posts</h2>
-            {% for post in lost_posts %}
-                <div class="lost-item">
-                    <p><b>Category:</b> {{ post.post_itemcategory }}</p>
-                    <p><b>Description:</b> {{ post.post_description }}</p>
-                    <p><b>Location:</b> {{ post.post_location }}</p>
-                    <p><b>Date:</b> {{ post.post_datetime }}</p>
+        <div id="post-section">
+
+            {% for post in all_posts %}
+                <div class="post-item" data-type="{{ post.post_type }}">
+                    <h4>{{ post.post_type|upper }} POST</h4>
+
+                    {% if post.post_image %}
+                        <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image" required>
+                    {% endif %}
+
+                    <p> Date Time: {{ post.post_datetime }} </p>
+                    <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
+                    <p> Location: {{ post.post_location.location_name }} </p>
                     <p>————————————————————————————————————————————————————————</p>
                 </div>
             {% empty %}
                 <p>No lost posts</p>
-            {% endfor %}
-        </div>
-
-        <div id="foundSection">
-            <h2>Found Posts</h2>
-            {% for post in found_posts %}
-                <div class="found-item">
-                    <p><b>Category:</b> {{ post.post_itemcategory }}</p>
-                    <p><b>Description:</b> {{ post.post_description }}</p>
-                    <p><b>Location:</b> {{ post.post_location }}</p>
-                    <p><b>Date:</b> {{ post.post_datetime }}</p>
-                    <p>————————————————————————————————————————————————————————</p>
-                </div>
-            {% empty %}
-                <p>No found posts</p>
             {% endfor %}
         </div>
 
@@ -270,20 +260,24 @@
         document.addEventListener("DOMContentLoaded", function () {
             showAll();
         });
+
         // Show all lost and found posts
         function showAll() {
-            document.getElementById("lostSection").style.display = "block";
-            document.getElementById("foundSection").style.display = "block";
+            document.querySelectorAll(".post-item").forEach(post => {
+                post.style.display = "block";
+            });
         }
         
         function showLost() {
-            document.getElementById("lostSection").style.display = "block";
-            document.getElementById("foundSection").style.display = "none";
+            document.querySelectorAll(".post-item").forEach(post => {
+                post.style.display = (post.dataset.type === "lost") ? "block" : "none";
+            });
         }
 
         function showFound() {
-            document.getElementById("lostSection").style.display = "none";
-            document.getElementById("foundSection").style.display = "block";
+            document.querySelectorAll(".post-item").forEach(post => {
+                post.style.display = (post.dataset.type === "found") ? "block" : "none";
+            });
         }
     </script>
 </body>

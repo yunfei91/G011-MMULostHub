@@ -312,6 +312,10 @@ def profile(request):
     user = request.user
     profile, created = Profile.objects.get_or_create(user=user)
 
+    all_posts = Post.objects.filter(
+        post_user=user
+    ).order_by('-id')
+
     lost_posts = Post.objects.filter(
         post_user=user,
         post_type='lost'
@@ -325,6 +329,7 @@ def profile(request):
     return render(request, 'user/profile.html', {
         'user': user,
         'profile': profile,
+        'all_posts': all_posts,
         'lost_posts': lost_posts,
         'found_posts': found_posts
     })
