@@ -108,12 +108,20 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             type: "polygon",
 
             points: [
-                [1024,1570],
-                [1090,1545],
-                [1043,1662],
-                [1117,1664],
-                [1011,1765],
-                [1065,1801],
+                [1026,1578],
+                [1096,1547],
+                [1114,1594],
+                [1123,1641],
+                [1121,1685],
+                [1112,1718],
+                [1100,1756],
+                [1087,1785],
+                [1067,1810],
+                [1008,1778],
+                [1026,1740],
+                [1035,1702],
+                [1042,1566],
+                [1031,1605]
             ],
 
             markerX: 1077,
@@ -126,11 +134,12 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             type: "polygon",
 
             points: [
-		        [981,1528],
-                [1033,1463],
-		        [1094,1546],
-		        [1024,1577]
-               
+		        [1033,1634],
+                [1071,1504],
+		        [1096,1547],
+		        [1026,1578],
+                [1008,1558],
+                [984,1529]               
             ],
 
             markerX: 1037,
@@ -882,13 +891,9 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
         
         let inside = false;
 
-        for(
+        for(let i = 0, j = polygon.length - 1; i < polygon.length; j = i++){
             // j = last point
-            let i = 0, j = polygon.length - 1;
-            i < polygon.length;
             // loop 2 start, j take previouse i, then i +1
-            j = i ++
-        ){
             let xi = polygon[i][0]; 
             let yi = polygon[i][1]; 
 
