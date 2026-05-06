@@ -118,13 +118,21 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
+<<<<<<< HEAD
 LOGIN_URL = 'beginning'
+=======
+STATIC_URL = 'static/'
+>>>>>>> 39f8d28f243a1d17a2a5d2007f541a61803960cb
 
 STATIC_URL = 'static/' #Used for css
 
 TIME_ZONE = 'Asia/Kuala_Lumpur'
 
+<<<<<<< HEAD
 import os
+=======
+# user import post images
+>>>>>>> 39f8d28f243a1d17a2a5d2007f541a61803960cb
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -135,4 +143,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'adminlosthub@gmail.com'
 EMAIL_HOST_PASSWORD = 'mauqafdeqnkwjkay'
 
+<<<<<<< HEAD
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+=======
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+>>>>>>> 39f8d28f243a1d17a2a5d2007f541a61803960cb
