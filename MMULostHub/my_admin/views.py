@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Q
 
 from items.models import Post
-from report.models import Feedback, Report
+from report.models import Feedback, Report, User
 
 from .email_utils import send_feedback_confirmation, send_report_confirmation
 
@@ -106,3 +106,28 @@ def update_report_status(request, report_id):
                 )
 
     return redirect('admin_report')
+
+def admin_view_user(request):
+    query = request.GET.get('q')
+
+    if query:
+        users = User.objects.fillter(username__icontains=query)
+    else:
+        users = User.objects.all()
+
+    users = users.order_by('-is_reported', 'username')
+
+    return render(request, 'adminviewuser.html', {'users': users})
+
+def delete_user(request):
+    if request.method == "POST":
+        user_id = request.POST.get('user_id')
+        User.objects.filter(id=user_id).delete()
+    return redirect('admin_user')
+
+def delete_selected(request):
+    if request.method == "POST":
+        selected_ids = request.POST.getlist('selected_users')
+        User.objects.filter(id__in=selected_ids).delete()
+    return redirect('user_page')
+

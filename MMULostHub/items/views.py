@@ -34,3 +34,4 @@ def createPost(request):
         'item_categories': CATEGORY_CHOICES,
         'locations': MMULocation.objects.all(),
     })
+

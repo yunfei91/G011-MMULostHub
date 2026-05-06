@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from  .services import create_feedback
 from django.contrib.auth.decorators import login_required
 from items.models import Post
-from .models import Feedback,Report
+from .models import Feedback, Report
 from django.contrib import messages
 
 
@@ -46,3 +46,5 @@ def submit_report(request):
         post = get_object_or_404(Post, id=post_id)
 
     return render(request, 'report/reportfunction.html', {'post':post})
+
+
