@@ -1,3 +1,4 @@
+
 function confirmCreate(event) {
 
     event.preventDefault();                         // prevent form submit directly before check this function
@@ -14,11 +15,11 @@ function confirmCreate(event) {
                 Check Post Type      
      ====================================== */
     if (!postType) {
-        Swal.fire("Error", "Please choose Lost or Found.", "error");
+        showPopup("Error", "Please choose Lost or Found.");
         return;
     }
     if (postType === "found" && !location) {
-        Swal.fire("Error", "Location is required for Found Posts.", "error");
+        showPopup("Error", "Location is required for Found Posts.");
         return;
     }
 
@@ -26,14 +27,14 @@ function confirmCreate(event) {
                  Check Date Time      
      ====================================== */
     if (!datetime) {
-        Swal.fire("Error", "Please select date & time.", "error");
+        showPopup("Error", "Please select date & time.");
         return;
     }
     const selectedDate = new Date(datetime);            // date time user input
     const now = new Date();                                 // date time now (mlys)
 
     if (selectedDate > now) {
-        Swal.fire("Error", "Datetime cannot be in the future.", "error");
+        showPopup("Error", "Datetime cannot be in the future.");
         return;
     }
     
@@ -41,7 +42,7 @@ function confirmCreate(event) {
                 Check Category        
      ====================================== */
     if (!category) {
-        Swal.fire("Error", "Please choose a category.", "error");
+        showPopup("Error", "Please choose a category.");
         return;
     }
     
@@ -49,24 +50,16 @@ function confirmCreate(event) {
                     Check Image        
      ====================================== */
     if (!image) {
-        Swal.fire("Error", "Please upload an image.", "error");
+        showPopup("Error", "Please upload an image.");
         return;
     }
 
     /* ====================================== 
             Confirmation to create post        
      ====================================== */
-    Swal.fire({
-        title: "CONFIRMATION",
-        text: "Do you want to create this post?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Yes",
-        cancelButtonText: "No"
-    }).then((result) => {
-        if (result.isConfirmed){
-            form.requestSubmit();
-        }
+    showConfirmPopup("Confirm", "Do you want to create this post?", () => {
+        form.requestSubmit();
     });
+
 }
 

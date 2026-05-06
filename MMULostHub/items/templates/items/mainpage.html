@@ -92,7 +92,11 @@
                         {% endif %}
                         <p> Date Time: {{ post.post_datetime }} </p>
                         <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
-                        <p> Location: {{ post.post_location.location_name }} </p>
+                        {% if post.post_location %}
+                            <p> Location: {{ post.post_location.location_name }}</p>
+                        {% elif post.post_type == "lost" %}
+                            <p> Location: Unknown Lost Location</p>
+                        {% endif %}
 
                     </div>
                 </div>
