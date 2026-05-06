@@ -293,6 +293,9 @@ def user_logout(request):
 @never_cache # Must login first
 def update_name(request):
     if request.method == "POST":
+        if request.user != request.user:
+            return redirect('profile')
+
         name = (request.POST.get("name") or "").strip()
 
         if Profile.objects.filter(name=name).exclude(user=request.user).exists(): # Check duplicate name except self
@@ -334,7 +337,8 @@ def profile(request):
         'profile': profile,
         'all_posts': all_posts,
         'lost_posts': lost_posts,
-        'found_posts': found_posts
+        'found_posts': found_posts,
+        'is_owner': True
     })
 
 @login_required(login_url='beginning')
@@ -372,11 +376,17 @@ def update_avatar(request):
 
     return redirect('profile')
 
+@login_required(login_url='beginning')
+@never_cache
 # yunfee add to check other user's profile
 def userProfile(request, username):
     user_obj = get_object_or_404(User, username=username)
 
     profile, created = Profile.objects.get_or_create(user=user_obj)
+
+    all_posts = Post.objects.filter(
+        post_user=user_obj
+    ).order_by('-id')
 
     lost_posts = Post.objects.filter(
         post_user = user_obj,
@@ -391,6 +401,8 @@ def userProfile(request, username):
     return render(request, 'user/profile.html', {
         'user': user_obj,
         'profile': profile,
+        'all_posts': all_posts,
         'lost_posts': lost_posts,
-        'found_posts': found_posts
+        'found_posts': found_posts,
+        'is_owner': request.user == user_obj
     })

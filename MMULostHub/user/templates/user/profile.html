@@ -41,10 +41,10 @@
         <!-- now = current time ; |date:'U' = convert time to Unix timestamp(second) ; Force to reload image instead of using cache -->
         {% if profile.avatar %}
             <img id="avatarImage" src="{{ profile.avatar.url }}?v={{ now|date:'U' }}" 
-            width="150" height="150" style="border-radius:50%; object-fit:cover; cursor:pointer;">
+            width="150" height="150" style="border-radius:50%; object-fit:cover; {% if is_owner %}cursor:pointer;{% else %}cursor:default;{% endif %}">
         {% else %}
             <img id="avatarImage"  src="{% static 'images/default.png' %}?v={{ now|date:'U' }}" 
-            width="150" height="150" style="border-radius:50%; object-fit:cover; cursor:pointer;">
+            width="150" height="150" style="border-radius:50%; object-fit:cover; {% if is_owner %}cursor:pointer;{% else %}cursor:default;{% endif %}">
         {% endif %}
 
         <div id="editor" style="display:none;"> <!-- Hide edit button -->
@@ -64,14 +64,16 @@
             <!-- Show name (User and Admin not the same) -->
             <p id="nameText">{{ profile.name|default:user.first_name|default:user.username }}</p>
 
-            <button onclick="showNameEdit()">Edit Name</button>
+            {% if request.user == user %}
+                <button onclick="showNameEdit()">Edit Name</button>
 
-            <form id="nameForm" method="POST" action="{% url 'update_name' %}" style="display:none;">
-                {% csrf_token %}
-                <input type="text" name="name" value="{{ profile.name }}">
-                <button type="submit">Save</button>
-                <button type="button" onclick="hideNameEdit()">Cancel</button>
-            </form>
+                <form id="nameForm" method="POST" action="{% url 'update_name' %}" style="display:none;">
+                    {% csrf_token %}
+                    <input type="text" name="name" value="{{ profile.name }}">
+                    <button type="submit">Save</button>
+                    <button type="button" onclick="hideNameEdit()">Cancel</button>
+                </form>
+            {% endif %}
 
             {% if messages %}
                 {% for message in messages %}
@@ -86,16 +88,18 @@
 
         <p id="bioText">{{ profile.bio }}</p>
 
-        <button onclick="showBioEdit()">Edit Bio</button>
+        {% if request.user == user %}
+            <button onclick="showBioEdit()">Edit Bio</button>
 
-        <form id="bioForm" method="POST" action="{% url 'update_bio' %}" style="display:none;">
-            {% csrf_token %} <!-- Security token to prevent CSRF attack -->
-            <!-- Bio box to input -->
-            <textarea name="bio" rows="4" cols="50">{{ profile.bio }}</textarea>
-            <br>
-            <button type="submit">Save</button>
-            <button type="button" onclick="hideBioEdit()">Cancel</button>
-        </form>
+            <form id="bioForm" method="POST" action="{% url 'update_bio' %}" style="display:none;">
+                {% csrf_token %} <!-- Security token to prevent CSRF attack -->
+                <!-- Bio box to input -->
+                <textarea name="bio" rows="4" cols="50">{{ profile.bio }}</textarea>
+                <br>
+                <button type="submit">Save</button>
+                <button type="button" onclick="hideBioEdit()">Cancel</button>
+            </form>
+        {% endif %}
 
         <div style="margin-top:20px;">
             <button onclick="showAll()">All</button>
@@ -140,6 +144,7 @@
             return document.querySelector('[name=csrfmiddlewaretoken]').value;
         }
 
+        {% if is_owner %}
         // Open image editor when avatar is clicked
         avatar.addEventListener('click', function() {
             editor.style.display = "block";
@@ -160,7 +165,8 @@
                 });
             };
         });
-
+        {% endif %}
+        
         // Detect user selected image file
         document.getElementById('imageInput').addEventListener('change', function(e) {
 
