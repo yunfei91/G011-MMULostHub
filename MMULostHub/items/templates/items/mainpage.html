@@ -41,7 +41,7 @@
                     <p> Date Time :{{ post.post_datetime }} </p>
                     <p> Item Category :{{ post.post_itemcategory }} </p>
                     <p> Location :{{ post.post_location }} </p>
-                    <p> Description:{{ post.post_description }} </p>
+                    <p> Description:{{ post.post_description }} </p> <!--zinc-->
                         <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
                         <button type="button">Report</button>
                     </a>

@@ -92,7 +92,7 @@ def admin_login(request):
             })
 
         login(request, user)
-        return redirect('admin_mainpage')
+        return redirect('admin_mainpage') #zinc 
 
     return render(request, 'user/admin-login.html')
 
