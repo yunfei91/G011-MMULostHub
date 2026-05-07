@@ -51,10 +51,26 @@
             </script>
         {% endif %}
 
-        <div class="search_bar">                                        <!-- after need to be changed when starting to do search feature -->
-            <input type="text" placeholder="Search for items...">
-            <button type="submit"> Search </button>
+        <div class="filter_bar">
+            <form method="GET">
+                <input 
+                    type="text" 
+                    name="q"
+                    placeholder="Search for posts"
+                    value="{{ query }}"
+                >
+
+                <button type="submit">
+                    Search
+                </button>
+            </form>
         </div>
+
+        {% if query %}
+            <p>
+                Search result for "{{ query }}"
+            </p>
+        {% endif %}
 
         <div class="post-list">
             {% for post in posts %}

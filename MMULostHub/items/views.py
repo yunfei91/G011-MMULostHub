@@ -3,10 +3,25 @@ from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post, edit_post
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Q
 
 def mainPage(request):
+
+    query = request.GET.get('q', '').strip()
+
     post_box = Post.objects.all().order_by('-id')       #newest post on top # display all post in main page and order by datetime (latest post will be on top)
-    return render(request, 'items/mainpage.html', {'posts': post_box})
+    
+    if query:
+        post_box = post_box.filter(
+            Q(post_itemcategory__icontains=query) |
+            Q(post_location__location_name__icontains=query) |
+            Q(post_description__icontains=query) 
+        ).distinct()
+    
+    return render(request, 'items/mainpage.html', {
+        'posts': post_box,
+        'query': query
+    })
 
 @login_required
 def createPost(request):
