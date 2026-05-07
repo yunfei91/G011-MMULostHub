@@ -62,6 +62,17 @@
 
         <div class="post-list">
             {% for post in posts %}
+
+            <div class="post"
+                onclick="openPost(this)"
+                data-user="{{ post.post_user.username }}"
+                data-type="{{ post.post_type }}"
+                data-date="{{ post.post_datetime }}"
+                data-category="{{ post.get_post_itemcategory_display }}"
+                data-location="{{ post.post_location.location_name }}"
+                data-description="{{ post.post_description }}"
+                data-image="{% if post.post_image %}{{ post.post_image.url }}{% endif %}">
+                
                 <div class = "post-box">
 
                     <div class = "post">
@@ -103,11 +114,48 @@
 
                     </div>
                 </div>
+            </div>
             {% empty %}
                 <div class = "no_post">
                     <p> No posts available. </p>
                 </div>
             {% endfor %}
+        </div>
+
+        <!-- POPUP MODAL -->
+        <div id="postModal" class="modal">
+
+            <div class="modal-content">
+
+                <span class="close" onclick="closePost()">&times;</span>
+
+                <div class="modal-body">
+
+                    <div class="modal-left">
+                        <p><span id="m_user"></span></p>
+
+                        <img id="m_image" style="max-width:100%; display:none;">
+                    </div>
+
+                    <div class="modal-right">
+                        <h2 id="m_type"></h2>
+
+                        <p><b>Date:</b> <span id="m_date"></span></p>
+
+                        <p><b>Category:</b> <span id="m_category"></span></p>
+
+                        <p><b>Location:</b> <span id="m_location"></span></p>
+
+                        <p><b>Description:</b></p>
+                        <p id="m_description"></p>
+
+                        <div class="chatBtn">
+                            <button type="button">
+                                <a href="#">Chat</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="create_post">
@@ -131,5 +179,8 @@
                 Designed by: Kho Yee Theng / Tan Yun Fee / Lim Tze Ying
             </p>
         </footer>
+
+    <script src="{% static 'items/js/popup.js' %}"></script>
+
     </body>
 </html>
