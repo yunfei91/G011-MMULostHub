@@ -9,6 +9,12 @@ def mainPage(request):
 
     query = request.GET.get('q', '').strip()
 
+    selected_category = request.GET.get('category', '')
+
+    selected_location = request.GET.get('location', '')
+
+    selected_date = request.GET.get('date', '')
+
     post_box = Post.objects.all().order_by('-id')       #newest post on top # display all post in main page and order by datetime (latest post will be on top)
     
     if query:
@@ -17,10 +23,33 @@ def mainPage(request):
             Q(post_location__location_name__icontains=query) |
             Q(post_description__icontains=query) 
         ).distinct()
+
+    # Category filter
+    if selected_category:
+        post_box = post_box.filter(
+            post_itemcategory=selected_category
+        )
+
+    # Location filter
+    if selected_location:
+        post_box = post_box.filter(
+            post_location_id=selected_location
+        )
+
+    # Date filter
+    if selected_date:
+        post_box = post_box.filter(
+            post_datetime__date=selected_date
+        )
     
     return render(request, 'items/mainpage.html', {
         'posts': post_box,
-        'query': query
+        'query': query,
+        'item_categories': CATEGORY_CHOICES,
+        'locations': MMULocation.objects.all(),
+        'selected_category': selected_category,
+        'selected_location': selected_location,
+        'selected_date': selected_date
     })
 
 @login_required
