@@ -1,0 +1,54 @@
+.post-image{
+    width: 500px;
+    height: auto;
+}
+
+.search-container{
+    position: relative;
+    width: 400px;
+}
+
+.search-bar{
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.search-bar input{
+    border: none;
+    outline: none;
+    width: 100%;
+}
+
+.filter-panel{
+    position: absolute;
+    width: 500px;
+    background: white;
+    z-index: 100;
+}
+
+.hidden{
+    display: none;
+}
+
+.chip{
+
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 8px 12px;
+
+    border-radius: 20px;
+
+    background: #e5f0ff;
+
+    margin: 5px;
+}
+
+.chip span{
+
+    margin-left: 10px;
+
+    cursor: pointer;
+}

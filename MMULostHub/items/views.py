@@ -1,3 +1,5 @@
+from urllib import request
+
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post, edit_post
@@ -9,17 +11,17 @@ def mainPage(request):
 
     query = request.GET.get('q', '').strip()
 
-    selected_category = request.GET.get('category', '')
+    selected_category = request.GET.getlist('category', '')
 
-    selected_location = request.GET.get('location', '')
+    selected_locations = request.GET.getlist('location')
 
-    selected_date = request.GET.get('date', '')
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
 
     post_box = Post.objects.all().order_by('-id')       #newest post on top # display all post in main page and order by datetime (latest post will be on top)
     
     if query:
         post_box = post_box.filter(
-            Q(post_itemcategory__icontains=query) |
             Q(post_location__location_name__icontains=query) |
             Q(post_description__icontains=query) 
         ).distinct()
@@ -27,19 +29,29 @@ def mainPage(request):
     # Category filter
     if selected_category:
         post_box = post_box.filter(
-            post_itemcategory=selected_category
+            post_itemcategory__in=selected_category
         )
+
+    # remove empty string
+    selected_locations = [
+        loc for loc in selected_locations if loc
+    ]
 
     # Location filter
-    if selected_location:
+    if selected_locations:
         post_box = post_box.filter(
-            post_location_id=selected_location
+            post_location_id__in=selected_locations
         )
 
-    # Date filter
-    if selected_date:
+    # Date range filter
+    if start_date:
         post_box = post_box.filter(
-            post_datetime__date=selected_date
+            post_datetime__date__gte=start_date
+        )
+
+    if end_date:
+        post_box = post_box.filter(
+            post_datetime__date__lte=end_date
         )
     
     return render(request, 'items/mainpage.html', {
@@ -48,8 +60,9 @@ def mainPage(request):
         'item_categories': CATEGORY_CHOICES,
         'locations': MMULocation.objects.all(),
         'selected_category': selected_category,
-        'selected_location': selected_location,
-        'selected_date': selected_date
+        'selected_location': selected_locations,
+        'start_date': start_date,
+        'end_date': end_date,
     })
 
 @login_required

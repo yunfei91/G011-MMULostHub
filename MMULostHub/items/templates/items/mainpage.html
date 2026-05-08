@@ -4,6 +4,7 @@
         {% load static %}
 
         <link rel="stylesheet" href="{% static 'items/css/popup.css' %}">
+        <link rel="stylesheet" href="{% static 'items/css/mainpage.css' %}">
 
         <script src="{% static 'items/js/popup.js' %}" defer></script>
         <script src="{% static 'items/js/mainpage.js' %}" defer></script>                <!-- differ = load complete html then load java -->
@@ -51,64 +52,100 @@
             </script>
         {% endif %}
 
-        <div class="filter_bar">
+        <div class="search-container">
+
             <form method="GET">
-                <input 
-                    type="text" 
-                    name="q"
-                    placeholder="Search for posts"
-                    value="{{ query }}"
-                >
 
-                <!-- Category -->
-                <select name="category">
+                <!-- Search Bar -->
+                <div class="search-bar">
 
-                    <option value="">All Categories</option>
+                    <button
+                        type="button"
+                        onclick="toggleFilter()"
+                    >
+                        Search🔍
+                    </button>
 
-                    {% for value, label in item_categories %}
-                        <option
-                            value="{{ value }}"
-                            {% if selected_category == value %}
-                                selected
-                            {% endif %}
-                        >
-                            {{ label }}
+                </div>
+
+                <!-- Expandable Filter Panel -->
+                <div class="filter-panel hidden" id="filterPanel">
+                    
+                    <input
+                        type="text"
+                        name="q"
+                        placeholder="Search..."
+                        value="{{ query }}"
+                    >
+
+                    <!-- REAL SUBMIT BUTTON -->
+                    <button type="submit">
+                        Apply Filters
+                    </button>
+
+                    <!-- Item Category -->
+                    <h3>Item Category</h3>
+
+                    <div class="category-options">
+
+                        {% for value, label in item_categories %}
+
+                            <button
+                                type="button"
+                                class="category-btn"
+                                onclick="toggleCategory('{{ value }}', '{{ label }}')"
+                            >
+                                {{ label }}
+                            </button>
+
+                        {% endfor %}
+
+                    </div>
+
+                    <!-- Selected Chips -->
+                    <div id="selectedCategories"></div>
+
+                    <!-- Location -->
+                    <h3>Location</h3>
+
+                    <select onchange="toggleLocation(this)">
+
+                        <option value="">
+                            All Locations
                         </option>
-                    {% endfor %}
 
-                </select>
+                        {% for location in locations %}
+                            <option
+                                value="{{ location.id }}">
+                                {{ location.location_name }}
+                            </option>
+                        {% endfor %}
 
-                <!-- Location Filter -->
-                <select name="location">
+                    </select>
+                    
+                    <div id="selectedLocations"></div>
 
-                    <option value="">
-                        All Locations
-                    </option>
+                    <!-- Date -->
+                    <h3>Start Date</h3>
 
-                    {% for location in locations %}
-                        <option
-                            value="{{ location.id }}"
-                            {% if selected_location == location.id|stringformat:"s" %}
-                                selected
-                            {% endif %}
-                        >
-                            {{ location.location_name }}
-                        </option>
-                    {% endfor %}
+                    <input
+                        type="date"
+                        name="start_date"
+                        value="{{ start_date }}"
+                    >
 
-                </select>
+                    <h3>End Date</h3>
 
-                <!-- Date Filter -->
-                <input
-                    type="date"
-                    name="date"
-                    value="{{ selected_date }}"
-                >
+                    <input
+                        type="date"
+                        name="end_date"
+                        value="{{ end_date }}"
+                    >
 
-                <button type="submit">
-                    Search
-                </button>
+                </div>
+
             </form>
+
         </div>
 
         {% if query %}
