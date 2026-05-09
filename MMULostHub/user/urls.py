@@ -19,7 +19,7 @@ urlpatterns = [
     path('update-name/', views.update_name, name='update_name'),
 
     #zinc add to report user
-    path('report-user/', views.report_user, name='report_user'), 
+    path('report-user/<int:user_id>/', views.report_user, name='report_user'),
     
     # yunfee add to check other user's profile
     path('profile/<str:username>/', views.userProfile, name='userProfile'),

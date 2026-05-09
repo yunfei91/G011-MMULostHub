@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Report User</title>
+</head>
+
+<body>
+
+<h2>Report User</h2>
+<p> Reporting User: {{ reported_user.username }}</p>
+
+<form method="POST" enctype="multipart/form-data" action="{% url 'report_user' reported_user.id %}">
+    {% csrf_token %}
+    <input type="hidden" name="user_id" value="{{ reported_user.id }}">
+
+    <!-- Reason -->
+    <label>Reason:</label>
+    <br>
+    <textarea name="comments" rows="5" cols="40" required></textarea>
+    <br><br>
+
+    <!-- Proof Image -->
+    <label>Upload Proof:</label>
+    <br>
+     <input type="file" name="image">
+    <br><br>
+
+    <button type="submit">Submit Report</button>
+</form>
+</body>
+</html>

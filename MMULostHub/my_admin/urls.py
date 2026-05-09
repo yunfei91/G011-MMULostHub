@@ -21,4 +21,6 @@ urlpatterns = [
     path('delete/', views.delete_user, name='delete_user'),
     path('delete_selected/', views.delete_selected, name='delete_selected'),
    # path('report/', views.report_user, name='report_user')
+    path('verify-report/<int:report_id>/', views.verify_report, name='verify_report'),
+    path('reject-report/<int:report_id>/', views.reject_report, name='reject_report'),
 ]

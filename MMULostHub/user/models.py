@@ -7,6 +7,7 @@ class Profile(models.Model):
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     bio = models.CharField(max_length=255, blank=True, null=True, default="")
     is_reported = models.BooleanField(default=False) #zinc add 
+    need_reverify = models.BooleanField(default=False) #zinc add
     
     def __str__(self):
         return self.name if self.name else self.user.username

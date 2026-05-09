@@ -36,6 +36,17 @@
         </div>
 
         <h1>My Profile</h1>
+        <!--zinc reverify acc-->
+        {% if need_reverify %}
+    <div>
+        <h3 style="color:red;">
+            Your account has been reported.
+        </h3>
+        <p>
+            Please verify your account again.
+        </p>
+    </div>
+{% endif %}
 
         <!-- Display user's uploaded avatar or default avatar if user has none with-->
         <!-- now = current time ; |date:'U' = convert time to Unix timestamp(second) ; Force to reload image instead of using cache -->

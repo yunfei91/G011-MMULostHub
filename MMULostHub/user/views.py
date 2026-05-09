@@ -14,6 +14,7 @@ from django.shortcuts import get_object_or_404
 from .services import create_user_account # Custom function for create user
 from .models import Profile 
 from items.models import Post
+from report.models import UserReport #zinc add for report user
 
 from django.core.mail import EmailMultiAlternatives # Send email with HTML content
 from django.template.loader import render_to_string # Convert HTML template to string (wording email)
@@ -319,6 +320,7 @@ def profile(request, user_id=None): #zinc add if else
         user = request.user
 
     profile, created = Profile.objects.get_or_create(user=user)
+    need_reverify = profile.need_reverify #zinc add reverify acc
 
     lost_posts = Post.objects.filter(
         post_user=user,
@@ -338,7 +340,8 @@ def profile(request, user_id=None): #zinc add if else
         'profile': profile,
         'lost_posts': lost_posts,
         'found_posts': found_posts,
-        'is_owner': is_owner #zinc add
+        'is_owner': is_owner, #zinc add
+        'need_reverify': need_reverify #zinc add
     })
 
 @login_required(login_url='beginning')
@@ -379,21 +382,34 @@ def update_avatar(request):
 
 #zinc add def report_user 
 @login_required
-def report_user(request):
+def report_user(request, user_id):
+    reported_user = get_object_or_404(User, id=user_id)
     if request.method == "POST":
-        user_id = request.POST.get('user_id')
+        comments = request.POST.get('comments')
+        image = request.FILES.get('image')
 
-        # avoid user report by themselves
-        if str(request.user.id) == user_id:
+        # prevent self report
+        if request.user.id == reported_user.id:
             return redirect('profile')
-        
-        user = User.objects.get(id=user_id)
 
-        profile, _ = Profile.objects.get_or_create(user=user)
+        # create report
+        UserReport.objects.create(
+            user=reported_user,
+            reported_by=request.user,
+            comments=comments,
+            image=image,
+            status="Pending"
+        )
+
+        # mark profile reported
+        profile, _ = Profile.objects.get_or_create(user=reported_user)
         profile.is_reported = True
         profile.save()
 
-    return redirect('view_profile', user_id=user_id)
+        return redirect('view_profile', user_id=user_id)
+    return render(request,'user/report_user.html', {
+            'reported_user': reported_user
+        })
 
 # yunfee add to check other user's profile
 def userProfile(request, username):
