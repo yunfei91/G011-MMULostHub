@@ -1,8 +1,13 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head>
         <title>MMU Lost Hub</title>
-        {% load static %}
+        
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
+
         <link rel="stylesheet" type="text/css" href="{% static 'user/css/beginning.css' %}">
     </head>
 
@@ -26,8 +31,8 @@
 
                     <nav>
                         <div class="beginning-page-action-button">
-                            <a href="{% url 'user-login' %}">User Login</a>
-                            <a href="{% url 'admin-login' %}">Admin Login</a>
+                            <a href="{% url 'user_login' %}">User Login</a>
+                            <a href="{% url 'admin_login' %}">Admin Login</a>
                             <a href="{% url 'register' %}">Register</a>
                         </div>
                     </nav>
@@ -40,5 +45,32 @@
             <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
         </footer>
     </div>
+
+    <script>
+        function clearBackHistory() {
+            window.history.pushState(null, "", window.location.href);
+        }
+
+        clearBackHistory();
+
+        window.onpopstate = function () {
+            alert("Please login first to continue.");
+            window.location.replace("{% url 'beginning' %}");
+        };
+
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                window.location.reload();
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has("next")) {
+                alert("Please login first to continue.");
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
+    </script>
 </body>
 </html>

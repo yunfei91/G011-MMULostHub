@@ -4,9 +4,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post, edit_post
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache # yt added to block user to jump back to the previous page after logout
 from django.contrib import messages
 from django.db.models import Q
 
+
+@login_required(login_url='beginning') # yt added to block user to jump back to the previous page after logout
+@never_cache                           # yt added to block user to jump back to the previous page after logout
 def mainPage(request):
 
     query = request.GET.get('q', '').strip()
@@ -65,7 +69,8 @@ def mainPage(request):
         'end_date': end_date,
     })
 
-@login_required
+@login_required(login_url='beginning')
+@never_cache
 def createPost(request):
     if request.method == "POST":
         try:
@@ -96,7 +101,8 @@ def createPost(request):
         'post_data': {},
     })
 
-@login_required
+@login_required(login_url='beginning')
+@never_cache
 def editPost(request,post_id):
 
     post = get_object_or_404(
@@ -136,7 +142,8 @@ def editPost(request,post_id):
         'locations': MMULocation.objects.all(),
     })
 
-@login_required
+@login_required(login_url='beginning')
+@never_cache
 def deletePost(request, post_id):
     post = get_object_or_404(
         Post,
@@ -150,3 +157,22 @@ def deletePost(request, post_id):
         return redirect('mainPage')
     
     return redirect('mainPage')
+
+# yt added for lost and found posts page
+@login_required(login_url='beginning')
+@never_cache
+def lost_posts(request):
+    lost_posts = Post.objects.filter(post_type='lost').order_by('-id')
+
+    return render(request, 'items/lost-posts.html', {
+        'posts': lost_posts
+    })
+
+@login_required(login_url='beginning')
+@never_cache
+def found_posts(request):
+    found_posts = Post.objects.filter(post_type='found').order_by('-id')
+
+    return render(request, 'items/found-posts.html', {
+        'posts': found_posts
+    })

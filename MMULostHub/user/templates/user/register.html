@@ -1,8 +1,8 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head>
         <title>MMU Lost Hub</title>
-        {% load static %}
         <link rel="stylesheet" type="text/css" href="{% static 'user/css/register.css' %}">
     </head>
 
@@ -26,16 +26,19 @@
                     and found can find its way back.
                     </p>
 
+                    <button onclick="goBack()">Back</button>
+
                     <h2>Welcome to MMU Lost Hub</h2>
                     <h3>Register</h3>
 
                     <form method="POST">
                         {% csrf_token %}
                         <!--Name-->
-                        <input type="text" name="name" placeholder="Name" value="{{ name }}">
+                        <input type="text" id="name" name="name" placeholder="Name" value="{{ name }}" oninput="checkName()">
+                        <p id="name-status"></p>
                         <p style="color:red;">{{ name_error }}</p>
                         <!--Email-->
-                        <input type="text" id="email" name="email" placeholder="MMU Email" oninput="checkEmail()">
+                        <input type="text" id="email" name="email" placeholder="Email" value="{{ email }}" oninput="checkEmail()">
                         <p id="email-status"></p>
                         {% if email_error %}
                             <p style="color:red;">{{ email_error }}</p>
@@ -72,10 +75,10 @@
                     </form>
 
                     <p>Already have an account?</p>
-                    <a href="{% url 'user-login' %}">Login Here</a>
+                    <a href="{% url 'user_login' %}">Login Here</a>
 
                     <p>Are you an admin?</p>
-                    <a href="{% url 'admin-login' %}">Login as Admin</a>
+                    <a href="{% url 'admin_login' %}">Login as Admin</a>
                 </div>
             </div>
         </div>
@@ -87,6 +90,57 @@
     </div>
 
     <script>
+        function goBack() {
+            window.location.replace("{% url 'beginning' %}")
+        }
+        
+        let nameValid = false;
+        let nameTimeout;
+        let currentName = "";
+        const checkNameUrl = "{% url 'check_name' %}";
+
+        function checkName() {
+            clearTimeout(nameTimeout);
+
+            let name = document.getElementById("name").value.trim();
+            let status = document.getElementById("name-status");
+
+            currentName = name;
+
+            status.innerHTML = "";
+            nameValid = false;
+            updateButton();
+
+            if (!name) return;
+
+            status.innerHTML = "Checking...";
+            status.style.color ="gray";
+
+            nameTimeout = setTimeout(() => {
+                fetch(`${checkNameUrl}?name=${encodeURIComponent(name)}`)
+                .then(res => res.json())
+                .then(data => {
+
+                    if (name !== currentName) return;
+
+                    if (data.exists) {
+                        status.innerHTML = "Name already taken";
+                        status.style.color = "red";
+                        nameValid = false;
+                    } else {
+                        status.innerHTML = "Name available";
+                        status.style.color = "green";
+                        nameValid = true;
+                    }
+                    updateButton();
+                })
+                .catch(error => {
+                    console.error(error);
+                    status.innerHTML = "Error checking name";
+                    status.style.color = "red";
+                });
+            }, 1000);
+        }
         let emailValid = false;
         let passwordValid = false;
         let match = false;
@@ -225,7 +279,7 @@
         }
         /* Button Control */
         function updateButton() {
-            submitBtn.disabled =!(emailValid && passwordValid && match);
+            submitBtn.disabled =!(nameValid && emailValid && passwordValid && match);
         }
     </script>
 </body>

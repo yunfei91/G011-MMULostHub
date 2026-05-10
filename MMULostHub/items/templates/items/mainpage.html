@@ -1,7 +1,7 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head> 
-        {% load static %}
 
         <link rel="stylesheet" href="{% static 'items/css/popup.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/mainpage.css' %}">
@@ -9,14 +9,78 @@
         <script src="{% static 'items/js/popup.js' %}" defer></script>
         <script src="{% static 'items/js/mainpage.js' %}" defer></script>                <!-- differ = load complete html then load java -->
         
-
         <title> 
             MMU Lost Hub 
         </title>
+        <!-- yt added to block user to jump back to the previous page after logout -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
 
     </head>
 
     <body>
+
+    <style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+    }
+
+    .modal-content {
+        background: #fff;
+        height: 80%;
+        width: 70%;
+        margin: 5% auto;
+        padding: 20px;
+        border-radius: 10px;
+        position: relative;
+    }
+
+    .modal-body {
+        display: flex;
+        gap: 30px;
+    }
+
+    .modal-left {
+        flex: 1;
+    }
+
+    .modal-left img {
+        width: 100%;
+        object-fit: contain;
+        background: #f5f5f5;
+        border-radius: 10px;
+        aspect-ratio: 4/3;
+    }
+
+    .modal-right {
+        flex: 1;
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+    .chatBtn {
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+    }
+
+    .close {
+        position: absolute;
+        right: 20px;
+        top: 10px;
+        font-size: 30px;
+        cursor: pointer;
+    }
+</style>
+
         <header>
             <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class = "mmu-logo">
 
@@ -30,11 +94,11 @@
             
             <div class="dropdown-content">
                 <a href="{% url 'mainPage' %}"> Home </a>
-                <a href="#"> Lost Post </a>                 <!-- yt lost post link -->
-                <a href="#"> Found Post </a>                <!-- yt found post link -->
-                <a href="#"> Profile </a>                   <!-- yt profile link -->       
-                <a href="{% url 'feedback_form' %}"> Feedback/Report </a>  <!-- zinc feedback link -->
-                <a href="#"> Logout </a>                    <!-- yt logout link -->
+                <a href="{% url 'lost_posts' %}"> Lost Post </a>                 <!-- yt lost post link -->
+                <a href="{% url 'found_posts' %}"> Found Post </a>                <!-- yt found post link -->
+                <a href="{% url 'profile' %}"> Profile </a>                   <!-- yt profile link -->       
+                <a href="{% url 'feedback_form' %}">Feedback/Report </a>  <!-- zinc feedback link -->
+                <a href="{% url 'logout' %}"> Logout </a>               <!-- yt logout link -->
             </div>
         </div>
 
@@ -156,6 +220,17 @@
 
         <div class="post-list">
             {% for post in posts %}
+
+            <div class="post"
+                onclick="openPost(this)"
+                data-user="{{ post.post_user.username }}"
+                data-type="{{ post.post_type }}"
+                data-date="{{ post.post_datetime }}"
+                data-category="{{ post.get_post_itemcategory_display }}"
+                data-location="{{ post.post_location.location_name }}"
+                data-description="{{ post.post_description }}"
+                data-image="{% if post.post_image %}{{ post.post_image.url }}{% endif %}">
+                
                 <div class = "post-box">
 
                     <div class = "post">
@@ -181,7 +256,12 @@
                             {% endif %}
                         </div>
 
-                        <p> Posted by: {{ post.post_user.username }} </p>
+                        <p>
+                            Posted by: 
+                            <a href="{% url 'userProfile' post.post_user.username %}">
+                                {{ post.post_user.username }}
+                            </a>
+                        </p>
 
                         {% if post.post_image %}
                             <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image" required>
@@ -196,11 +276,48 @@
 
                     </div>
                 </div>
+            </div>
             {% empty %}
                 <div class = "no_post">
                     <p> No posts available. </p>
                 </div>
             {% endfor %}
+        </div>
+
+        <!-- POPUP MODAL -->
+        <div id="postModal" class="modal">
+
+            <div class="modal-content">
+
+                <span class="close" onclick="closePost()">&times;</span>
+
+                <div class="modal-body">
+
+                    <div class="modal-left">
+                        <p><span id="m_user"></span></p>
+
+                        <img id="m_image" style="max-width:100%; display:none;">
+                    </div>
+
+                    <div class="modal-right">
+                        <h2 id="m_type"></h2>
+
+                        <p><b>Date:</b> <span id="m_date"></span></p>
+
+                        <p><b>Category:</b> <span id="m_category"></span></p>
+
+                        <p><b>Location:</b> <span id="m_location"></span></p>
+
+                        <p><b>Description:</b></p>
+                        <p id="m_description"></p>
+
+                        <div class="chatBtn">
+                            <button type="button">
+                                <a href="#">Chat</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="create_post">
@@ -234,5 +351,8 @@
                 Designed by: Kho Yee Theng / Tan Yun Fee / Lim Tze Ying
             </p>
         </footer>
+
+    <script src="{% static 'items/js/popup.js' %}"></script>
+
     </body>
 </html>
