@@ -1,20 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from  .services import create_feedback
 from django.contrib.auth.decorators import login_required
-<<<<<<< HEAD
 from django.views.decorators.cache import never_cache # yt added to block user to jump back to the previous page after logout
 from django.contrib import messages
+from items.models import Post
+from .models import Feedback,Report
 
 @login_required(login_url='beginning') # yt added to block user to jump back to the previous page after logout
 @never_cache                           # yt added to block user to jump back to the previous page after logout
-=======
-from items.models import Post
-from .models import Feedback,Report
-from django.contrib import messages
-
-
-@login_required
->>>>>>> b8ec693fd1ed5c01a80904dec0bc00b7957269af
 def feedback_form_view(request):
     if request.method == "POST":
         comments = request.POST.get('comments')

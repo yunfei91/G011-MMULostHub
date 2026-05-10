@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 document.addEventListener("DOMContentLoaded", () => {
 
     const popup = document.getElementById("popup");
@@ -54,7 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
 });
-=======
+
+// yt post view popup
 function openPost(el) {
 
     document.getElementById("postModal").style.display = "block";
@@ -90,4 +90,3 @@ window.onclick = function(event) {
         modal.style.display = "none";
     }
 }
->>>>>>> bae37bc35249cda7a628b9435ab73e2f30e9bffc
