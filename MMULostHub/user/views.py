@@ -232,7 +232,7 @@ def admin_login(request):
             })
 
         login(request, user)
-        return redirect('mainPage')
+        return redirect('admin_mainpage')
 
     return render(request, 'user/admin-login.html')
 

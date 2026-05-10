@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <head>
-        <meta charset="UTF-8">
         <title>MMU Lost Hub - Feedback</title>
         <link rel="stylesheet" href="style.css"> 
     </head>
@@ -9,15 +8,18 @@
         <div class="container">
             <header>
                 <div class="menu-icon"></div>
-                <h1>MMU Lost Hub</h1>
             </header>
 
             <main>
-                <section class="feedback-section">
+                 <div class="container">
+            <header>
+                <div class="menu-icon"></div>
+                <h1>MMU Lost Hub</h1>
+            </header>
                     <h2>Feedback / Report</h2>
                     <p>Leave your comments / suggestions here!</p>
 
-                    <form id="FeedbackForm" method="POST" enctype="multipart/form-data">
+                    <form actions="{% url 'feedback_form' %}" method="POST" enctype="multipart/form-data">
                         {% csrf_token %} 
 
                         <label for="comments">Your feedback:</label>
@@ -29,7 +31,12 @@
                         </div> 
 
                         <div class="button-group">
-                            <button type="submit" class="submit-btn">Submit</button>
+                        <button 
+                            type="submit"
+                            class="btn"
+                            onclick="return confirm('Are you sure you want to submit?')">
+                            SUBMIT
+                        </button>
                         </div>
                     </form>
                 </section>

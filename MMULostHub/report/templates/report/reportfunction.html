@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <title>MMU Lost Hub - Feedback</title>
+        <link rel="stylesheet" href="style.css"> 
+    </head>
+    <body>
+         <div class="container">
+            <header>
+                <div class="menu-icon"></div>
+            </header>
+            <main>
+             <div class="container">
+            <header>
+                <div class="menu-icon"></div>
+                <h1>MMU Lost Hub</h1>
+            </header>
+        <h2>Report Post</h2>
+        {% if post %}
+        <p>You are reporting post ID: {{ post.id }} by {{ post.post_user.username }}</p>
+        <p><strong>Type:</strong>{{ post.post_type }}</p>
+        <p><strong>Describe:</strong>{{ post.post_description }}</p>
+        {% endif %}
+
+        <form action="{% url 'submit_report' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if post %}
+            <input type="hidden" name="post_id" value="{{ post.id }}">
+            {% endif %}
+
+            <div>
+                <label for="comments">Reason for reporting:</label><br>
+                <textarea name="comments" id="comments" rows="4" cols="50" required placeholder="Please describe the issue..."></textarea>
+            </div>
+
+            <br>
+            <div>
+                <label for="image-upload">Upload Image (Optional):</label>
+                <input type="file" name="image-upload" id="image-upload">
+            </div>
+            <br>
+             <button 
+                type="submit"
+                class="btn"
+                onclick="return confirm('Are you sure you want to submit?')">
+                SUBMIT
+            </button>
+            <a href="{% url 'mainPage' %}">Cancel</a>
+        </form>
+    </main>
+    </body>
+</html>

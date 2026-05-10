@@ -253,6 +253,10 @@
                                         Delete Post
                                     </button>
                                 </form>
+                            {%else %}
+                                <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                                    <button type="button">Report</button>
+                                </a>
                             {% endif %}
                         </div>
 
