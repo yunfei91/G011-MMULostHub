@@ -1,9 +1,11 @@
-function openPost(el) {
+// yt added
+// Create a function "openPost"
+function openPost(el) { // el=this connection
 
-    document.getElementById("postModal").style.display = "block";
+    document.getElementById("postModal").style.display = "block"; // Show popup modal , block=show element
 
-    document.getElementById("m_type").innerText =
-        el.dataset.type.toUpperCase() + " POST";
+    document.getElementById("m_type").innerText = // Set popup title, innerText=change text inside element
+        el.dataset.type.toUpperCase() + " POST"; // Read HTML, convert lower to upper
 
     document.getElementById("m_user").innerText = el.dataset.user;
     document.getElementById("m_date").innerText = el.dataset.date;
@@ -13,12 +15,12 @@ function openPost(el) {
 
     const img = document.getElementById("m_image");
 
-    if (el.dataset.image) {
+    if (el.dataset.image) { // Check whether image exists
         img.src = el.dataset.image;
         img.style.display = "block";
-        img.alt = "Post Image";
+        img.alt = "Post Image"; // Alternative text if image does't display successfully
     } else {
-        img.style.display = "none";
+        img.style.display = "none"; // Hide image element, Avoid broken image icon
     }
 }
 
@@ -26,10 +28,11 @@ function closePost() {
     document.getElementById("postModal").style.display = "none";
 }
 
-// click outside close
+// click outside of the popup post to close it
+// Detect any click on webpage
 window.onclick = function(event) {
-    const modal = document.getElementById("postModal");
-    if (event.target === modal) {
+    const modal = document.getElementById("postModal"); // Store modal element
+    if (event.target === modal) { // Check whether user clicked background
         modal.style.display = "none";
     }
 }

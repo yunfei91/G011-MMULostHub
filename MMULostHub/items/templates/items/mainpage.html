@@ -5,12 +5,17 @@
         <title> 
             MMU Lost Hub 
         </title>
-        <!-- yt added to block user to jump back to the previous page after logout -->
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <!-- yt added -->
+        <!-- Prevent browser cache, user cannot press back to access previous page -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
+        <!-- Older browser cache prevention -->
         <meta http-equiv="Pragma" content="no-cache">
+        <!-- Expire page immediately -->
         <meta http-equiv="Expires" content="0">
 
         <script src="{% static 'items/js/mainpage.js' %}" defer></script>
+        <!-- yt added for view full post popup version-->
+        <script src="{% static 'items/js/popup.js' %}"></script>
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </head>
@@ -124,9 +129,12 @@
         <div class="post-list">
             {% for post in posts %}
 
+            <!-- yt added -->
+            <!-- Open popup modal after clicked -->
+            <!-- Store username into HTML attribute, so JS can read it-->
             <div class="post"
                 onclick="openPost(this)"
-                data-user="{{ post.post_user.username }}"
+                data-user="{{ post.post_user.username }}" 
                 data-type="{{ post.post_type }}"
                 data-date="{{ post.post_datetime }}"
                 data-category="{{ post.get_post_itemcategory_display }}"
@@ -140,7 +148,7 @@
                         <h4> {{ post.post_type|upper }} POST </h4>
                         
                         <div class = "post-nav">
-                            {% if request.user == post.post_user %}
+                            {% if request.user == post.post_user %} 
                                 <a href="{% url 'editPost' post.id %}">
                                     Edit Post
                                 </a>
@@ -183,23 +191,23 @@
             {% endfor %}
         </div>
 
-        <!-- POPUP MODAL -->
+        <!-- Popup modal -->
         <div id="postModal" class="modal">
 
             <div class="modal-content">
 
-                <span class="close" onclick="closePost()">&times;</span>
+                <span class="close" onclick="closePost()">&times;</span> <!-- Symbol display cross -->
 
                 <div class="modal-body">
 
                     <div class="modal-left">
-                        <p><span id="m_user"></span></p>
+                        <p><span id="m_user"></span></p> <!-- JS inserts username -->
 
                         <img id="m_image" style="max-width:100%; display:none;">
                     </div>
 
                     <div class="modal-right">
-                        <h2 id="m_type"></h2>
+                        <h2 id="m_type"></h2> <!-- JS inserts post type -->
 
                         <p><b>Date:</b> <span id="m_date"></span></p>
 
@@ -240,8 +248,5 @@
                 Designed by: Kho Yee Theng / Tan Yun Fee / Lim Tze Ying
             </p>
         </footer>
-
-    <script src="{% static 'items/js/popup.js' %}"></script>
-
     </body>
 </html>
