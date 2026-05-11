@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post, edit_post
 from django.contrib.auth.decorators import login_required
+
 # yt added
 # Prevent browser cache, user cannot press back to access previous page
 from django.views.decorators.cache import never_cache 
