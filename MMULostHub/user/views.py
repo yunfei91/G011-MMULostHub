@@ -94,7 +94,7 @@ def forgot_pw(request):
 
         otp = str(random.randint(100000, 999999))
 
-        request.session['reset_data'] = {
+        request.session['reset_data'] = { # Stor in session
             'email': email,
             'otp': otp,
             'otp_time': time.time()
@@ -175,7 +175,7 @@ def resend_reset_otp(request):
 def reset_pw(request):
     data = request.session.get('reset_data')
 
-    if not data:
+    if not data: # Must come from OTP page
         return redirect('forgot_pw')
 
     if request.method == 'POST':

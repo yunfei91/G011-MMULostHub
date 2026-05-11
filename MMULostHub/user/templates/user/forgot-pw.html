@@ -53,8 +53,8 @@
 
 <script>
     function goBack() {
-        if (document.referrer !== "") {
-            window.history.back();
+        if (document.referrer !== "") { // Check previous page exists
+            window.history.back(); // Go back
         } else {
             window.location.href = "{% url 'beginning' %}";
         }
