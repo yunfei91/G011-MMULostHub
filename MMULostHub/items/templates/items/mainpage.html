@@ -14,6 +14,7 @@
         <title> 
             MMU Lost Hub 
         </title>
+        
         <!-- yt added -->
         <!-- Prevent browser cache, user cannot press back to access previous page -->
         <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
@@ -26,7 +27,6 @@
         <!-- yt added for view full post popup version-->
         <script src="{% static 'items/js/popup.js' %}"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </head>
 
     <body>
@@ -265,6 +265,9 @@
                 
                 <div class = "post-box">
 
+                    <!-- ============================== -->
+                    <!--     YF - Post Small View       -->
+                    <!-- ============================== -->
                     <div class = "post">
 
                         <h4> {{ post.post_type|upper }} POST </h4>
@@ -287,10 +290,13 @@
                                         Delete Post
                                     </button>
                                 </form>
+
                             {%else %}
+
                                 <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
                                     <button type="button">Report</button>
                                 </a>
+
                             {% endif %}
                         </div>
 
@@ -332,7 +338,7 @@
 
         </div>
 
-        <!-- YT - POPUP MODAL -->
+        <!-- YT - Post View Popup Modal -->
         <div id="postModal" class="modal">
 
             <div class="modal-content">

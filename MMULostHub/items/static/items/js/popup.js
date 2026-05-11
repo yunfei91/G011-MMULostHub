@@ -84,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+
 // yt added
 // Create a function "openPost"
 function openPost(el) { // el=this connection

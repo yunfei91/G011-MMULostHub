@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 # yt added
 # Prevent browser cache, user cannot press back to access previous page
 from django.views.decorators.cache import never_cache 
-
 from django.contrib import messages
 from django.db.models import Q
 
