@@ -3,7 +3,8 @@ from django.http import JsonResponse # Return JSON data to frontend
 from django.contrib.auth.models import User # Django built-in user model
 from django.contrib.auth import authenticate, login, logout 
 from django.contrib.auth.decorators import login_required # Only users who are logged in can access this page
-from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import never_cache # Prevent browser cache, user cannot press back to access previous page
+
 from django.contrib import messages # Show messages system (success/error alerts)
 
 # yunfee add to check other user's profile
@@ -413,16 +414,20 @@ def resend_otp(request):
     return JsonResponse({'success': True})
 
 def user_logout(request):
-    logout(request)
-    request.session.flush()
+    logout(request) # Django logout, clear login session and let user become anonymous user
+    request.session.flush() # Completely clear session data
 
     response = redirect("beginning")
+    # Prevent browser from storing page
+    # no-store=don't store anything
+    # no-cache=must recheck with server
+    # force validation again
+    # expire immediately
+    response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0" 
+    response["Pragma"] = "no-cache" # old http cache control
+    response["Expires"] = "0" # set page as expired immediately
 
-    response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-    response["Pragma"] = "no-cache"
-    response["Expires"] = "0"
-
-    return response
+    return response # send final response to browser
 
 @login_required(login_url='beginning')
 @never_cache # Must login first
