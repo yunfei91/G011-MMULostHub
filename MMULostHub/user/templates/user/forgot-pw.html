@@ -3,61 +3,61 @@
 <html>
     <head>
         <title>MMU Lost Hub</title>
+
         <link rel="stylesheet" type="text/css" href="{% static 'user/css/register.css' %}">
     </head>
 
-<body>
-    <div class="whole-page">
-        <header>
-            <a href="{% url 'beginning' %}">
-                <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class="mmu-logo">
-            </a>
-        </header>
+    <body>
+        <div class="whole-page">
+            <header>
+                <a href="{% url 'beginning' %}">
+                    <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class="mmu-logo">
+                </a>
+            </header>
 
-        <div class="content">
-            <div class="banner">
-                <div class="web-logo">
-                    <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
-                </div>
+            <div class="content">
+                <div class="banner">
+                    <div class="web-logo">
+                        <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
+                    </div>
 
-                <div class="slogan">
-                    <p>
-                        What's lost can be found,<br>
-                    and found can find its way back.
-                    </p>
+                    <div class="slogan">
+                        <p>
+                            What's lost can be found,<br>
+                        and found can find its way back.
+                        </p>
 
-                    <button onclick="goBack()">Back</button>
+                        <button onclick="goBack()">Back</button>
 
-                    <h2>Welcome to MMU Lost Hub</h2>
-                    
-                    <form method="POST">
-                        {% csrf_token %}
-                        <input type="text" name="email" placeholder="Enter your email">
-                        <button type="submit">Send OTP</button>
+                        <h2>Welcome to MMU Lost Hub</h2>
+                        
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="text" name="email" placeholder="Enter your email">
+                            <button type="submit">Send OTP</button>
 
-                        {% if error %}
-                            <p style="color:red;">{{ error }}</p>
-                        {% endif %}
-                    </form>
+                            {% if error %}
+                                <p style="color:red;">{{ error }}</p>
+                            {% endif %}
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <footer>
-        <p>© 2026 MMU Lost Hub<br>
-        <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
-    </footer>
-    
-</body>
+        <footer>
+            <p>© 2026 MMU Lost Hub<br>
+            <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
+        </footer>
 
-<script>
-    function goBack() {
-        if (document.referrer !== "") { // Check previous page exists
-            window.history.back(); // Go back
-        } else {
-            window.location.href = "{% url 'beginning' %}";
-        }
-    }
-</script>
+        <script>
+            function goBack() {
+                if (document.referrer !== "") { // Check previous page exists
+                    window.history.back(); // Go back
+                } else {
+                    window.location.href = "{% url 'beginning' %}";
+                }
+            }
+        </script>
+    </body>
 </html>

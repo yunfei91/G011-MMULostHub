@@ -95,6 +95,13 @@ function openPost(el) { // el=this connection
         el.dataset.type.toUpperCase() + " POST"; // Read HTML, convert lower to upper
 
     document.getElementById("m_user").innerText = el.dataset.user;
+    
+    const profileLink = document.getElementById("m_user_link");
+
+    if (profileLink && el.dataset.profile) {
+        profileLink.href = el.dataset.profile;
+    }
+
     document.getElementById("m_date").innerText = el.dataset.date;
     document.getElementById("m_category").innerText = el.dataset.category;
     document.getElementById("m_location").innerText = el.dataset.location;
