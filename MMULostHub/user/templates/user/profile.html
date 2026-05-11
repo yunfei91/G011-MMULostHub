@@ -39,6 +39,7 @@
 
         <!-- Display user's uploaded avatar or default avatar if user has none with-->
         <!-- now = current time ; |date:'U' = convert time to Unix timestamp(second) ; Force to reload image instead of using cache -->
+        <!-- Check if current user owns profile -->
         {% if profile.avatar %}
             <img id="avatarImage" src="{{ profile.avatar.url }}?v={{ now|date:'U' }}" 
             width="150" height="150" style="border-radius:50%; object-fit:cover; {% if is_owner %}cursor:pointer;{% else %}cursor:default;{% endif %}">

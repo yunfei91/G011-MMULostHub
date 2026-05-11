@@ -460,7 +460,7 @@ def profile(request):
     lost_posts = Post.objects.filter(
         post_user=user,
         post_type='lost'
-    ).order_by('-id')
+    ).order_by('-id') # Newest first
 
     found_posts = Post.objects.filter(
         post_user=user,
@@ -473,7 +473,7 @@ def profile(request):
         'all_posts': all_posts,
         'lost_posts': lost_posts,
         'found_posts': found_posts,
-        'is_owner': True
+        'is_owner': True # Own profile
     })
 
 @login_required(login_url='beginning')
