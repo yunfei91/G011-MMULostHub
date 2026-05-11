@@ -3,9 +3,12 @@
 <html>
     <head>
         <title>MMU Lost Hub</title>
-        
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <!-- yt added -->
+        <!-- Prevent browser cache, user cannot press back to access previous page -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
+        <!-- Older browser cache prevention -->
         <meta http-equiv="Pragma" content="no-cache">
+        <!-- Expire page immediately -->
         <meta http-equiv="Expires" content="0">
 
         <link rel="stylesheet" type="text/css" href="{% static 'user/css/beginning.css' %}">
@@ -48,27 +51,29 @@
 
     <script>
         function clearBackHistory() {
+            // Add fake history entry, prevent back button working normally
             window.history.pushState(null, "", window.location.href);
         }
 
-        clearBackHistory();
+        clearBackHistory(); // Block back navigation
 
-        window.onpopstate = function () {
+        window.onpopstate = function () { // Detect back button press
             alert("Please login first to continue.");
-            window.location.replace("{% url 'beginning' %}");
+            window.location.replace("{% url 'beginning' %}"); // Force redirect, replace=can't go back
         };
 
-        window.addEventListener("pageshow", function (event) {
+        window.addEventListener("pageshow", function (event) { // Detect page restored from cache
+            // event.peristed=check if the page was restored from the 'back-forward cache'=store previous page
             if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
-                window.location.reload();
+                window.location.reload(); // Force refresh page
             }
         });
 
-        document.addEventListener("DOMContentLoaded", function () {
-            const params = new URLSearchParams(window.location.search);
-            if (params.has("next")) {
+        document.addEventListener("DOMContentLoaded", function () { // Run after page loads
+            const params = new URLSearchParams(window.location.search); // Read URL parameters
+            if (params.has("next")) { // If redirect happened
                 alert("Please login first to continue.");
-                window.history.replaceState({}, document.title, window.location.pathname);
+                window.history.replaceState({}, document.title, window.location.pathname); // Clear URL
             }
         });
     </script>
