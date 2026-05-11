@@ -1,0 +1,350 @@
+from django.shortcuts import render, redirect # render = return HTML page ; redirect = jump to another URL
+from django.http import JsonResponse # Return JSON data to frontend
+from django.contrib.auth.models import User # Django built-in user model
+from django.contrib.auth import authenticate, login, logout 
+from django.contrib.auth.decorators import login_required # Only users who are logged in can access this page
+from django.contrib import messages # Show messages system (success/error alerts)
+
+from .services import create_user_account # Custom function for create user
+from .models import Profile 
+from items.models import Post
+
+from django.core.mail import EmailMultiAlternatives # Send email with HTML content
+from django.template.loader import render_to_string # Convert HTML template to string (wording email)
+from django.utils.html import strip_tags # Remove HTML tags to create plain text version of email
+from django.conf import settings
+
+import time # Handle timestamps
+import random # Generate random OTP for email verification
+import re # Regular expression for validation
+
+def beginning(request):
+    return render(request, 'user/beginning.html')
+
+def user_login(request):
+    if request.method == 'POST': # Form submitted
+        email = (request.POST.get('email') or '').strip().lower() # Get email, remove spaces, lowercase
+        password = request.POST.get('password') or '' # Use empty string to prevent error when value=None
+
+        # Store error messages
+        email_error = ""
+        password_error = ""
+        user_login_error = ""
+
+        if not email:
+            email_error = "Please enter your MMU email." # Empty email
+        elif not (
+            re.match(r'^[A-Za-z0-9._%+-]+@mmu\.edu\.my$',email)
+            or
+            re.match(r'^[A-Za-z0-9._%+-]+@student\.mmu\.edu\.my$',email)
+        ):
+            email_error = "Please enter a valid MMU email."
+
+        if not password:
+            password_error = "Please enter your password." # Empty check
+
+        if email_error or password_error:
+            return render(request, 'user/user-login.html', { # Send errors back to login page
+                'email_error': email_error,
+                'password_error': password_error,
+                'email': email,
+            })
+        
+        user = authenticate(request, username=email, password=password) # Check user in db
+
+        if user is None:
+            user_login_error = "Invalid email or password"
+            return render(request, 'user/user-login.html', {
+                'user_login_error': user_login_error,
+                'email': email,
+            })
+
+        login(request, user) # Login success, create session
+        return redirect('mainPage')
+    
+    return render(request, 'user/user-login.html')
+
+def admin_login(request):
+    if request.method == 'POST':
+        email = (request.POST.get('email') or '').strip().lower()
+        password = request.POST.get('password') or ''
+
+        admin_login_error = ""
+        email_error = ""
+
+        if not email:
+            email_error = "Please enter admin email."
+            return render(request, 'user/admin-login.html', {'email_error': email_error}) # Empty check
+
+        user = authenticate(request, username=email, password=password)
+
+        if user is None:
+            admin_login_error = "Invalid email or password"
+            return render(request, 'user/admin-login.html', {
+                'admin_login_error': admin_login_error,
+            })
+
+        # Check admin permission
+        if not user.is_staff: 
+            admin_login_error = "You are not authorized as admin."
+            return render(request, 'user/admin-login.html', {
+                'admin_login_error': admin_login_error
+            })
+
+        login(request, user)
+        return redirect('mainPage')
+
+    return render(request, 'user/admin-login.html')
+
+def register(request):
+    # Handle form submission
+    if request.method == 'POST':
+        name = request.POST.get('name','').strip()
+        email = (request.POST.get('email') or '').strip().lower()
+        password = request.POST.get('password','')
+        confirm_password = request.POST.get('confirm_password','')
+
+        name_error = ""
+        email_error = ""
+        password_error = ""
+        confirm_password_error = ""
+
+        if not name:
+            name_error = "Please enter your name."
+        elif Profile.objects.filter(name=name).exists(): # Check duplicate name
+            name_error = "Name already taken."
+
+        if not email:
+            email_error = "Please enter your email."
+        elif not (
+            re.match(r'^[A-Za-z0-9._%+-]+@mmu\.edu\.my$',email)
+            or
+            re.match(r'^[A-Za-z0-9._%+-]+@student\.mmu\.edu\.my$',email)
+        ):
+            email_error = "Please enter a valid MMU email."
+        elif User.objects.filter(username=email).exists(): # Check email exists
+            email_error = "MMU Email already registered."
+    
+        if not password:
+            password_error = "Please enter a password."
+        
+        if not confirm_password:
+            confirm_password_error = "Please confirm your password."
+        elif password != confirm_password:
+            confirm_password_error = "Passwords do not match."
+
+        if name_error or email_error or password_error or confirm_password_error:
+            return render(request, 'user/register.html', {
+                'name_error': name_error,
+                'email_error': email_error,
+                'password_error': password_error,
+                'confirm_password_error': confirm_password_error,
+                'name': name,
+                'email': email,
+                'confirm_password': confirm_password,
+            })
+        
+        otp = str(random.randint(100000, 999999)) # generate 6-digit code
+
+        request.session['register_data'] = { # Save temporary registration data
+            'name': name,
+            'email': email,
+            'password': password,
+            'otp': otp,
+            'otp_time': time.time()
+        }
+        
+        send_otp_email(email, otp) # Send OTP to user's email
+        return redirect('verify_email')
+    
+    return render(request, 'user/register.html')
+
+def send_otp_email(email, otp):
+
+    html_content =render_to_string("email/otp_email.html", { # convert template to word
+        "otp": otp, # Pass data into template
+        "email": email
+    })
+
+    text_content = strip_tags(html_content) # Create plain text version by removing HTML tags
+
+    email_msg = EmailMultiAlternatives( # Create email message
+        subject = "MMU Lost Hub - Email Verification Code",
+        body = text_content,
+        from_email = settings.DEFAULT_FROM_EMAIL,
+        to = [email]
+    )
+
+    email_msg.attach_alternative(html_content, "text/html") # Attach HTML version
+    email_msg.send()
+
+def check_name(request):
+    name = (request.GET.get('name') or '').strip()
+    exists = Profile.objects.filter(name=name).exists() # Check name exists
+
+    return JsonResponse({'exists': exists}) # Return result to frontend
+
+def check_email(request):
+    email = (request.GET.get('email') or '').strip().lower()
+    exists = User.objects.filter(username=email).exists()
+
+    return JsonResponse({'exists': exists})
+
+def verify_email(request):
+    data = request.session.get('register_data') # Get session data
+
+    if not data:
+        return redirect('register')
+    
+    now = time.time()
+    
+    otp_valid_seconds = 60 # OTP valid 60s
+    otp_remaining = int(otp_valid_seconds - (now - data['otp_time'])) # Calculate remaining time for OTP
+    otp_remaining = max(0, otp_remaining) # Cannot be negative
+
+    resend_cooldown = 30 # resend limit 30s
+    resend_remaining = int(resend_cooldown - (now-data['otp_time'])) # Calculate resend wait time
+    resend_remaining = max(0, resend_remaining)
+
+    context = {
+        'otp_remaining': otp_remaining,
+        'resend_remaining': resend_remaining,
+        'can_resend': resend_remaining == 0,
+        'expired': otp_remaining == 0
+    }
+
+    if request.method == 'POST':
+        user_otp = request.POST.get('otp', '')
+
+        if context['expired']:
+            context['error'] = "OTP expired"
+            return render(request,'user/email-verify.html', context)
+        
+        if user_otp != data['otp']: # Wrong OTP
+            context['error'] = "Invalid OTP"
+            return render(request, 'user/email-verify.html', context)
+        
+        if User.objects.filter(username=data['email']).exists():
+            context['error'] = "Account already exists"
+            return render(request, 'user/email-verify.html', context)
+        
+        create_user_account( # create new user in db
+            data['name'],
+            data['email'],
+            data['password']
+        )
+
+        request.session.pop('register_data', None) # Remove data
+
+        return redirect('user_login')
+    
+    return render(request, 'user/email-verify.html', context)
+
+def resend_otp(request):
+    if request.method != "POST":
+        return JsonResponse({'error': 'Invalid request'}, status=400) # 400=error, bad request
+    
+    data = request.session.get('register_data')
+
+    if not data:
+        return JsonResponse({'error': 'Session expired'}, status=400)
+    
+    now = time.time()
+    
+    if now - data['otp_time'] < 30: # Check if 30 seconds have passed from last OTP generate, prevent spam
+        return JsonResponse({
+            'error': 'Please wait before requesting a new OTP.'
+        }, status=400)
+    
+    otp = str(random.randint(100000, 999999))
+
+    data['otp'] = otp # Update OTP + time
+    data['otp_time'] = now
+
+    request.session['register_data'] = data
+    request.session.modified = True # force session save
+
+    try:
+        send_otp_email(data['email'], otp)
+    except Exception as e: # Catch error
+        print("EMAIL ERROR:", e) # Debug log
+        return JsonResponse({'error': 'Failed to resend OTP'}, status=500)
+
+    return JsonResponse({'success': True})
+
+def user_logout(request):
+    logout(request)
+    return redirect('beginning')
+
+@login_required # Must login first
+def update_name(request):
+    if request.method == "POST":
+        name = (request.POST.get("name") or "").strip()
+
+        if Profile.objects.filter(name=name).exclude(user=request.user).exists(): # Check duplicate name except self
+            messages.error(request, "Name already taken.")
+            return redirect('profile')
+
+        request.user.first_name = name # Update Django User
+        request.user.save()
+
+        profile, _ = Profile.objects.get_or_create(user=request.user)
+        profile.name = name # Update profile
+        profile.save()
+        
+    return redirect('profile')
+
+@login_required
+def profile(request):
+
+    user = request.user
+    profile, created = Profile.objects.get_or_create(user=user)
+
+    lost_posts = Post.objects.filter(
+        post_user=user,
+        post_type='lost'
+    ).order_by('-id')
+
+    found_posts = Post.objects.filter(
+        post_user=user,
+        post_type='found'
+    ).order_by('-id')
+
+    return render(request, 'user/profile.html', {
+        'user': user,
+        'profile': profile,
+        'lost_posts': lost_posts,
+        'found_posts': found_posts
+    })
+@login_required
+def update_bio(request):
+    if request.method == 'POST':
+        bio = request.POST.get('bio', '')
+
+        profile, created = Profile.objects.get_or_create(user=request.user)
+        profile.bio = bio # Update bio
+        profile.save()
+
+        return redirect('profile')
+
+    return redirect('profile')
+
+@login_required
+def update_avatar(request):
+    print("FILES:", request.FILES)
+
+    if request.method == 'POST':
+        avatar = request.FILES.get('avatar') # Get uploaded image
+
+        if avatar:
+            profile, created = Profile.objects.get_or_create(user=request.user)
+
+            # Delete old avatar
+            if profile.avatar:
+                profile.avatar.delete(save=False)
+
+            # Save new avatar
+            profile.avatar = avatar
+            profile.save()
+
+    return redirect('profile')
