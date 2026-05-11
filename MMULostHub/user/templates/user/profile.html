@@ -117,7 +117,7 @@
                     <h4>{{ post.post_type|upper }} POST</h4>
 
                     {% if post.post_image %}
-                        <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image" required>
+                        <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image" required style="width: 500px; height: auto;">
                     {% endif %}
 
                     <p> Date Time: {{ post.post_datetime }} </p>
@@ -136,7 +136,7 @@
                 <div class="post-item">
 
                     {% if post.post_image %}
-                        <img src="{{ post.post_image.url }}" class="post-image">
+                        <img src="{{ post.post_image.url }}" class="post-image" style="width: 500px; height: auto;">
                     {% endif %}
 
                     <p> Date Time: {{ post.post_datetime }} </p>
@@ -155,7 +155,7 @@
                 <div class="post-item">
                     
                     {% if post.post_image %}
-                        <img src="{{ post.post_image.url }}" class="post-image">
+                        <img src="{{ post.post_image.url }}" class="post-image" style="width: 500px; height: auto;">
                     {% endif %}
 
                     <p> Date Time: {{ post.post_datetime }} </p>
