@@ -29,7 +29,7 @@ function confirmEdit(event) {
     }
 
     const selectedDate = new Date(datetime);                // date time user input
-    const now = new Date();                                 // date time now (mlys)
+    const now = new Date();                                 // date time now (mlys,kl)
 
     if (selectedDate > now) {
         showPopup("Error", "Datetime cannot be in the future.");

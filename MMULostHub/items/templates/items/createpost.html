@@ -2,12 +2,13 @@
 <!DOCTYPE html>
 <html>
     <head> 
-        {% load static %}
-
+        
+        <!-- CSS Links -->
         <link rel="stylesheet" href="{% static 'items/css/createpost.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/map.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/popup.css' %}">
 
+        <!-- JS Links -->
         <script src="{% static 'items/js/popup.js' %}" defer></script>
         <script src="{% static 'items/js/map.js' %}" defer></script>
         <script src="{% static 'items/js/createpost.js' %}" defer></script>                <!-- differ = load complete html then load java -->
@@ -15,19 +16,23 @@
         <title> 
             MMU Lost Hub
         </title>
+
         <!-- yt added to block user to jump back to the previous page after logout -->
         <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
         <meta http-equiv="Pragma" content="no-cache">
         <meta http-equiv="Expires" content="0">
+
     </head>
 
     <body>
         <header>
             <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class = "mmu-logo">
-
             <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
         </header>
 
+        <!-- ================================================== -->
+        <!--            Dropdown Menu Navigation                -->
+        <!-- ================================================== -->
         <div class = "dropdown-nav">
             <nav>
                 Menu button
@@ -35,45 +40,66 @@
             
             <div class = "dropdown-content">
                 <a href = "{% url 'mainPage' %}"> Home </a>
-                <a href = "{% url 'lost_posts' %}"> Lost Post </a>                 <!-- yt lost post link -->
-                <a href = "{% url 'found_posts' %}"> Found Post </a>                <!-- yt found post link -->
-                <a href = "{% url 'profile' %}"> Profile </a>                   <!-- yt profile link -->
+                <a href = "{% url 'lost_posts' %}"> Lost Post </a>                 
+                <a href = "{% url 'found_posts' %}"> Found Post </a>                
+                <a href = "{% url 'profile' %}"> Profile </a>                   
                 <a href = "{% url 'feedback_form' %}"> Feedback/Report </a>
-                <a href="{% url 'logout' %}"> Logout </a>                   <!-- yt logout link -->
+                <a href="{% url 'logout' %}"> Logout </a>                   
             </div>
         </div>
 
+        <!-- ================================================== -->
+        <!--            Create Post Section                     -->
+        <!-- ================================================== -->
         <div class = "create-post-box">
             <h2>
                 CREATE POST
             </h2>
 
+            <!-- ================================================== -->
+            <!--    Backend to Check Which Popup Msg To Display     -->
+            <!-- ================================================== -->
             {% if messages %}
-            <script>
-                window.addEventListener("load", function () {
-                    {% for message in messages %}
-                        {% if message.tags == "success" %}
-                            showPopup("Success", "{{ message }}", true, 2000);
-                        {% else %}
-                            showPopup("Info", "{{ message }}");
-                        {% endif %}
-                    {% endfor %}
-                });
-            </script>
-        {% endif %}
+                <script>                                                    // js code
+                    window.addEventListener("load", function () {
+
+                        //loop messages inside createpost.js
+                        {% for message in messages %} 
+
+                            {% if message.tags == "success" %}     
+
+                                // true = auto close popup / 2000 = 2 seconds
+                                showPopup("Success", "{{ message }}", true, 2000);
+
+                            {% else %}
+                                // show info = show error message 
+                                showPopup("Info", "{{ message }}");
+
+                            {% endif %}
+
+                        {% endfor %}
+                    });
+                </script>
+            {% endif %}
 
             <form method = "POST" enctype = 'multipart/form-data'>      <!-- enctype add to upload photo -->
-                {% csrf_token %}                <!-- Django security protection code -->
+                {% csrf_token %}                                        <!-- Django security protection code -->
                 
+                <!-- ============================== -->
+                <!--        Select Post Type        -->
+                <!-- ============================== -->
                 <label> Type: </label>
                 <select name = "post_type">
 
+                    <!-- Default -->
                     <option value = ""> Select Post Type </option>
 
+                    <!-- Select Lost Post-->
                     <option value = "lost" {% if post_data.post_type == "lost" %} selected {% endif %}> 
                         Lost Post 
                     </option>
 
+                    <!-- Select Found Post-->
                     <option value = "found" {% if post_data.post_type == "found" %} selected {% endif %}> 
                         Found Post 
                     </option>
@@ -82,24 +108,37 @@
 
                 <br><br>
 
+                <!-- ================================================== -->
+                <!--            Date Time Selection                     -->
+                <!-- ================================================== -->
                 <label> Date Time: </label>
                 <input type = "datetime-local" name = "post_datetime" value = "{{ post_data.post_datetime }}">
 
                 <br><br> 
 
+                <!-- ================================================== -->
+                <!--            Image Upload Section                    -->
+                <!-- ================================================== -->
                 <label> Upload Item Image: </label>
                 <input type = "file" id = "post_image" name = "userposts_images" accept = "image/*" >                 <!-- Input image field / accept = "image/* (limit oni can choose photo) / id is for java-->
                 
                 <br><br>
 
-                <img id = 'image_preview' width = '200' style = "display:none;" />            <!-- Display photo uploaded -->
+                <!-- Display photo uploaded -->
+                <img id = 'image_preview' width = '200' style = "display:none;" />            
 
                 <br><br>
 
+                <!-- ================================================== -->
+                <!--            Item Category Selection                 -->
+                <!-- ================================================== -->
                 <label> Item Category: </label>
                 <select name = "post_itemcategory">
+
+                    <!-- Default -->
                     <option value = ""> Select Category </option>
 
+                    <!-- Show (modal.py) and Select Item Categories -->
                     {% for value, label in item_categories %}
                         <option value="{{ value }}" {% if post_data.post_itemcategory == value %} selected {% endif %}>
                             {{ label }}
@@ -109,11 +148,16 @@
 
                 <br><br>
 
+                <!-- ================================================== -->
+                <!--            Location Selection                      -->
+                <!-- ================================================== -->
                 <label> Location: </label>
                 <select name = "post_location" id = "post_location">
 
+                    <!-- Default -->
                     <option value =""> Select Location </option>
-
+                    
+                    <!-- Show (migration 0002) and Select Locations -->
                     {% for loc in locations %}
                         <option value="{{loc.location_code}}" {% if post_data.post_location == loc.location_code %} selected {% endif %}>
                             {{loc.location_name}}
@@ -124,28 +168,40 @@
 
                 <br><br>
 
+                <!-- ================================================== -->
+                <!--            Map Select Location                     -->
+                <!-- ================================================== -->
                 <p>Click Map to choose location: </p>
                 <div class = "map_box">
                     <img src="{% static 'images/map-img.jpg' %}" id="smallMap" class="smallMap">
-
                     <div id = "smallMap_marker" class = "smallMap-marker"> 📍 </div>
                 </div>
 
                 <br><br>
 
+                <!-- ================================================== -->
+                <!--                    Description                     -->
+                <!-- ================================================== -->
                 <label> Item Description: </label>
-                <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ ">{{ post_data.post_description }}</textarea>
 
+                <!-- placeholder = display text at text area -->
+                <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ ">
+                    {{ post_data.post_description }}
+                </textarea>
+
+                <!-- ================================================== -->
+                <!--            Map Modal Section                       -->
+                <!-- ================================================== -->
                 <div id="map_modal" class="map_modal">
 
                     <div class="mapmodal_content">
 
-                        <!-- Close button -->
+                        <!-- Close map button -->
                         <span id="close_map" class="close_button">
-                            &times;
+                            &times;   <!-- x icon -->
                         </span>
 
-                        <!-- Scroll container -->
+                        <!-- Scroller -->
                         <div class="map-scroll-container">
 
                             <div id = "location_label" class = "location_label"></div>
@@ -173,6 +229,7 @@
 
                 <br><br>
 
+                <!-- onclick = will run a confirm popup first from createpost.js -->
                 <button type = "button" onclick = "confirmCreate(event)">
                         Create Post 
                 </button>
@@ -180,6 +237,9 @@
             </form>
         </div>
 
+        <!-- ================================================== -->
+        <!--             Popup Box Modal                        -->
+        <!-- ================================================== -->
         <div id = "popup" class = "popup hidden">
             <div class = "popup-box">
                 <h3 id = "popup-title"></h3>
@@ -188,6 +248,7 @@
                 <button id = "popup-cancel"> Cancel </button>
             </div>
         </div>
+
     </body>
 
     <footer>
