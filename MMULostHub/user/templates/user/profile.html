@@ -4,8 +4,11 @@
     <head>
         <title>MMU Lost Hub</title>
         
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <!-- Prevent browser cache, user cannot press back to access previous page -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
+        <!-- Older browser cache prevention -->
         <meta http-equiv="Pragma" content="no-cache">
+        <!-- Expire page immediately -->
         <meta http-equiv="Expires" content="0">
 
         <link rel="stylesheet" type="text/css" href="{% static 'user/css/profile.css' %}">
@@ -39,6 +42,7 @@
 
         <!-- Display user's uploaded avatar or default avatar if user has none with-->
         <!-- now = current time ; |date:'U' = convert time to Unix timestamp(second) ; Force to reload image instead of using cache -->
+        <!-- Check if current user owns profile -->
         {% if profile.avatar %}
             <img id="avatarImage" src="{{ profile.avatar.url }}?v={{ now|date:'U' }}" 
             width="150" height="150" style="border-radius:50%; object-fit:cover; {% if is_owner %}cursor:pointer;{% else %}cursor:default;{% endif %}">
@@ -113,7 +117,7 @@
                     <h4>{{ post.post_type|upper }} POST</h4>
 
                     {% if post.post_image %}
-                        <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image" required>
+                        <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image" required style="width: 500px; height: auto;">
                     {% endif %}
 
                     <p> Date Time: {{ post.post_datetime }} </p>
@@ -132,7 +136,7 @@
                 <div class="post-item">
 
                     {% if post.post_image %}
-                        <img src="{{ post.post_image.url }}" class="post-image">
+                        <img src="{{ post.post_image.url }}" class="post-image" style="width: 500px; height: auto;">
                     {% endif %}
 
                     <p> Date Time: {{ post.post_datetime }} </p>
@@ -151,7 +155,7 @@
                 <div class="post-item">
                     
                     {% if post.post_image %}
-                        <img src="{{ post.post_image.url }}" class="post-image">
+                        <img src="{{ post.post_image.url }}" class="post-image" style="width: 500px; height: auto;">
                     {% endif %}
 
                     <p> Date Time: {{ post.post_datetime }} </p>
