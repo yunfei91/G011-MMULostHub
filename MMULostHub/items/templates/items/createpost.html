@@ -2,8 +2,6 @@
 <!DOCTYPE html>
 <html>
     <head> 
-        {% load static %}
-
         <link rel="stylesheet" href="{% static 'items/css/createpost.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/map.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/popup.css' %}">
@@ -15,9 +13,12 @@
         <title> 
             MMU Lost Hub
         </title>
-        <!-- yt added to block user to jump back to the previous page after logout -->
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <!-- yt added -->
+        <!-- Prevent browser cache, user cannot press back to access previous page -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
+        <!-- Older browser cache prevention -->
         <meta http-equiv="Pragma" content="no-cache">
+        <!-- Expire page immediately -->
         <meta http-equiv="Expires" content="0">
     </head>
 

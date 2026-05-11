@@ -1,8 +1,8 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head>
         <title>MMU Lost Hub</title>
-        {% load static %}
         <link rel="stylesheet" type="text/css" href="{% static 'user/css/register.css' %}">
     </head>
 
@@ -113,7 +113,7 @@
     }
 
     function goLogin() {
-        window.location.href = "{% url 'user-login' %}";
+        window.location.href = "{% url 'user_login' %}";
     }
     
     let passwordValid = false;
