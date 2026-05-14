@@ -10,7 +10,7 @@ html,body{
 
 body{
     margin: 0;
-    background: linear-gradient(225deg, #CED8D4, #CED8D4, #D9E7FD, #B5D1FA, #72788A);
+    background: white;
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -28,10 +28,10 @@ body{
 
 header{
     margin: 0;
-    height: 90px;
+    height: 120px;
     width: 100%;
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    background: #D9E7FD;
+    background: linear-gradient(225deg, #CED8D4, #CED8D4, #D9E7FD, #B5D1FA);
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -245,7 +245,7 @@ footer{
     margin: 0;
     height: 120px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-    background: #d7dfdc;
+    background: linear-gradient(225deg, #CED8D4, #CED8D4, #D9E7FD, #B5D1FA, #72788A);
     text-align: center;
     font-size: 12px;
     font-weight: bold;
