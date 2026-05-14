@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Slackey&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Sansation&display=swap');
+
 html,body{
     width: 100%;
     overflow-x: hidden;
@@ -74,11 +75,11 @@ header{
     left: 0;
     z-index: 2;
 
-    max-height: 250px;
+    max-height: 200px;
     width: auto;
 
-    padding-top: 150px;
-    padding-left: 140px;
+    padding-top: 190px;
+    padding-left: 190px;
 
     animation: logoFloat 4s ease-in-out infinite;
 
@@ -159,7 +160,7 @@ header{
         0 4px 8px rgba(0,0,0,0.2);
 }
 
-nav{
+.main-nav{
     display: flex;
     gap: 50px;
     padding-top: 20px;
@@ -209,7 +210,7 @@ nav a:active{
         0 5px 10px rgba(0,0,0,0.25);
 }
 
-.beginning-page-action-button{
+.action-btn{
     display: flex;
     flex-direction: column;
     align-items: flex-start;
