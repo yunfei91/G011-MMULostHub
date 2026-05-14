@@ -10,76 +10,86 @@
     <body>
         <div class="whole-page">
             <header>
-                <a href="{% url 'beginning' %}">
-                    <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class="mmu-logo">
-                </a>
+                <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class="mmu-logo">
             </header>
 
             <div class="content">
                 <div class="banner">
                     <div class="web-logo">
-                        <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
+                        <img src="{% static 'images/Web Logo-top.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo-top">
+                        <img src="{% static 'images/Web Logo-base.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo-base">
                     </div>
 
-                    <div class="slogan">
-                        <p>
-                            What's lost can be found,<br>
-                        and found can find its way back.
-                        </p>
+                    <div class="box-input">
+
+                        <div class="slogan">
+                            <p>
+                                What's lost can be found,<br>
+                            and found can find its way back.
+                            </p>
+                        </div>
 
                         <button onclick="goBack()">Back</button>
 
-                        <h2>Welcome to MMU Lost Hub</h2>
-                        <h3>Register</h3>
+                        <div class="auth-panel">
+                            <div class="auth-card">
+                                <h2>Welcome to MMU Lost Hub</h2>
+                                <h3>Register</h3>
 
-                        <form method="POST">
-                            {% csrf_token %}
-                            <!--Name-->
-                            <input type="text" id="name" name="name" placeholder="Name" value="{{ name }}" oninput="checkName()">
-                            <p id="name-status"></p>
-                            <p style="color:red;">{{ name_error }}</p>
-                            <!--Email-->
-                            <input type="text" id="email" name="email" placeholder="Email" value="{{ email }}" oninput="checkEmail()">
-                            <p id="email-status"></p>
-                            {% if email_error %}
-                                <p style="color:red;">{{ email_error }}</p>
-                            {% endif %}
-                            <!--Password-->
-                            <div class="password-box">
-                                <input type="password" id="password" name="password" placeholder="Password" oninput="checkPassword()">
-                                <span class="show-password" onclick="showPassword('password', this)">🙈</span>
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <!--Name-->
+                                    <input type="text" id="name" name="name" placeholder="Name" value="{{ name }}" oninput="checkName()">
+                                    <p id="name-status"></p>
+                                    <p style="color:red;">{{ name_error }}</p>
+                                    <!--Email-->
+                                    <input type="text" id="email" name="email" placeholder="Email" value="{{ email }}" oninput="checkEmail()">
+                                    <p id="email-status"></p>
+                                    {% if email_error %}
+                                        <p style="color:red;">{{ email_error }}</p>
+                                    {% endif %}
+                                    <!--Password-->
+                                    <div class="password-box">
+                                        <input type="password" id="password" name="password" placeholder="Password" oninput="checkPassword()">
+                                        <span class="show-password" onclick="showPassword('password', this)">🙈</span>
+                                    </div>
+                                    {% if password_error %}
+                                        <p style="color:red;">{{ password_error }}</p>
+                                    {% endif %}
+
+                                    <!-- Checklist -->
+                                    <div class="checklist">
+                                        <p id="letter" class="invalid">At least 1 letter</p>
+                                        <p id="number" class="invalid">At least 1 number</p>
+                                        <p id="symbol" class="invalid">At least 1 symbol (@#$*.)</p>
+                                        <p id="length" class="invalid">At least 8 characters</p>
+                                    </div>
+
+                                    <!-- Confirm Password -->
+                                    <div class="password-box">
+                                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" oninput="checkPassword()">
+                                        <span class="show-password" onclick="showPassword('confirm_password', this)">🙈</span>
+                                    </div>
+                                    <p id="match-text"></p>
+                                    {% if confirm_password_error %}
+                                        <p style="color:red;">{{ confirm_password_error }}</p>
+                                    {% endif %}
+
+                                    <button type="submit" id="submitBtn" disabled>Register</button>
+
+                                </form>
+
+                                <p class="switch-text">
+                                    Already have an account?
+                                    <a href="{% url 'user_login' %}">Login Here</a>
+                                </p>    
+
+                                <p class="switch-text">
+                                    Are you an admin?
+                                    <a href="{% url 'admin_login' %}">Login as Admin</a>
+                                </p>
                             </div>
-                            {% if password_error %}
-                                <p style="color:red;">{{ password_error }}</p>
-                            {% endif %}
-
-                            <!-- Checklist -->
-                            <div class="checklist">
-                                <p id="letter" class="invalid">At least 1 letter</p>
-                                <p id="number" class="invalid">At least 1 number</p>
-                                <p id="symbol" class="invalid">At least 1 symbol (@#$*.)</p>
-                                <p id="length" class="invalid">At least 8 characters</p>
-                            </div>
-
-                            <!-- Confirm Password -->
-                            <div class="password-box">
-                                <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" oninput="checkPassword()">
-                                <span class="show-password" onclick="showPassword('confirm_password', this)">🙈</span>
-                            </div>
-                            <p id="match-text"></p>
-                            {% if confirm_password_error %}
-                                <p style="color:red;">{{ confirm_password_error }}</p>
-                            {% endif %}
-
-                            <button type="submit" id="submitBtn" disabled>Register</button>
-
-                        </form>
-
-                        <p>Already have an account?</p>
-                        <a href="{% url 'user_login' %}">Login Here</a>
-
-                        <p>Are you an admin?</p>
-                        <a href="{% url 'admin_login' %}">Login as Admin</a>
+                        </div>
                     </div>
                 </div>
             </div>
