@@ -6,241 +6,241 @@
         <link rel="stylesheet" type="text/css" href="{% static 'user/css/email-verify.css' %}">
     </head>
 
-<body>
-    <div class="whole-page">
-        <header>
-            <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class="mmu-logo">
-        </header>
+    <body>
+        <div class="whole-page">
+            <header>
+                <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class="mmu-logo">
+            </header>
 
-        <div class="content">
-            <div class="banner">
-                <div class="web-logo">
-                    <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
-                </div>
+            <div class="content">
+                <div class="banner">
+                    <div class="web-logo">
+                        <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
+                    </div>
 
-                <div class="slogan">
-                    <p>
-                        What's lost can be found,<br>
-                    and found can find its way back.
-                    </p>
+                    <div class="slogan">
+                        <p>
+                            What's lost can be found,<br>
+                        and found can find its way back.
+                        </p>
 
-                <button onclick="goBack()">Back</button>
+                    <button onclick="goBack()">Back</button>
 
-                </div>
-                    <p id="otpTimer"></p>
-                    
-                    <form method="POST">
-                        {% csrf_token %}
-                        <div class="otp-box" id="otpBox">
-                            <input type="text" maxlength="1" class="otp-digit">
-                            <input type="text" maxlength="1" class="otp-digit">
-                            <input type="text" maxlength="1" class="otp-digit">
-                            <input type="text" maxlength="1" class="otp-digit">
-                            <input type="text" maxlength="1" class="otp-digit">
-                            <input type="text" maxlength="1" class="otp-digit">
-                        </div>
+                    </div>
+                        <p id="otpTimer"></p>
                         
-                        <input type="hidden" name="otp" id="otpHidden">
-                        <button type="submit">Verify</button>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="otp-box" id="otpBox">
+                                <input type="text" maxlength="1" class="otp-digit">
+                                <input type="text" maxlength="1" class="otp-digit">
+                                <input type="text" maxlength="1" class="otp-digit">
+                                <input type="text" maxlength="1" class="otp-digit">
+                                <input type="text" maxlength="1" class="otp-digit">
+                                <input type="text" maxlength="1" class="otp-digit">
+                            </div>
+                            
+                            <input type="hidden" name="otp" id="otpHidden">
+                            <button type="submit">Verify</button>
 
-                        {% if error %}
-                            <p id="errorMsg" style="color:red;">{{ error }}</p>
-                        {% endif %}
-                    </form>
-                    
-                    <button type="button" id="resendBtn" {% if not can_resend %}disabled{% endif %}>Resend OTP</button>
+                            {% if error %}
+                                <p id="errorMsg" style="color:red;">{{ error }}</p>
+                            {% endif %}
+                        </form>
+                        
+                        <button type="button" id="resendBtn" {% if not can_resend %}disabled{% endif %}>Resend OTP</button>
 
-                    <p id="resendTimer"></p>
+                        <p id="resendTimer"></p>
+                </div>
             </div>
+
+            <footer>
+                <p>© 2026 MMU Lost Hub<br>
+                <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
+            </footer>
         </div>
 
-        <footer>
-            <p>© 2026 MMU Lost Hub<br>
-            <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
-        </footer>
-    </div>
+        {{ otp_remaining|json_script:"otp-time" }}
+        {{ resend_remaining|json_script:"resend-time" }}
 
-    {{ otp_remaining|json_script:"otp-time" }}
-    {{ resend_remaining|json_script:"resend-time" }}
-
-    <script>
-        function goBack() {
-            if (document.referrer !== "") {
-                window.history.back();
-            } else {
-                window.location.href = "{% url 'beginning' %}";
+        <script>
+            function goBack() {
+                if (document.referrer !== "") {
+                    window.history.back();
+                } else {
+                    window.location.href = "{% url 'beginning' %}";
+                }
             }
-        }
-        
-        let otpTime = 0;
-        let resendTime = 0;
-        
-        try {
-            otpTime = JSON.parse(document.getElementById("otp-time").textContent);
-            resendTime = JSON.parse(document.getElementById("resend-time").textContent);
-        } catch (e) {
-            console.log("Timer init error", e);
-        }
-
-        const otpTimer = document.getElementById("otpTimer");
-        const resendTimer = document.getElementById("resendTimer");
-        const resendBtn = document.getElementById("resendBtn");
-
-
-        const inputs = document.querySelectorAll(".otp-digit");
-        const hiddenInput = document.getElementById("otpHidden");
-        const form = document.querySelector("form");
-        const otpBox = document.getElementById("otpBox");
-        const errorMsg = document.getElementById("errorMsg");
-
-        if (inputs.length > 0) {
-            inputs[0].focus();
-        }
-
-        function updateHidden() {
-            hiddenInput.value = Array.from(inputs)
-            .map(i => i.value)
-            .join("");
-        }
-
-        function hideError() {
-            if (!errorMsg) return;
-
-            errorMsg.style.opacity = "0";
-
-            setTimeout(() => {
-                errorMsg.style.display = "none";
-            }, 300);
-        }
-
-        inputs.forEach((input, index) => {
             
-            input.addEventListener("input", (e) => {
-                let value = e.target.value.replace(/\D/g, "");
-                input.value = value;
+            let otpTime = 0;
+            let resendTime = 0;
+            
+            try {
+                otpTime = JSON.parse(document.getElementById("otp-time").textContent);
+                resendTime = JSON.parse(document.getElementById("resend-time").textContent);
+            } catch (e) {
+                console.log("Timer init error", e);
+            }
 
-                if (value && index < inputs.length - 1) {
-                    inputs[index + 1].focus();
-                }
+            const otpTimer = document.getElementById("otpTimer");
+            const resendTimer = document.getElementById("resendTimer");
+            const resendBtn = document.getElementById("resendBtn");
 
-                updateHidden();
 
-                if (hiddenInput.value.length === 6) {
-                    form.submit();
-                }
+            const inputs = document.querySelectorAll(".otp-digit");
+            const hiddenInput = document.getElementById("otpHidden");
+            const form = document.querySelector("form");
+            const otpBox = document.getElementById("otpBox");
+            const errorMsg = document.getElementById("errorMsg");
 
-                hideError();
-            });
+            if (inputs.length > 0) {
+                inputs[0].focus();
+            }
 
-            input.addEventListener("keydown", (e) => {
-                if (e.key === "Backspace" && !input.value && index > 0) {
-                    inputs[index - 1].focus();
-                }
-            });
+            function updateHidden() {
+                hiddenInput.value = Array.from(inputs)
+                .map(i => i.value)
+                .join("");
+            }
 
-            input.addEventListener("paste", (e) => {
-                e.preventDefault();
+            function hideError() {
+                if (!errorMsg) return;
 
-                let data = e.clipboardData
-                    .getData("text")
-                    .replace(/\D/g, "")
-                    .slice(0, 6);
-
-                inputs.forEach((box, i) => {
-                    box.value = data[i] || "";
-                });
-
-                updateHidden();
-
-                const nextIndex = Math.min(data.length, 5);
-                inputs[nextIndex].focus();
-
-                if (data.length === 6) {
-                    form.submit();
-                }
-            });
-        });
-
-        window.addEventListener("load", () => {
-            if (errorMsg && otpBox) {
-                otpBox.classList.add("shake");
+                errorMsg.style.opacity = "0";
 
                 setTimeout(() => {
-                    otpBox.classList.remove("shake");
+                    errorMsg.style.display = "none";
                 }, 300);
             }
-        });
 
-        function updateTimers() {
-            if (otpTime > 0) {
-                otpTimer.innerText = "OTP expires in: " + otpTime + "s";
-                otpTime--;
-            } else {
-                otpTimer.innerText = "OTP expired";
+            inputs.forEach((input, index) => {
+                
+                input.addEventListener("input", (e) => {
+                    let value = e.target.value.replace(/\D/g, "");
+                    input.value = value;
+
+                    if (value && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+
+                    updateHidden();
+
+                    if (hiddenInput.value.length === 6) {
+                        form.submit();
+                    }
+
+                    hideError();
+                });
+
+                input.addEventListener("keydown", (e) => {
+                    if (e.key === "Backspace" && !input.value && index > 0) {
+                        inputs[index - 1].focus();
+                    }
+                });
+
+                input.addEventListener("paste", (e) => {
+                    e.preventDefault();
+
+                    let data = e.clipboardData
+                        .getData("text")
+                        .replace(/\D/g, "")
+                        .slice(0, 6);
+
+                    inputs.forEach((box, i) => {
+                        box.value = data[i] || "";
+                    });
+
+                    updateHidden();
+
+                    const nextIndex = Math.min(data.length, 5);
+                    inputs[nextIndex].focus();
+
+                    if (data.length === 6) {
+                        form.submit();
+                    }
+                });
+            });
+
+            window.addEventListener("load", () => {
+                if (errorMsg && otpBox) {
+                    otpBox.classList.add("shake");
+
+                    setTimeout(() => {
+                        otpBox.classList.remove("shake");
+                    }, 300);
+                }
+            });
+
+            function updateTimers() {
+                if (otpTime > 0) {
+                    otpTimer.innerText = "OTP expires in: " + otpTime + "s";
+                    otpTime--;
+                } else {
+                    otpTimer.innerText = "OTP expired";
+                }
+
+                if (resendTime > 0) {
+                    resendTimer.innerText = "Resend available in: " + resendTime + "s";
+                    resendBtn.disabled = true;
+                    resendTime--;
+                } else {
+                    resendTimer.innerText = "";
+                    resendBtn.disabled = false;
+                }
+
+                setTimeout(updateTimers, 1000);
             }
 
-            if (resendTime > 0) {
-                resendTimer.innerText = "Resend available in: " + resendTime + "s";
-                resendBtn.disabled = true;
-                resendTime--;
-            } else {
-                resendTimer.innerText = "";
-                resendBtn.disabled = false;
-            }
+            updateTimers();
 
-            setTimeout(updateTimers, 1000);
-        }
+            function getCookie(name) {
+                let cookieValue = null;
 
-        updateTimers();
+                if (document.cookie) {
+                    const cookies = document.cookie.split(';');
 
-        function getCookie(name) {
-            let cookieValue = null;
+                    for (let cookie of cookies) {
+                        cookie = cookie.trim();
 
-            if (document.cookie) {
-                const cookies = document.cookie.split(';');
-
-                for (let cookie of cookies) {
-                    cookie = cookie.trim();
-
-                    if (cookie.startsWith(name + '=')) {
-                        cookieValue = cookie.substring(name.length + 1);
+                        if (cookie.startsWith(name + '=')) {
+                            cookieValue = cookie.substring(name.length + 1);
+                        }
                     }
                 }
+                return cookieValue;
             }
-            return cookieValue;
-        }
 
-        resendBtn.addEventListener("click", function () {
-            fetch("{% url 'resend_reset_otp' %}", {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": getCookie('csrftoken'),
-                    "Content-Type": "application/json"
-                },
-                credentials: "same-origin"
-            })
-            .then(res => res.json())
-            .then(data => {
+            resendBtn.addEventListener("click", function () {
+                fetch("{% url 'resend_reset_otp' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": getCookie('csrftoken'),
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "same-origin"
+                })
+                .then(res => res.json())
+                .then(data => {
 
-                if (data.error) {
-                    alert(data.error);
-                    return;
-                }
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
 
-                alert("OTP sent!");
+                    alert("OTP sent!");
 
-                otpTime = 60;
-                resendTime = 30;
-                resendBtn.disabled = true;
+                    otpTime = 60;
+                    resendTime = 30;
+                    resendBtn.disabled = true;
 
-                inputs.forEach(i => i.value = "");
-                inputs[0].focus();
-                hiddenInput.value = "";
-            })
-            .catch(err => {
-                console.error(err);
+                    inputs.forEach(i => i.value = "");
+                    inputs[0].focus();
+                    hiddenInput.value = "";
+                })
+                .catch(err => {
+                    console.error(err);
+                });
             });
-        });
-    </script>
-</body>
+        </script>
+    </body>
 </html>

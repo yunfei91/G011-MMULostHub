@@ -90,7 +90,7 @@
         font-size: 30px;
         cursor: pointer;
     }
-</style>
+    </style>
 
         <header>
             <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class = "mmu-logo">
@@ -256,6 +256,7 @@
             <div class="post"
                 onclick="openPost(this)"
                 data-user="{{ post.post_user.username }}" 
+                data-profile="{% url 'userProfile' post.post_user.username %}"
                 data-type="{{ post.post_type }}"
                 data-date="{{ post.post_datetime }}"
                 data-category="{{ post.get_post_itemcategory_display }}"
@@ -348,7 +349,11 @@
                 <div class="modal-body">
 
                     <div class="modal-left">
-                        <p><span id="m_user"></span></p> <!-- JS inserts username -->
+                        <p>
+                            <a id="m_user_link" href="">
+                                <span id="m_user"></span>
+                            </a>
+                        </p> <!-- JS inserts username -->
 
                         <img id="m_image" style="max-width:100%; display:none;">
                     </div>
