@@ -2,7 +2,11 @@
 <!DOCTYPE html>
 <html>
     <head> 
-        
+        <!-- Cropper CSS/JS Tool to crop photo -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+
+
         <!-- CSS Links -->
         <link rel="stylesheet" href="{% static 'items/css/createpost.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/map.css' %}">
@@ -123,12 +127,42 @@
                 <!--            Image Upload Section                    -->
                 <!-- ================================================== -->
                 <label> Upload Item Image: </label>
-                <input type = "file" id = "post_image" name = "userposts_images" accept = "image/*" >                 <!-- Input image field / accept = "image/* (limit oni can choose photo) / id is for java-->
                 
-                <br><br>
+                <input type = "file" id = "post_image" name = "userposts_images" accept = "image/*" hidden>                 <!-- Input image field / accept = "image/* (limit oni can choose photo) / id is for java-->
+                
+                <button type="button" id="uploadBtn">
+                    Upload Image
+                </button>
+                
+                <!-- ====================================== -->
+                <!--          Crop Image Modal             -->
+                <!-- ====================================== -->
+                <div id ="crop_modal" class = "crop-modal">
 
-                <!-- Display photo uploaded -->
-                <img id = 'image_preview' width = '200' style = "display:none;" />            
+                    <!-- close button -->
+                    <span id="close_crop" class="imgclose_button">
+                        &times;
+                    </span>
+
+                    <div id ="crop_container" class = "crop-container">
+
+                        <!-- Display photo uploaded to crop -->
+                        <img id = 'crop_preview' class = "crop-preview">
+
+                        <button type="button" id="confirmCropBtn">
+                            Crop Image
+                        </button>
+                    
+                    </div>
+                </div>
+
+                <div id = "imagePreview_container" class = "imagePreview-container">
+
+                    <img id="image_preview" class = "image-preview">
+
+                </div>
+
+                <input type="hidden" name="cropped_image" id="cropped_image">
 
                 <br><br>
 
@@ -200,7 +234,7 @@
                     <div class="mapmodal_content">
 
                         <!-- Close map button -->
-                        <span id="close_map" class="close_button">
+                        <span id="close_map" class="mapclose_button">
                             &times;   <!-- x icon -->
                         </span>
 

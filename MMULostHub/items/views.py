@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post, edit_post
 from django.contrib.auth.decorators import login_required
+# for crop image
+import base64
+from django.core.files.base import ContentFile
 
 # yt added
 # Prevent browser cache, user cannot press back to access previous page
@@ -33,9 +36,18 @@ def mainPage(request):
     #=================================
     #        Search By Keyword       #
     if query:
+
+        # Search category can no full words also can search
+        matching_categories = [
+            value
+            for value, label in CATEGORY_CHOICES
+            if query.lower() in label.lower()
+        ]
+
         post_box = post_box.filter(
             Q(post_location__location_name__icontains=query) |          # icontains = ignore case sencitive (HI\hi\Hi..)
-            Q(post_description__icontains=query)                        # | = or
+            Q(post_description__icontains=query) |                       # | = or
+            Q(post_itemcategory__in=matching_categories)
         ).distinct()
 
     #=================================
@@ -50,7 +62,7 @@ def mainPage(request):
 
     #=================================
     #        Location Filter         #
-
+    
     # remove empty string (none value)
     selected_locations = [
         loc for loc in selected_locations if loc
@@ -104,11 +116,36 @@ def createPost(request):
     # when user submit create post form
     if request.method == "POST":
         try:
+
+            # =====================================
+            #     Get cropped image from JS
+            # =====================================
+
+            cropped = request.POST.get("cropped_image")
+
+            # original upload image
+            image_file = request.FILES.get('userposts_images')
+
+            # if user cropped image
+            if cropped:
+
+                # split base64 data
+                format, imgstr = cropped.split(';base64,')
+
+                # get image extension
+                ext = format.split('/')[-1]
+
+                # convert base64 to image file
+                image_file = ContentFile(
+                    base64.b64decode(imgstr),
+                    name=f'cropped.{ext}'
+                )
+
             # run service.py to check data accuratecy
             create_post({
                 'post_type': request.POST.get('post_type'),
                 'post_datetime': request.POST.get('post_datetime'),
-                'userposts_images' : request.FILES.get('userposts_images'),
+                'userposts_images': image_file,
                 'post_itemcategory': request.POST.get('post_itemcategory'),
                 'post_location': request.POST.get('post_location'),
                 'post_description': request.POST.get('post_description'),

@@ -1,46 +1,16 @@
-
-.smallMap,
-.bigMap {
-    position: relative;
-}
-
-.smallMap-marker,
-.bigMap-marker {
-    position: absolute;
-    transform: translate(-50%, -100%);
-    pointer-events: none;                               /* marker won't block mouse click */
-    z-index: 10;                                        /* marker will be on the upper pic */
-    display: none;                                      /* cannot see without clicking first */
-}
-
-.map_modal {
-    display: none; 
-    position: fixed;                                    /* fixed position wont move with the */
-    z-index: 999; 
-    inset: 0;                                           /* full screen */
-}
-
-.smallMap { 
-    width: 400px; 
-} 
-
-/* Big popup map */ 
-.bigMap { 
-    width: 950px;
-    height: auto;
-}
-
-/* White popup box */ 
-.mapmodal_content { 
-    width: 100%; 
-    max-width: 950px;                                       /* = bigmap img width */
-    margin: 10px auto; 
-    padding: 30px; 
-    position: relative;                                     /* relative to close button position */
+/* ========================= */
+/*       IMAGE UPLOAD        */
+/* ========================= */
+.crop-modal {
+    display:none;
+    position:fixed;
+    z-index:9999;
+    inset:0;
+    background:rgba(0,0,0,0.7);
 }
 
 /* Close button X */ 
-.close_button { 
+.imgclose_button { 
     position: absolute; 
     top: 15px; 
     right: 25px; 
@@ -49,25 +19,24 @@
     cursor: pointer; 
 }
 
-/* ========================= */
-/* MAP SCROLL AREA */
-/* ========================= */
-
-.map-scroll-container {
-    max-height: 800px;
-    overflow: auto;                                             /* scroll line  */
-    margin-top: 20px;
+.crop-container{
+    background:white;
+    width:90%;
+    max-width:700px;
+    position:relative;
 }
 
-.big-map-box{
-    position: relative;                                         /* relative to marker(absolute) */
+.crop-preview{
+    max-width: 500px;
+    display: block;
 }
 
-.map_box{
-    position: relative;
+.imagePreview-container{
+    display: none;
 }
 
-.location_label{
-    display:none;
+.image-preview{
+    width:240px;
+    height:320px;
+    object-fit:cover;
 }
-
