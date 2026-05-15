@@ -49,7 +49,7 @@ imageInput.addEventListener("change", function(e){
 
         cropper = new Cropper(cropPreview,{
 
-            aspectRatio: 3/4,
+            aspectRatio: 4/3,
 
             viewMode:1,
 

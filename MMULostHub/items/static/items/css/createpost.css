@@ -36,7 +36,7 @@
 }
 
 .image-preview{
-    width:240px;
-    height:320px;
+    width:auto;
+    height:auto;
     object-fit:cover;
 }
