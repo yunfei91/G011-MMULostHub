@@ -58,6 +58,14 @@ header{
     z-index: 10000;
 }
 
+header.shrink{
+    height: 75px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+    transition:
+        transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 /* ===================================== */
 /*             Header Left               */
 /* ===================================== */
@@ -84,6 +92,14 @@ header{
    
     transition: height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     transform-origin: left center;
+}
+
+header.shrink .mmu-logo{
+    height: 42px;
+}
+
+header.shrink .losthub-logo{
+    height: 52px;
 }
 
 /* ===================================== */
@@ -148,6 +164,20 @@ header{
         0 3px 0 #565c6e,
         0 5px 10px rgba(0,0,0,0.25);
 }
+
+.menu-icon.active span:nth-child(1){
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.menu-icon.active span:nth-child(2){
+    opacity: 0;
+    transform: scale(0);
+}
+
+.menu-icon.active span:nth-child(3){
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
 /* ===================================== */
 /*                Overlay                */
 /* ===================================== */
@@ -179,6 +209,10 @@ header{
     right: 25px;
 
     z-index: 10002;
+}
+
+header.shrink ~ .dropdown-nav{
+    top: 15px;
 }
 
 /* ===================================== */
