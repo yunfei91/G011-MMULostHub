@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Q
 
 from items.models import Post
-from report.models import Feedback, Report
+from report.models import Feedback, Report, UserReport
 
 from .email_utils import (
     send_feedback_confirmation,
@@ -191,9 +191,9 @@ def admin_view_user(request):
     )
 
     # Reports
-    reports = Report.objects.select_related(
+    reports = UserReport.objects.select_related(
         'user',
-        'post'
+        'reported_by'
     ).order_by(
         '-created_at'
     )
@@ -249,7 +249,7 @@ def delete_user(request):
 def verify_report(request, report_id):
 
     report = get_object_or_404(
-        Report,
+        UserReport,
         id=report_id
     )
 
@@ -279,7 +279,7 @@ def verify_report(request, report_id):
 def reject_report(request, report_id):
 
     report = get_object_or_404(
-        Report,
+        UserReport,
         id=report_id
     )
 

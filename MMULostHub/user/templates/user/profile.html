@@ -43,7 +43,7 @@
             position: relative;
         }
 
-<<<<<<< HEAD
+
         <h1>My Profile</h1>
         <!--zinc reverify acc-->
         {% if need_reverify %}
@@ -56,12 +56,10 @@
         </p>
     </div>
 {% endif %}
-=======
         .modal-body {
             display: flex;
             gap: 30px;
         }
->>>>>>> 338c57e7e11b4e3bf17ea240f27dc51aef5360c2
 
         .modal-left {
             flex: 1;
@@ -118,7 +116,7 @@
 
             <h1>My Profile</h1>
 
-<<<<<<< HEAD
+
             <button onclick="cancelCrop()">Cancel</button>
         </div>
         {% csrf_token%} <!-- Security token to prevent CSRF attack -->
@@ -129,11 +127,9 @@
 
             <!--zinc add-->
             {% if not is_owner %}
-                <form method="POST" action="{% url 'report_user' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="user_id" value="{{ user.id }}">
-                    <button type="submit">Report User</button>
-                </form>
+              <a href="{% url 'report_user' user.id %}">
+                <button type="button">Report User</button>
+            </a>
             {% endif %}
 
             <button onclick="showNameEdit()">Edit Name</button>
@@ -149,7 +145,8 @@
                 {% for message in messages %}
                     <p style="color:red;">{{ message }}</p>
                 {% endfor %}
-=======
+            {% endif %}
+
             <!-- Display user's uploaded avatar or default avatar if user has none with-->
             <!-- now = current time ; |date:'U' = convert time to Unix timestamp(second) ; Force to reload image instead of using cache -->
             <!-- Check if current user owns profile -->
@@ -159,7 +156,7 @@
             {% else %}
                 <img id="avatarImage"  src="{% static 'images/default.png' %}?v={{ now|date:'U' }}" 
                 width="150" height="150" style="border-radius:50%; object-fit:cover; {% if is_owner %}cursor:pointer;{% else %}cursor:default;{% endif %}">
->>>>>>> 338c57e7e11b4e3bf17ea240f27dc51aef5360c2
+
             {% endif %}
 
             <div id="editor" style="display:none;"> <!-- Hide edit button -->

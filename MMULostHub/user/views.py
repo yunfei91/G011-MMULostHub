@@ -556,7 +556,7 @@ def report_user(request, user_id):
         profile.save()
 
         return redirect('view_profile', user_id=user_id)
-    return render(request,'user/report_user.html', {
+    return render(request,'report/reportuser.html', {
             'reported_user': reported_user
         })
 
