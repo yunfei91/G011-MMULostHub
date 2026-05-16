@@ -3,8 +3,8 @@ from django.http import JsonResponse # Return JSON data to frontend
 from django.contrib.auth.models import User # Django built-in user model
 from django.contrib.auth import authenticate, login, logout 
 from django.contrib.auth.decorators import login_required # Only users who are logged in can access this page
-from django.views.decorators.cache import never_cache
-from django.views.decorators.cache import cache_control
+from django.views.decorators.cache import never_cache # Prevent browser cache, user cannot press back to access previous page
+
 from django.contrib import messages # Show messages system (success/error alerts)
 
 # yunfee add to check other user's profile
@@ -15,6 +15,9 @@ from .services import create_user_account # Custom function for create user
 from .models import Profile 
 from items.models import Post
 from report.models import UserReport #zinc add for report user
+
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 from django.core.mail import EmailMultiAlternatives # Send email with HTML content
 from django.template.loader import render_to_string # Convert HTML template to string (wording email)
@@ -47,8 +50,14 @@ def user_login(request):
         ):
             email_error = "Please enter a valid MMU email."
 
-        if not password:
-            password_error = "Please enter your password." # Empty check
+        if password and not password_error:
+            try:
+                validate_password(password)
+            except ValidationError as e:
+                password_error = e.messages[0]
+
+        if password == email:
+            password_error = "Password cannot be the same as email."
 
         if email_error or password_error:
             return render(request, 'user/user-login.html', { # Send errors back to login page
@@ -70,6 +79,132 @@ def user_login(request):
         return redirect('mainPage')
     
     return render(request, 'user/user-login.html')
+
+def forgot_pw(request):
+    if request.method == 'POST':
+        email = (request.POST.get('email') or '').strip().lower()
+
+        if not email:
+            return render(request, 'user/forgot-pw.html', {
+                'error': "Please enter your email."
+            })
+        
+        if not User.objects.filter(username=email).exists():
+            return render(request, 'user/forgot-pw.html', {
+                'error': "Email not registered"
+            })
+
+        otp = str(random.randint(100000, 999999))
+
+        request.session['reset_data'] = { # Stor in session
+            'email': email,
+            'otp': otp,
+            'otp_time': time.time()
+        }
+
+        send_otp_email(email, otp)
+
+        return redirect('reset_otp_verify')
+
+    return render(request, 'user/forgot-pw.html')
+
+def reset_otp_verify(request):
+    data = request.session.get('reset_data')
+
+    if not data:
+        return redirect('forgot_pw')
+    
+    now = time.time()
+
+    resend_cooldown = 30
+    resend_remaining = int(resend_cooldown - (now - data['otp_time']))
+    resend_remaining = max(0, resend_remaining)
+
+    otp_valid_seconds = 60
+    otp_remaining = int(otp_valid_seconds - (now - data['otp_time']))
+    otp_remaining = max(0, otp_remaining)
+
+    context = {
+        'otp_remaining': otp_remaining,
+        'resend_remaining': resend_remaining,
+        'can_resend': resend_remaining == 0,
+        'expired': otp_remaining == 0
+    }
+
+    if request.method == 'POST':
+        user_otp = request.POST.get('otp', '')
+
+        if context['expired']:
+            context['error'] = "OTP expired"
+            return render(request, 'user/resetpw-otp.html', context)
+
+        if user_otp != data['otp']:
+            context['error'] = "Invalid OTP"
+            return render(request, 'user/resetpw-otp.html', context)
+
+        return redirect('reset_pw')
+
+    return render(request, 'user/resetpw-otp.html', context)
+
+def resend_reset_otp(request):
+    if request.method != "POST":
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+    
+    data = request.session.get('reset_data')
+
+    if not data:
+        return JsonResponse({'error': 'Session expired'}, status=400)
+    
+    now = time.time()
+    
+    if now - data['otp_time'] < 30:
+        return JsonResponse({
+            'error': 'Please wait before requesting a new OTP.'
+        }, status=400)
+    
+    otp = str(random.randint(100000, 999999))
+
+    data['otp'] = otp
+    data['otp_time'] = now
+
+    request.session['reset_data'] = data
+    request.session.modified = True
+
+    send_otp_email(data['email'], otp)
+
+    return JsonResponse({'success': True})
+
+def reset_pw(request):
+    data = request.session.get('reset_data')
+
+    if not data: # Must come from OTP page
+        return redirect('forgot_pw')
+
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if not password:
+            return render(request, 'user/reset-pw.html', {
+                'error': "Please enter password"
+            })
+
+        if password != confirm_password:
+            return render(request, 'user/reset-pw.html', {
+                'error': "Passwords do not match"
+            })
+
+        user = User.objects.get(username=data['email'])
+        user.set_password(password)
+        user.save()
+
+        request.session.pop('reset_data', None)
+
+        return render(request, 'user/reset-pw.html', {
+            'success': True
+        })
+
+    return render(request, 'user/reset-pw.html')
 
 def admin_login(request):
     if request.method == 'POST':
@@ -280,21 +415,28 @@ def resend_otp(request):
     return JsonResponse({'success': True})
 
 def user_logout(request):
-    logout(request)
-    request.session.flush()
+    logout(request) # Django logout, clear login session and let user become anonymous user
+    request.session.flush() # Completely clear session data
 
     response = redirect("beginning")
+    # Prevent browser from storing page
+    # no-store=don't store anything
+    # no-cache=must recheck with server
+    # force validation again
+    # expire immediately
+    response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0" 
+    response["Pragma"] = "no-cache" # old http cache control
+    response["Expires"] = "0" # set page as expired immediately
 
-    response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-    response["Pragma"] = "no-cache"
-    response["Expires"] = "0"
-
-    return response
+    return response # send final response to browser
 
 @login_required(login_url='beginning')
 @never_cache # Must login first
 def update_name(request):
     if request.method == "POST":
+        if request.user != request.user:
+            return redirect('profile')
+
         name = (request.POST.get("name") or "").strip()
 
         if Profile.objects.filter(name=name).exclude(user=request.user).exists(): # Check duplicate name except self
@@ -322,10 +464,14 @@ def profile(request, user_id=None): #zinc add if else
     profile, created = Profile.objects.get_or_create(user=user)
     need_reverify = profile.need_reverify #zinc add reverify acc
 
+    all_posts = Post.objects.filter(
+        post_user=user
+    ).order_by('-id')
+
     lost_posts = Post.objects.filter(
         post_user=user,
         post_type='lost'
-    ).order_by('-id')
+    ).order_by('-id') # Newest first
 
     found_posts = Post.objects.filter(
         post_user=user,
@@ -338,10 +484,13 @@ def profile(request, user_id=None): #zinc add if else
     return render(request, 'user/profile.html', {
         'user': user,
         'profile': profile,
+        'all_posts': all_posts,
         'lost_posts': lost_posts,
         'found_posts': found_posts,
+
         'is_owner': is_owner, #zinc add
         'need_reverify': need_reverify #zinc add
+        #'is_owner': True # Own profile
     })
 
 @login_required(login_url='beginning')
@@ -411,11 +560,18 @@ def report_user(request, user_id):
             'reported_user': reported_user
         })
 
+
+@login_required(login_url='beginning')
+@never_cache
 # yunfee add to check other user's profile
 def userProfile(request, username):
     user_obj = get_object_or_404(User, username=username)
 
     profile, created = Profile.objects.get_or_create(user=user_obj)
+
+    all_posts = Post.objects.filter(
+        post_user=user_obj
+    ).order_by('-id')
 
     lost_posts = Post.objects.filter(
         post_user = user_obj,
@@ -430,7 +586,9 @@ def userProfile(request, username):
     return render(request, 'user/profile.html', {
         'user': user_obj,
         'profile': profile,
+        'all_posts': all_posts,
         'lost_posts': lost_posts,
-        'found_posts': found_posts
+        'found_posts': found_posts,
+        'is_owner': request.user == user_obj
     })
 

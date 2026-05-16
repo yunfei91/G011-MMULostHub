@@ -3,6 +3,9 @@ from .models import MMULocation
 from datetime import datetime
 from django.utils import timezone
 
+# ======================================================
+#            Create Post Beckend Services
+# ======================================================
 def create_post (post_data, user):
 
     post_type = post_data.get('post_type')
@@ -11,12 +14,20 @@ def create_post (post_data, user):
     post_category = post_data.get('post_itemcategory')
     post_datetime_str = post_data.get('post_datetime')
 
+    # ======================================================
+    #                 Check Post Type 
+    # ======================================================
+    # Empty or not
     if not post_type:
         raise ValueError("Please choose Lost or Found.")
 
+    # Post = found but no location = error
     if post_type == "found" and not location:
         raise ValueError("Location is required for Found Posts. Please state where did you found this item. ^-^")
     
+    # ======================================================
+    #                 Check Empty Location
+    # ======================================================
     item_location = None
     
     if location:
@@ -26,44 +37,57 @@ def create_post (post_data, user):
         except MMULocation.DoesNotExist:
             raise ValueError("Invalid location. Please select a location from the dropdown menu.")
 
+    # ======================================================
+    #                 Check Empty Category
+    # ======================================================
     if not post_category:
         raise ValueError("Please choose a category for your item.")
 
+    # ======================================================
+    #                 Check Empty Image 
+    # ======================================================
     if not post_image:
         raise ValueError("Please Upload an image about the item ^^")
     
+    # ======================================================
+    #                 Check Date Time
+    # ======================================================
+    # Empty anot
     if not post_datetime_str:
         raise ValueError("Please select a date and time.")
 
+    # Date Time format
     try:
-    # 把 HTML datetime-local 转成 Python datetime
         post_datetime = datetime.strptime(
             post_datetime_str,
             "%Y-%m-%dT%H:%M"
         )
-
     except ValueError:
         raise ValueError("Invalid date format.")
 
-    # 转成 timezone-aware（Django 时区）
+
     post_datetime = timezone.make_aware(post_datetime)
 
-    # 去掉秒数和微秒，避免误判 future datetime
+    # Change all input second to 0
     post_datetime = post_datetime.replace(
         second=0,
         microsecond=0
     )
 
+    # Get timezone now and cahange all second to 0
     now = timezone.now().replace(
         second=0,
         microsecond=0
     )
 
+    # Future Date Time = error
     if post_datetime > now:
         raise ValueError("Datetime cannot be in the future.")
     
 
-    
+    # ======================================================
+    #             Save Post Date to Database
+    # ======================================================
     new_post = Post.objects.create(
         post_user = user,
         post_type = post_type,
@@ -73,6 +97,77 @@ def create_post (post_data, user):
         post_location = item_location,
         post_description = post_data.get('post_description'),
     )
-
     return new_post
 
+# ======================================================
+#             Edit Post Beckend Services
+# ======================================================
+def edit_post(post, data):
+    post_type = data.get('post_type')
+    post_datetime_str = data.get('post_datetime')
+    post_image = data.get('userposts_images')
+    post_category = data.get('post_itemcategory')
+    location = data.get('post_location')
+    post_description = data.get('post_description') or ""
+    
+    # ======================================================
+    #                 Check Post Type
+    # ======================================================
+    # Empty or not
+    if not post_type:
+        raise ValueError("Please choose Lost or Found.")
+
+    # Post = found but no location = error
+    if post_type == "found" and not location:
+        raise ValueError("Location is required for Found Posts. Please state where did you found this item. ^-^")
+    
+    # ======================================================
+    #                 Check Empty Location
+    # ======================================================
+    item_location = None
+    if location:
+        try:
+            item_location = MMULocation.objects.get(location_code = location)
+        except MMULocation.DoesNotExist:
+            raise ValueError("Invalid location. Please select a location from the dropdown menu.")
+
+    # ======================================================
+    #                 Check Empty Category
+    # ======================================================
+    if not post_category:
+        raise ValueError("Please choose a category for your item.")
+    
+    # ======================================================
+    #                 Check Date Time
+    # ======================================================
+    # Empty anot
+    if not post_datetime_str:
+        raise ValueError("Please select a date and time.")
+    
+    post_datetime = datetime.fromisoformat(post_datetime_str)
+    post_datetime = timezone.make_aware(post_datetime)
+
+    # Future Date Time = error
+    if post_datetime > timezone.now():
+        raise ValueError("Datetime cannot be in the future.")
+    
+    # ======================================================
+    #                 Check Empty Image
+    # ======================================================
+    # if no new input keep old one
+    if post_image:
+        post.post_image = post_image
+    
+    # ======================================================
+    #             Update and Save Post Data to Database
+    # ======================================================
+    post.post_type = post_type
+    post.post_datetime = post_datetime
+    post.post_itemcategory = post_category
+    post.post_location = item_location
+    post.post_description = post_description
+
+    post.save()
+    
+    return post
+    
