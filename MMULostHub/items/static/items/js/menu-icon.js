@@ -16,6 +16,21 @@ function closeMenu(){
     document.querySelector(".menu-icon").classList.remove("active");
 }
 
+// click outside close (optional safety)
+window.addEventListener("click", function(event){
+
+    const menu = document.getElementById("menu");
+    const button = document.querySelector(".menu-icon");
+    const overlay = document.getElementById("overlay");
+
+    if (
+        !menu.contains(event.target) &&
+        !button.contains(event.target)
+    ){
+        closeMenu();
+    }
+});
+
 let scrollTimer;
 const menu = document.getElementById("menu");
 const header = document.querySelector("header");
