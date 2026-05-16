@@ -15,6 +15,21 @@ body{
     background-attachment: fixed;
 }
 
+body::before{
+    content: "";
+    position: fixed;
+    inset: 0; /* top:0; right:0; bottom:0; left:0 */
+
+    background: url("/static/images/WebLogo-base.png");
+    background-size: 65%;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    opacity: 0.3;   /* Control transparent */
+    pointer-events: none;
+    z-index: -1;
+}
+
 /* ===================================== */
 /*             Main Container            */
 /* ===================================== */
@@ -266,6 +281,33 @@ header.shrink ~ .dropdown-nav{
 .menu.show-menu ul li{
     opacity: 1;
     transform: translateX(0);
+}
+
+/* ===================================== */
+/*           Menu List Delay             */
+/* ===================================== */
+.menu.show-menu ul li:nth-child(1){
+    transition-delay: 0.08s;
+}
+
+.menu.show-menu ul li:nth-child(2){
+    transition-delay: 0.14s;
+}
+
+.menu.show-menu ul li:nth-child(3){
+    transition-delay: 0.20s;
+}
+
+.menu.show-menu ul li:nth-child(4){
+    transition-delay: 0.26s;
+}
+
+.menu.show-menu ul li:nth-child(5){
+    transition-delay: 0.32s;
+}
+
+.menu.show-menu ul li:nth-child(6){
+    transition-delay: 0.38s;
 }
 
 /* ===================================== */
