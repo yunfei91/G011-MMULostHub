@@ -38,17 +38,34 @@
     <body>
         <div class="whole-page">
             <header>
-                <img src="{% static 'images/MMU Logo.png' %}" alt="MMU Logo" class="mmu-logo">
-                <img src="{% static 'images/Web Logo-top.png' %}" alt="MMU Logo" class="losthub-logo">
+                <div class="header-left"> <!-- yt adjusted for css uses-->              
+                    <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
+                    <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
+                </div>
+
+                <div class="header-right"> <!-- yt adjusted for css uses-->
+                    <!-- Home icon -->
+                    <a href="{% url 'mainPage' %}" class="home-icon">
+                        <img src="{% static 'images/homeicon.png' %}" alt="Home">
+                    </a>
+
+                    <!-- Menu button --> <!-- yt adjusted for css uses-->
+                    <button type="button" class="menu-icon" onclick="toggleMenu()">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
             </header>
+
+            <div id="overlay" class="overlay"></div> <!-- yt adjusted for css uses-->
 
             <!-- ================================================== -->
             <!--            Dropdown Menu Navigation                -->
             <!-- ================================================== -->
             <div class = "dropdown-nav">
-                <button type="button" class="menu-icon" onclick="toggleMenu()">☰</button>
                 
-                <nav id="menu" class="menu hidden-menu">
+                <nav id="menu" class="menu"> <!-- yt adjusted for css uses-->
                     <ul>
                         <li>
                         <a href="{% url 'mainPage' %}"> Home </a>
@@ -374,11 +391,8 @@
             </div>
 
             <footer>
-                <p>
-                    © 2026 MMU Lost Hub
-                    <br>
-                    Designed by: Kho Yee Theng / Tan Yun Fee / Lim Tze Ying
-                </p>
+                <p>© 2026 MMU Lost Hub<br>
+                <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
             </footer>
         </div>
     </body>

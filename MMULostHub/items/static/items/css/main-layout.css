@@ -10,12 +10,14 @@ html,body{
 
 body{
     margin: 0;
-    background: white;
-    background-size: cover;
+    padding-top: 110px;
     background-position: center;
     background-attachment: fixed;
 }
 
+/* ===================================== */
+/*             Main Container            */
+/* ===================================== */
 .whole-page{
     min-height: 100vh;
     display: flex;
@@ -23,86 +25,114 @@ body{
 }
 
 .content{
+    position: relative;
+    overflow: hidden;
     flex: 1;
 }
 
+/* ===================================== */
+/*                 Header                */
+/* ===================================== */
 header{
-    margin: 0;
-    height: 120px;
-    width: 100%;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    background: linear-gradient(225deg, #CED8D4, #CED8D4, #D9E7FD, #B5D1FA);
+    position: fixed;
     display: flex;
-    flex-direction: row;
     align-items: center;
-    margin-bottom: 10px;
+    justify-content: space-between;
+
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 110px;
+    padding: 0 10px;
+    box-sizing: border-box;
+
+    background: linear-gradient(225deg, #CED8D4, #D9E7FD, #B5D1FA);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+
+    transform-origin: top;
+    transform: translateY(0);
+    transition: height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.35s ease,
+                background 0.35s ease;
+
+    z-index: 10000;
+}
+
+/* ===================================== */
+/*             Header Left               */
+/* ===================================== */
+.header-left{
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .mmu-logo{
-    height: 60px;
+    height: 55px;
     width: auto;
     text-align: left;
-    padding-left: 10px;
+    transition: height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: left center;
 }
 
 .losthub-logo{
-    height: 70px;
+    height: 65px;
     width: auto;
+    padding-left: 0;
+    margin-left: 10;
     text-align: left;
-    padding-left: 10px;
+   
+    transition: height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: left center;
 }
 
 /* ===================================== */
-/*          Dropdown Navigation          */
+/*             Header Right              */
 /* ===================================== */
-
-.dropdown-nav{
-    position: relative;
-
-    margin-top: 0;
-    margin-left: 10px;
-
-    z-index: 9999;
+.header-right{
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 /* ===================================== */
 /*              Menu Button              */
 /* ===================================== */
-
 .menu-icon{
-    width: 40px;
-    height: 40px;
-
-    top: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    width: 35px;
+    height: 35px;
+    gap: 3.5px;
     border: none;
-    border-radius: 15px;
-
-    cursor: pointer;
-
-    font-size: 20px;
-    font-family: 'Slackey';
-
-    color: white;
-
+    border-radius: 10px;
     background: #7e8599;
 
+    cursor: pointer;
+    transition: all 0.2s ease;
     box-shadow:
         0 1px 0 rgba(255,255,255,0.35) inset,
         0 -2px 4px rgba(0,0,0,0.10) inset,
         0 4px 0 #6a7184,
         0 6px 12px rgba(0,0,0,0.20);
+        
+    z-index: 10002;
+}
 
-    transform: translateY(0);
+.menu-icon span{
+    width: 15px;
+    height: 3px;
 
-    transition: all 0.2s ease;
-
-    position: relative;
-    z-index: 10001;
+    background: white;
+    border-radius: 10px;
+    transition: all 0.35s ease;
 }
 
 .menu-icon:hover{
     transform: translateY(-3px);
-
     box-shadow:
         0 1px 0 rgba(255,255,255,0.32) inset,
         0 -2px 5px rgba(0,0,0,0.12) inset,
@@ -112,101 +142,126 @@ header{
 
 .menu-icon:active{
     transform: translateY(2px);
-
     box-shadow:
         0 1px 0 rgba(255,255,255,0.25) inset,
         0 -2px 4px rgba(0,0,0,0.18) inset,
         0 3px 0 #565c6e,
         0 5px 10px rgba(0,0,0,0.25);
 }
-
 /* ===================================== */
-/*              Dropdown Box             */
+/*                Overlay                */
 /* ===================================== */
+.overlay{
+    position: fixed;
+    inset: 0; /* top:0; right:0; bottom:0; left:0 */
 
-.menu{
-    position: absolute;
-    z-index: 10000;
+    background: rgba(115, 115, 115, 0.448);
 
-    top: 0;
-    left: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.35s ease;
 
-    min-height: 400px;
-    width: 200px;
-    margin-left: -25px;
-    padding: 25px 25px 25px 40px;
-
-    border-radius: 25px;
-
-    background: rgba(255,255,255,0.18);
-
-    backdrop-filter: blur(14px);
-
-    box-shadow:
-        0 8px 24px rgba(0,0,0,0.18),
-        inset 0 1px 0 rgba(255,255,255,0.35);
-
-    animation: menuFade 0.25s ease;
+    z-index: 9998;
 }
 
-/* Hide Menu */
+.overlay.show{
+    opacity: 1;
+    visibility: visible;
+}
 
-.hidden-menu{
-    display: none;
+/* ===================================== */
+/*          Dropdown Navigation          */
+/* ===================================== */
+.dropdown-nav{
+    position: fixed;
+
+    top: 30px;
+    right: 25px;
+
+    z-index: 10002;
+}
+
+/* ===================================== */
+/*             Dropdown Menu             */
+/* ===================================== */
+.menu{
+    position: fixed;
+
+    top: 160px;
+    left: auto;
+    right: 0;
+    width: 200px;
+    padding: 20px 15px;
+    border-radius: 20px 0 0 20px;
+    
+    box-shadow: 4px 0 25px rgba(0,0,0,0.2);
+    background: rgba(255, 255, 255, 0.458);
+    backdrop-filter: blur(18px);
+
+    transform: translateX(110%);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+    
+    z-index: 10001;
+}
+
+.menu.show-menu{
+    transform: translateX(0);
 }
 
 /* ===================================== */
 /*               Menu List               */
 /* ===================================== */
-
 .menu ul{
+    display: flex;
+    flex-direction: column;
     list-style: none;
 
     padding: 0;
-    margin: 40px 0 0 0;
+    margin: 0;
+    width: 200px;
+    gap: 20px;
+}
 
-    display: flex;
-    flex-direction: column;
+.menu ul li{
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.4s ease;
+}
 
-    gap: 18px;
+.menu.show-menu ul li{
+    opacity: 1;
+    transform: translateX(0);
 }
 
 /* ===================================== */
 /*              Menu Button              */
 /* ===================================== */
-
 .menu ul li a{
     display: block;
 
     text-align: center;
-
     text-decoration: none;
 
-    padding: 14px 20px;
-
+    padding: 10px 0;
     border-radius: 20px;
-
-    background: #7e8599;
-
-    color: white;
-
-    font-family: 'Slackey';
-    font-size: 13px;
-
     box-shadow:
         0 1px 0 rgba(255,255,255,0.35) inset,
         0 -2px 4px rgba(0,0,0,0.10) inset,
         0 4px 0 #6a7184,
         0 6px 12px rgba(0,0,0,0.20);
 
-    transform: translateY(0);
+    background: #7e8599;
+    color: white;
+    font-family: 'Slackey';
+    font-size: 13px;
 
+    transform: translateY(0);
     transition: all 0.2s ease;
 }
 
 .menu ul li a:hover{
     transform: translateY(-3px);
-
     box-shadow:
         0 1px 0 rgba(255,255,255,0.32) inset,
         0 -2px 5px rgba(0,0,0,0.12) inset,
@@ -216,7 +271,6 @@ header{
 
 .menu ul li a:active{
     transform: translateY(2px);
-
     box-shadow:
         0 1px 0 rgba(255,255,255,0.25) inset,
         0 -2px 4px rgba(0,0,0,0.18) inset,
@@ -225,34 +279,23 @@ header{
 }
 
 /* ===================================== */
-/*               Animation               */
+/*                Footer                 */
 /* ===================================== */
-
-@keyframes menuFade{
-
-    from{
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to{
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 footer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     margin: 0;
-    height: 120px;
+    height: 110px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-    background: linear-gradient(225deg, #CED8D4, #CED8D4, #D9E7FD, #B5D1FA, #72788A);
+    background: linear-gradient(225deg, #CED8D4, #D9E7FD, #B5D1FA);
+
     text-align: center;
     font-size: 12px;
     font-weight: bold;
     font-family: 'Sansation';
     line-height: 1.3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 100px;
+    
+    z-index: 10000;
 }

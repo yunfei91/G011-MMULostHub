@@ -1,18 +1,17 @@
-function toggleMenu() {
-    const menu = document.getElementById("menu");
-
-    menu.classList.toggle("hidden-menu");
+// yt added for menu icon
+function toggleMenu(){
+    document.getElementById("menu").classList.toggle("show-menu");
+    document.getElementById("overlay").classList.toggle("show");
+    document.querySelector(".menu-icon").classList.toggle("active");
 }
 
-window.addEventListener("click", function(event){
-    const menu = document.getElementById("menu");
-    const menuButton = document.querySelector(".menu-icon");
-
-    // Check click outside menu and menu button
-    if(
-        !menu.contains(event.target) &&
-        !menuButton.contains(event.target)
-    ){
-        menu.classList.add("hidden-menu");
-    }
+// click overlay close
+document.getElementById("overlay").addEventListener("click", function(){
+    closeMenu();
 });
+
+function closeMenu(){
+    document.getElementById("menu").classList.remove("show-menu");
+    document.getElementById("overlay").classList.remove("show");
+    document.querySelector(".menu-icon").classList.remove("active");
+}
