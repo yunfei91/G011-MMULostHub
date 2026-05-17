@@ -43,19 +43,6 @@
             position: relative;
         }
 
-
-        <h1>My Profile</h1>
-        <!--zinc reverify acc-->
-        {% if need_reverify %}
-    <div>
-        <h3 style="color:red;">
-            Your account has been reported.
-        </h3>
-        <p>
-            Please verify your account again.
-        </p>
-    </div>
-{% endif %}
         .modal-body {
             display: flex;
             gap: 30px;
@@ -93,6 +80,34 @@
             cursor: pointer;
         }
     </style>
+
+     /*zinc add*/
+        <h1>My Profile</h1>
+    
+        {% if need_reverify %}
+        <div
+        style="
+        padding:20px;
+        background:#ffe5e5;
+        border:1px solid red;
+        margin-bottom:20px;
+        ">
+
+    <h3 style="color:red;">
+        Your account has been reported
+    </h3>
+
+    <p>
+        Please verify your account again.
+    </p>
+
+    <a href="{% url 'start_reverify' %}">
+        <button type="button">
+            Verify Again
+        </button>
+    </a>
+</div>
+{% endif %}
 
         <div class="whole-page">
             <header>

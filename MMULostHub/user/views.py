@@ -547,7 +547,7 @@ def report_user(request, user_id):
             reported_by=request.user,
             comments=comments,
             image=image,
-            status="Pending"
+            status=""
         )
 
         # mark profile reported
@@ -592,3 +592,159 @@ def userProfile(request, username):
         'is_owner': request.user == user_obj
     })
 
+#zinc add def start_reverify 
+@login_required
+def start_reverify(request):
+
+    otp = str(random.randint(100000, 999999))
+
+    request.session['reverify_data'] = {
+
+        'otp': otp,
+        'otp_time': time.time(),
+
+    }
+
+    send_otp_email(
+        request.user.email,
+        otp
+    )
+
+    return redirect('reverify_otp')
+
+#zinc add def reverify_otp
+@login_required
+def reverify_otp(request):
+
+    data = request.session.get(
+        'reverify_data'
+    )
+
+    if not data:
+        return redirect('profile')
+
+    now = time.time()
+    otp_valid_seconds = 60
+    otp_remaining = int(
+        otp_valid_seconds - (
+            now - data['otp_time']
+        )
+    )
+
+    otp_remaining = max(0, otp_remaining)
+    resend_cooldown = 30
+    resend_remaining = int(
+        resend_cooldown - (
+            now - data['otp_time']
+        )
+    )
+
+    resend_remaining = max(0, resend_remaining)
+
+    context = {
+        'otp_remaining': otp_remaining,
+        'resend_remaining': resend_remaining,
+        'can_resend': resend_remaining == 0,
+        'expired': otp_remaining == 0
+    }
+
+    if request.method == 'POST':
+
+        user_otp = request.POST.get(
+            'otp',
+            ''
+        )
+
+        if context['expired']:
+            context['error'] = "OTP expired"
+
+            return render(
+                request,
+                'user/email-verify.html',
+                context
+            )
+
+        if user_otp != data['otp']:
+            context['error'] = "Invalid OTP"
+
+            return render(
+                request,
+                'user/email-verify.html',
+                context
+            )
+
+        profile, _ = Profile.objects.get_or_create(
+            user=request.user
+        )
+
+        profile.need_reverify = False
+        profile.save()
+
+        # latest user report
+        report = UserReport.objects.filter(
+            user=request.user
+        ).latest('created_at')
+        
+        report.status = "Verified"
+        report.save()
+
+        request.session.pop(
+            'reverify_data',
+            None
+        )
+
+        return redirect('mainPage')
+
+    return render(
+        request,
+        'user/email-verify.html',
+        context
+    )
+
+#zinc add def resend_reverify_otp
+@login_required
+def resend_reverify_otp(request):
+
+    if request.method != "POST":
+
+        return JsonResponse({
+            'error': 'Invalid request'
+        }, status=400)
+
+    data = request.session.get(
+        'reverify_data'
+    )
+
+    if not data:
+
+        return JsonResponse({
+            'error': 'Session expired'
+        }, status=400)
+
+    now = time.time()
+
+    if now - data['otp_time'] < 30:
+
+        return JsonResponse({
+            'error':
+            'Please wait before requesting a new OTP.'
+        }, status=400)
+
+    otp = str(random.randint(100000, 999999))
+
+    data['otp'] = otp
+
+    data['otp_time'] = now
+
+    request.session['reverify_data'] = data
+
+    request.session.modified = True
+
+    send_otp_email(
+        request.user.email,
+        otp
+    )
+
+    return JsonResponse({
+        'success': True
+    })

@@ -27,6 +27,9 @@ urlpatterns = [
     #path('report-user/<int:user_id>/', views.report_user, name='report_user'),
     #path('report-user/', views.report_user, name='report_user'),
     path('report-user/<int:user_id>/',views.report_user,name='report_user'),
+    path('start-reverify/',views.start_reverify,name='start_reverify'),
+    path('reverify-otp/',views.reverify_otp,name='reverify_otp'),
+    path('resend-reverify-otp/',views.resend_reverify_otp,name='resend_reverify_otp'),
     
     # yunfee add to check other user's profile
     path('profile/<str:username>/', views.userProfile, name='userProfile'),

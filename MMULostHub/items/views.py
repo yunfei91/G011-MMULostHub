@@ -1,7 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
+
+from user.views import profile
 from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post, edit_post
 from django.contrib.auth.decorators import login_required
+
+#zinc add to check if user is verified before create post
+from user.models import Profile
 
 # yt added
 # Prevent browser cache, user cannot press back to access previous page
@@ -100,6 +105,20 @@ def mainPage(request):
 @login_required(login_url='beginning')
 @never_cache
 def createPost(request):
+
+    #zinc add to check if user is verified before create post
+
+    profile, _ = Profile.objects.get_or_create(
+    user=request.user
+    )
+    
+    if profile.need_reverify:
+        messages.error(
+            request,
+            "Please verify your account again."
+            )
+
+        return redirect('profile')
 
     # when user submit create post form
     if request.method == "POST":

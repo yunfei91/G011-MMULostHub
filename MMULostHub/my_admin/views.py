@@ -167,6 +167,7 @@ def admin_view_user(request):
 
     query = request.GET.get('q')
 
+    # Search User
     if query:
 
         users = User.objects.filter(
@@ -177,15 +178,32 @@ def admin_view_user(request):
 
         users = User.objects.all()
 
-    # Ensure profile exists
+    # Ensure Profile Exists
     for user in users:
+
         Profile.objects.get_or_create(
             user=user
         )
 
+    # View Type
+    view_type = request.GET.get(
+        'view',
+        'all'
+    )
+
     users = users.select_related(
         'profile'
-    ).order_by(
+    )
+
+    # Show Only Reported Users
+    if view_type == 'reported_only':
+
+        users = users.filter(
+            profile__is_reported=True
+        )
+
+    # Order Users
+    users = users.order_by(
         '-profile__is_reported',
         'username'
     )
@@ -194,6 +212,8 @@ def admin_view_user(request):
     reports = UserReport.objects.select_related(
         'user',
         'reported_by'
+    ).exclude(
+        status='Rejected'
     ).order_by(
         '-created_at'
     )
@@ -204,6 +224,7 @@ def admin_view_user(request):
         {
             'users': users,
             'reports': reports,
+            'view_type': view_type,
         }
     )
 
@@ -253,7 +274,7 @@ def verify_report(request, report_id):
         id=report_id
     )
 
-    report.status = "Verified"
+    report.status = "Pending"
     report.save()
 
     # Send email to reported user
@@ -269,6 +290,7 @@ def verify_report(request, report_id):
 
     profile.is_reported = True
     profile.need_reverify = True
+    profile.is_reverified = False
     profile.save()
 
     return redirect('admin_user')
@@ -287,10 +309,20 @@ def reject_report(request, report_id):
     report.save()
 
     # Send email to report owner
-    if report.user and report.user.email:
+    if report.reported_by and report.reported_by.email:
         send_report_rejected_email(
-        report.user.email
-    )
+            report.reported_by.email
+        )
+
+    if report.user:
+        profile = Profile.objects.get_or_create(
+            user=report.user
+    )[0]
+        
+        profile.is_reported = False
+        profile.need_reverify = False  
+        profile.is_reverified = True 
+        profile.save()
 
     return redirect('admin_user')
 
