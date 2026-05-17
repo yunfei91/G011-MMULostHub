@@ -546,7 +546,8 @@ def report_user(request, user_id):
             user=reported_user,
             reported_by=request.user,
             comments=comments,
-            image=image
+            image=image,
+            status="Pending"
         )
 
         return redirect('userProfile', username=reported_user.username)
@@ -672,6 +673,8 @@ def reverify_otp(request):
         )
 
         profile.need_reverify = False
+        profile.is_reverified = True
+        profile.is_reported = True
         profile.save()
 
         # latest user report
@@ -725,13 +728,9 @@ def resend_reverify_otp(request):
         }, status=400)
 
     otp = str(random.randint(100000, 999999))
-
     data['otp'] = otp
-
     data['otp_time'] = now
-
     request.session['reverify_data'] = data
-
     request.session.modified = True
 
     send_otp_email(

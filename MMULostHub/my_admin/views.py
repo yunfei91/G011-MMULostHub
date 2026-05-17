@@ -1,3 +1,5 @@
+import email
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Q
@@ -239,32 +241,18 @@ def delete_user(request):
             'user_id'
         )
 
-        # Prevent Empty ID
-        if not user_id:
-            return redirect('admin_user')
-
-        # Prevent Invalid ID
-        if not str(user_id).isdigit():
-            return redirect('admin_user')
-
         user = get_object_or_404(
             User,
             id=user_id
         )
 
-        # Ban Account
-        user.is_active = False
-        user.save()
+        email = user.email
 
-        UserReport.objects.filter(
-            user=user
-        ).delete()
+        user.delete()  # Permanently delete the user and all related data
 
         # Send email
-        if user.email:
-            send_account_deleted_email(
-                user.email
-    )
+        if email:
+            send_account_deleted_email(email)
 
     return redirect('admin_user')
 
@@ -291,9 +279,12 @@ def verify_report(request, report_id):
             user=report.user
     )
 
+    report.status = "Verified"
+    report.save()
+
+    profile, _ = Profile.objects.get_or_create(user=report.user)
     profile.is_reported = True
     profile.need_reverify = True
-    profile.is_reverified = False
     profile.save()
 
     return redirect('admin_user')
@@ -347,6 +338,12 @@ def confirm_verified(request, report_id):
         id=report_id
     )
 
+    profile, _ = Profile.objects.get_or_create(user=report.user)
+    profile.is_reported = False
+    profile.save()
+
+    report.status = "Closed"
+    reoprt.save()
     report.delete()
 
     return redirect('admin_user')

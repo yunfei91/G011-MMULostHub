@@ -18,8 +18,8 @@ class Feedback(models.Model):
         return f"Feedback {self.id} - {self.created_at.strftime('%Y-%m-%d %H:%M')}"
     
 class Report(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='reports')
-    post = models.ForeignKey('items.Post', on_delete=models.SET_NULL, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='reports')
+    post = models.ForeignKey('items.Post', on_delete=models.CASCADE, null=True, blank=True)
     comments = models.TextField()
     image = models.ImageField(upload_to='report_image/', null=True, blank=True)
     status = models.CharField(
@@ -38,8 +38,8 @@ class UserReport(models.Model):
         ('Verified', 'Verified'),
         ('Rejected', 'Rejected'),
     ]
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='reported_user')
-    reported_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='report_sender')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='reported_user')
+    reported_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='report_sender')
     comments = models.TextField()
     image = models.ImageField(upload_to='user_report_image/', null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, blank=True, null=True)
