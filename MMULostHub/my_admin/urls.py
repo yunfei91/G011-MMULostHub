@@ -22,4 +22,5 @@ urlpatterns = [
     path('delete_selected/', views.delete_selected, name='delete_selected'),
     path('verify-report/<int:report_id>/', views.verify_report, name='verify_report'),
     path('reject-report/<int:report_id>/', views.reject_report, name='reject_report'),
+    path('confirm-verified/<int:report_id>/',views.confirm_verified,name='confirm_verified'),
 ]

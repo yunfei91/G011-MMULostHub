@@ -546,16 +546,10 @@ def report_user(request, user_id):
             user=reported_user,
             reported_by=request.user,
             comments=comments,
-            image=image,
-            status=""
+            image=image
         )
 
-        # mark profile reported
-        profile, _ = Profile.objects.get_or_create(user=reported_user)
-        profile.is_reported = True
-        profile.save()
-
-        return redirect('view_profile', user_id=user_id)
+        return redirect('userProfile', username=reported_user.username)
     return render(request,'report/reportuser.html', {
             'reported_user': reported_user
         })

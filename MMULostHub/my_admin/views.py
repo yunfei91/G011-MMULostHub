@@ -256,6 +256,10 @@ def delete_user(request):
         user.is_active = False
         user.save()
 
+        UserReport.objects.filter(
+            user=user
+        ).delete()
+
         # Send email
         if user.email:
             send_account_deleted_email(
@@ -283,10 +287,9 @@ def verify_report(request, report_id):
         report.user.email
     )
         
-    if report.user:
-        profile = Profile.objects.get_or_create(
+    profile, _ = Profile.objects.get_or_create(
             user=report.user
-    )[0]
+    )
 
     profile.is_reported = True
     profile.need_reverify = True
@@ -305,24 +308,13 @@ def reject_report(request, report_id):
         id=report_id
     )
 
-    report.status = "Rejected"
-    report.save()
-
     # Send email to report owner
     if report.reported_by and report.reported_by.email:
         send_report_rejected_email(
             report.reported_by.email
         )
 
-    if report.user:
-        profile = Profile.objects.get_or_create(
-            user=report.user
-    )[0]
-        
-        profile.is_reported = False
-        profile.need_reverify = False  
-        profile.is_reverified = True 
-        profile.save()
+    report.delete()
 
     return redirect('admin_user')
 
@@ -343,5 +335,18 @@ def delete_selected(request):
             ).update(
                 is_active=False
             )
+
+    return redirect('admin_user')
+
+# Confirm Verified
+@user_passes_test(is_admin)
+def confirm_verified(request, report_id):
+
+    report = get_object_or_404(
+        UserReport,
+        id=report_id
+    )
+
+    report.delete()
 
     return redirect('admin_user')

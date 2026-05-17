@@ -138,7 +138,7 @@
 
         <!-- Verify -->
         <td>
-            {%bif not report.status %}
+            {% if not report.status %}
 
             <form method="POST"
                   action="{% url 'verify_report' report.id %}"
@@ -149,28 +149,22 @@
                 <button type="submit">
                     Verify
                 </button>
+            </form>
 
                 {% elif report.status == "Verified" %}
                 <form method="POST"
-                 action="{% url 'confirm_verified' report.id %}">
-
-    {% csrf_token %}
-
-    <button type="submit">
-        OK
-    </button>
-
-</form>
-
-{% endif %}
-
-
-            </form>
-
+                      action="{% url 'confirm_verified' report.id %}">
+                      {% csrf_token %}
+                      <button type="submit">
+                        OK
+                      </button>
+                </form>
+                {% endif %}
         </td>
 
         <!-- Reject -->
         <td>
+            {% if not report.status %}
 
             <form method="POST"
                   action="{% url 'reject_report' report.id %}"
@@ -183,13 +177,14 @@
                 </button>
 
             </form>
+            {% endif %}
 
         </td>
 
         <!-- Delete -->
         <td>
 
-            {% if report.user %}
+            {% if not report.status %}
 
             <form method="POST"
                   action="{% url 'delete_user' %}"
@@ -206,13 +201,7 @@
                 </button>
 
             </form>
-
-            {% else %}
-
-                No User
-
             {% endif %}
-
         </td>
 
     </tr>
