@@ -15,6 +15,7 @@ from .services import create_user_account # Custom function for create user
 from .models import Profile 
 from items.models import Post
 from report.models import UserReport #zinc add for report user
+from .decorators import reverify_required #zinc add for reverify decorator  
 
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -531,6 +532,7 @@ def update_avatar(request):
 
 #zinc add def report_user 
 @login_required
+@reverify_required
 def report_user(request, user_id):
     reported_user = get_object_or_404(User, id=user_id)
     if request.method == "POST":
@@ -564,6 +566,17 @@ def userProfile(request, username):
 
     profile, created = Profile.objects.get_or_create(user=user_obj)
 
+    #check current login user #zinc add
+    profile_self, _ = Profile.objects.get_or_create(user=request.user)
+
+    #block reported user from veiwing other #zinc add
+    if (
+        profile_self.need_reverify and request.user != user_obj
+    ):
+        return redirect('profile')
+    
+    need_reverify = profile.need_reverify #zinc add reverify acc
+
     all_posts = Post.objects.filter(
         post_user=user_obj
     ).order_by('-id')
@@ -584,7 +597,8 @@ def userProfile(request, username):
         'all_posts': all_posts,
         'lost_posts': lost_posts,
         'found_posts': found_posts,
-        'is_owner': request.user == user_obj
+        'is_owner': request.user == user_obj,
+        'need_reverify': need_reverify
     })
 
 #zinc add def start_reverify 
@@ -674,16 +688,18 @@ def reverify_otp(request):
 
         profile.need_reverify = False
         profile.is_reverified = True
-        profile.is_reported = True
+        profile.is_reported = False
         profile.save()
 
         # latest user report
         report = UserReport.objects.filter(
             user=request.user
-        ).latest('created_at')
-        
-        report.status = "Verified"
-        report.save()
+        ).update(
+            status="Verified"
+        )
+
+        if not report:
+            return redirect('profile')
 
         request.session.pop(
             'reverify_data',

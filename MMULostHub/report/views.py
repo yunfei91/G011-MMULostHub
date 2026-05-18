@@ -12,10 +12,12 @@ from .models import Feedback, Report, UserReport
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.models import User
+from user.decorators import reverify_required
 
 # yt added to block user to jump back to the previous page after logout
 @login_required(login_url='beginning') # If didn't login, will redirect to beginning page
 @never_cache
+@reverify_required
 def feedback_form_view(request):
     if request.method == "POST":
         comments = request.POST.get('comments')
@@ -30,6 +32,7 @@ def feedback_form_view(request):
 
 @login_required(login_url='beginning')
 @never_cache
+@reverify_required
 def submit_report(request):
     if request.method == "POST":
         post_id = request.POST.get('post_id')

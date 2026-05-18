@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 
 #zinc add to check if user is verified before create post
 from user.models import Profile
+from user.decorators import reverify_required
 
 # yt added
 # Prevent browser cache, user cannot press back to access previous page
@@ -104,6 +105,7 @@ def mainPage(request):
 # ======================================================
 @login_required(login_url='beginning')
 @never_cache
+@reverify_required
 def createPost(request):
 
     #zinc add to check if user is verified before create post
@@ -160,6 +162,7 @@ def createPost(request):
 # ======================================================
 @login_required(login_url='beginning')
 @never_cache
+@reverify_required
 def editPost(request,post_id):
 
     # post not exist = 404 page 
@@ -216,6 +219,7 @@ def editPost(request,post_id):
 # ======================================================
 @login_required(login_url='beginning')
 @never_cache
+@reverify_required
 def deletePost(request, post_id):
 
     # post not exist = 404 page

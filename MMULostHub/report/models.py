@@ -35,7 +35,9 @@ class Report(models.Model):
 class UserReport(models.Model):
     STATUS_CHOICES = [
         ('Pending', 'Pending'),
+        ('Waiting for Reverify', 'Waiting for Reverify'),
         ('Verified', 'Verified'),
+        ('Closed', 'Closed'),
         ('Rejected', 'Rejected'),
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='reported_user')

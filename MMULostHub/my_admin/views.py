@@ -266,26 +266,24 @@ def verify_report(request, report_id):
         id=report_id
     )
 
-    report.status = "Pending"
-    report.save()
+    UserReport.objects.filter(
+        user=report.user,
+    ).update(
+        status="Waiting for Reverify"
+    )
+
+    #Mark user as restricted
+    profile, _ = Profile.objects.get_or_create(user=report.user)
+
+    profile.is_reported = True
+    profile.need_reverify = True
+    profile.save()
 
     # Send email to reported user
     if report.user and report.user.email:
         send_user_report_verified_email(
         report.user.email
     )
-        
-    profile, _ = Profile.objects.get_or_create(
-            user=report.user
-    )
-
-    report.status = "Verified"
-    report.save()
-
-    profile, _ = Profile.objects.get_or_create(user=report.user)
-    profile.is_reported = True
-    profile.need_reverify = True
-    profile.save()
 
     return redirect('admin_user')
 
@@ -305,7 +303,9 @@ def reject_report(request, report_id):
             report.reported_by.email
         )
 
-    report.delete()
+    UserReport.objects.filter(
+        user=report.user,
+    ).delete()
 
     return redirect('admin_user')
 
@@ -338,12 +338,16 @@ def confirm_verified(request, report_id):
         id=report_id
     )
 
-    profile, _ = Profile.objects.get_or_create(user=report.user)
+    profile, created = Profile.objects.get_or_create(user=report.user)
+   
     profile.is_reported = False
+    profile.need_reverify = True
+    profile.is_reverified = True
     profile.save()
 
-    report.status = "Closed"
-    reoprt.save()
-    report.delete()
+    #Remove report record
+    UserReport.objects.filter(
+        user=report.user,
+    ).delete()
 
     return redirect('admin_user')
