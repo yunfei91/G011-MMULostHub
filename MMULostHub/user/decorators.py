@@ -8,7 +8,7 @@ def reverify_required(view_func):
         if request.user.is_authenticated:
             profile, _ = Profile.objects.get_or_create(user=request.user)
             if profile.need_reverify:
-                messages.error(request, "Please reverify your account first.")
-                return redirect('start_reverify')
+                messages.error(request, "Your account has been reported. Please verify your account again.")
+                return redirect('profile')
         return view_func(request, *args, **kwargs)
     return wrapper

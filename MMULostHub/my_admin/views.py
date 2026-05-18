@@ -302,7 +302,16 @@ def reject_report(request, report_id):
         send_report_rejected_email(
             report.reported_by.email
         )
+    
+    # Reset user profile status
+    profile, _ = Profile.objects.get_or_create(user=report.user)
 
+    profile.is_reported = False
+    profile.need_reverify = False
+    profile.is_reported = False
+    profile.save()
+
+    # delete reports
     UserReport.objects.filter(
         user=report.user,
     ).delete()
@@ -341,7 +350,7 @@ def confirm_verified(request, report_id):
     profile, created = Profile.objects.get_or_create(user=report.user)
    
     profile.is_reported = False
-    profile.need_reverify = True
+    profile.need_reverify = False
     profile.is_reverified = True
     profile.save()
 
