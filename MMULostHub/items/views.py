@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post, edit_post
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 # for crop image
+import json
 import base64
 from django.core.files.base import ContentFile
 
@@ -121,31 +123,37 @@ def createPost(request):
             #     Get cropped image from JS
             # =====================================
 
-            cropped = request.POST.get("cropped_image")
+            cropped = request.POST.get("cropped_images")
 
-            # original upload image
-            image_file = request.FILES.get('userposts_images')
+            image_files = []
 
             # if user cropped image
             if cropped:
 
-                # split base64 data
-                format, imgstr = cropped.split(';base64,')
+                images_data = json.loads(cropped)
 
-                # get image extension
-                ext = format.split('/')[-1]
+                for img in images_data:
+                    format, imgstr = img.split(';base64,')
+                    ext = format.split('/')[-1]
 
-                # convert base64 to image file
-                image_file = ContentFile(
-                    base64.b64decode(imgstr),
-                    name=f'cropped.{ext}'
-                )
+                    image_file = ContentFile(
+                        base64.b64decode(imgstr),
+                        name=f'cropped_{timezone.now().timestamp()}.{ext}'
+                    )
+
+                    image_files.append(image_file)
+            
+            else:
+                uploaded = request.FILES.get('userposts_images')
+
+                if uploaded:
+                    image_files.append(uploaded)
 
             # run service.py to check data accuratecy
             create_post({
                 'post_type': request.POST.get('post_type'),
                 'post_datetime': request.POST.get('post_datetime'),
-                'userposts_images': image_file,
+                'images': image_files,
                 'post_itemcategory': request.POST.get('post_itemcategory'),
                 'post_location': request.POST.get('post_location'),
                 'post_description': request.POST.get('post_description'),

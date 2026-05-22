@@ -46,6 +46,15 @@ class MMULocation (models.Model):
     def __str__(self):
         return self.location_name
 
+class PostImage(models.Model):
+
+    post = models.ForeignKey(
+        'Post',
+        on_delete = models.CASCADE,
+        related_name = "images"
+    )
+
+    image = models.ImageField(upload_to = "userposts_iamges/")
 
 # Lost and Found Post Model  
 class Post (models.Model):
@@ -66,12 +75,6 @@ class Post (models.Model):
 
     post_datetime = models.DateTimeField(
         null = False,                            
-        blank = False,
-    )
-
-    post_image = models.ImageField(
-        upload_to = 'userposts_images/',
-        null = False,
         blank = False,
     )
 

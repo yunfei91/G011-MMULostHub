@@ -1,5 +1,4 @@
-from .models import Post
-from .models import MMULocation
+from .models import Post, PostImage, MMULocation
 from datetime import datetime
 from django.utils import timezone
 
@@ -10,9 +9,9 @@ def create_post (post_data, user):
 
     post_type = post_data.get('post_type')
     location = post_data.get('post_location')
-    post_image = post_data.get('userposts_images')
     post_category = post_data.get('post_itemcategory')
     post_datetime_str = post_data.get('post_datetime')
+    images = post_data.get('images', [])
 
     # ======================================================
     #                 Check Post Type 
@@ -46,8 +45,8 @@ def create_post (post_data, user):
     # ======================================================
     #                 Check Empty Image 
     # ======================================================
-    if not post_image:
-        raise ValueError("Please Upload an image about the item ^^")
+    if not images:
+        raise ValueError("Please upload at least one image.")
     
     # ======================================================
     #                 Check Date Time
@@ -92,11 +91,17 @@ def create_post (post_data, user):
         post_user = user,
         post_type = post_type,
         post_datetime = post_datetime,
-        post_image = post_image,
         post_itemcategory = post_category,
         post_location = item_location,
         post_description = post_data.get('post_description'),
     )
+
+    for img in images:
+        PostImage.objects.create(
+            post=new_post,
+            image=img
+        )
+
     return new_post
 
 # ======================================================
