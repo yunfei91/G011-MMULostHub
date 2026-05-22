@@ -42,7 +42,7 @@ window.addEventListener("scroll", () => {
     const current = window.pageYOffset;
 
     // When scrolling downward exceed 120, header will shrink
-    if(current > 120 && !isShrink){
+    if(current > 80 && !isShrink){
 
         header.classList.add("shrink");
         isShrink = true;
