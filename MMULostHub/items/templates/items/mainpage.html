@@ -296,12 +296,6 @@
                                     </button>
                                 </form>
 
-                            {%else %}
-
-                                <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
-                                    <button type="button">Report</button>
-                                </a>
-
                             {% endif %}
                         </div>
 
@@ -323,14 +317,6 @@
                         <!-- Category -->
                         <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
 
-                        <p> Location: {{ post.post_location.location_name }} </p>
-                        <p> Description:{{ post.post_description }} </p> <!--zinc-->
-                        <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
-                        <button type="button">Report</button>
-                    </a>
-                    <hr>
-
-
                         <!-- Location (If Lost Pos can no location ) -->
                         {% if post.post_location %}
                             <p> Location: {{ post.post_location.location_name }}</p>
@@ -338,6 +324,15 @@
                             <p> Location: Unknown Lost Location</p>
                         {% endif %}
 
+                        <!-- Report Button (Only show when view other user post) zinc add -->
+                        {% if request.user != post.post_user %}
+                            <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                                <button type="button">Report</button>
+                            </a>
+                        {% endif %}
+
+                        
+                        <hr>
                     </div>
                 </div>
             </div>
@@ -381,10 +376,12 @@
 
                         <p><b>Description:</b></p>
                         <p id="m_description"></p>
+                            
 
                         <div class="chatBtn">
                             <button type="button">
                                 <a href="#">Chat</a>
+                            </button>
                         </div>
                     </div>
                 </div>

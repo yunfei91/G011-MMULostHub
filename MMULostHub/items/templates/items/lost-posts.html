@@ -184,12 +184,6 @@
                                     </button>
                                 </form>
 
-                            {%else %}
-
-                                <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
-                                    <button type="button">Report</button>
-                                </a>
-                                
                             {% endif %}
                         </div>
 
@@ -219,6 +213,12 @@
                             <p> Location: {{ post.post_location.location_name }}</p>
                         {% elif post.post_type == "lost" %}
                             <p> Location: Unknown Lost Location</p>
+                        {% endif %}
+                        <!-- Report Button (Only show when view other user post) zinc add -->
+                        {% if request.user != post.post_user %}
+                            <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                            <button type="button">Report</button>
+                            </a>
                         {% endif %}
 
                     </div>

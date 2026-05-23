@@ -40,6 +40,12 @@
     <button type="submit">Search</button>
 </form>
 <br>
+<!-- View User (reported & all user)-->
+<a href="{% url 'admin_user' %}">
+    <button type="button">
+        View User
+    </button>
+</a>
 
 <!-- View Reported Users -->
 <a href="?view=reported_only">
@@ -54,7 +60,7 @@
 <a href="?view=user_only">
 
     <button type="button">
-        View User
+        View All User
     </button>
 
 </a>
@@ -153,10 +159,11 @@
 
                 {% elif report.status == "Verified" %}
                 <form method="POST"
-                      action="{% url 'confirm_verified' report.id %}">
+                      action="{% url 'confirm_verified' report.id %}"
+                      onsubmit="return confirm('Are you sure you want to close this report?')">
                       {% csrf_token %}
                       <button type="submit">
-                        OK
+                        Close Case
                       </button>
                 </form>
                 {% endif %}
