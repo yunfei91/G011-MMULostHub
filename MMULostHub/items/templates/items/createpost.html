@@ -11,7 +11,6 @@
         <link rel="stylesheet" href="{% static 'items/css/post.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/map.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/popup.css' %}">
-        <link rel="stylesheet" href="{% static 'items/css/createpost.css' %}">
 
         <!-- JS Links -->
         <script src="{% static 'items/js/popup.js' %}" defer></script>
@@ -94,7 +93,7 @@
                 {% csrf_token %}                                        <!-- Django security protection code -->
                 
                 <!-- ============================== -->
-                <!--        Select Post Type        -->
+                <!--        SELECT POST TYPE        -->
                 <!-- ============================== -->
                 <label> Type: </label>
                 <select name = "post_type">
@@ -117,7 +116,7 @@
                 <br><br>
 
                 <!-- ================================================== -->
-                <!--            Date Time Selection                     -->
+                <!--                SELECT DATE TIME                    -->
                 <!-- ================================================== -->
                 <label> Date Time: </label>
                 <input type = "datetime-local" name = "post_datetime" value = "{{ post_data.post_datetime }}">
@@ -125,38 +124,19 @@
                 <br><br> 
 
                 <!-- ================================================== -->
-                <!--            Image Upload Section                    -->
+                <!--                   UPLOAD IMAGES                    -->
                 <!-- ================================================== -->
                 <label> Upload Item Image: </label>
                 
-                <input type = "file" id = "post_image" name = "userposts_images" accept = "image/*" multiple hidden>                 <!-- Input image field / accept = "image/* (limit oni can choose photo) / id is for java-->
+                <input type = "file" id = "post_image" name = "userposts_images" accept = "image/*" hidden>                 <!-- Input image field / accept = "image/* (limit oni can choose photo) / id is for java-->
                 
                 <button type="button" id="uploadBtn">
-                    Upload Image
+                    Add Image
                 </button>
                 
                 <!-- ====================================== -->
-                <!--          Crop Image Modal             -->
+                <!--       PREVIEW UPLOADED IMAGES          -->
                 <!-- ====================================== -->
-                <div id ="crop_modal" class = "crop-modal">
-
-                    <!-- close button -->
-                    <span id="close_crop" class="imgclose_button">
-                        &times;
-                    </span>
-
-                    <div id ="crop_container" class = "crop-container">
-
-                        <!-- Display photo uploaded to crop -->
-                        <img id = 'crop_preview' class = "crop-preview">
-
-                        <button type="button" id="confirmCropBtn">
-                            Crop Image
-                        </button>
-                    
-                    </div>
-                </div>
-
                 <div id = "imagePreview_container" class = "imagePreview-container">
                 </div>
 
@@ -165,7 +145,7 @@
                 <br><br>
 
                 <!-- ================================================== -->
-                <!--            Item Category Selection                 -->
+                <!--            SELECT ITEM CATEGORY                    -->
                 <!-- ================================================== -->
                 <label> Item Category: </label>
                 <select name = "post_itemcategory">
@@ -184,7 +164,7 @@
                 <br><br>
 
                 <!-- ================================================== -->
-                <!--            Location Selection                      -->
+                <!--            SELECT LOCATION                      -->
                 <!-- ================================================== -->
                 <label> Location: </label>
                 <select name = "post_location" id = "post_location">
@@ -204,7 +184,7 @@
                 <br><br>
 
                 <!-- ================================================== -->
-                <!--            Map Select Location                     -->
+                <!--            MAP SELECT LOCATION                     -->
                 <!-- ================================================== -->
                 <p>Click Map to choose location: </p>
                 <div class = "map_box">
@@ -215,7 +195,7 @@
                 <br><br>
 
                 <!-- ================================================== -->
-                <!--                    Description                     -->
+                <!--                    DESCRIPTION                     -->
                 <!-- ================================================== -->
                 <label> Item Description: </label>
 
@@ -223,44 +203,6 @@
                 <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ ">
                     {{ post_data.post_description }}
                 </textarea>
-
-                <!-- ================================================== -->
-                <!--            Map Modal Section                       -->
-                <!-- ================================================== -->
-                <div id="map_modal" class="map_modal">
-
-                    <div class="mapmodal_content">
-
-                        <!-- Close map button -->
-                        <span id="close_map" class="mapclose_button">
-                            &times;   <!-- x icon -->
-                        </span>
-
-                        <!-- Scroller -->
-                        <div class="map-scroll-container">
-
-                            <div id = "location_label" class = "location_label"></div>
-
-                            <div class="big-map-box">
-    
-                                <img
-                                    src="{% static 'images/map-img.jpg' %}"
-                                    id="bigMap"
-                                    class="bigMap"
-                                    alt="MMU Big Map"
-                                >
-
-                                <div id="bigMap_marker" class="bigMap-marker">
-                                    📍
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
 
                 <br><br>
 
@@ -272,8 +214,98 @@
             </form>
         </div>
 
+        <!-- ====================================== -->
+        <!--          CROP IMAGE MODAL             -->
+        <!-- ====================================== -->
+        <div id ="crop_modal" class = "crop-modal">
+
+            <!-- close crop modal button -->
+            <span id="close_crop" class="imgclose_button">
+                &times;
+            </span>
+
+            <div id ="crop_container" class = "crop-container">
+
+                <!-- Display photo uploaded to crop -->
+                <img id = 'crop_preview' class = "crop-preview">
+
+                <button type="button" id="confirmCropBtn">
+                    Crop
+                </button>
+            
+            </div>
+        </div>
+
+        <!-- ====================================== -->
+        <!--         IMAGE PREVIEW MODAL           -->
+        <!-- ====================================== -->
+        <div id="preview_modal" class="preview-modal">
+
+            <span id="close_preview" class="preview-close">
+                &times;
+            </span>
+
+            <!-- left arrow -->
+            <button type="button" id="prev_image_btn" class="preview-arrow left-arrow">
+                ❮
+            </button>
+
+            <!-- show image -->
+            <img id="preview_modal_image" class="preview-modal-image">
+
+            <!-- set iamge as cover button-->
+            <button type="button" id="cover_btn" class="cover-button">
+                Cover Image
+            </button>
+
+            <!-- right arrow -->
+            <button type="button" id="next_image_btn" class="preview-arrow right-arrow">
+                ❯
+            </button>
+
+            <!-- delete -->
+            <button type="button" id="delete_image" class="delete-preview-btn">
+                Delete
+            </button>
+
+            <button type="button" id="crop_again_btn" class="crop-again-btn">
+                Crop Again
+            </button>
+
+        </div>
+
         <!-- ================================================== -->
-        <!--             Popup Box Modal                        -->
+        <!--                    MAP MODAL                       -->
+        <!-- ================================================== -->
+        <div id="map_modal" class="map_modal">
+
+            <div class="mapmodal_content">
+
+                <!-- Close map button -->
+                <span id="close_map" class="mapclose_button">
+                    &times;   <!-- x icon -->
+                </span>
+
+                <!-- Scroller -->
+                <div class="map-scroll-container">
+                    <div id = "location_label" class = "location_label"></div>
+                    <div class="big-map-box">
+                        <img
+                            src="{% static 'images/map-img.jpg' %}"
+                            id="bigMap"
+                            class="bigMap"
+                            alt="MMU Big Map"
+                        >
+                        <div id="bigMap_marker" class="bigMap-marker">
+                            📍
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================================================== -->
+        <!--             POP UP BOX MODAL                       -->
         <!-- ================================================== -->
         <div id = "popup" class = "popup hidden">
             <div class = "popup-box">

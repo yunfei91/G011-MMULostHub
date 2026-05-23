@@ -1,24 +1,43 @@
-/* ====================================== 
-            CROP IMAGE      
-====================================== */
+
+// Global Elements
 let croppedImages = [];
-
+let currentOriginalImage = "";
 let cropper = null;
+let cropAgainMode = false;
+let currentPreviewIndex = 0;
 
+// Upload Image
+const uploadBtn = document.getElementById("uploadBtn");
 const imageInput = document.getElementById("post_image");
+
+// Crop Image
 const cropModal = document.getElementById("crop_modal");
 const closeCrop = document.getElementById("close_crop");
 const cropPreview = document.getElementById("crop_preview");
 const cropButton = document.getElementById("confirmCropBtn");
+const cropAgainBtn = document.getElementById("crop_again_btn");
+
+// Preview Image
+const previewModal = document.getElementById("preview_modal");
+const previewModalImage = document.getElementById("preview_modal_image");
+const closePreview = document.getElementById("close_preview");
+const prevBtn = document.getElementById("prev_image_btn");
+const nextBtn = document.getElementById("next_image_btn");
+const deletePreviewBtn = document.getElementById("delete_image");
+const setCoverBtn = document.getElementById("cover_btn");
 
 const imagePreviewContainer = document.getElementById("imagePreview_container");
 
-const uploadBtn = document.getElementById("uploadBtn");
-
+/* ====================================== 
+        UPLOAD IMAGE BUTTON FUNCTION     
+    ====================================== */
 uploadBtn.addEventListener("click", function(){
     imageInput.click();
 });
 
+/* ====================================== 
+            CROP IMAGE FUNCTION        
+    ====================================== */
 imageInput.addEventListener("change", function(e){
 
    const files = e.target.files;
@@ -32,6 +51,8 @@ imageInput.addEventListener("change", function(e){
         const reader = new FileReader();
 
         reader.onload = function(event){
+
+            currentOriginalImage = event.target.result;
 
             cropModal.style.display = "block";
 
@@ -53,6 +74,9 @@ imageInput.addEventListener("change", function(e){
     }
 });
 
+/* ====================================== 
+    CLOSE CROP MODAL BUTTON FUNCTION
+    ====================================== */
 closeCrop.addEventListener("click",function(){
 
     cropModal.style.display = "none";
@@ -68,7 +92,7 @@ closeCrop.addEventListener("click",function(){
 });
 
 /* ====================================== 
-            Confirm Crop Image        
+        CROP MODAL BUTTON FUNCTION        
     ====================================== */
 cropButton.addEventListener("click", function(){
 
@@ -81,15 +105,27 @@ cropButton.addEventListener("click", function(){
 
     const croppedDataURL = canvas.toDataURL("image/jpeg");
 
-    croppedImages.push({
-        id: Date.now(),
-        image: croppedDataURL
-    });
+    // image ie being cropped again
+    if(cropAgainMode){
+
+        croppedImages[currentPreviewIndex].image =
+            croppedDataURL;
+
+        cropAgainMode = false;
+
+    }
+    // new image
+    else{
+        croppedImages.push({
+            id: Date.now(),
+            originalImage: currentOriginalImage,
+            image: croppedDataURL
+        });
+    }
+
+    cropModal.style.display = "none";
 
     renderImages();
-
-    // close modal
-    cropModal.style.display = "none";
 
     // destroy cropper
     cropper.destroy();
@@ -104,7 +140,7 @@ cropButton.addEventListener("click", function(){
 });
 
 /* ======================================
-            Render Images
+            RENDER IMAGES
 ====================================== */
 function renderImages(){
 
@@ -121,6 +157,14 @@ function renderImages(){
         img.src = imgObj.image;
         img.classList.add("image-preview");
 
+        /* ======================================
+                Click Image Preview
+        ====================================== */
+        img.addEventListener("click", function(){
+            currentPreviewIndex = index;
+            openPreviewModal();
+        });
+
         // remove button
         const removeBtn = document.createElement("button");
         removeBtn.innerHTML = "&times;";
@@ -128,11 +172,8 @@ function renderImages(){
 
         // delete image
         removeBtn.addEventListener("click", function(){
-
             croppedImages.splice(index,1);
-
             renderImages();
-
         });
 
         // append
@@ -153,6 +194,138 @@ function renderImages(){
     }
 }
 
+/* ======================================
+        IMAGE PREVIEW MODAL FUNCTION
+====================================== */
+function openPreviewModal(){
+
+    if (!croppedImages.length) return;
+
+    const currentImage = croppedImages[currentPreviewIndex];
+
+    previewModal.style.display = "flex";
+    previewModalImage.src = currentImage.image;
+
+    cropAgainMode = false;
+
+    setCoverBtn.style.display =
+        currentPreviewIndex === 0 ? "none" : "block";
+}
+
+/* ======================================
+    CLOSE PREVIEW MODAL BUTTON FUNCTION
+====================================== */
+closePreview.addEventListener("click", function(){
+
+    previewModal.style.display = "none";
+
+});
+
+/* ======================================
+        NEXT IMAGE BUTTON FUNCTION
+====================================== */
+nextBtn.addEventListener("click", function(){
+
+    currentPreviewIndex++;
+
+    if(currentPreviewIndex >= croppedImages.length){
+        currentPreviewIndex = 0;
+    }
+
+    openPreviewModal();
+
+});
+
+/* ======================================
+    PREVIOUS IMAGE BUTTON FUNCTION
+====================================== */
+prevBtn.addEventListener("click", function(){
+
+    currentPreviewIndex--;
+
+    if(currentPreviewIndex < 0){
+        currentPreviewIndex =
+            croppedImages.length - 1;
+    }
+
+    openPreviewModal();
+
+});
+
+/* ======================================
+    DELETE IMAGE BUTTON FUNCTION
+====================================== */
+deletePreviewBtn.addEventListener("click", function(){
+
+    croppedImages.splice(currentPreviewIndex,1);
+
+    renderImages();
+
+    // no image left
+    if(croppedImages.length === 0){
+
+        previewModal.style.display = "none";
+
+        return;
+    }
+
+    // prevent overflow
+    if(currentPreviewIndex >= croppedImages.length){
+
+        currentPreviewIndex =
+            croppedImages.length - 1;
+    }
+
+    openPreviewModal();
+
+});
+
+/* ======================================
+    CROP IMAGE AGAIN BUTTON FUNCTION
+====================================== */
+cropAgainBtn.addEventListener("click", function(){
+
+    previewModal.style.display = "none";
+
+    cropModal.style.display = "block";
+
+    cropPreview.src =
+        croppedImages[currentPreviewIndex].originalImage;
+
+    if(cropper){
+        cropper.destroy();
+    }
+
+    cropper = new Cropper(cropPreview,{
+        aspectRatio:4/3,
+        viewMode:1,
+        autoCropArea:1,
+    });
+
+    cropAgainMode = true;
+
+});
+
+/* ====================================== 
+        SET COVER IAMGE BUTTON FUNCTION       
+    ====================================== */
+setCoverBtn.addEventListener("click", function() {
+
+    const selected = croppedImages[currentPreviewIndex];
+
+    croppedImages.splice(currentPreviewIndex, 1);
+    croppedImages.unshift(selected);
+
+    currentPreviewIndex = 0;
+
+    previewModalImage.src = selected.image;
+
+    renderImages();
+    openPreviewModal();
+
+    showPopup("Success", "Set as cover image!");
+});
+
 /* ====================================== 
             CREATE POST      
 ====================================== */
@@ -165,7 +338,6 @@ function confirmCreate(event) {
     const category = form.querySelector("[name='post_itemcategory']").value;
     const datetime = form.querySelector("[name='post_datetime']").value;
     const location = form.querySelector("[name='post_location']").value;
-    const croppedImagesData = croppedImages;
 
     /* ====================================== 
                 Check Post Type      
@@ -205,7 +377,6 @@ function confirmCreate(event) {
     /* ====================================== 
                     Check Image        
      ====================================== */
-    const croppedImage = document.getElementById("cropped_image").value;
 
     if (croppedImages.length === 0) {
         showPopup("Error", "Please upload and crop at least one image.");
