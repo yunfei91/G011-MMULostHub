@@ -1,0 +1,44 @@
+/* ======================================
+            IMAGE PREVIEW
+====================================== */
+
+.imagePreview-container{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-top:20px;
+}
+
+.preview-box{
+    position:relative;
+}
+
+.image-preview{
+    width:160px;
+    height:160px;
+    object-fit:cover;
+    border-radius:10px;
+    border:2px solid #ccc;
+}
+
+.remove-image-btn{
+
+    position:absolute;
+
+    top:-10px;
+    right:-10px;
+
+    width:28px;
+    height:28px;
+
+    border:none;
+    border-radius:50%;
+
+    background:red;
+    color:white;
+
+    cursor:pointer;
+
+    font-size:18px;
+    font-weight:bold;
+}

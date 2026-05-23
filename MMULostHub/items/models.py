@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import os
 
 
 # ('storage name inside sqlite', 'display name on website')
@@ -45,6 +46,14 @@ class MMULocation (models.Model):
     # Contoh : √ Laptop ✗ Item Obeject 1
     def __str__(self):
         return self.location_name
+    
+def post_image_path(instance, filename):
+
+    return os.path.join(
+        "userposts_images",
+        f"post_{instance.post.id}",
+        filename
+    )
 
 class PostImage(models.Model):
 
@@ -54,7 +63,7 @@ class PostImage(models.Model):
         related_name = "images"
     )
 
-    image = models.ImageField(upload_to = "userposts_iamges/")
+    image = models.ImageField(upload_to = post_image_path)
 
 # Lost and Found Post Model  
 class Post (models.Model):

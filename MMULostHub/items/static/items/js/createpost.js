@@ -11,7 +11,6 @@ const closeCrop = document.getElementById("close_crop");
 const cropPreview = document.getElementById("crop_preview");
 const cropButton = document.getElementById("confirmCropBtn");
 
-const imagePreview = document.getElementById("image_preview");
 const imagePreviewContainer = document.getElementById("imagePreview_container");
 
 const uploadBtn = document.getElementById("uploadBtn");
@@ -63,6 +62,9 @@ closeCrop.addEventListener("click",function(){
             cropper = null;
         }
 
+    // reset input
+    imageInput.value = "";
+
 });
 
 /* ====================================== 
@@ -73,21 +75,18 @@ cropButton.addEventListener("click", function(){
     if(!cropper) return;
 
     const canvas = cropper.getCroppedCanvas({
-        width:600,
-        height:800
+        width:800,
+        height:600
     });
 
     const croppedDataURL = canvas.toDataURL("image/jpeg");
 
-    // convert to base64
-    croppedImages.push(croppedDataURL);
+    croppedImages.push({
+        id: Date.now(),
+        image: croppedDataURL
+    });
 
-    const img = document.createElement("img");
-    img.src = croppedDataURL;
-    img.classList.add("image-preview");
-    imagePreviewContainer.appendChild(img);
-
-    imagePreviewContainer.style.display = "block";
+    renderImages();
 
     // close modal
     cropModal.style.display = "none";
@@ -103,6 +102,56 @@ cropButton.addEventListener("click", function(){
         "Image cropped successfully!"
     );
 });
+
+/* ======================================
+            Render Images
+====================================== */
+function renderImages(){
+
+    imagePreviewContainer.innerHTML = "";
+
+    croppedImages.forEach((imgObj,index)=>{
+
+        // preview box
+        const previewBox = document.createElement("div");
+        previewBox.classList.add("preview-box");
+
+        // image
+        const img = document.createElement("img");
+        img.src = imgObj.image;
+        img.classList.add("image-preview");
+
+        // remove button
+        const removeBtn = document.createElement("button");
+        removeBtn.innerHTML = "&times;";
+        removeBtn.classList.add("remove-image-btn");
+
+        // delete image
+        removeBtn.addEventListener("click", function(){
+
+            croppedImages.splice(index,1);
+
+            renderImages();
+
+        });
+
+        // append
+        previewBox.appendChild(img);
+        previewBox.appendChild(removeBtn);
+
+        imagePreviewContainer.appendChild(previewBox);
+
+    });
+
+    // hide container if empty
+    if(croppedImages.length === 0){
+        imagePreviewContainer.style.display = "none";
+    }
+
+    else{
+        imagePreviewContainer.style.display = "flex";
+    }
+}
 
 /* ====================================== 
             CREATE POST      
@@ -168,7 +217,9 @@ function confirmCreate(event) {
      ====================================== */
     showConfirmPopup("Confirm", "Do you want to create this post?", () => {
 
-        document.getElementById("cropped_image").value = JSON.stringify(croppedImages);
+        const imageData = croppedImages.map(img => img.image);
+
+        document.getElementById("cropped_image").value = JSON.stringify(imageData);
 
         // submit form
         form.requestSubmit();
