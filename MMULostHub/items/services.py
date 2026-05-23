@@ -1,5 +1,4 @@
-from .models import Post
-from .models import MMULocation
+from .models import Post, PostImage, MMULocation
 from datetime import datetime
 from django.utils import timezone
 
@@ -10,9 +9,9 @@ def create_post (post_data, user):
 
     post_type = post_data.get('post_type')
     location = post_data.get('post_location')
-    post_image = post_data.get('userposts_images')
     post_category = post_data.get('post_itemcategory')
     post_datetime_str = post_data.get('post_datetime')
+    images = post_data.get('images', [])
 
     # ======================================================
     #                 Check Post Type 
@@ -46,8 +45,8 @@ def create_post (post_data, user):
     # ======================================================
     #                 Check Empty Image 
     # ======================================================
-    if not post_image:
-        raise ValueError("Please Upload an image about the item ^^")
+    if not images:
+        raise ValueError("Please upload at least one image.")
     
     # ======================================================
     #                 Check Date Time
@@ -92,11 +91,17 @@ def create_post (post_data, user):
         post_user = user,
         post_type = post_type,
         post_datetime = post_datetime,
-        post_image = post_image,
         post_itemcategory = post_category,
         post_location = item_location,
         post_description = post_data.get('post_description'),
     )
+
+    for img in images:
+        PostImage.objects.create(
+            post=new_post,
+            image=img
+        )
+
     return new_post
 
 # ======================================================
@@ -105,7 +110,7 @@ def create_post (post_data, user):
 def edit_post(post, data):
     post_type = data.get('post_type')
     post_datetime_str = data.get('post_datetime')
-    post_image = data.get('userposts_images')
+    images = data.get('images', [])
     post_category = data.get('post_itemcategory')
     location = data.get('post_location')
     post_description = data.get('post_description') or ""
@@ -152,13 +157,6 @@ def edit_post(post, data):
         raise ValueError("Datetime cannot be in the future.")
     
     # ======================================================
-    #                 Check Empty Image
-    # ======================================================
-    # if no new input keep old one
-    if post_image:
-        post.post_image = post_image
-    
-    # ======================================================
     #             Update and Save Post Data to Database
     # ======================================================
     post.post_type = post_type
@@ -168,6 +166,18 @@ def edit_post(post, data):
     post.post_description = post_description
 
     post.save()
+
+    if images:
+
+        # delete old images
+        post.images.all().delete()
+
+        # save new images
+        for img in images:
+            PostImage.objects.create(
+                post=post,
+                image=img
+            )
     
     return post
     
