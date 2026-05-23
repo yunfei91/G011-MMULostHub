@@ -573,7 +573,6 @@ def userProfile(request, username):
     if (
         profile_self.need_reverify and request.user != user_obj
     ):
-        messages.error(request, "Your account has been reported. Please verify your account again to access other profiles.")
 
         return redirect('profile')
     

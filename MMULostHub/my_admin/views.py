@@ -214,20 +214,9 @@ def admin_view_user(request):
     reports = UserReport.objects.select_related(
         'user',
         'reported_by'
+    ).order_by(
+        '-created_at'
     )
-
-    # Active cases only
-    if view_type == 'all' or view_type == 'user_only':
-
-        reports = reports.exclude(
-            status__in=['Closed', 'Rejected']
-        )
-
-    # Report History
-    elif view_type == 'reported_only':
-        reports = reports.order_by(
-            '-created_at'
-        )
 
     return render(
         request,
@@ -318,16 +307,13 @@ def reject_report(request, report_id):
 
     profile.is_reported = False
     profile.need_reverify = False
-    profile.is_reported = False
     profile.save()
 
     # delete reports
     UserReport.objects.filter(
         user=report.user,
         status="Pending"
-    ).update(
-        status="Rejected"
-    )
+    ).delete()
 
     return redirect('admin_user')
 
@@ -371,8 +357,6 @@ def confirm_verified(request, report_id):
     UserReport.objects.filter(
         user=report.user,
         status="Verified"
-    ).update(
-        status="Closed"
-    )
+    ).delete()
 
     return redirect('admin_user')
