@@ -695,7 +695,8 @@ def reverify_otp(request):
 
         # latest user report
         report = UserReport.objects.filter(
-            user=request.user
+            user=request.user,
+            status="Waiting for Reverify"
         ).update(
             status="Verified"
         )
