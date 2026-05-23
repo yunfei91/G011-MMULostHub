@@ -277,6 +277,8 @@ def verify_report(request, report_id):
 
     UserReport.objects.filter(
         user=report.user,
+    ).exclede(
+        stustus__in=['Closed', 'Rejected']
     ).update(
         status="Waiting for Reverify"
     )
@@ -323,6 +325,8 @@ def reject_report(request, report_id):
     # delete reports
     UserReport.objects.filter(
         user=report.user,
+    ).exclude(
+        status__in=['Closed', 'Rejected']
     ).update(
         status="Rejected"
     )
@@ -368,6 +372,8 @@ def confirm_verified(request, report_id):
     #Remove report record
     UserReport.objects.filter(
         user=report.user,
+    ).exclude(
+        status__in=['Closed', 'Rejected']
     ).update(
         status="Closed"
     )
