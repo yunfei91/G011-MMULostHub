@@ -80,6 +80,8 @@ closeCrop.addEventListener("click",function(){
             cropper = null;
         }
 
+    imageInput.value = "";
+
 });
 
 /* ====================================== 
