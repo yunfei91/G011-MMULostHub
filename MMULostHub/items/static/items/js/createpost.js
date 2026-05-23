@@ -77,6 +77,8 @@ cropButton.addEventListener("click", function(){
         height:800
     });
 
+    const croppedDataURL = canvas.toDataURL("image/jpeg");
+
     // convert to base64
     croppedImages.push(croppedDataURL);
 

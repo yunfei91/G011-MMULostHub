@@ -110,7 +110,7 @@ def create_post (post_data, user):
 def edit_post(post, data):
     post_type = data.get('post_type')
     post_datetime_str = data.get('post_datetime')
-    post_image = data.get('userposts_images')
+    images = data.get('images', [])
     post_category = data.get('post_itemcategory')
     location = data.get('post_location')
     post_description = data.get('post_description') or ""
@@ -157,13 +157,6 @@ def edit_post(post, data):
         raise ValueError("Datetime cannot be in the future.")
     
     # ======================================================
-    #                 Check Empty Image
-    # ======================================================
-    # if no new input keep old one
-    if post_image:
-        post.post_image = post_image
-    
-    # ======================================================
     #             Update and Save Post Data to Database
     # ======================================================
     post.post_type = post_type
@@ -173,6 +166,18 @@ def edit_post(post, data):
     post.post_description = post_description
 
     post.save()
+
+    if images:
+
+        # delete old images
+        post.images.all().delete()
+
+        # save new images
+        for img in images:
+            PostImage.objects.create(
+                post=post,
+                image=img
+            )
     
     return post
     
