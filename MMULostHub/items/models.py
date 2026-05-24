@@ -104,6 +104,14 @@ class Post (models.Model):
 
     post_description = models.TextField()
 
+    cover_image = models.ForeignKey(
+        'PostImage',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='cover_posts'
+    )
+
     def __str__(self):
         return f"{self.post_type}: {self.post_itemcategory}"
 

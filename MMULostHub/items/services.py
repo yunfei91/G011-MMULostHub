@@ -96,11 +96,23 @@ def create_post (post_data, user):
         post_description = post_data.get('post_description'),
     )
 
+    saved_images = []
+
     for img in images:
-        PostImage.objects.create(
-            post=new_post,
-            image=img
+
+        post_image = PostImage.objects.create(
+            post = new_post,
+            image = img
         )
+
+        saved_images.append(post_image)
+
+    # first image = cover image
+    if saved_images:
+
+        new_post.cover_image = saved_images[0]
+
+        new_post.save()
 
     return new_post
 
