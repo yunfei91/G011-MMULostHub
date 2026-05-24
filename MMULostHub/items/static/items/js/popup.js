@@ -101,6 +101,21 @@ function openPost(el) { // el=this connection
     if (profileLink && el.dataset.profile) {
         profileLink.href = el.dataset.profile;
     }
+/** zinc add this **/
+    const chatLink = document.getElementById("chat_link");
+
+    if (chatLink && el.dataset.chatUrl) {
+        chatLink.href = el.dataset.chatUrl;
+    }
+
+    const chatContainer =
+    document.getElementById("chat_btn_container");
+
+    if (el.dataset.user === CURRENT_USERNAME) {
+        chatContainer.style.display = "none";
+    } else {
+        chatContainer.style.display = "block";
+    }
 
     document.getElementById("m_date").innerText = el.dataset.date;
     document.getElementById("m_category").innerText = el.dataset.category;

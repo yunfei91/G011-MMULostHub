@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Inbox</title>
+</head>
+<body>
+    
+    <h1>Chat Inbox</h1>
+    <div class="dropdown-nav">
+            <nav>
+                Menu Button
+            </nav>
+            
+            <div class="dropdown-content">
+                <a href="{% url 'mainPage' %}"> Home </a>
+                <a href="{% url 'lost_posts' %}"> Lost Post </a>                 
+                <a href="{% url 'found_posts' %}"> Found Post </a>                
+                <a href="{% url 'profile' %}"> Profile </a> 
+                <a href="{% url 'chat_inbox' %}">Chat</a>                       
+                <a href="{% url 'feedback_form' %}">Feedback/Report </a> 
+                <a href="{% url 'logout' %}"> Logout </a>
+            </div>
+    </div>
+    {% for room in rooms  %}
+    
+        <div>
+            {% if room.user1 == request.user %}
+                <p>Chat with {{ room.user2.username }}</p>
+            {% else %}
+                <p>Chat with {{ room.user1.username }}</p>
+            {% endif %}
+            <a href="{% url 'chat_room' room.id %}">Open Chat</a>
+        </div>
+        <hr>
+    {% empty %}
+        <p>No chats yet. Start a new chat!</p>
+    {% endfor %}
+</body>
+</html>

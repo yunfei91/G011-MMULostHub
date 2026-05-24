@@ -36,6 +36,7 @@ urlpatterns = [
     path('report/',include('report.urls')),
     path('admin/', admin.site.urls),
     path('adminfeedback/', include('my_admin.urls')),
+    path('chat/', include('chat.urls')),
 ]
 
 if settings.DEBUG:

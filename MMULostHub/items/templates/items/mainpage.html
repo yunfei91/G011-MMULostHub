@@ -9,7 +9,8 @@
 
         <!-- JS Links -->
         <script src="{% static 'items/js/popup.js' %}" defer></script>
-        <script src="{% static 'items/js/mainpage.js' %}" defer></script>                <!-- differ = load complete html then load java -->
+        <script src="{% static 'items/js/mainpage.js' %}" defer></script>
+        <script>const CURRENT_USERNAME ="{{ request.user.username }}";</script> <!-- zinc add this-->
         
         <title> 
             MMU Lost Hub 
@@ -22,10 +23,11 @@
         <meta http-equiv="Pragma" content="no-cache">
         <!-- Expire page immediately -->
         <meta http-equiv="Expires" content="0">
-
-        <script src="{% static 'items/js/mainpage.js' %}" defer></script>
+<!-- added alr not sure need delete or not (zinc)
+        <script src="{% static 'items/js/mainpage.js' %}" defer></script> -->
         <!-- yt added for view full post popup version-->
-        <script src="{% static 'items/js/popup.js' %}"></script>
+    <!--   <script src="{% static 'items/js/popup.js' %}"></script> 
+-->
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -112,7 +114,8 @@
                 <a href="{% url 'mainPage' %}"> Home </a>
                 <a href="{% url 'lost_posts' %}"> Lost Post </a>                 
                 <a href="{% url 'found_posts' %}"> Found Post </a>                
-                <a href="{% url 'profile' %}"> Profile </a>                         
+                <a href="{% url 'profile' %}"> Profile </a>  
+                <a href="{% url 'chat_inbox' %}">Chat</a>                       
                 <a href="{% url 'feedback_form' %}">Feedback/Report </a>  
                 <a href="{% url 'logout' %}"> Logout </a>               
             </div>
@@ -259,6 +262,7 @@
             <div class="post"
                 onclick="openPost(this)"
                 data-user="{{ post.post_user.username }}" 
+                data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
                 data-profile="{% url 'userProfile' post.post_user.username %}"
                 data-type="{{ post.post_type }}"
                 data-date="{{ post.post_datetime }}"
@@ -375,11 +379,11 @@
                         <p id="m_description"></p>
                             
 
-                        <div class="chatBtn">
-                            <button type="button">
-                                <a href="#">Chat</a>
-                            </button>
-                        </div>
+                        <div class="chatBtn" id="chat_btn_container" style="display:none;">
+                            <!-- zinc add chat url-->
+                            <a id="chat_link" href="#">
+                                <button type="button">Chat</button>
+                            </a>
                     </div>
                 </div>
             </div>
@@ -429,6 +433,5 @@
                 Designed by: Kho Yee Theng / Tan Yun Fee / Lim Tze Ying
             </p>
         </footer>
-        
     </body>
 </html>

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     'report',
     'my_admin',
+    'chat',
     ]
 
 MIDDLEWARE = [
