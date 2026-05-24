@@ -281,9 +281,23 @@
                                 </p>
 
                                 <!-- Image -->
-                                {% if post.post_image %}
-                                    <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image" required>
-                                {% endif %}
+                                <div class="image-wrapper">
+
+                                    {% if post.cover_image %}
+                                        <img
+                                            src="{{ post.cover_image.image.url }}"
+                                            alt="Post Image"
+                                            class="post-image"
+                                        >
+                                    {% endif %}
+
+                                    {% if post.images.count > 1 %}
+                                        <div class="multiple-icon">
+                                            📷 {{ post.images.count }}
+                                        </div>
+                                    {% endif %}
+
+                                </div>
 
                                 <!-- Date Time -->
                                 <p> Date Time: {{ post.post_datetime }} </p>

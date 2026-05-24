@@ -2,6 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post, edit_post
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+# for crop image
+import json
+import base64
+from django.core.files.base import ContentFile
 
 # yt added
 # Prevent browser cache, user cannot press back to access previous page
@@ -33,9 +38,18 @@ def mainPage(request):
     #=================================
     #        Search By Keyword       #
     if query:
+
+        # Search category can no full words also can search
+        matching_categories = [
+            value
+            for value, label in CATEGORY_CHOICES
+            if query.lower() in label.lower()
+        ]
+
         post_box = post_box.filter(
             Q(post_location__location_name__icontains=query) |          # icontains = ignore case sencitive (HI\hi\Hi..)
-            Q(post_description__icontains=query)                        # | = or
+            Q(post_description__icontains=query) |                       # | = or
+            Q(post_itemcategory__in=matching_categories)
         ).distinct()
 
     #=================================
@@ -50,7 +64,7 @@ def mainPage(request):
 
     #=================================
     #        Location Filter         #
-
+    
     # remove empty string (none value)
     selected_locations = [
         loc for loc in selected_locations if loc
@@ -104,11 +118,42 @@ def createPost(request):
     # when user submit create post form
     if request.method == "POST":
         try:
+
+            # =====================================
+            #     Get cropped image from JS
+            # =====================================
+
+            cropped = request.POST.get("cropped_images")
+
+            image_files = []
+
+            # if user cropped image
+            if cropped:
+
+                images_data = json.loads(cropped)
+
+                for img in images_data:
+                    format, imgstr = img.split(';base64,')
+                    ext = format.split('/')[-1]
+
+                    image_file = ContentFile(
+                        base64.b64decode(imgstr),
+                        name=f'cropped_{timezone.now().timestamp()}.{ext}'
+                    )
+
+                    image_files.append(image_file)
+            
+            else:
+                uploaded = request.FILES.get('userposts_images')
+
+                if uploaded:
+                    image_files.append(uploaded)
+
             # run service.py to check data accuratecy
             create_post({
                 'post_type': request.POST.get('post_type'),
                 'post_datetime': request.POST.get('post_datetime'),
-                'userposts_images' : request.FILES.get('userposts_images'),
+                'images': image_files,
                 'post_itemcategory': request.POST.get('post_itemcategory'),
                 'post_location': request.POST.get('post_location'),
                 'post_description': request.POST.get('post_description'),
@@ -160,7 +205,7 @@ def editPost(request,post_id):
             edit_post(post,{
                 'post_type': request.POST.get('post_type'),
                 'post_datetime': request.POST.get('post_datetime'),
-                'userposts_images': request.FILES.get('userposts_images'),
+                'images': request.FILES.getlist('userposts_images'),
                 'post_itemcategory': request.POST.get('post_itemcategory'),
                 'post_location': request.POST.get('post_location'),
                 'post_description': request.POST.get('post_description'),

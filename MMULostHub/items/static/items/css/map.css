@@ -1,4 +1,6 @@
-
+/* ========================= */
+/*      BIG & SMALL MAP      */
+/* ========================= */
 .smallMap,
 .bigMap {
     position: relative;
@@ -40,7 +42,7 @@
 }
 
 /* Close button X */ 
-.close_button { 
+.mapclose_button { 
     position: absolute; 
     top: 15px; 
     right: 25px; 

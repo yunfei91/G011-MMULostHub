@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import os
 
 
 # ('storage name inside sqlite', 'display name on website')
@@ -45,7 +46,24 @@ class MMULocation (models.Model):
     # Contoh : √ Laptop ✗ Item Obeject 1
     def __str__(self):
         return self.location_name
+    
+def post_image_path(instance, filename):
 
+    return os.path.join(
+        "userposts_images",
+        f"post_{instance.post.id}",
+        filename
+    )
+
+class PostImage(models.Model):
+
+    post = models.ForeignKey(
+        'Post',
+        on_delete = models.CASCADE,
+        related_name = "images"
+    )
+
+    image = models.ImageField(upload_to = post_image_path)
 
 # Lost and Found Post Model  
 class Post (models.Model):
@@ -69,12 +87,6 @@ class Post (models.Model):
         blank = False,
     )
 
-    post_image = models.ImageField(
-        upload_to = 'userposts_images/',
-        null = False,
-        blank = False,
-    )
-
     # Dropdown menu to choose category
     post_itemcategory = models.CharField(
         max_length = 100,
@@ -91,6 +103,14 @@ class Post (models.Model):
     )
 
     post_description = models.TextField()
+
+    cover_image = models.ForeignKey(
+        'PostImage',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='cover_posts'
+    )
 
     def __str__(self):
         return f"{self.post_type}: {self.post_itemcategory}"
