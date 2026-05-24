@@ -10,7 +10,7 @@ html,body{
 
 body{
     margin: 0;
-    padding-top: 110px;
+    padding-top: 100px;
     background-position: center;
     background-attachment: fixed;
 }
@@ -57,7 +57,7 @@ header{
     top: 0;
     left: 0;
     width: 100%;
-    height: 110px;
+    height: 100px;
     padding: 0 10px;
     box-sizing: border-box;
 
