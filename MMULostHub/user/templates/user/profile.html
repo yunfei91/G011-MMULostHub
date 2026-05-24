@@ -11,7 +11,10 @@
         <!-- Expire page immediately -->
         <meta http-equiv="Expires" content="0">
 
-        <link rel="stylesheet" type="text/css" href="{% static 'user/css/profile.css' %}">
+        <link rel="stylesheet" href="{% static 'items/css/post-popup.css' %}">
+        <link rel="stylesheet" href="{% static 'user/css/profile.css' %}">
+
+        <script src="{% static 'items/js/menu-icon.js' %}" defer></script>
         <script src="{% static 'items/js/popup.js' %}" defer></script>
 
         <!-- Import Cropper.js library for image cropping -->
@@ -20,290 +23,261 @@
     </head>
 
     <body>
-    <!-- yt did this -->
-    <style>
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-        }
-
-        .modal-content {
-            background: #fff;
-            height: 80%;
-            width: 70%;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 10px;
-            position: relative;
-        }
-
-        .modal-body {
-            display: flex;
-            gap: 30px;
-        }
-
-        .modal-left {
-            flex: 1;
-        }
-
-        .modal-left img {
-            width: 100%;
-            object-fit: contain;
-            background: #f5f5f5;
-            border-radius: 10px;
-            aspect-ratio: 4/3;
-        }
-
-        .modal-right {
-            flex: 1;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .chatBtn {
-            position: absolute;
-            right: 20px;
-            bottom: 20px;
-        }
-
-        .close {
-            position: absolute;
-            right: 20px;
-            top: 10px;
-            font-size: 30px;
-            cursor: pointer;
-        }
-    </style>
-
         <div class="whole-page">
             <header>
-                <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class="mmu-logo">
+                <div class="header-left"> <!-- yt adjusted for css uses-->              
+                    <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
+                    <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
+                </div>
+
+                <div class="header-right"> <!-- yt adjusted for css uses-->
+                    <!-- Home icon -->
+                    <a href="{% url 'mainPage' %}" class="home-icon">
+                        <img src="{% static 'images/homeicon.png' %}" alt="Home">
+                    </a>
+
+                    <!-- Menu button --> <!-- yt adjusted for css uses-->
+                    <button type="button" class="menu-icon" onclick="toggleMenu()">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
             </header>
 
-            <div class="dropdown-nav">
-                <nav>
-                    Menu Button
-                </nav>
+            <div id="overlay" class="overlay"></div> <!-- yt adjusted for css uses-->
+
+            <!-- ================================================== -->
+            <!--            Dropdown Menu Navigation                -->
+            <!-- ================================================== -->
+            <div class = "dropdown-nav">
                 
-                <div class="dropdown-content">
-                    <a href="{% url 'mainPage' %}"> Home </a>
-                    <a href="{% url 'lost_posts' %}"> Lost Post </a>                 
-                    <a href="{% url 'found_posts' %}"> Found Post </a>                
-                    <a href="{% url 'profile' %}"> Profile </a>                      
-                    <a href="{% url 'feedback_form' %}">Feedback/Report </a> 
-                    <a href="{% url 'logout' %}"> Logout </a>
-                </div>
+                <nav id="menu" class="menu"> <!-- yt adjusted for css uses-->
+                    <ul>
+                        <li>
+                        <a href="{% url 'lost_posts' %}"> Lost Post </a>  
+                        </li>
+                        <li>
+                        <a href="{% url 'found_posts' %}"> Found Post </a>
+                        </li>
+                        <li>
+                        <a href="{% url 'profile' %}"> Profile </a>
+                        </li>
+                        <li>
+                        <a href="{% url 'feedback_form' %}"> Feedback </a>
+                        </li>
+                        <li>
+                        <a href="{% url 'logout' %}"> Logout </a> 
+                        </li>
+                    </ul>
+                </nav>
             </div>
 
-            <h1>My Profile</h1>
+            <div class="content">
+                <h1>My Profile</h1>
 
-            <!-- Display user's uploaded avatar or default avatar if user has none with-->
-            <!-- now = current time ; |date:'U' = convert time to Unix timestamp(second) ; Force to reload image instead of using cache -->
-            <!-- Check if current user owns profile -->
-            {% if profile.avatar %}
-                <img id="avatarImage" src="{{ profile.avatar.url }}?v={{ now|date:'U' }}" 
-                width="150" height="150" style="border-radius:50%; object-fit:cover; {% if is_owner %}cursor:pointer;{% else %}cursor:default;{% endif %}">
-            {% else %}
-                <img id="avatarImage"  src="{% static 'images/default.png' %}?v={{ now|date:'U' }}" 
-                width="150" height="150" style="border-radius:50%; object-fit:cover; {% if is_owner %}cursor:pointer;{% else %}cursor:default;{% endif %}">
-            {% endif %}
+                <!-- Display user's uploaded avatar or default avatar if user has none with-->
+                <!-- now = current time ; |date:'U' = convert time to Unix timestamp(second) ; Force to reload image instead of using cache -->
+                <!-- Check if current user owns profile -->
+                {% if profile.avatar %}
+                    <img id="avatarImage" src="{{ profile.avatar.url }}?v={{ now|date:'U' }}" 
+                    width="150" height="150" style="border-radius:50%; object-fit:cover; {% if is_owner %}cursor:pointer;{% else %}cursor:default;{% endif %}">
+                {% else %}
+                    <img id="avatarImage"  src="{% static 'images/default.png' %}?v={{ now|date:'U' }}" 
+                    width="150" height="150" style="border-radius:50%; object-fit:cover; {% if is_owner %}cursor:pointer;{% else %}cursor:default;{% endif %}">
+                {% endif %}
 
-            <div id="editor" style="display:none;"> <!-- Hide edit button -->
-                <input type="file" id="imageInput"> <!-- File input for image upload -->
+                <div id="editor" style="display:none;"> <!-- Hide edit button -->
+                    <input type="file" id="imageInput"> <!-- File input for image upload -->
 
-                <div>
-                    <img id="preview" style="max-width:100%; max-height:400px;"> <!-- Preview selected image -->
+                    <div>
+                        <img id="preview" style="max-width:100%; max-height:400px;"> <!-- Preview selected image -->
+                    </div>
+
+                    <button onclick="cropImage()">Crop & Upload</button>
+
+                    <button onclick="cancelCrop()">Cancel</button>
                 </div>
 
-                <button onclick="cropImage()">Crop & Upload</button>
+                {% csrf_token %} <!-- Security token to prevent CSRF attack -->
 
-                <button onclick="cancelCrop()">Cancel</button>
-            </div>
+                <div class="profile-info"> 
+                    <!-- Show name (User and Admin not the same) -->
+                    <p id="nameText">{{ profile.name|default:user.first_name|default:user.username }}</p>
 
-            {% csrf_token %} <!-- Security token to prevent CSRF attack -->
+                    {% if request.user == user %}
+                        <button onclick="showNameEdit()">Edit Name</button>
 
-            <div class="profile-info"> 
-                <!-- Show name (User and Admin not the same) -->
-                <p id="nameText">{{ profile.name|default:user.first_name|default:user.username }}</p>
+                        <form id="nameForm" method="POST" action="{% url 'update_name' %}" style="display:none;">
+                            {% csrf_token %}
+                            <input type="text" name="name" value="{{ profile.name }}">
+                            <button type="submit">Save</button>
+                            <button type="button" onclick="hideNameEdit()">Cancel</button>
+                        </form>
+                    {% endif %}
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p style="color:red;">{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+
+                    <p><b>MMU Email:</b> {{ user.email }}</p>
+                </div>
+
+                <h2>Bio</h2>
+
+                <p id="bioText">{{ profile.bio }}</p>
 
                 {% if request.user == user %}
-                    <button onclick="showNameEdit()">Edit Name</button>
+                    <button onclick="showBioEdit()">Edit Bio</button>
 
-                    <form id="nameForm" method="POST" action="{% url 'update_name' %}" style="display:none;">
-                        {% csrf_token %}
-                        <input type="text" name="name" value="{{ profile.name }}">
+                    <form id="bioForm" method="POST" action="{% url 'update_bio' %}" style="display:none;">
+                        {% csrf_token %} <!-- Security token to prevent CSRF attack -->
+                        <!-- Bio box to input -->
+                        <textarea name="bio" rows="4" cols="50">{{ profile.bio }}</textarea>
+                        <br>
                         <button type="submit">Save</button>
-                        <button type="button" onclick="hideNameEdit()">Cancel</button>
+                        <button type="button" onclick="hideBioEdit()">Cancel</button>
                     </form>
                 {% endif %}
 
-                {% if messages %}
-                    {% for message in messages %}
-                        <p style="color:red;">{{ message }}</p>
-                    {% endfor %}
-                {% endif %}
-
-                <p><b>MMU Email:</b> {{ user.email }}</p>
-            </div>
-
-            <h2>Bio</h2>
-
-            <p id="bioText">{{ profile.bio }}</p>
-
-            {% if request.user == user %}
-                <button onclick="showBioEdit()">Edit Bio</button>
-
-                <form id="bioForm" method="POST" action="{% url 'update_bio' %}" style="display:none;">
-                    {% csrf_token %} <!-- Security token to prevent CSRF attack -->
-                    <!-- Bio box to input -->
-                    <textarea name="bio" rows="4" cols="50">{{ profile.bio }}</textarea>
-                    <br>
-                    <button type="submit">Save</button>
-                    <button type="button" onclick="hideBioEdit()">Cancel</button>
-                </form>
-            {% endif %}
-
-            <div style="margin-top:20px;">
-                <button onclick="showAll()">All</button>
-                <button onclick="showLost()">Lost</button>
-                <button onclick="showFound()">Found</button>
-            </div>
-
-            <div id="all-posts">
-                {% for post in all_posts %}
-
-                <!-- Open popup modal after clicked -->
-                <!-- Store username into HTML attribute, so JS can read it-->
-                <div class="post"
-                    onclick="openPost(this)"
-                    data-user="{{ post.post_user.username }}" 
-                    data-type="{{ post.post_type }}"
-                    data-date="{{ post.post_datetime }}"
-                    data-category="{{ post.get_post_itemcategory_display }}"
-                    data-location="{{ post.post_location.location_name }}"
-                    data-description="{{ post.post_description }}"
-                    data-image="{% if post.post_image %}{{ post.post_image.url }}{% endif %}">
-                    
-                    <div class="post-item" data-type="{{ post.post_type }}">
-                    
-                        <h4>{{ post.post_type|upper }} POST</h4>
-
-                        {% if post.post_image %}
-                            <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image" required style="width: 500px; height: auto;">
-                        {% endif %}
-
-                        <p> Date Time: {{ post.post_datetime }} </p>
-                        <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
-                        <p> Location: {{ post.post_location.location_name }} </p>
-                        <p>————————————————————————————————————————————————————————</p>
-                    </div>
+                <div style="margin-top:20px;">
+                    <button onclick="showAll()">All</button>
+                    <button onclick="showLost()">Lost</button>
+                    <button onclick="showFound()">Found</button>
                 </div>
-                {% empty %}
-                    <p>No posts</p>
-                {% endfor %}
-            </div>
 
-            <div id="lost-posts">
-            <h4>LOST POST</h4>
-                {% for post in lost_posts %}
+                <div id="all-posts">
+                    {% for post in all_posts %}
 
-                <!-- Open popup modal after clicked -->
-                <!-- Store username into HTML attribute, so JS can read it-->
-                <div class="post"
-                    onclick="openPost(this)"
-                    data-user="{{ post.post_user.username }}" 
-                    data-type="{{ post.post_type }}"
-                    data-date="{{ post.post_datetime }}"
-                    data-category="{{ post.get_post_itemcategory_display }}"
-                    data-location="{{ post.post_location.location_name }}"
-                    data-description="{{ post.post_description }}"
-                    data-image="{% if post.post_image %}{{ post.post_image.url }}{% endif %}">
-                    
-                    <div class="post-item">
-
-                        {% if post.post_image %}
-                            <img src="{{ post.post_image.url }}" class="post-image" style="width: 500px; height: auto;">
-                        {% endif %}
-
-                        <p> Date Time: {{ post.post_datetime }} </p>
-                        <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
-                        <p> Location: {{ post.post_location.location_name }} </p>
-                        <p>————————————————————————————————————————————————————————</p>
-                    </div>
-                </div>
-                {% empty %}
-                    <p>No lost posts</p>
-                {% endfor %}
-            </div>
-
-            <div id="found-posts">
-            <h4>FOUND POST</h4>
-                {% for post in found_posts %}
-
-                <!-- Open popup modal after clicked -->
-                <!-- Store username into HTML attribute, so JS can read it-->
-                <div class="post"
-                    onclick="openPost(this)"
-                    data-user="{{ post.post_user.username }}" 
-                    data-type="{{ post.post_type }}"
-                    data-date="{{ post.post_datetime }}"
-                    data-category="{{ post.get_post_itemcategory_display }}"
-                    data-location="{{ post.post_location.location_name }}"
-                    data-description="{{ post.post_description }}"
-                    data-image="{% if post.post_image %}{{ post.post_image.url }}{% endif %}">
-                    
-                    <div class="post-item">
+                    <!-- Open popup modal after clicked -->
+                    <!-- Store username into HTML attribute, so JS can read it-->
+                    <div class="post"
+                        onclick="openPost(this)"
+                        data-user="{{ post.post_user.username }}" 
+                        data-type="{{ post.post_type }}"
+                        data-date="{{ post.post_datetime }}"
+                        data-category="{{ post.get_post_itemcategory_display }}"
+                        data-location="{{ post.post_location.location_name }}"
+                        data-description="{{ post.post_description }}"
+                        data-image="{% if post.post_image %}{{ post.post_image.url }}{% endif %}">
                         
-                        {% if post.post_image %}
-                            <img src="{{ post.post_image.url }}" class="post-image" style="width: 500px; height: auto;">
-                        {% endif %}
+                        <div class="post-item" data-type="{{ post.post_type }}">
+                        
+                            <h4>{{ post.post_type|upper }} POST</h4>
 
-                        <p> Date Time: {{ post.post_datetime }} </p>
-                        <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
-                        <p> Location: {{ post.post_location.location_name }} </p>
-                        <p>————————————————————————————————————————————————————————</p>
-                    </div>
-                </div>
-                {% empty %}
-                    <p>No found posts</p>
-                {% endfor %}
-            </div>
+                            {% if post.post_image %}
+                                <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image" required style="width: 500px; height: auto;">
+                            {% endif %}
 
-            <!-- YT - Post View Popup Modal -->
-            <div id="postModal" class="modal">
-
-                <div class="modal-content">
-
-                    <span class="close" onclick="closePost()">&times;</span> <!-- Symbol display cross -->
-
-                    <div class="modal-body">
-
-                        <div class="modal-left">
-                            <p><span id="m_user"></span></p> <!-- JS inserts username -->
-
-                            <img id="m_image" style="max-width:100%; display:none;">
+                            <p> Date Time: {{ post.post_datetime }} </p>
+                            <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
+                            <p> Location: {{ post.post_location.location_name }} </p>
+                            <p>————————————————————————————————————————————————————————</p>
                         </div>
+                    </div>
+                    {% empty %}
+                        <p>No posts</p>
+                    {% endfor %}
+                </div>
 
-                        <div class="modal-right">
-                            <h2 id="m_type"></h2> <!-- JS inserts post type -->
+                <div id="lost-posts">
+                <h4>LOST POST</h4>
+                    {% for post in lost_posts %}
 
-                            <p><b>Date:</b> <span id="m_date"></span></p>
+                    <!-- Open popup modal after clicked -->
+                    <!-- Store username into HTML attribute, so JS can read it-->
+                    <div class="post"
+                        onclick="openPost(this)"
+                        data-user="{{ post.post_user.username }}" 
+                        data-type="{{ post.post_type }}"
+                        data-date="{{ post.post_datetime }}"
+                        data-category="{{ post.get_post_itemcategory_display }}"
+                        data-location="{{ post.post_location.location_name }}"
+                        data-description="{{ post.post_description }}"
+                        data-image="{% if post.post_image %}{{ post.post_image.url }}{% endif %}">
+                        
+                        <div class="post-item">
 
-                            <p><b>Category:</b> <span id="m_category"></span></p>
+                            {% if post.post_image %}
+                                <img src="{{ post.post_image.url }}" class="post-image" style="width: 500px; height: auto;">
+                            {% endif %}
 
-                            <p><b>Location:</b> <span id="m_location"></span></p>
+                            <p> Date Time: {{ post.post_datetime }} </p>
+                            <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
+                            <p> Location: {{ post.post_location.location_name }} </p>
+                            <p>————————————————————————————————————————————————————————</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                        <p>No lost posts</p>
+                    {% endfor %}
+                </div>
 
-                            <p><b>Description:</b></p>
-                            <p id="m_description"></p>
+                <div id="found-posts">
+                <h4>FOUND POST</h4>
+                    {% for post in found_posts %}
 
-                            <div class="chatBtn">
-                                <button type="button">Chat</button>
+                    <!-- Open popup modal after clicked -->
+                    <!-- Store username into HTML attribute, so JS can read it-->
+                    <div class="post"
+                        onclick="openPost(this)"
+                        data-user="{{ post.post_user.username }}" 
+                        data-type="{{ post.post_type }}"
+                        data-date="{{ post.post_datetime }}"
+                        data-category="{{ post.get_post_itemcategory_display }}"
+                        data-location="{{ post.post_location.location_name }}"
+                        data-description="{{ post.post_description }}"
+                        data-image="{% if post.post_image %}{{ post.post_image.url }}{% endif %}">
+                        
+                        <div class="post-item">
+                            
+                            {% if post.post_image %}
+                                <img src="{{ post.post_image.url }}" class="post-image" style="width: 500px; height: auto;">
+                            {% endif %}
+
+                            <p> Date Time: {{ post.post_datetime }} </p>
+                            <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
+                            <p> Location: {{ post.post_location.location_name }} </p>
+                            <p>————————————————————————————————————————————————————————</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                        <p>No found posts</p>
+                    {% endfor %}
+                </div>
+
+                <!-- YT - Post View Popup Modal -->
+                <div id="postModal" class="modal">
+
+                    <div class="modal-content">
+
+                        <span class="close" onclick="closePost()">&times;</span> <!-- Symbol display cross -->
+
+                        <div class="modal-body">
+
+                            <div class="modal-left">
+                                <p><span id="m_user"></span></p> <!-- JS inserts username -->
+
+                                <img id="m_image" style="max-width:100%; display:none;">
+                            </div>
+
+                            <div class="modal-right">
+                                <h2 id="m_type"></h2> <!-- JS inserts post type -->
+
+                                <p><b>Date:</b> <span id="m_date"></span></p>
+
+                                <p><b>Category:</b> <span id="m_category"></span></p>
+
+                                <p><b>Location:</b> <span id="m_location"></span></p>
+
+                                <p><b>Description:</b></p>
+                                <p id="m_description"></p>
+
+                                <div class="chatBtn">
+                                    <button type="button">Chat</button>
+                                </div>
                             </div>
                         </div>
                     </div>
