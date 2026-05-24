@@ -55,3 +55,9 @@
     font-size: 30px;
     cursor: pointer;
 }
+
+.prev-btn:disabled,
+.next-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}

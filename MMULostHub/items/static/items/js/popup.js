@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // yt added
 // Create a function "openPost"
 let images = [];
-let currentIndex = 0;
+currentIndex = 0;
 
 function openPost(el) { // el=this connection
 
@@ -115,19 +115,64 @@ function openPost(el) { // el=this connection
         : [];
 
     currentIndex = 0;
+    showImg();
+}
 
-    showImage();
+function showImg() {
+    const img = document.getElementById("m_image");
+
+    if (images.length > 0) {
+        img.src = images[currentIndex];
+        img.style.display = "block";
+    } else {
+        img.style.display = "none";
+    }
+
+    updateButtons();
+}
+
+// NEXT (NO LOOP)
+function nextImg() {
+    if (currentIndex < images.length - 1) {
+        currentIndex++;
+        showImg();
+    }
+}
+
+// PREV (NO LOOP)
+function prevImg() {
+    if (currentIndex > 0) {
+        currentIndex--;
+        showImg();
+    }
+}
+
+function updateButtons() {
+    const prevBtn = document.querySelector(".prev-btn");
+    const nextBtn = document.querySelector(".next-btn");
+
+    if (!prevBtn || !nextBtn) return;
+
+    prevBtn.disabled = (currentIndex === 0);
+    nextBtn.disabled = (currentIndex === images.length - 1);
 }
 
 function closePost() {
     document.getElementById("postModal").style.display = "none";
+
+    // reset image state
+    images = [];
+    currentIndex = 0;
 }
 
 // click outside of the popup post to close it
 // Detect any click on webpage
-window.onclick = function(event) {
-    const modal = document.getElementById("postModal"); // Store modal element
-    if (event.target === modal) { // Check whether user clicked background
+window.addEventListener("click", function (event) {
+    const modal = document.getElementById("postModal");
+
+    if (!modal) return;
+
+    if (event.target === modal) {
         modal.style.display = "none";
     }
-}
+});
