@@ -132,7 +132,7 @@
                         data-category="{{ post.get_post_itemcategory_display }}"
                         data-location="{{ post.post_location.location_name }}"
                         data-description="{{ post.post_description }}"
-                        data-image="{% if post.post_image %}{{ post.post_image.url }}{% endif %}">
+                        data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
                         <div class = "post-box">
 
                             <div class = "post">
@@ -237,8 +237,14 @@
                                         <span id="m_user"></span>
                                     </a>
                                 </p> <!-- JS inserts username -->
+                                
+                                <div class="img-container">
+                                    <button class="prev-btn" onclick="prevImg()">⬅</button>
 
-                                <img id="m_image" style="max-width:100%; display:none;">
+                                    <img id="m_image" style="max-width:100%; display:none;">
+
+                                    <button class="next-btn" onclick="nextImg()">➡</button>
+                                </div>
                             </div>
 
                             <div class="modal-right">

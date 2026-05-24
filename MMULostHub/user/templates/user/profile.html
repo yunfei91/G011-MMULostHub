@@ -161,14 +161,19 @@
                         data-category="{{ post.get_post_itemcategory_display }}"
                         data-location="{{ post.post_location.location_name }}"
                         data-description="{{ post.post_description }}"
-                        data-image="{% if post.post_image %}{{ post.post_image.url }}{% endif %}">
+                        data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
                         
                         <div class="post-item" data-type="{{ post.post_type }}">
                         
                             <h4>{{ post.post_type|upper }} POST</h4>
 
-                            {% if post.post_image %}
-                                <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image" required style="width: 500px; height: auto;">
+                            {% if post.cover_image %}
+                                <img
+                                    src="{{ post.cover_image.image.url }}"
+                                    alt="Post Image"
+                                    class="post-image"
+                                    style="width:500px; height:auto;"
+                                >
                             {% endif %}
 
                             <p> Date Time: {{ post.post_datetime }} </p>
@@ -196,12 +201,16 @@
                         data-category="{{ post.get_post_itemcategory_display }}"
                         data-location="{{ post.post_location.location_name }}"
                         data-description="{{ post.post_description }}"
-                        data-image="{% if post.post_image %}{{ post.post_image.url }}{% endif %}">
+                        data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
                         
                         <div class="post-item">
 
-                            {% if post.post_image %}
-                                <img src="{{ post.post_image.url }}" class="post-image" style="width: 500px; height: auto;">
+                            {% if post.cover_image %}
+                                <img
+                                    src="{{ post.cover_image.image.url }}"
+                                    class="post-image"
+                                    style="width:500px; height:auto;"
+                                >
                             {% endif %}
 
                             <p> Date Time: {{ post.post_datetime }} </p>
@@ -229,12 +238,15 @@
                         data-category="{{ post.get_post_itemcategory_display }}"
                         data-location="{{ post.post_location.location_name }}"
                         data-description="{{ post.post_description }}"
-                        data-image="{% if post.post_image %}{{ post.post_image.url }}{% endif %}">
+                        data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
                         
                         <div class="post-item">
                             
-                            {% if post.post_image %}
-                                <img src="{{ post.post_image.url }}" class="post-image" style="width: 500px; height: auto;">
+                            {% if post.cover_image %}
+                                <img
+                                    src="{{ post.cover_image.image.url }}"
+                                    class="post-image"
+                                    style="width:500px; height:auto;">
                             {% endif %}
 
                             <p> Date Time: {{ post.post_datetime }} </p>
@@ -260,7 +272,13 @@
                             <div class="modal-left">
                                 <p><span id="m_user"></span></p> <!-- JS inserts username -->
 
-                                <img id="m_image" style="max-width:100%; display:none;">
+                                <div class="img-container">
+                                    <button class="prev-btn" onclick="prevImg()">⬅</button>
+
+                                    <img id="m_image" style="max-width:100%; display:none;">
+
+                                    <button class="next-btn" onclick="nextImg()">➡</button>
+                                </div>
                             </div>
 
                             <div class="modal-right">
