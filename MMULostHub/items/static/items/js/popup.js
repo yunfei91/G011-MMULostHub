@@ -87,6 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // yt added
 // Create a function "openPost"
+let images = [];
+let currentIndex = 0;
+
 function openPost(el) { // el=this connection
 
     document.getElementById("postModal").style.display = "block"; // Show popup modal , block=show element
@@ -107,15 +110,13 @@ function openPost(el) { // el=this connection
     document.getElementById("m_location").innerText = el.dataset.location;
     document.getElementById("m_description").innerText = el.dataset.description;
 
-    const img = document.getElementById("m_image");
+    images = el.dataset.images
+        ? el.dataset.images.split("|").filter(i => i)
+        : [];
 
-    if (el.dataset.image) { // Check whether image exists
-        img.src = el.dataset.image;
-        img.style.display = "block";
-        img.alt = "Post Image"; // Alternative text if image does't display successfully
-    } else {
-        img.style.display = "none"; // Hide image element, Avoid broken image icon
-    }
+    currentIndex = 0;
+
+    showImage();
 }
 
 function closePost() {

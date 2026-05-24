@@ -234,7 +234,7 @@
                         data-category="{{ post.get_post_itemcategory_display }}"
                         data-location="{{ post.post_location.location_name }}"
                         data-description="{{ post.post_description }}"
-                        data-image="{% if post.post_image %}{{ post.post_image.url }}{% endif %}">
+                        data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
                         
                         <div class = "post-box">
 
@@ -340,8 +340,8 @@
                                         <span id="m_user"></span>
                                     </a>
                                 </p> <!-- JS inserts username -->
-
-                                <img id="m_image" style="max-width:100%; display:none;">
+                                
+                                    <img id="m_image" style="max-width:100%; display:none;">
                             </div>
 
                             <div class="modal-right">
