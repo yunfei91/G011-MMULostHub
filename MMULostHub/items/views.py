@@ -201,11 +201,38 @@ def editPost(request,post_id):
     if request.method == "POST":
         try:
 
-            # check service.py to update data
+            # =====================================
+            #     Get cropped image from JS
+            # =====================================
+
+            cropped = request.POST.get("cropped_images")
+
+            image_files = []
+
+            if cropped:
+
+                images_data = json.loads(cropped)
+
+                for img in images_data:
+
+                    format, imgstr = img.split(';base64,')
+                    ext = format.split('/')[-1]
+
+                    image_file = ContentFile(
+                        base64.b64decode(imgstr),
+                        name=f'cropped_{timezone.now().timestamp()}.{ext}'
+                    )
+
+                    image_files.append(image_file)
+
+            # =====================================
+            #         Update post
+            # =====================================
+
             edit_post(post,{
                 'post_type': request.POST.get('post_type'),
                 'post_datetime': request.POST.get('post_datetime'),
-                'images': request.FILES.getlist('userposts_images'),
+                'images': image_files,
                 'post_itemcategory': request.POST.get('post_itemcategory'),
                 'post_location': request.POST.get('post_location'),
                 'post_description': request.POST.get('post_description'),
@@ -233,6 +260,13 @@ def editPost(request,post_id):
         'post_data': {},
         'item_categories': CATEGORY_CHOICES,
         'locations': MMULocation.objects.all(),
+        'existing_images': [
+            {
+                'id': img.id,
+                'url': img.image.url
+            }
+            for img in post.images.all()
+        ]
     })
 
 

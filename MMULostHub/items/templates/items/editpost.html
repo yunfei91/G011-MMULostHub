@@ -12,6 +12,7 @@
         <script src="{% static 'items/js/popup.js' %}" defer></script>
         <script src="{% static 'items/js/map.js' %}" defer></script>
         <script src="{% static 'items/js/editpost.js' %}" defer></script>                <!-- differ = load complete html then load java -->
+        <script src="{% static 'items/js/image.js' %}" defer></script>
 
         <title>
             MMU Lost Hub
@@ -124,19 +125,31 @@
                 <!-- ================================================== -->
                 <!--            Change Image Upload Section             -->
                 <!-- ================================================== -->
-                <label>Upload Item Image:</label>
+                <label> Upload Item Image: </label>
+                
+                <!-- existing image data -->
+                {{ existing_images|json_script:"existing-images-data" }}
 
-                <img
-                    id="image_preview"
-                    src="{% if post.post_image %}{{ post.post_image.url }}{% endif %}"
-                    width="200"
-                    style="{% if not post.post_image %}display: none;{% endif %}"
-                >
+                <!-- hidden input submit cropped images -->
+                <input type="hidden"
+                    name="cropped_images"
+                    id="cropped_images">
 
+                <!-- upload input -->
                 <input type="file"
                     id="post_image"
                     name="userposts_images"
-                    accept="image/*">
+                    accept="image/*"
+                    hidden>
+
+                <button type="button" id="uploadBtn">
+                    Add Image
+                </button>
+
+                <!-- image preview container -->
+                <div id="imagePreview_container"
+                    class="imagePreview_container">
+                </div>
 
                 <br><br>
 
@@ -203,41 +216,6 @@
 
                 <br><br>
 
-                <!-- ================================================== -->
-                <!--            Map Modal Section                       -->
-                <!-- ================================================== -->
-                <div id="map_modal" class="map_modal">
-
-                    <div class="mapmodal_content">
-
-                        <!-- Close map button -->
-                        <span id="close_map" class="mapclose_button">
-                            &times;   <!-- x icon -->
-                        </span>
-
-                        <!-- Scroller -->
-                        <div class="map-scroll-container">
-
-                            <div id = "location_label" class = "location_label"></div>
-
-                            <div class="big-map-box">
-    
-                                <img
-                                    src="{% static 'images/map-img.jpg' %}"
-                                    id="bigMap"
-                                    class="bigMap"
-                                    alt="MMU Big Map"
-                                >
-
-                                <div id="bigMap_marker" class="bigMap-marker">
-                                    📍
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
 
                 </div>
 
@@ -251,8 +229,98 @@
             </form>
         </div>
 
+        <!-- ====================================== -->
+        <!--          CROP IMAGE MODAL             -->
+        <!-- ====================================== -->
+        <div id ="crop_modal" class = "crop-modal">
+
+            <!-- close crop modal button -->
+            <span id="close_crop" class="imgclose_button">
+                &times;
+            </span>
+
+            <div id ="crop_container" class = "crop-container">
+
+                <!-- Display photo uploaded to crop -->
+                <img id = 'crop_preview' class = "crop-preview">
+
+                <button type="button" id="confirmCropBtn">
+                    Crop
+                </button>
+            
+            </div>
+        </div>
+
+        <!-- ====================================== -->
+        <!--         IMAGE PREVIEW MODAL           -->
+        <!-- ====================================== -->
+        <div id="preview_modal" class="preview-modal">
+
+            <span id="close_preview" class="preview-close">
+                &times;
+            </span>
+
+            <!-- left arrow -->
+            <button type="button" id="prev_image_btn" class="preview-arrow left-arrow">
+                ❮
+            </button>
+
+            <!-- show image -->
+            <img id="preview_modal_image" class="preview-modal-image">
+
+            <!-- set iamge as cover button-->
+            <button type="button" id="cover_btn" class="cover-button">
+                Cover Image
+            </button>
+
+            <!-- right arrow -->
+            <button type="button" id="next_image_btn" class="preview-arrow right-arrow">
+                ❯
+            </button>
+
+            <!-- delete -->
+            <button type="button" id="delete_image" class="delete-preview-btn">
+                Delete
+            </button>
+
+            <button type="button" id="crop_again_btn" class="crop-again-btn">
+                Crop Again
+            </button>
+
+        </div>
+
         <!-- ================================================== -->
-        <!--             Popup Box Modal                        -->
+        <!--                    MAP MODAL                       -->
+        <!-- ================================================== -->
+        <div id="map_modal" class="map_modal">
+
+            <div class="mapmodal_content">
+
+                <!-- Close map button -->
+                <span id="close_map" class="mapclose_button">
+                    &times;   <!-- x icon -->
+                </span>
+
+                <!-- Scroller -->
+                <div class="map-scroll-container">
+                    <div id = "location_label" class = "location_label"></div>
+                    <div class="big-map-box">
+                        <img
+                            src="{% static 'images/map-img.jpg' %}"
+                            id="bigMap"
+                            class="bigMap"
+                            alt="MMU Big Map"
+                        >
+                        <div id="bigMap_marker" class="bigMap-marker">
+                            📍
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================================================== -->
+        <!--             POP UP BOX MODAL                       -->
         <!-- ================================================== -->
         <div id = "popup" class = "popup hidden">
             <div class = "popup-box">
