@@ -269,7 +269,6 @@ header{
         0 6px 10px rgba(0,0,0,0.18);
 }
 
-
 .password-box{
     position: relative;
     width: 100%;
@@ -310,28 +309,52 @@ header{
     text-decoration: underline;
 }
 
-.checklist p {
-    position: relative;
-    padding-left: 20px;
-    transition: 0.2s;
+.checklist{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
 }
 
-.checklist p.invalid::before {
-    content: "✖ ";
-    position: absolute;
-    left: 0;
+.checklist p{
+    margin: 0;
+    padding: 6px 12px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-family: 'Sansation';
+
+    background: rgba(255,255,255,0.5);
+
+    border: 1px solid rgba(255,255,255,0.4);
+
+    color: #666;
+
+    transition: all 0.25s ease;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.checklist p[style*="green"]::before {
-    content: "✔ ";
-    position: absolute;
-    left: 0;
+.checklist p::before{
+    content: "✖";
+    font-size: 11px;
 }
 
-.checklist p[style*="red"]::before {
-    content: "✖ ";
-    position: absolute;
-    left: 0;
+.checklist p.valid{
+    background: rgba(90, 200, 120, 0.18);
+    border-color: rgba(90, 200, 120, 0.45);
+    color: #2e7d32;
+}
+
+.checklist p.valid::before{
+    content: "✔";
+}
+
+.checklist p.invalid{
+    opacity: 0.6;
 }
 
 .show-password {

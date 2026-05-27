@@ -56,8 +56,8 @@
                                     <!-- Checklist -->
                                     <div class="checklist">
                                         <p id="letter" class="invalid">At least 1 letter</p>
-                                        <p id="number" class="invalid">At least 1 number</p>
                                         <p id="symbol" class="invalid">At least 1 symbol (@#$*.)</p>
+                                        <p id="number" class="invalid">At least 1 number</p>
                                         <p id="length" class="invalid">At least 8 characters</p>
                                     </div>
 
@@ -223,34 +223,42 @@
 
                 /* letter */
                 if (/[A-Za-z]/.test(password)) {
-                    document.getElementById("letter").style.color = "green";
+                    document.getElementById("letter").classList.add("valid");
+                    document.getElementById("letter").classList.remove("invalid");
                     validCount++;
                 } else {
-                    document.getElementById("letter").style.color = "red";
+                    document.getElementById("letter").classList.add("invalid");
+                    document.getElementById("letter").classList.remove("valid");
                 }
 
                 /* number */
                 if (/[0-9]/.test(password)) {
-                    document.getElementById("number").style.color = "green";
+                    document.getElementById("number").classList.add("valid");
+                    document.getElementById("number").classList.remove("invalid");
                     validCount++;
                 } else {
-                    document.getElementById("number").style.color = "red";
+                    document.getElementById("number").classList.add("invalid");
+                    document.getElementById("number").classList.remove("valid");
                 }
 
                 /* symbol */
                 if (/[@#$*.]/.test(password)) {
-                    document.getElementById("symbol").style.color = "green";
+                    document.getElementById("symbol").classList.add("valid");
+                    document.getElementById("symbol").classList.remove("invalid");
                     validCount++;
                 } else {
-                    document.getElementById("symbol").style.color = "red";
+                    document.getElementById("symbol").classList.add("invalid");
+                    document.getElementById("symbol").classList.remove("valid");
                 }
 
                 /* length */
                 if (password.length >= 8) {
-                    document.getElementById("length").style.color = "green";
+                    document.getElementById("length").classList.add("valid");
+                    document.getElementById("length").classList.remove("invalid");
                     validCount++;
                 } else {
-                    document.getElementById("length").style.color = "red";
+                    document.getElementById("length").classList.add("invalid");
+                    document.getElementById("length").classList.remove("valid");
                 }
 
                 passwordValid = (validCount === 4);
