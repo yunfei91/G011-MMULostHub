@@ -18,6 +18,7 @@ body{
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .content{
@@ -174,6 +175,11 @@ header{
     color: #4f5568;
 }
 
+.register-btn {
+    display: block;
+    margin: 0 auto;
+}
+
 .auth-card{
     display: flex;
     flex-direction: column;
@@ -195,6 +201,12 @@ header{
 .auth-card p{
     margin: 10px 0;
     font-size: 13px;
+    font-family: 'Sansation';
+}
+
+input::placeholder{
+    font-size: 13px;
+    font-family: 'Sansation';
 }
 
 .auth-card h3{
@@ -209,6 +221,7 @@ header{
     padding: 12px 14px;
     box-sizing: border-box;
 
+    margin: 5px 0;
     border-radius: 14px;
     border: none;
     outline: none;
@@ -434,20 +447,20 @@ footer{
 }
 
 .popup {
-    position: fixed;
-
+    position: absolute;
     top: 90px;
-    right: 170px;
-    transform: translateX(50%) translateY(10px);
+    right: 220px;
 
+    width: 200px;
+    text-align: center;
     color: #b00020;
     background: rgba(176, 0, 32, 0.08);
     border: 1px solid rgba(176, 0, 32, 0.25);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.082);
+    transform: translateY(10px);
 
     padding: 12px 20px;
     border-radius: 12px;
-
-    box-shadow: 0 8px 10px rgba(0,0,0,0.2);
 
     font-family: 'Sansation';
     font-size: 13px;
@@ -461,5 +474,5 @@ footer{
 
 .popup.show {
     opacity: 1;
-    transform: translateX(50%) translateY(0);
+    transform: translateY(0);
 }

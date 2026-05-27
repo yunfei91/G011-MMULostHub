@@ -76,8 +76,7 @@
                                         <p class="message error-message">{{ confirm_password_error }}</p>
                                     {% endif %}
 
-                                    <br>
-                                    <button type="submit" id="submitBtn">Register</button>
+                                    <button class="register-btn"type="submit" id="submitBtn">Register</button>
 
                                 </form>
 
@@ -87,14 +86,10 @@
                                     <br><br>Are you an admin?
                                     <a href="{% url 'admin_login' %}">Login as Admin</a>
                                 </p>
-
-                                
-                            </div>
-                            
-                            <div id="errorPopup" class="popup">
-                                Please fill in all fields
                             </div>
                         </div>
+
+                        <div id="errorPopup" class="popup"></div>
                     </div>
                 </div>
             </div>
@@ -131,13 +126,35 @@
 
                 if (!name || !email || !pw || !cpw) {
                     e.preventDefault();
-                    showPopup("Please fill in all the fields");
+                    showPopup("Please fill in all fields");
                     return;
                 }
 
-                if (pw !== cpw) {
+                /* Name Validation */
+                if (!nameValid) {
                     e.preventDefault();
-                    showPopup("Password not match");
+                    showPopup("Please check your input");
+                    return;
+                }
+
+                /* Email Validation */
+                if (!emailValid) {
+                    e.preventDefault();
+                    showPopup("Please check your input");
+                    return;
+                }
+
+                /* Password Requirement */
+                if (!passwordValid) {
+                    e.preventDefault();
+                    showPopup("Please check your input");
+                    return;
+                }
+
+                /* Confirm Password */
+                if (!match) {
+                    e.preventDefault();
+                    showPopup("Please check your input");
                     return;
                 }
             });
