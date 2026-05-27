@@ -52,7 +52,7 @@ function confirmCreate(event) {
                     Check Image        
      ====================================== */
 
-    if (croppedImages.length === 0) {
+    if (window.croppedImages.length === 0) {
         showPopup("Error", "Please upload and crop at least one image.");
         return;
     }
@@ -62,9 +62,11 @@ function confirmCreate(event) {
      ====================================== */
     showConfirmPopup("Confirm", "Do you want to create this post?", () => {
 
-        const imageData = croppedImages.map(img => img.image);
+        const imageData = window.croppedImages
+            .filter(img => img.type === "new")
+            .map(img => img.image);
 
-        document.getElementById("cropped_image").value = JSON.stringify(imageData);
+        document.getElementById("cropped_images").value = JSON.stringify(imageData);
 
         // submit form
         form.requestSubmit();

@@ -262,7 +262,7 @@
                 data-category="{{ post.get_post_itemcategory_display }}"
                 data-location="{{ post.post_location.location_name }}"
                 data-description="{{ post.post_description }}"
-                data-image="{% if post.post_image %}{{ post.post_image.url }}{% endif %}">
+                data-image="{% if post.cover_image %}{{ post.cover_image.image.url }}{% endif %}">
                 
                 <div class = "post-box">
 

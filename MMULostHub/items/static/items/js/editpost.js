@@ -47,7 +47,9 @@ function confirmEdit(event) {
     /* ====================================== 
                     Check Image        
      ====================================== */
-    if(croppedImages.length === 0){
+    const hasImages = window.croppedImages && window.croppedImages.length > 0;
+
+    if (!hasImages) {
         showPopup("Error", "Please upload an image.");
         return;
     }
@@ -56,11 +58,19 @@ function confirmEdit(event) {
     /* ====================================== 
             Confirmation to edit post        
      ====================================== */
+    const imageData = window.croppedImages.map((img, index) => ({
+        id: img.id,
+        image: img.image,
+        type: img.type,
+        order: index
+    }));
+
+    const coverIndex = 0;
+    document.getElementById("cover_index").value = coverIndex;
+
     document.getElementById("cropped_images").value =
-        JSON.stringify(
-            croppedImages.map(img => img.image)
-        );
-    
+        JSON.stringify(imageData);
+
     showConfirmPopup("Confirm", "Are you sure you want to edit this post?", () => {
         form.requestSubmit();
     });

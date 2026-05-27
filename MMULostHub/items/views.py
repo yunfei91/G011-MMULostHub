@@ -7,6 +7,7 @@ from django.utils import timezone
 import json
 import base64
 from django.core.files.base import ContentFile
+import uuid
 
 # yt added
 # Prevent browser cache, user cannot press back to access previous page
@@ -206,24 +207,46 @@ def editPost(request,post_id):
             # =====================================
 
             cropped = request.POST.get("cropped_images")
-
-            image_files = []
+            
+            existing_ids = []
+            images_order = []
 
             if cropped:
-
                 images_data = json.loads(cropped)
 
                 for img in images_data:
 
-                    format, imgstr = img.split(';base64,')
-                    ext = format.split('/')[-1]
+                    # keep existing image
+                    if img["type"] == "existing":
+                        existing_ids.append(img["id"])
 
-                    image_file = ContentFile(
-                        base64.b64decode(imgstr),
-                        name=f'cropped_{timezone.now().timestamp()}.{ext}'
-                    )
+                        images_order.append({
+                        "type": "existing",
+                        "id": img["id"],
+                        "order": img["order"]
+                    })
 
-                    image_files.append(image_file)
+                    # new cropped image
+                    elif img["type"] == "new":
+
+                        image_data = img["image"]
+
+                        if ';base64,' in image_data:
+
+                            format, imgstr = image_data.split(';base64,')
+
+                            ext = format.split('/')[-1]
+
+                            image_file = ContentFile(
+                                base64.b64decode(imgstr),
+                                name=f"{uuid.uuid4()}.{ext}"
+                            )
+
+                            images_order.append({
+                                "type": "new",
+                                "file": image_file,
+                                "order": img["order"]
+                            })
 
             # =====================================
             #         Update post
@@ -232,7 +255,8 @@ def editPost(request,post_id):
             edit_post(post,{
                 'post_type': request.POST.get('post_type'),
                 'post_datetime': request.POST.get('post_datetime'),
-                'images': image_files,
+                'images_order': images_order,
+                'existing_ids': existing_ids,
                 'post_itemcategory': request.POST.get('post_itemcategory'),
                 'post_location': request.POST.get('post_location'),
                 'post_description': request.POST.get('post_description'),
@@ -265,7 +289,7 @@ def editPost(request,post_id):
                 'id': img.id,
                 'url': img.image.url
             }
-            for img in post.images.all()
+            for img in post.images.all().order_by('order')
         ]
     })
 

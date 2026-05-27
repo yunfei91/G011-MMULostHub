@@ -2,6 +2,11 @@
 <!DOCTYPE html>
 <html>
     <head>
+
+        <!-- Cropper CSS/JS Tool to crop photo -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+
         
         <!-- CSS Links -->
         <link rel="stylesheet" href="{% static 'items/css/map.css' %}">
@@ -142,6 +147,12 @@
                     accept="image/*"
                     hidden>
 
+                <input
+                    type="hidden"
+                    id="cover_index"
+                    name="cover_index"
+                >
+
                 <button type="button" id="uploadBtn">
                     Add Image
                 </button>
@@ -212,13 +223,10 @@
 
                 <!-- placeholder = display text at text area -->
                 <textarea name="post_description"
-                        placeholder="Describe the item or give it a name ^-^">{{ post_data.post_description|default:post.post_description }}</textarea>
+                    placeholder="Describe the item or give it a name ^-^">{{ post_data.post_description|default:post.post_description }}
+                </textarea>
 
                 <br><br>
-
-
-                </div>
-
                 <br><br>
 
                 <!-- onclick = will run a confirm popup first from editpost.js -->
@@ -268,14 +276,13 @@
             <!-- show image -->
             <img id="preview_modal_image" class="preview-modal-image">
 
-            <!-- set iamge as cover button-->
-            <button type="button" id="cover_btn" class="cover-button">
-                Cover Image
-            </button>
-
             <!-- right arrow -->
             <button type="button" id="next_image_btn" class="preview-arrow right-arrow">
                 ❯
+            </button>
+
+            <button type="button" id="crop_again_btn" class="crop-again-btn">
+                Crop Again
             </button>
 
             <!-- delete -->
@@ -283,8 +290,9 @@
                 Delete
             </button>
 
-            <button type="button" id="crop_again_btn" class="crop-again-btn">
-                Crop Again
+            <!-- set iamge as cover button-->
+            <button type="button" id="cover_btn" class="cover-button">
+                Cover Image
             </button>
 
         </div>

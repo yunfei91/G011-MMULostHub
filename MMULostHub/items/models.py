@@ -65,6 +65,8 @@ class PostImage(models.Model):
 
     image = models.ImageField(upload_to = post_image_path)
 
+    order = models.PositiveIntegerField(default=0)
+
 # Lost and Found Post Model  
 class Post (models.Model):
 
