@@ -49,13 +49,15 @@ header{
     display: flex;
     align-items: top;
     justify-content: center;
-    align-items: flex-start;
-    gap: 0px;
+    
     width: 100%;
     max-width: 100vw;
     min-height: 500px;
     height: auto;
     padding: 10px;
+
+    align-items: flex-start;
+    gap: 5px;
 }
 
 .web-logo{
@@ -190,6 +192,11 @@ header{
         0 2px 0 rgba(255,255,255,0.6) inset;   
 }
 
+.auth-card p{
+    margin: 10px 0;
+    font-size: 13px;
+}
+
 .auth-card h3{
     font-family: 'Sansation';
     font-size: 14px;
@@ -260,6 +267,31 @@ header{
         0 1px 0 rgba(255,255,255,0.25) inset,
         0 3px 0 #5c6375,
         0 6px 10px rgba(0,0,0,0.18);
+}
+
+
+.password-box{
+    position: relative;
+    width: 100%;
+}
+
+.password-box input{
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 45px;
+}
+
+.show-password{
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.show-password.material-icons {
+    font-size: 20px;
+    color: rgba(0,0,0,0.6);
 }
 
 .switch-text{
