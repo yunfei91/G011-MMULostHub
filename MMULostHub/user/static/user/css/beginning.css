@@ -45,7 +45,6 @@ header{
 
 .banner{
     display: flex;
-    align-items: top;
     justify-content: center;
     align-items: flex-start;
     gap: 0px;
