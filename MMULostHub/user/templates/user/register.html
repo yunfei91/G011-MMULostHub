@@ -21,13 +21,12 @@
                     </div>
 
                     <div class="box-input">
-
-                        <button onclick="goBack()"><</button>
-
                         <div class="auth-panel">
                             <div class="auth-card">
-                                <h2>Welcome to MMU Lost Hub</h2>
-                                <h3>Register</h3>
+                                <div class="auth-header">
+                                    <button class="back-button" onclick="goBack()"><</button>
+                                    <h2>Welcome to MMU Lost Hub</h2>
+                                </div>
 
                                 <form method="POST">
                                     {% csrf_token %}
