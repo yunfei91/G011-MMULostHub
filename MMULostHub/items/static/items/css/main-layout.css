@@ -65,7 +65,7 @@ header{
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 
     transform-origin: top;
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
     transition: height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
                 box-shadow 0.35s ease,
                 background 0.35s ease;
@@ -124,6 +124,7 @@ header.shrink .losthub-logo{
     display: flex;
     align-items: center;
     gap: 12px;
+    margin-right: 8px;
 }
 
 /* ===================================== */
@@ -178,17 +179,26 @@ header.shrink .losthub-logo{
 .menu-icon{
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     
     width: 35px;
     height: 35px;
-    gap: 3.5px;
+    padding: 8px 0;
+    gap: 3px;
+
+    line-height: 0;
+    font-size: 0;
+    flex-shrink: 0;
+    align-self: center;
+
+    box-sizing: border-box;
     border: none;
     border-radius: 10px;
     background: #7e8599;
 
     cursor: pointer;
+    transform: translateZ(0);
     transition: all 0.2s ease;
     box-shadow:
         0 1px 0 rgba(255,255,255,0.35) inset,
@@ -200,12 +210,18 @@ header.shrink .losthub-logo{
 }
 
 .menu-icon span{
+    display: block;
     width: 15px;
     height: 3px;
 
     background: white;
     border-radius: 10px;
+
+    flex-shrink: 0;
+
+    will-change: transform;
     transition: all 0.35s ease;
+    transform: translateZ(0);
 }
 
 .menu-icon:hover{
