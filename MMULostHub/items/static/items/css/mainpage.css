@@ -48,7 +48,7 @@
 .chip{
     display: inline-flex;
     align-items: center;
-    background: white;
+    border: 1px solid black;
 }
 
 .chip span{

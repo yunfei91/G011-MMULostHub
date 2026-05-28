@@ -186,20 +186,29 @@
                     <input type="hidden" name="end_date" value="{{ end_date }}">
 
                     <!-- Category -->
-                    <select name="category" onchange="this.form.submit()">
+                    <select id="categorySelect" onchange="addCategory(this)">
                         <option value="">Category</option>
 
                         {% for value, label in item_categories %}
-                            <option value="{{ value }}"
-                                {% if value in selected_category %}selected{% endif %}>
+                            <option value="{{ value }}">
                                 {{ label }}
                             </option>
                         {% endfor %}
                     </select>
 
-                    {% if selected_category %}
-                        <span class="clear-btn" onclick="clearSingleFilter('category')">✖</span>
-                    {% endif %}
+                    <div id="categoryChips">
+
+                        {% for value in selected_category %}
+
+                            <span class="chip">
+                                {{ value }}
+
+                                <span onclick="removeFilter('category', '{{ value }}')">✖</span>
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
 
                     <!-- Location -->
                     <select name="location" onchange="this.form.submit()">

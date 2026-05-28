@@ -5,19 +5,19 @@ import os
 
 # ('storage name inside sqlite', 'display name on website')
 CATEGORY_CHOICES = [
-    (   'electronics'  ,    'Electronic Devices'),
-    (   'stationary'   ,    'Stationaries'      ),
-    (   'wallet'       ,    'Wallets'           ),
-    (   'card'         ,    'Cards'             ),
-    (   'bottle'       ,    'Water Bottles'     ),
-    (   'bag'          ,    'Bags'              ),
-    (   'key'          ,    'Keys'              ),
-    (   'umbrella'     ,    'Umbrellas'         ),
-    (   'keychain'     ,    'Keychains'         ),
-    (   'clothes'      ,    'Clothes'           ),
-    (   'shoes'        ,    'Shoes'             ),
-    (   'accessory'    ,    'Accessories'       ),
-    (   'other'        ,    'Other Items'       ),
+    (   'Electronic Devices'  ,    'Electronic Devices'),
+    (   'Stationaries'        ,    'Stationaries'      ),
+    (   'Wallets'             ,    'Wallets'           ),
+    (   'Cards'               ,    'Cards'             ),
+    (   'Water Bottles'       ,    'Water Bottles'     ),
+    (   'Bags'                ,    'Bags'              ),
+    (   'Keys'                ,    'Keys'              ),
+    (   'Umbrellas'           ,    'Umbrellas'         ),
+    (   'Keychains'           ,    'Keychains'         ),
+    (   'Clothes'             ,    'Clothes'           ),
+    (   'Shoes'               ,    'Shoes'             ),
+    (   'Accessories'         ,    'Accessories'       ),
+    (   'Others'              ,    'Other Items'       ),
 ]
 
 # MMU Location Model
