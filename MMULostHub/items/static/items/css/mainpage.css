@@ -4,27 +4,41 @@
 }
 
 .search-container{
-    position: relative;
-    width: 400px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin: 20px;
 }
 
-.search-bar{
+/* ========================= */
+/*       Search Input        */
+/* ========================= */
+
+#searchForm input[type="text"]{
+    width: auto;
+    border: 1px solid black;
+}
+
+/* ========================= */
+/*        Filter Row         */
+/* ========================= */
+
+#filterForm{
     display: flex;
     align-items: center;
+    gap: 10px;
+}
+
+/* Dropdown + Date */
+
+#filterForm select,
+#filterForm input[type="date"]{
+    border: 1px solid black;
     cursor: pointer;
-}
-
-.search-bar input{
-    border: none;
-    outline: none;
-    width: 100%;
-}
-
-.filter-panel{
-    position: absolute;
-    width: 500px;
-    background: white;
-    z-index: 100;
 }
 
 .hidden{
@@ -32,24 +46,13 @@
 }
 
 .chip{
-
     display: inline-flex;
-
     align-items: center;
-
-    padding: 8px 12px;
-
-    border-radius: 20px;
-
-    background: #e5f0ff;
-
-    margin: 5px;
+    background: white;
 }
 
 .chip span{
-
     margin-left: 10px;
-
     cursor: pointer;
 }
 
@@ -62,6 +65,30 @@
     position:absolute;
     top:10px;
     right:10px;
-    padding:5px 10px;
-    font-size:14px;
+}
+
+.keywordsearch {
+    position: relative;
+    display: inline-block;
+}
+
+.clear-search {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: black;
+}
+
+.filtersearch {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: 10px;
+}
+
+.clear-btn {
+    cursor: pointer;
+    color: black;
 }

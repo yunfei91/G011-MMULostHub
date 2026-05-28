@@ -26,8 +26,9 @@ def mainPage(request):
     query = request.GET.get('q', '').strip()
 
     # search by filter many | getlist = can choose many to filter
-    selected_category = request.GET.getlist('category', '')
+    selected_category = request.GET.getlist('category')
     selected_locations = request.GET.getlist('location')
+    selected_category = [c for c in selected_category if c]
 
     # search by filter date range
     start_date = request.GET.get('start_date', '')
