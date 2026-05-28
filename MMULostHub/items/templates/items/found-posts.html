@@ -133,10 +133,120 @@
             </script>
         {% endif %}
 
-        <div class="search_bar">                                        <!-- after need to be changed when starting to do search feature -->
-            <input type="text" placeholder="Search for items...">
-            <button type="submit"> Search </button>
+        <!-- ================================================== -->
+        <!--                    Search Feature                  -->
+        <!-- ================================================== -->
+        <div class="search-container">
+
+            <!-- Keyword Search -->
+            <div class="keywordsearch">
+                <form method="GET" id="searchForm">
+
+                    <input
+                        type="text"
+                        name="q"
+                        placeholder="Search..."
+                        value="{{ query }}"
+                    >
+
+                    <!-- ✖ clear button -->
+                    {% if query %}
+                    <span class="clear-search" onclick="clearSearch()">✖</span>
+                    {% endif %}
+                </form>
+            </div>
+
+            <div class = "filtersearch">            
+
+                <!-- Filter Form -->
+                <form method="GET" id="filterForm">
+
+                    <!-- Keep Search Keyword -->
+                    <input type="hidden" name="q" value="{{ query }}">
+
+                    <!-- Keep selected filters -->
+                    {% for cat in selected_category %}
+                        <input type="hidden" name="category" value="{{ cat }}">
+                    {% endfor %}
+
+                    {% for loc in selected_location %}
+                        <input type="hidden" name="location" value="{{ loc }}">
+                    {% endfor %}
+
+                    <input type="hidden" name="start_date" value="{{ start_date }}">
+                    <input type="hidden" name="end_date" value="{{ end_date }}">
+
+                    <!-- Category -->
+                    <select id="categorySelect" onchange="addCategory(this)">
+                        <option value="">Category</option>
+
+                        {% for value, label in item_categories %}
+                            <option value="{{ value }}">
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <div id="categoryChips">
+
+                        {% for value in selected_category %}
+
+                            <span class="chip">
+                                {{ value }}
+
+                                <span onclick="removeFilter('category', '{{ value }}')">✖</span>
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+                    <!-- Location -->
+                    <select name="location" onchange="this.form.submit()">
+                        <option value="">Location</option>
+
+                        {% for location in locations %}
+                            <option value="{{ location.id }}"
+                                {% if location.id|stringformat:'s' in selected_location %}selected{% endif %}>
+                                {{ location.location_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    {% if selected_location %}
+                        <span class="clear-btn" onclick="clearSingleFilter('location')">✖</span>
+                    {% endif %}
+
+                    <lable>Start Date:</lable>
+                    <input type="date"
+                        name="start_date"
+                        value="{{ start_date }}"
+                        onchange="this.form.submit()">
+
+                    {% if start_date %}
+                        <span class="clear-btn" onclick="clearSingleFilter('start_date')">✖</span>
+                    {% endif %}
+
+                    <lable>End Date:</lable>
+                    <input type="date"
+                        name="end_date"
+                        value="{{ end_date }}"
+                        onchange="this.form.submit()">
+
+                    {% if end_date %}
+                        <span class="clear-btn" onclick="clearSingleFilter('end_date')">✖</span>
+                    {% endif %}
+
+                </form>
+            </div>
+
         </div>
+
+        {% if query %}
+            <p>
+                Search result for "{{ query }}"
+            </p>
+        {% endif %}
 
         <h2>Found Posts</h2>
 
@@ -203,9 +313,23 @@
                         </p>
 
                         <!-- Image -->
-                        {% if post.post_image %}
-                            <img src="{{ post.post_image.url }}" alt="Post Image" class="post-image" required>
-                        {% endif %}
+                        <div class="image-wrapper">
+
+                            {% if post.cover_image %}
+                                <img
+                                    src="{{ post.cover_image.image.url }}"
+                                    alt="Post Image"
+                                    class="post-image"
+                                >
+                            {% endif %}
+
+                            {% if post.images.count > 1 %}
+                                <div class="multiple-icon">
+                                    📷 {{ post.images.count }}
+                                </div>
+                            {% endif %}
+
+                        </div>
 
                         <!-- Date Time -->
                         <p> Date Time: {{ post.post_datetime }} </p>

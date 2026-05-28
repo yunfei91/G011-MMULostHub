@@ -35,7 +35,8 @@ def mainPage(request):
     end_date = request.GET.get('end_date', '')
 
     # display all post in main page and order by datetime (latest post will be on top)
-    post_box = Post.objects.all().order_by('-id')       
+    post_box = Post.objects.all().order_by('-id')
+    post_box = apply_filters(request, post_box)    
     
     #=================================
     #        Search By Keyword       #
@@ -108,6 +109,50 @@ def mainPage(request):
         'start_date': start_date,
         'end_date': end_date,
     })
+
+
+def apply_filters(request, post_box):
+
+    query = request.GET.get('q', '').strip()
+
+    selected_category = request.GET.getlist('category')
+    selected_locations = request.GET.getlist('location')
+
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+
+    selected_category = [c for c in selected_category if c]
+    selected_locations = [l for l in selected_locations if l]
+
+    # keyword search
+    if query:
+        matching_categories = [
+            value for value, label in CATEGORY_CHOICES
+            if query.lower() in label.lower()
+        ]
+
+        post_box = post_box.filter(
+            Q(post_location__location_name__icontains=query) |
+            Q(post_description__icontains=query) |
+            Q(post_itemcategory__in=matching_categories)
+        ).distinct()
+
+    # category
+    if selected_category:
+        post_box = post_box.filter(post_itemcategory__in=selected_category)
+
+    # location
+    if selected_locations:
+        post_box = post_box.filter(post_location_id__in=selected_locations)
+
+    # date
+    if start_date:
+        post_box = post_box.filter(post_datetime__date__gte=start_date)
+
+    if end_date:
+        post_box = post_box.filter(post_datetime__date__lte=end_date)
+
+    return post_box
 
 
 # ======================================================
@@ -325,19 +370,45 @@ def deletePost(request, post_id):
 # yt added for lost and found posts page
 @login_required(login_url='beginning')
 @never_cache
-def lost_posts(request):
-    lost_posts = Post.objects.filter(post_type='lost').order_by('-id')
+def found_posts(request):
 
-    return render(request, 'items/lost-posts.html', {
-        'posts': lost_posts
+    post_box = Post.objects.filter(post_type='found').order_by('-id')
+
+    # ydf add to search 
+    post_box = apply_filters(request, post_box)
+
+    return render(request, 'items/found-posts.html', {
+        'posts': post_box,
+
+        #yf add to search
+        'item_categories': CATEGORY_CHOICES,
+        'locations': MMULocation.objects.all(),
+        'query': request.GET.get('q', ''),
+        'selected_category': request.GET.getlist('category'),
+        'selected_location': request.GET.getlist('location'),
+        'start_date': request.GET.get('start_date', ''),
+        'end_date': request.GET.get('end_date', ''),
     })
 
 @login_required(login_url='beginning')
 @never_cache
-def found_posts(request):
-    found_posts = Post.objects.filter(post_type='found').order_by('-id')
+def lost_posts(request):
 
-    return render(request, 'items/found-posts.html', {
-        'posts': found_posts
+    post_box = Post.objects.filter(post_type='lost').order_by('-id')
+
+    #yf add to search
+    post_box = apply_filters(request, post_box)
+
+    return render(request, 'items/lost-posts.html', {
+        'posts': post_box,
+
+        # yf add to sesrch
+        'item_categories': CATEGORY_CHOICES,
+        'locations': MMULocation.objects.all(),
+        'query': request.GET.get('q', ''),
+        'selected_category': request.GET.getlist('category'),
+        'selected_location': request.GET.getlist('location'),
+        'start_date': request.GET.get('start_date', ''),
+        'end_date': request.GET.get('end_date', ''),
     })
     
