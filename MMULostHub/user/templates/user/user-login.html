@@ -12,7 +12,7 @@
     <body>
         <div class="whole-page">
             <header>
-                <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class="mmu-logo">
+                <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
             </header>
 
             <div class="content">
@@ -45,21 +45,24 @@
                                         <span class="show-password material-icons" onclick="showPassword('password', this)">
                                         visibility_off
                                         </span>
-                                        <p><a href="{% url 'forgot_pw' %}">Forgot Password?</a></p>
+
+                                        <p class="forgot-pw">
+                                            <a href="{% url 'forgot_pw' %}">Forgot Password?</a>
+                                        </p>
                                     </div>
                                     {% if password_error %}
                                         <p class="message error-message">{{ password_error }}</p>
                                     {% endif %}
 
+                                    <br><br><br>
                                     <button class="login-btn" type="submit">Login</button>
                                 </form>
                                 
-                               
-
                                 <p class="switch-text">
                                     Don't have an account?
                                     <a href="{% url 'register' %}">Register Here</a>
-                                    <br><br>Are you an admin?
+                                    <br><br>
+                                    Are you an admin?
                                     <a href="{% url 'admin_login' %}">Login as Admin</a>
                                 </p>
                             </div>
@@ -152,7 +155,7 @@
                     return;
                 }
             });
-            
+
             window.addEventListener("load", () => {
                 let popup = document.getElementById("errorPopup");
 
