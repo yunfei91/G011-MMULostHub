@@ -110,6 +110,10 @@
             }
 
             let emailValid = false;
+            let emailExists = false;
+
+            let emailTimeout;
+            const checkEmailUrl = "{% url 'check_email' %}";
 
             function checkEmail() {
                 const input = document.getElementById("email");
@@ -117,25 +121,63 @@
 
                 let email = input.value.trim();
 
+                clearTimeout(emailTimeout);
+
                 if (!email) {
                     status.innerHTML = "";
                     status.className = "";
                     emailValid = false;
+                    emailExists = false;
                     return;
                 }
 
-                let pattern = /^[A-Za-z0-9._%+-]+@(mmu\.edu\.my|student\.mmu\.edu\.my)$/;
-
-                if (!pattern.test(email)) {
-                    status.className = "message error-message";
-                    status.innerHTML = "Invalid MMU email format";
+                if (!email.includes("@")) {
+                    status.innerHTML = "";
                     emailValid = false;
-                } else {
-                    status.className = "message success-message";
-                    status.innerHTML = "Valid email";
-                    emailValid = true;
+                    emailExists = false;
+                    return;
                 }
-            }
+
+                status.className = "message info-message";
+                status.innerHTML = "Checking...";
+
+                emailTimeout = setTimeout(() => {
+
+                    let pattern = /^[A-Za-z0-9._%+-]+@(mmu\.edu\.my|student\.mmu\.edu\.my)$/;
+
+                    if (!pattern.test(email)) {
+                        status.className = "message error-message";
+                        status.innerHTML = "Invalid MMU email format";
+                        emailValid = false;
+                        emailExists = false;
+                        return;
+                    }
+
+                    emailValid = true;
+                    emailExists = false;
+
+                    fetch(`${checkEmailUrl}?email=${encodeURIComponent(email)}`)
+                        .then(res => res.json())
+                        .then(data => {
+
+                            if (data.exists) {
+                                status.className = "message success-message";
+                                status.innerHTML = "Email Valid";
+                                emailExists = true;
+                            } else {
+                                status.className = "message error-message";
+                                status.innerHTML = "Haven't registered yet";
+                                emailExists = false;
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            status.className = "message error-message";
+                            status.innerHTML = "Error checking email";
+                            emailExists = false;
+                        });
+                    },1500);
+                }
 
             form.addEventListener("submit", function(e){
 
@@ -152,6 +194,12 @@
                 if (!emailValid) {
                     e.preventDefault();
                     showPopup("Invalid MMU email format");
+                    return;
+                }
+
+                if (!emailExists) {
+                    e.preventDefault();
+                    showPopup("Haven't registered yet");
                     return;
                 }
             });
