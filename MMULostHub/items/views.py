@@ -38,67 +38,6 @@ def mainPage(request):
     post_box = Post.objects.all().order_by('-id')
     post_box = apply_filters(request, post_box)    
     
-    #=================================
-    #        Search By Keyword       #
-    if query:
-
-        # Search category can no full words also can search
-        matching_categories = [
-            value
-            for value, label in CATEGORY_CHOICES
-            if query.lower() in label.lower()
-        ]
-
-        post_box = post_box.filter(
-            Q(post_location__location_name__icontains=query) |          # icontains = ignore case sencitive (HI\hi\Hi..)
-            Q(post_description__icontains=query) |                       # | = or
-            Q(post_itemcategory__in=matching_categories)
-        ).distinct()
-
-    #=================================
-    #        Category Filter         #
-    if selected_category:
-        post_box = post_box.filter(
-
-            # show post related to category choosed
-            post_itemcategory__in = selected_category
-
-        )
-
-    #=================================
-    #        Location Filter         #
-    
-    # remove empty string (none value)
-    selected_locations = [
-        loc for loc in selected_locations if loc
-    ]
-
-    if selected_locations:
-        post_box = post_box.filter(
-
-            # show post related to location choosed
-            post_location_id__in=selected_locations
-
-        )
-
-    #=================================
-    #        Date Range Filter       #
-    if start_date:
-        post_box = post_box.filter(
-
-            # show post after/when start date choosed
-            post_datetime__date__gte=start_date             # gte = greater than or equal
-        
-        )
-
-    if end_date:
-        post_box = post_box.filter(
-
-            # show post before/when end date choosed
-            post_datetime__date__lte=end_date                # lte = less than or equal
-        
-        )
-    
     return render(request, 'items/mainpage.html', {
         'posts': post_box,
         'item_categories': CATEGORY_CHOICES,
@@ -109,7 +48,6 @@ def mainPage(request):
         'start_date': start_date,
         'end_date': end_date,
     })
-
 
 def apply_filters(request, post_box):
 
@@ -124,7 +62,10 @@ def apply_filters(request, post_box):
     selected_category = [c for c in selected_category if c]
     selected_locations = [l for l in selected_locations if l]
 
-    # keyword search
+    selected_category = list(set(selected_category))
+    selected_locations = list(set(selected_locations))
+
+    # keyword
     if query:
         matching_categories = [
             value for value, label in CATEGORY_CHOICES
@@ -139,21 +80,31 @@ def apply_filters(request, post_box):
 
     # category
     if selected_category:
-        post_box = post_box.filter(post_itemcategory__in=selected_category)
+        post_box = post_box.filter(
+            post_itemcategory__in=selected_category
+        )
 
     # location
     if selected_locations:
-        post_box = post_box.filter(post_location_id__in=selected_locations)
+        post_box = post_box.filter(
+            post_location_id__in=selected_locations
+        )
 
-    # date
+    # start date
     if start_date:
-        post_box = post_box.filter(post_datetime__date__gte=start_date)
+        post_box = post_box.filter(
+            post_datetime__date__gte=start_date
+        )
 
+    # end date
     if end_date:
-        post_box = post_box.filter(post_datetime__date__lte=end_date)
+        post_box = post_box.filter(
+            post_datetime__date__lte=end_date
+        )
+
+    print("RESULT COUNT:", post_box.count())
 
     return post_box
-
 
 # ======================================================
 #                 CREATE POST PAGE
