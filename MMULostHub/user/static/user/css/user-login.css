@@ -146,6 +146,7 @@ header{
     align-items: center;
     justify-content: center;
 
+    min-height: 500px;
     width: 420px;
 }
 
@@ -383,50 +384,6 @@ input[type="password"]::-ms-clear {
 }
 
 /* ===================================== */
-/*                Messages               */
-/* ===================================== */
-.message {
-    display: inline-block;
-    
-    margin: 6px 0 0 0;
-    padding: 8px 12px;
-
-    border-radius: 10px;
-    font-size: 12px;
-    font-family: 'Sansation';
-    animation: fadeInError 0.2s ease;
-}
-
-.error-message {
-    color: #b00020;
-    background: rgba(176, 0, 32, 0.08);
-    border: 1px solid rgba(176, 0, 32, 0.25);
-}
-
-.success-message {
-    color: #1b5e20;
-    background: rgba(46, 125, 50, 0.08);
-    border: 1px solid rgba(46, 125, 50, 0.25);
-}
-
-.info-message {
-    color: #555;
-    background: rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-@keyframes fadeInError {
-    from {
-        opacity: 0;
-        transform: translateY(-3px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ===================================== */
 /*             Switch Text               */
 /* ===================================== */
 .switch-text{
@@ -472,7 +429,7 @@ footer{
 .popup {
     position: absolute;
 
-    top: 90px;
+    top: 135px;
     right: 220px;
     width: 200px;
     padding: 12px 20px;
