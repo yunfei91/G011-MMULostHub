@@ -205,24 +205,30 @@ def reset_pw(request):
 
     return render(request, 'user/reset-pw.html')
 
-ADMIN_EMAIL = 'adminlosthub@gmail.com'
-ADMIN_PASSWORD = 'mauqafdeqnkwjkay'
-
 def admin_login(request):
-    error = ""
+    error_message = ""
+    email = ""
 
     if request.method == 'POST':
         email = (request.POST.get('email') or '').strip().lower()
         password = request.POST.get('password') or ''
 
-        if email == ADMIN_EMAIL and password == ADMIN_PASSWORD:
-            request.session["is_admin"] = True
-            return redirect("admin_mainpage")
+        if not email or not password:
+            error_message = "Please fill in all fields"
         else:
-            error = "Invalid admin credentials"
+            user = authenticate(request, username=email, password=password)
 
-    return render(request, "user/admin-login.html", {
-        "admin_login_error": error
+            if user is None:
+                error_message = "Invalid admin credentials"
+            elif not user.is_staff:
+                error_message = "You are not authorized as admin."
+            else:
+                login(request, user)
+                return redirect('admin_mainpage')
+
+    return render(request, 'user/admin-login.html', {
+        'error_message': error_message,
+        'email': email
     })
 
 def register(request):
