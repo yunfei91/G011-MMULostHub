@@ -51,19 +51,19 @@ def mainPage(request):
 
 def apply_filters(request, post_box):
 
+    # search by keyword (q= query) if keyword not match = 'empty'
     query = request.GET.get('q', '').strip()
 
+    # search by filter many | getlist = can choose many to filter
     selected_category = request.GET.getlist('category')
     selected_locations = request.GET.getlist('location')
 
+    # search by filter date range
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
 
     selected_category = [c for c in selected_category if c]
     selected_locations = [l for l in selected_locations if l]
-
-    selected_category = list(set(selected_category))
-    selected_locations = list(set(selected_locations))
 
     # keyword
     if query:
