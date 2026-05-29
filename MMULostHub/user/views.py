@@ -68,7 +68,7 @@ def user_login(request):
         user = authenticate(request, username=email, password=password) # Check user in db
 
         if user is None:
-            user_login_error = "Invalid  password"
+            user_login_error = "Wrong password"
             return render(request, 'user/user-login.html', {
                 'user_login_error': user_login_error,
                 'email': email,
