@@ -367,9 +367,11 @@ input[type="password"]::-ms-clear {
 /* ===================================== */
 .checklist{
     display: flex;
-    margin: 12px 0;
+    width: 320px;
+    margin: 12px 0 12px 26px;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px;
+    justify-content: space-between;
 }
 
 .checklist p{
@@ -471,6 +473,7 @@ input[type="password"]::-ms-clear {
 
 .switch-text a:hover{
     text-decoration: underline;
+    color: #598974;
 }
 
 /* ===================================== */
