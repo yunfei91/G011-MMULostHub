@@ -151,6 +151,7 @@ header{
 }
 
 .auth-card{
+    position: relative;
     display: flex;
     flex-direction: column;
     
@@ -473,8 +474,8 @@ footer{
 .popup {
     position: absolute;
 
-    top: 135px;
-    right: 220px;
+    top: -50px;
+    right: 88px;
     width: 200px;
     padding: 12px 20px;
 
