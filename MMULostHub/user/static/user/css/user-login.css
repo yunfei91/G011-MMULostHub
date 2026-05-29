@@ -236,7 +236,7 @@ header{
 .auth-card input{
     width: 100%;
     padding: 12px 14px;
-    margin: 5px 0;
+    margin: 5px 0 15px 0;
 
     box-sizing: border-box;
     border-radius: 14px;
@@ -266,7 +266,6 @@ input::placeholder{
 }
 
 .auth-card p{
-    margin: 10px 0;
     font-size: 13px;
     font-family: 'Sansation';
 }
@@ -342,7 +341,7 @@ input::placeholder{
 .show-password{
     position: absolute;
     right: 15px;
-    top: 50%;
+    top: 35%;
     transform: translateY(-50%);
     cursor: pointer;
 }
@@ -370,6 +369,7 @@ input[type="password"]::-ms-clear {
     color: rgba(0,0,0,0.5);
     text-align: left;
     padding-left: 10px;
+    margin: 0;
 }
 
 .forgot-pw a{
@@ -379,7 +379,6 @@ input[type="password"]::-ms-clear {
 }
 
 .forgot-pw a:hover{
-    text-decoration: underline;
     color: #598974;
 }
 
@@ -431,6 +430,7 @@ input[type="password"]::-ms-clear {
 /*             Switch Text               */
 /* ===================================== */
 .switch-text{
+    margin: 10px 0;
     font-size: 12px;
     color: rgba(0,0,0,0.5);
     text-align: center;
