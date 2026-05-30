@@ -215,9 +215,7 @@ def reset_pw(request):
 
         request.session.pop('reset_data', None)
 
-        return render(request, 'user/reset-pw.html', {
-            'success': True
-        })
+        return redirect('user_login')
 
     return render(request, 'user/reset-pw.html')
 

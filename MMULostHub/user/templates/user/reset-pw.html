@@ -27,7 +27,7 @@
                             <div class="auth-card">
                                 <div class="auth-header">
                                     <button class="back-button" onclick="goBack()"><</button>
-                                    <h2>Welcome to MMU Lost Hub</h2>
+                                    <h2>Reset Password</h2>
                                 </div>
                         
                                 <form id="resetpwForm" method="POST">
@@ -42,25 +42,22 @@
                                     <!-- Checklist -->
                                     <div class="checklist">
                                         <p id="letter" class="invalid">At least 1 letter</p>
-                                        <p id="number" class="invalid">At least 1 number</p>
                                         <p id="symbol" class="invalid">At least 1 symbol (@#$*.)</p>
+                                        <p id="number" class="invalid">At least 1 number</p>
                                         <p id="length" class="invalid">At least 8 characters</p>
                                     </div>
 
                                     <!-- Confirm Password -->
                                     <div class="password-box">
-                                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" oninput="checkPassword()">
+                                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm New Password" oninput="checkPassword()">
                                         <span class="show-password material-icons" onclick="showPassword('confirm_password', this)">
                                         visibility_off
                                         </span>
                                     </div>
 
-                                    {% if password_error %}
-                                        <p style="color:red;">{{ password_error }}</p>
-                                    {% endif %}
-
                                     <p id="match-text"></p>
 
+                                    <br><br><br>
                                     <button class="resetpw-btn"type="submit" id="submitBtn">Reset Password</button>
                                 </form>
 
@@ -98,7 +95,7 @@
                 // empty check
                 if (!pw || !cpw) {
                     e.preventDefault();
-                    showPopup("Please check your input");
+                    showPopup("Please fill in all fields");
                     return;
                 }
 
@@ -145,6 +142,7 @@
                 if (!cpw) {
                     match = false;
                     matchText.innerHTML = "";
+                    matchText.className = "message"; 
                     return;
                 }
 
