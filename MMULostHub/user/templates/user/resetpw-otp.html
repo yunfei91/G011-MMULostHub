@@ -3,54 +3,66 @@
 <html>
     <head>
         <title>MMU Lost Hub</title>
+
         <link rel="stylesheet" type="text/css" href="{% static 'user/css/email-verify.css' %}">
     </head>
 
     <body>
         <div class="whole-page">
             <header>
-                <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class="mmu-logo">
+                <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
             </header>
 
             <div class="content">
                 <div class="banner">
                     <div class="web-logo">
-                        <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
+                        <img src="{% static 'images/WebLogo-top.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo-top">
+                        <img src="{% static 'images/WebLogo-base.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo-base">
                     </div>
 
-                    <div class="slogan">
-                        <p>
-                            What's lost can be found,<br>
-                        and found can find its way back.
-                        </p>
+                    <div class="box-input">
+                        <div class="auth-panel">
+                            <div class="auth-card">
+                                <div class="auth-header">
+                                    <button class="back-button" onclick="goBack()"><</button>
+                                    <h2>Reset Password</h2>
+                                </div>
+                                <form method="POST">
+                                    {% csrf_token %}
 
-                    <button onclick="goBack()">Back</button>
+                                    <div class="otp-status">
+                                        <div class="otp-row">
+                                            <span class="otp-title">OTP Code</span>
+                                            <span id="otpBadge"></span>
+                                        </div>
+                                    </div>
 
-                    </div>
-                        <p id="otpTimer"></p>
-                        
-                        <form method="POST">
-                            {% csrf_token %}
-                            <div class="otp-box" id="otpBox">
-                                <input type="text" maxlength="1" class="otp-digit">
-                                <input type="text" maxlength="1" class="otp-digit">
-                                <input type="text" maxlength="1" class="otp-digit">
-                                <input type="text" maxlength="1" class="otp-digit">
-                                <input type="text" maxlength="1" class="otp-digit">
-                                <input type="text" maxlength="1" class="otp-digit">
+                                    <div class="otp-box" id="otpBox">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                    </div>
+                                    
+                                    <input type="hidden" name="otp" id="otpHidden"> <!-- Hidden input to store full OTP from each box at frontend for backend -->
+
+                                    <div class="resend-status">
+                                        <button class="resend-btn" type="button" id="resendBtn" {% if not can_resend %}disabled{% endif %}>
+                                            Resend code
+                                        </button>
+                                        <span id="resendBadge"></span>
+                                    </div>
+
+                                    <br><br>
+                                    <button class="verify-btn" type="submit">Verify</button>
+                                </form>
+
+                                <div id="errorPopup" class="popup"></div>
                             </div>
-                            
-                            <input type="hidden" name="otp" id="otpHidden">
-                            <button type="submit">Verify</button>
-
-                            {% if error %}
-                                <p id="errorMsg" style="color:red;">{{ error }}</p>
-                            {% endif %}
-                        </form>
-                        
-                        <button type="button" id="resendBtn" {% if not can_resend %}disabled{% endif %}>Resend OTP</button>
-
-                        <p id="resendTimer"></p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -60,91 +72,88 @@
             </footer>
         </div>
 
-        {{ otp_remaining|json_script:"otp-time" }}
+        {{ otp_remaining|json_script:"otp-time" }} <!-- Pass python to JS, after pass <script><p id="otpTimer">60</script>-->
         {{ resend_remaining|json_script:"resend-time" }}
 
         <script>
             function goBack() {
-                if (document.referrer !== "") {
-                    window.history.back();
-                } else {
-                    window.location.href = "{% url 'beginning' %}";
-                }
+                window.location.replace("{% url 'beginning' %}")
             }
-            
+
+            const popup = document.getElementById("errorPopup");
+
+            function showPopup(msg, type = "error") {
+                if (!popup) return;
+
+                popup.innerHTML = msg;
+
+                popup.classList.remove("error", "success");
+                popup.classList.add(type, "show");
+
+                setTimeout(() => {
+                    popup.classList.remove("show");
+                }, 2500);
+            }
+
             let otpTime = 0;
             let resendTime = 0;
             
             try {
-                otpTime = JSON.parse(document.getElementById("otp-time").textContent);
+                otpTime = JSON.parse(document.getElementById("otp-time").textContent); // Convert string to number
                 resendTime = JSON.parse(document.getElementById("resend-time").textContent);
             } catch (e) {
                 console.log("Timer init error", e);
             }
 
-            const otpTimer = document.getElementById("otpTimer");
-            const resendTimer = document.getElementById("resendTimer");
+            const otpBadge = document.getElementById("otpBadge");
+            const resendBadge = document.getElementById("resendBadge");
             const resendBtn = document.getElementById("resendBtn");
-
 
             const inputs = document.querySelectorAll(".otp-digit");
             const hiddenInput = document.getElementById("otpHidden");
             const form = document.querySelector("form");
             const otpBox = document.getElementById("otpBox");
-            const errorMsg = document.getElementById("errorMsg");
 
-            if (inputs.length > 0) {
+            if (inputs.length > 0) { // Focus first box
                 inputs[0].focus();
             }
 
             function updateHidden() {
-                hiddenInput.value = Array.from(inputs)
+                hiddenInput.value = Array.from(inputs) // Combine OTP 6-digits
                 .map(i => i.value)
                 .join("");
             }
 
-            function hideError() {
-                if (!errorMsg) return;
-
-                errorMsg.style.opacity = "0";
-
-                setTimeout(() => {
-                    errorMsg.style.display = "none";
-                }, 300);
-            }
-
             inputs.forEach((input, index) => {
                 
-                input.addEventListener("input", (e) => {
-                    let value = e.target.value.replace(/\D/g, "");
+                input.addEventListener("input", (e) => { // Detect typing
+                    let value = e.target.value.replace(/\D/g, ""); // Remove non-numbers
                     input.value = value;
 
                     if (value && index < inputs.length - 1) {
-                        inputs[index + 1].focus();
+                        inputs[index + 1].focus(); // Auto move next box
                     }
 
                     updateHidden();
 
                     if (hiddenInput.value.length === 6) {
-                        form.submit();
+                        form.submit(); // Auto submit
                     }
-
-                    hideError();
                 });
 
                 input.addEventListener("keydown", (e) => {
-                    if (e.key === "Backspace" && !input.value && index > 0) {
+                    if (e.key === "Backspace" && !input.value && index > 0) { // Move back when delete
                         inputs[index - 1].focus();
                     }
                 });
 
-                input.addEventListener("paste", (e) => {
+                input.addEventListener("paste", (e) => { // Copy and paste
                     e.preventDefault();
 
                     let data = e.clipboardData
                         .getData("text")
                         .replace(/\D/g, "")
-                        .slice(0, 6);
+                        .slice(0, 6); // Max 6-digits
 
                     inputs.forEach((box, i) => {
                         box.value = data[i] || "";
@@ -162,7 +171,13 @@
             });
 
             window.addEventListener("load", () => {
-                if (errorMsg && otpBox) {
+                const backendError = "{{ error|escapejs }}";
+
+                if (backendError && backendError !== "None" && backendError.trim() !== "") {
+                    showPopup(backendError);
+                }
+
+                if (otpBox && backendError) {
                     otpBox.classList.add("shake");
 
                     setTimeout(() => {
@@ -172,22 +187,27 @@
             });
 
             function updateTimers() {
+                // OTP
                 if (otpTime > 0) {
-                    otpTimer.innerText = "OTP expires in: " + otpTime + "s";
-                    otpTime--;
+                    otpBadge.innerText = otpTime + " s";
+                    otpBadge.classList.remove("expired");
                 } else {
-                    otpTimer.innerText = "OTP expired";
+                    otpBadge.innerText = "Expired";
+                    otpBadge.classList.add("expired");
                 }
 
+                // Resend
                 if (resendTime > 0) {
-                    resendTimer.innerText = "Resend available in: " + resendTime + "s";
+                    resendBadge.innerText = resendTime + " s";
                     resendBtn.disabled = true;
-                    resendTime--;
                 } else {
-                    resendTimer.innerText = "";
+                    resendBadge.innerText = "";
                     resendBtn.disabled = false;
                 }
 
+                otpTime--;
+                resendTime--;
+    
                 setTimeout(updateTimers, 1000);
             }
 
@@ -211,34 +231,35 @@
             }
 
             resendBtn.addEventListener("click", function () {
-                fetch("{% url 'resend_reset_otp' %}", {
+                fetch("{% url 'resend_reset_otp' %}", { // Send request to backend
                     method: "POST",
                     headers: {
-                        "X-CSRFToken": getCookie('csrftoken'),
+                        "X-CSRFToken": getCookie('csrftoken'), // CSRF token for security
                         "Content-Type": "application/json"
                     },
                     credentials: "same-origin"
                 })
-                .then(res => res.json())
+                .then(res => res.json()) // Convert to JSON
                 .then(data => {
 
-                    if (data.error) {
-                        alert(data.error);
+                    if (data.error) { // Show error
+                        showPopup(data.error, "error"); // Popup for error
                         return;
                     }
 
-                    alert("OTP sent!");
+                    showPopup("OTP sent!", "success");
 
-                    otpTime = 60;
+                    otpTime = 60; // Reset time
                     resendTime = 30;
                     resendBtn.disabled = true;
 
-                    inputs.forEach(i => i.value = "");
+                    inputs.forEach(i => i.value = ""); // Clear input boxes
                     inputs[0].focus();
                     hiddenInput.value = "";
                 })
                 .catch(err => {
                     console.error(err);
+                    showPopup("Something went wrong");
                 });
             });
         </script>
