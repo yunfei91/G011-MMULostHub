@@ -25,13 +25,19 @@
                             <div class="auth-card">
                                 <div class="auth-header">
                                     <button class="back-button" onclick="goBack()"><</button>
-                                    <h2>Welcome to MMU Lost Hub</h2>
+                                    <h2>Email Verification</h2>
                                 </div>
-
-                                <p id="otpTimer"></p> <!-- Show OTP countdown -->
                                 
                                 <form method="POST">
                                     {% csrf_token %}
+
+                                    <div class="otp-status">
+                                        <div class="otp-row">
+                                            <span class="otp-title">OTP Code</span>
+                                            <span id="otpBadge"></span>
+                                        </div>
+                                    </div>
+
                                     <div class="otp-box" id="otpBox">
                                         <input type="text" maxlength="1" class="otp-digit">
                                         <input type="text" maxlength="1" class="otp-digit">
@@ -42,16 +48,19 @@
                                     </div>
                                     
                                     <input type="hidden" name="otp" id="otpHidden"> <!-- Hidden input to store full OTP from each box at frontend for backend -->
-                                    <button type="submit">Verify</button>
 
-                                    {% if error %}
-                                        <p id="errorMsg" style="color:red;">{{ error }}</p>
-                                    {% endif %}
+                                    <div class="resend-status">
+                                        <button class="resend-btn" type="button" id="resendBtn" {% if not can_resend %}disabled{% endif %}>
+                                            Resend code
+                                        </button>
+                                        <span id="resendBadge"></span>
+                                    </div>
+
+                                    <br><br>
+                                    <button class="verify-btn" type="submit">Verify</button>
                                 </form>
-                                
-                                <button type="button" id="resendBtn" {% if not can_resend %}disabled{% endif %}>Resend OTP</button>
 
-                                <p id="resendTimer"></p>
+                                <div id="errorPopup" class="popup"></div>
                             </div>
                         </div>
                     </div>
@@ -82,16 +91,14 @@
                 console.log("Timer init error", e);
             }
 
-            const otpTimer = document.getElementById("otpTimer");
-            const resendTimer = document.getElementById("resendTimer");
+            const otpBadge = document.getElementById("otpBadge");
+            const resendBadge = document.getElementById("resendBadge");
             const resendBtn = document.getElementById("resendBtn");
-
 
             const inputs = document.querySelectorAll(".otp-digit");
             const hiddenInput = document.getElementById("otpHidden");
             const form = document.querySelector("form");
             const otpBox = document.getElementById("otpBox");
-            const errorMsg = document.getElementById("errorMsg");
 
             if (inputs.length > 0) { // Focus first box
                 inputs[0].focus();
@@ -101,16 +108,6 @@
                 hiddenInput.value = Array.from(inputs) // Combine OTP 6-digits
                 .map(i => i.value)
                 .join("");
-            }
-
-            function hideError() {
-                if (!errorMsg) return;
-
-                errorMsg.style.opacity = "0"; // Fade out effect for error msg
-
-                setTimeout(() => {
-                    errorMsg.style.display = "none";
-                }, 300);
             }
 
             inputs.forEach((input, index) => {
@@ -128,8 +125,6 @@
                     if (hiddenInput.value.length === 6) {
                         form.submit(); // Auto submit
                     }
-
-                    hideError();
                 });
 
                 input.addEventListener("keydown", (e) => {
@@ -172,23 +167,28 @@
             });
 
             function updateTimers() {
+                // OTP
                 if (otpTime > 0) {
-                    otpTimer.innerText = "OTP expires in: " + otpTime + "s";
-                    otpTime--;
+                    otpBadge.innerText = otpTime + " s";
+                    otpBadge.classList.remove("expired");
                 } else {
-                    otpTimer.innerText = "OTP expired";
+                    otpBadge.innerText = "Expired";
+                    otpBadge.classList.add("expired");
                 }
 
+                // Resend
                 if (resendTime > 0) {
-                    resendTimer.innerText = "Resend available in: " + resendTime + "s";
-                    resendBtn.disabled = true; // Disabled button
-                    resendTime--;
+                    resendBadge.innerText = resendTime + " s";
+                    resendBtn.disabled = true;
                 } else {
-                    resendTimer.innerText = "";
+                    resendBadge.innerText = "";
                     resendBtn.disabled = false;
                 }
 
-                setTimeout(updateTimers, 1000); // Update every second
+                otpTime--;
+                resendTime--;
+    
+                setTimeout(updateTimers, 1000);
             }
 
             updateTimers();
@@ -223,11 +223,11 @@
                 .then(data => {
 
                     if (data.error) { // Show error
-                        alert(data.error); // Popup for error
+                        showPopup(data.error, "error"); // Popup for error
                         return;
                     }
 
-                    alert("OTP sent!");
+                    showPopup("OTP sent!", "success");
 
                     otpTime = 60; // Reset time
                     resendTime = 30;
@@ -239,6 +239,7 @@
                 })
                 .catch(err => {
                     console.error(err);
+                    showPopup("Something went wrong");
                 });
             });
         </script>
