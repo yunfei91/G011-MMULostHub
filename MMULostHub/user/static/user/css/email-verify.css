@@ -233,6 +233,188 @@ header{
 }
 
 /* ===================================== */
+/*          OTP Timer Display            */
+/* ===================================== */
+.otp-status{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 10px 0;
+}
+
+.otp-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 10px 0 10px 14px;
+    border-radius: 14px;
+
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(10px);
+
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+.otp-title{
+    font-family: 'Sansation';
+    font-size: 12px;
+    color: #4f5568;
+}
+
+#otpBadge{
+    font-family: 'Sansation';
+    font-size: 12px;
+
+    padding: 5px 5px;
+    margin-right: 10px;
+    border-radius: 999px;
+
+    color: #476d5d;
+
+    min-width: 70px;
+    text-align: center;
+}
+
+#otpBadge.expired{
+    background: rgba(176,0,32,0.12);
+    color: #b00020;
+    border: 1px solid rgba(176,0,32,0.25);
+}
+
+/* ===================================== */
+/*            OTP Input Box              */
+/* ===================================== */
+.otp-box {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 40px 0 10px 0;
+}
+
+.otp-digit {
+    width: 45px;
+    height: 55px;
+    font-size: 22px;
+    text-align: center;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+}
+
+.otp-digit:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.shake {
+    animation: shake 0.3s;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+/* ===================================== */
+/*            Resend Button              */
+/* ===================================== */
+.resend-status{
+    display: flex;
+    align-items: left;
+
+    padding: 10px 0;
+    border-radius: 14px;
+}
+
+#resendBadge{
+    font-family: 'Sansation';
+    font-size: 12px;
+
+    padding: 5px 0;
+    border-radius: 999px;
+
+    color: #476d5d;
+
+    min-width: 70px;
+    text-align: center;
+}
+
+#resendBtn{
+    background: none;
+    border: none;
+
+    font-family: 'Sansation';
+    font-size: 13px;
+
+    color: #4f5568;
+    cursor: pointer;
+
+    text-decoration: underline;
+    transition: 0.2s ease;
+}
+
+#resendBtn:hover{
+    color: #476d5d;
+    transform: translateY(-1px);
+}
+
+#resendBtn:disabled{
+    opacity: 0.4;
+    cursor: not-allowed;
+    text-decoration: none;
+}
+
+/* ===================================== */
+/*            Verify Button              */
+/* ===================================== */
+.verify-btn{
+    display: block;
+    margin: 0 auto;
+    padding: 12px 25px;
+
+    width: 100%;
+    max-width: 150px;
+    text-align: center;
+
+    border-radius: 25px;
+    border: none;
+    background: #7e8599;
+    color: white;
+    font-family: 'Slackey';
+    cursor: pointer;
+
+    box-shadow:
+    0 1px 0 rgba(255,255,255,0.35) inset, 
+    0 -2px 4px rgba(0,0,0,0.10) inset,  
+    0 4px 0 #6a7184,                 
+    0 6px 12px rgba(0,0,0,0.20);
+
+    transform: translateY(0);
+    transition: all 0.2s ease;
+}
+
+.verify-btn:hover{
+    transform: translateY(-3px);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.32) inset,
+        0 -2px 5px rgba(0,0,0,0.12) inset,
+        0 7px 0 #565c6e,  
+        0 12px 20px rgba(0,0,0,0.28); 
+}
+
+.verify-btn:active{
+    transform: translateY(2px);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.25) inset,
+        0 -2px 4px rgba(0,0,0,0.18) inset,
+        0 3px 0 #565c6e,
+        0 5px 10px rgba(0,0,0,0.25);
+}
+
+/* ===================================== */
 /*                Footer                 */
 /* ===================================== */
 footer{
@@ -294,41 +476,4 @@ footer{
 .popup.show {
     opacity: 1;
     transform: translateY(0);
-}
-
-.otp-box {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin: 15px 0;
-}
-
-.otp-digit {
-    width: 45px;
-    height: 55px;
-    font-size: 22px;
-    text-align: center;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-}
-
-.otp-digit:focus {
-    border-color: #007bff;
-    outline: none;
-}
-
-.shake {
-    animation: shake 0.3s;
-}
-
-@keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    50% { transform: translateX(5px); }
-    75% { transform: translateX(-5px); }
-    100% { transform: translateX(0); }
-}
-
-#errorMsg {
-    transition: 0.3s;
 }
