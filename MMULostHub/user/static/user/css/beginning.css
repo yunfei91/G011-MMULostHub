@@ -237,3 +237,48 @@ footer{
     font-family: 'Sansation';
     line-height: 1.2;
 }
+
+/* ===================================== */
+/*                Popup                  */
+/* ===================================== */
+.popup {
+    position: absolute;
+
+    top: 20px;
+    right: 88px;
+    width: 200px;
+    padding: 12px 20px;
+
+    border-radius: 12px;
+    text-align: center;
+    color: #b00020;
+    background: rgba(176, 0, 32, 0.08);
+    border: 1px solid rgba(176, 0, 32, 0.25);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.082);
+    transform: translateY(10px);
+
+    font-family: 'Sansation';
+    font-size: 13px;
+
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.popup.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.popup.error {
+    color: #b00020;
+    background: rgba(176, 0, 32, 0.08);
+    border: 1px solid rgba(176, 0, 32, 0.25);
+}
+
+.popup.success {
+    color: #1b5e20;
+    background: rgba(46, 125, 50, 0.10);
+    border: 1px solid rgba(46, 125, 50, 0.25);
+}

@@ -255,12 +255,6 @@ function cancelLogout() {
 }
 
 function confirmLogout() {
-    // redirect to Django logout URL
-    window.location.href = "{% url 'user_logout' %}";
-}
-
-const LOGOUT_URL = "{% url 'user_logout' %}";
-
-function confirmLogout() {
-    window.location.href = LOGOUT_URL;
+    const logoutUrl = window.DJANGO_LOGOUT_URL || "/user/logout/"; 
+    window.location.href = logoutUrl;
 }

@@ -44,7 +44,8 @@
                     </div>
                 </div>
             </div>
-
+            <div id="errorPopup" class="popup"></div>
+            
             <footer>
                 <p>© 2026 MMU Lost Hub<br>
                 <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
@@ -52,16 +53,34 @@
         </div>
 
         <script>
-            function clearBackHistory() {
-                // Add fake history entry, prevent back button working normally
+           function initBackLock() {
                 window.history.pushState(null, "", window.location.href);
             }
+            
+            initBackLock();
 
-            clearBackHistory(); // Block back navigation
+            function showPopup(msg, type = "error") {
+                const popup = document.getElementById("errorPopup");
 
-            window.onpopstate = function () { // Detect back button press
-                alert("Please login first to continue.");
-                window.location.replace("{% url 'beginning' %}"); // Force redirect, replace=can't go back
+                if (popup) {
+                    popup.innerHTML = msg;
+                    
+                    popup.classList.remove("error", "success", "show");
+                    
+                    void popup.offsetWidth; 
+
+                    popup.classList.add(type, "show");
+
+                    setTimeout(() => {
+                        popup.classList.remove("show");
+                    }, 2500);
+                }
+            }
+
+            window.onpopstate = function (event) { // Detect back button press
+                sessionStorage.setItem("show_back_warning", "true");
+
+                window.location.replace("{% url 'beginning' %}");
             };
 
             window.addEventListener("pageshow", function (event) { // Detect page restored from cache
@@ -74,28 +93,26 @@
             document.addEventListener("DOMContentLoaded", function () { // Run after page loads
                 const params = new URLSearchParams(window.location.search); // Read URL parameters
                 if (params.has("next")) { // If redirect happened
-                    alert("Please login first to continue.");
+                    showPopup("Please login first to continue.", "error");
                     window.history.replaceState({}, document.title, window.location.pathname); // Clear URL
+                }
+
+                if (sessionStorage.getItem("show_back_warning") === "true") {
+                    showPopup("Please login first to continue.", "error");
+                    sessionStorage.removeItem("show_back_warning");
                 }
             });
 
-            window.addEventListener("load", () => {
-                const popup = document.getElementById("successPopup");
-
-                function showSuccess(msg){
-                    popup.innerHTML = msg;
-                    popup.classList.add("show");
-
-                    setTimeout(() => {
-                        popup.classList.remove("show");
-                    }, 2500);
-                }
-
-                {% for message in messages %}
-                    if ("{{ message }}" === "logout_success") {
-                        showSuccess("Logout successful");
-                    }
-                {% endfor %}
+           window.addEventListener("load", () => {
+                {% if messages %}
+                    {% for message in messages %}
+                        if ("{{ message }}" === "logout_success" || "{{ message.tags }}" === "success") {
+                            showPopup("Logout successful", "success");
+                        } else {
+                            showPopup("{{ message|escapejs }}", "error");
+                        }
+                    {% endfor %}
+                {% endif %}
             });
         </script>
     </body>

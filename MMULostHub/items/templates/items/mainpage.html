@@ -16,6 +16,7 @@
         <link rel="stylesheet" href="{% static 'items/css/post-popup.css' %}">
 
         <script src="{% static 'items/js/header.js' %}" defer></script>
+        <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
 
         <title> 
             MMU Lost Hub 
@@ -80,7 +81,7 @@
                         <a href="{% url 'feedback_form' %}"> Feedback </a>
                         </li>
                         <li class="logout">
-                        <a href="javascript:void(0)" onclick="showLogoutConfirm()">Logout</a>
+                        <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
                         </li>
                     </ul>
                 </nav>
