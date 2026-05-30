@@ -373,6 +373,7 @@ def verify_email(request):
 
         return redirect('user_login')
     
+    messages.success(request, "Registration successful!")
     return render(request, 'user/email-verify.html', context)
 
 def resend_otp(request):
