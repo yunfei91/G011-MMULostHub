@@ -87,7 +87,7 @@ def apply_filters(request, post_box):
     # location
     if selected_locations:
         post_box = post_box.filter(
-            post_location_id__in=selected_locations
+            Q(post_location_id__in=selected_locations) | Q(post_location__isnull=True)
         )
 
     # start date
