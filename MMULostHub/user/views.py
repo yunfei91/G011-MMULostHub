@@ -428,6 +428,8 @@ def user_logout(request):
     logout(request) # Django logout, clear login session and let user become anonymous user
     request.session.flush() # Completely clear session data
 
+    messages.success(request, "logout_success")
+
     response = redirect("beginning")
     # Prevent browser from storing page
     # no-store=don't store anything

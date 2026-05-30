@@ -78,6 +78,25 @@
                     window.history.replaceState({}, document.title, window.location.pathname); // Clear URL
                 }
             });
+
+            window.addEventListener("load", () => {
+                const popup = document.getElementById("successPopup");
+
+                function showSuccess(msg){
+                    popup.innerHTML = msg;
+                    popup.classList.add("show");
+
+                    setTimeout(() => {
+                        popup.classList.remove("show");
+                    }, 2500);
+                }
+
+                {% for message in messages %}
+                    if ("{{ message }}" === "logout_success") {
+                        showSuccess("Logout successful");
+                    }
+                {% endfor %}
+            });
         </script>
     </body>
 </html>

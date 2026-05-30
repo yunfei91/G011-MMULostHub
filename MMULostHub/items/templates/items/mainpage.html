@@ -80,7 +80,7 @@
                         <a href="{% url 'feedback_form' %}"> Feedback </a>
                         </li>
                         <li class="logout">
-                        <a href="{% url 'logout' %}"> Logout </a> 
+                        <a href="javascript:void(0)" onclick="showLogoutConfirm()">Logout</a>
                         </li>
                     </ul>
                 </nav>
@@ -406,6 +406,20 @@
                         </div>
                     </div>
                 </div>
+                <!-- Confirm Logout Popup -->
+                <div id="confirmPopup" class="popup-modal">
+                    <div class="popup-box">
+                        <p>Are you sure you want to logout?</p>
+
+                        <div class="popup-btns">
+                            <button onclick="cancelLogout()">Cancel</button>
+                            <button onclick="confirmLogout()">OK</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Popup -->
+                <div id="successPopup" class="popup">Logout successful</div>
             </div>
             
             <footer>

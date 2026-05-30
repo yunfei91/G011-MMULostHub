@@ -445,3 +445,43 @@ footer{
     font-family: 'Sansation';
     line-height: 1.2;
 }
+
+/* ===================================== */
+/*                Logout                 */
+/* ===================================== */
+.popup-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-modal.show {
+    display: flex;
+}
+
+.popup-box {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #2e7d32;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    display: none;
+
+    z-index: 10005;
+}
+
+.popup.show {
+    display: block;
+}

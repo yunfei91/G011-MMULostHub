@@ -241,3 +241,26 @@ document.addEventListener("click", function(event){
         panel.classList.add("hidden");
     }
 });
+
+/* yt added for logout section */
+const confirmPopup = document.getElementById("confirmPopup");
+const successPopup = document.getElementById("successPopup");
+
+function showLogoutConfirm() {
+    confirmPopup.classList.add("show");
+}
+
+function cancelLogout() {
+    confirmPopup.classList.remove("show");
+}
+
+function confirmLogout() {
+    // redirect to Django logout URL
+    window.location.href = "{% url 'user_logout' %}";
+}
+
+const LOGOUT_URL = "{% url 'user_logout' %}";
+
+function confirmLogout() {
+    window.location.href = LOGOUT_URL;
+}
