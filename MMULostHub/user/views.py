@@ -80,17 +80,31 @@ def user_login(request):
     return render(request, 'user/user-login.html')
 
 def forgot_pw(request):
+    email = ""
+
     if request.method == 'POST':
         email = (request.POST.get('email') or '').strip().lower()
 
         if not email:
             return render(request, 'user/forgot-pw.html', {
-                'error': "Please enter your email."
+                'error': "Please enter your MMU email.",
+                'email': email,
+            })
+        
+        if not (
+            re.match(r'^[A-Za-z0-9._%+-]+@mmu\.edu\.my$',email)
+            or
+            re.match(r'^[A-Za-z0-9._%+-]+@student\.mmu\.edu\.my$',email)
+        ):
+            return render(request, 'user/forgot-pw.html', {
+                'error': "Please enter a valid MMU email.",
+                'email': email,
             })
         
         if not User.objects.filter(username=email).exists():
             return render(request, 'user/forgot-pw.html', {
-                'error': "Email not registered"
+                'error': "Email not registered",
+                'email': email,
             })
 
         otp = str(random.randint(100000, 999999))
@@ -105,7 +119,9 @@ def forgot_pw(request):
 
         return redirect('reset_otp_verify')
 
-    return render(request, 'user/forgot-pw.html')
+    return render(request, 'user/forgot-pw.html', {
+        'email': email
+    })
 
 def reset_otp_verify(request):
     data = request.session.get('reset_data')

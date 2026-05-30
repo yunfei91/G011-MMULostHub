@@ -30,7 +30,7 @@
                         
                                 <form method="POST">
                                     {% csrf_token %}
-                                    <input type="text" name="email" placeholder="Enter your MMU email">
+                                    <input type="text" name="email" placeholder="Enter your MMU email" value="{{ email }}">
 
                                     <br><br><br>
                                     <button class="submit-btn" type="submit">Send OTP</button>
