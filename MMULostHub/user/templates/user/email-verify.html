@@ -81,6 +81,21 @@
                 window.location.replace("{% url 'beginning' %}")
             }
 
+            const popup = document.getElementById("errorPopup");
+
+            function showPopup(msg, type = "error") {
+                if (!popup) return;
+
+                popup.innerHTML = msg;
+
+                popup.classList.remove("error", "success");
+                popup.classList.add(type, "show");
+
+                setTimeout(() => {
+                    popup.classList.remove("show");
+                }, 2500);
+            }
+
             let otpTime = 0;
             let resendTime = 0;
             
@@ -157,8 +172,14 @@
             });
 
             window.addEventListener("load", () => {
-                if (errorMsg && otpBox) {
-                    otpBox.classList.add("shake"); // Shake animation effect
+                const backendError = "{{ error|escapejs }}";
+
+                if (backendError && backendError !== "None" && backendError.trim() !== "") {
+                    showPopup(backendError);
+                }
+
+                if (otpBox && backendError) {
+                    otpBox.classList.add("shake");
 
                     setTimeout(() => {
                         otpBox.classList.remove("shake");
