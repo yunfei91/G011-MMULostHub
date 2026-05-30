@@ -97,13 +97,13 @@ def forgot_pw(request):
             re.match(r'^[A-Za-z0-9._%+-]+@student\.mmu\.edu\.my$',email)
         ):
             return render(request, 'user/forgot-pw.html', {
-                'error': "Please enter a valid MMU email.",
+                'error': "Please enter a valid MMU email",
                 'email': email,
             })
         
         if not User.objects.filter(username=email).exists():
             return render(request, 'user/forgot-pw.html', {
-                'error': "Email not registered",
+                'error': "MMU email not registered",
                 'email': email,
             })
 
