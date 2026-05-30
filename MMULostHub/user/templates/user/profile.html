@@ -1,0 +1,465 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MMU Lost Hub</title>
+        
+        <!-- Prevent browser cache, user cannot press back to access previous page -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
+        <!-- Older browser cache prevention -->
+        <meta http-equiv="Pragma" content="no-cache">
+        <!-- Expire page immediately -->
+        <meta http-equiv="Expires" content="0">
+
+        <link rel="stylesheet" href="{% static 'items/css/post-popup.css' %}">
+        <link rel="stylesheet" href="{% static 'user/css/profile.css' %}">
+
+        <script src="{% static 'items/js/header.js' %}" defer></script>
+        <script src="{% static 'items/js/popup.js' %}" defer></script>
+
+        <!-- Import Cropper.js library for image cropping -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" rel="stylesheet"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+    </head>
+
+    <body>
+        <div class="whole-page">
+            <header>
+                <div class="header-left"> <!-- yt adjusted for css uses-->              
+                    <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
+                    <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
+                </div>
+
+                <div class="header-right"> <!-- yt adjusted for css uses-->
+                    <!-- Home icon -->
+                    <a href="{% url 'mainPage' %}" class="home-icon">
+                        <img src="{% static 'images/homeicon.png' %}" alt="Home">
+                    </a>
+
+                    <!-- Menu button --> <!-- yt adjusted for css uses-->
+                    <button type="button" class="menu-icon" onclick="toggleMenu()">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </header>
+
+            <div id="overlay" class="overlay"></div> <!-- yt adjusted for css uses-->
+
+            <!-- ================================================== -->
+            <!--            Dropdown Menu Navigation                -->
+            <!-- ================================================== -->
+            <div class = "dropdown-nav">
+                
+                <nav id="menu" class="menu"> <!-- yt adjusted for css uses-->
+                    <ul>
+                        <li>
+                        <a href="{% url 'lost_posts' %}"> Lost Post </a>  
+                        </li>
+                        <li>
+                        <a href="{% url 'found_posts' %}"> Found Post </a>
+                        </li>
+                        <li>
+                        <a href="{% url 'profile' %}"> Profile </a>
+                        </li>
+                        <li>
+                        <a href="{% url 'feedback_form' %}"> Feedback </a>
+                        </li>
+                        <li class="logout">
+                        <a href="{% url 'logout' %}"> Logout </a> 
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="content">
+                <h1>My Profile</h1>
+
+                <!-- Display user's uploaded avatar or default avatar if user has none with-->
+                <!-- now = current time ; |date:'U' = convert time to Unix timestamp(second) ; Force to reload image instead of using cache -->
+                <!-- Check if current user owns profile -->
+                {% if profile.avatar %}
+                    <img id="avatarImage" src="{{ profile.avatar.url }}?v={{ now|date:'U' }}" 
+                    width="150" height="150" style="border-radius:50%; object-fit:cover; {% if is_owner %}cursor:pointer;{% else %}cursor:default;{% endif %}">
+                {% else %}
+                    <img id="avatarImage"  src="{% static 'images/default.png' %}?v={{ now|date:'U' }}" 
+                    width="150" height="150" style="border-radius:50%; object-fit:cover; {% if is_owner %}cursor:pointer;{% else %}cursor:default;{% endif %}">
+                {% endif %}
+
+                <div id="editor" style="display:none;"> <!-- Hide edit button -->
+                    <input type="file" id="imageInput"> <!-- File input for image upload -->
+
+                    <div>
+                        <img id="preview" style="max-width:100%; max-height:400px;"> <!-- Preview selected image -->
+                    </div>
+
+                    <button onclick="cropImage()">Crop & Upload</button>
+
+                    <button onclick="cancelCrop()">Cancel</button>
+                </div>
+
+                {% csrf_token %} <!-- Security token to prevent CSRF attack -->
+
+                <div class="profile-info"> 
+                    <!-- Show name (User and Admin not the same) -->
+                    <p id="nameText">{{ profile.name|default:user.first_name|default:user.username }}</p>
+
+                    {% if request.user == user %}
+                        <button onclick="showNameEdit()">Edit Name</button>
+
+                        <form id="nameForm" method="POST" action="{% url 'update_name' %}" style="display:none;">
+                            {% csrf_token %}
+                            <input type="text" name="name" value="{{ profile.name }}">
+                            <button type="submit">Save</button>
+                            <button type="button" onclick="hideNameEdit()">Cancel</button>
+                        </form>
+                    {% endif %}
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p style="color:red;">{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+
+                    <p><b>MMU Email:</b> {{ user.email }}</p>
+                </div>
+
+                <h2>Bio</h2>
+
+                <p id="bioText">{{ profile.bio }}</p>
+
+                {% if request.user == user %}
+                    <button onclick="showBioEdit()">Edit Bio</button>
+
+                    <form id="bioForm" method="POST" action="{% url 'update_bio' %}" style="display:none;">
+                        {% csrf_token %} <!-- Security token to prevent CSRF attack -->
+                        <!-- Bio box to input -->
+                        <textarea name="bio" rows="4" cols="50">{{ profile.bio }}</textarea>
+                        <br>
+                        <button type="submit">Save</button>
+                        <button type="button" onclick="hideBioEdit()">Cancel</button>
+                    </form>
+                {% endif %}
+
+                <div style="margin-top:20px;">
+                    <button onclick="showAll()">All</button>
+                    <button onclick="showLost()">Lost</button>
+                    <button onclick="showFound()">Found</button>
+                </div>
+
+                <div id="all-posts">
+                    {% for post in all_posts %}
+
+                    <!-- Open popup modal after clicked -->
+                    <!-- Store username into HTML attribute, so JS can read it-->
+                    <div class="post"
+                        onclick="openPost(this)"
+                        data-user="{{ post.post_user.username }}" 
+                        data-type="{{ post.post_type }}"
+                        data-date="{{ post.post_datetime }}"
+                        data-category="{{ post.get_post_itemcategory_display }}"
+                        data-location="{{ post.post_location.location_name }}"
+                        data-description="{{ post.post_description }}"
+                        data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
+                        
+                        <div class="post-item" data-type="{{ post.post_type }}">
+                        
+                            <h4>{{ post.post_type|upper }} POST</h4>
+
+                            {% if post.cover_image %}
+                                <img
+                                    src="{{ post.cover_image.image.url }}"
+                                    alt="Post Image"
+                                    class="post-image"
+                                    style="width:500px; height:auto;"
+                                >
+                            {% endif %}
+
+                            <p> Date Time: {{ post.post_datetime }} </p>
+                            <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
+                            <p> Location: {{ post.post_location.location_name }} </p>
+                            <p>————————————————————————————————————————————————————————</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                        <p>No posts</p>
+                    {% endfor %}
+                </div>
+
+                <div id="lost-posts">
+                <h4>LOST POST</h4>
+                    {% for post in lost_posts %}
+
+                    <!-- Open popup modal after clicked -->
+                    <!-- Store username into HTML attribute, so JS can read it-->
+                    <div class="post"
+                        onclick="openPost(this)"
+                        data-user="{{ post.post_user.username }}" 
+                        data-type="{{ post.post_type }}"
+                        data-date="{{ post.post_datetime }}"
+                        data-category="{{ post.get_post_itemcategory_display }}"
+                        data-location="{{ post.post_location.location_name }}"
+                        data-description="{{ post.post_description }}"
+                        data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
+                        
+                        <div class="post-item">
+
+                            {% if post.cover_image %}
+                                <img
+                                    src="{{ post.cover_image.image.url }}"
+                                    class="post-image"
+                                    style="width:500px; height:auto;"
+                                >
+                            {% endif %}
+
+                            <p> Date Time: {{ post.post_datetime }} </p>
+                            <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
+                            <p> Location: {{ post.post_location.location_name }} </p>
+                            <p>————————————————————————————————————————————————————————</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                        <p>No lost posts</p>
+                    {% endfor %}
+                </div>
+
+                <div id="found-posts">
+                <h4>FOUND POST</h4>
+                    {% for post in found_posts %}
+
+                    <!-- Open popup modal after clicked -->
+                    <!-- Store username into HTML attribute, so JS can read it-->
+                    <div class="post"
+                        onclick="openPost(this)"
+                        data-user="{{ post.post_user.username }}" 
+                        data-type="{{ post.post_type }}"
+                        data-date="{{ post.post_datetime }}"
+                        data-category="{{ post.get_post_itemcategory_display }}"
+                        data-location="{{ post.post_location.location_name }}"
+                        data-description="{{ post.post_description }}"
+                        data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
+                        
+                        <div class="post-item">
+                            
+                            {% if post.cover_image %}
+                                <img
+                                    src="{{ post.cover_image.image.url }}"
+                                    class="post-image"
+                                    style="width:500px; height:auto;">
+                            {% endif %}
+
+                            <p> Date Time: {{ post.post_datetime }} </p>
+                            <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
+                            <p> Location: {{ post.post_location.location_name }} </p>
+                            <p>————————————————————————————————————————————————————————</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                        <p>No found posts</p>
+                    {% endfor %}
+                </div>
+
+                <!-- YT - Post View Popup Modal -->
+                <div id="postModal" class="modal">
+
+                    <div class="modal-content">
+
+                        <span class="close" onclick="closePost()">&times;</span> <!-- Symbol display cross -->
+
+                        <div class="modal-body">
+
+                            <div class="modal-left">
+                                <p><span id="m_user"></span></p> <!-- JS inserts username -->
+
+                                <div class="img-container">
+                                    <button class="prev-btn" onclick="prevImg()">⬅</button>
+
+                                    <img id="m_image" style="max-width:100%; display:none;">
+
+                                    <button class="next-btn" onclick="nextImg()">➡</button>
+                                </div>
+                            </div>
+
+                            <div class="modal-right">
+                                <h2 id="m_type"></h2> <!-- JS inserts post type -->
+
+                                <p><b>Date:</b> <span id="m_date"></span></p>
+
+                                <p><b>Category:</b> <span id="m_category"></span></p>
+
+                                <p><b>Location:</b> <span id="m_location"></span></p>
+
+                                <p><b>Description:</b></p>
+                                <p id="m_description"></p>
+
+                                <div class="chatBtn">
+                                    <button type="button">Chat</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer>
+                <p>© 2026 MMU Lost Hub<br>
+                <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
+            </footer>
+        </div>
+
+        <script>
+            let cropper; // Save cropper object for later use
+            const avatar = document.getElementById('avatarImage'); // Get avatar element
+            const preview = document.getElementById('preview'); // Image preview area
+            const editor = document.getElementById('editor'); // Image editor container
+
+            // Get CSRF token from page
+            function getCSRFToken() {
+                return document.querySelector('[name=csrfmiddlewaretoken]').value;
+            }
+
+            {% if is_owner %}
+            // Open image editor when avatar is clicked
+            avatar.addEventListener('click', function() {
+                editor.style.display = "block";
+
+                // Remove previous cropper
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+
+                preview.src = avatar.src; // Load current avantar
+
+                preview.onload = function () {
+                    // Initialize cropper with square ratio
+                    cropper = new Cropper(preview, {
+                        aspectRatio: 1,
+                        viewMode: 1
+                    });
+                };
+            });
+            {% endif %}
+
+            // Detect user selected image file
+            document.getElementById('imageInput').addEventListener('change', function(e) {
+
+                const file = e.target.files[0];
+                if (!file) return; // Get selected file
+
+                const url = URL.createObjectURL(file); // Create temporary image URL
+
+                // Reset cropper
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+
+                preview.src = url;
+
+                preview.onload = function () {
+                    cropper = new Cropper(preview, {
+                        aspectRatio: 1,
+                        viewMode: 1
+                    });
+                };
+            });
+
+            function cropImage() {
+                // Ensure image exists to crop
+                if (!cropper) {
+                    alert("Select an image first");
+                    return;
+                }
+
+                // Get cropped image
+                const canvas = cropper.getCroppedCanvas({
+                    width: 300,
+                    height: 300
+                });
+
+                canvas.toBlob(function(blob) {
+
+                    const formData = new FormData();
+                    formData.append("avatar", blob, "avatar.jpg"); // Prepare image for upload
+
+                    // Send cropped image to Django backend
+                    fetch("{% url 'update_avatar' %}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": getCSRFToken() // Include CSRF token in fetch request
+                        },
+                        body: formData
+                    })
+                    // Reload page after upload
+                    .then(res => res.text())
+                    .then(data => {
+                        console.log("UPLOAD SUCCESS:", data);
+                        location.reload(); // Refresh page
+                    })
+                    .catch(err => console.error(err));
+                });
+            }
+
+            function cancelCrop() {
+                document.getElementById("editor").style.display = "none"; // Hide editor
+
+                const preview = document.getElementById("preview");
+                preview.src = ""; // Clear preview
+
+                document.getElementById("imageInput").value =""; // Reset file input
+
+                // Destroy cropper
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+            }
+
+            function showNameEdit() {
+                document.getElementById("nameForm").style.display = "block";
+                document.getElementById("nameText").style.display = "none";
+            }
+
+            function hideNameEdit() {
+                document.getElementById("nameForm").style.display = "none";
+                document.getElementById("nameText").style.display = "block";
+            }
+
+            function showBioEdit() {
+                document.getElementById("bioForm").style.display = "block";
+                document.getElementById("bioText").style.display = "none";
+            }
+
+            function hideBioEdit() {
+                document.getElementById("bioForm").style.display = "none";
+                document.getElementById("bioText").style.display = "block";
+            }
+
+            // Run when page is ready
+            document.addEventListener("DOMContentLoaded", function () {
+                showAll();
+            });
+
+            // Show all lost and found posts
+            function showAll() {
+                document.getElementById("all-posts").style.display = "block";
+                document.getElementById("lost-posts").style.display = "none";
+                document.getElementById("found-posts").style.display = "none";
+            }
+            
+            function showLost() {
+                document.getElementById("all-posts").style.display = "none";
+                document.getElementById("lost-posts").style.display = "block";
+                document.getElementById("found-posts").style.display = "none";
+            }
+
+            function showFound() {
+                document.getElementById("all-posts").style.display = "none";
+                document.getElementById("lost-posts").style.display = "none";
+                document.getElementById("found-posts").style.display = "block";
+            }
+        </script>
+    </body>
+</html>

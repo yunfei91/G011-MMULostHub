@@ -1,0 +1,268 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MMU Lost Hub</title>
+
+        <link rel="stylesheet" type="text/css" href="{% static 'user/css/email-verify.css' %}">
+    </head>
+
+    <body>
+        <div class="whole-page">
+            <header>
+                <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
+            </header>
+
+            <div class="content">
+                <div class="banner">
+                    <div class="web-logo">
+                        <img src="{% static 'images/WebLogo-top.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo-top">
+                        <img src="{% static 'images/WebLogo-base.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo-base">
+                    </div>
+
+                    <div class="box-input">
+                        <div class="auth-panel">
+                            <div class="auth-card">
+                                <div class="auth-header">
+                                    <button class="back-button" onclick="goBack()"><</button>
+                                    <h2>Email Verification</h2>
+                                </div>
+                                
+                                <form method="POST">
+                                    {% csrf_token %}
+
+                                    <div class="otp-status">
+                                        <div class="otp-row">
+                                            <span class="otp-title">OTP Code</span>
+                                            <span id="otpBadge"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="otp-box" id="otpBox">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                    </div>
+                                    
+                                    <input type="hidden" name="otp" id="otpHidden"> <!-- Hidden input to store full OTP from each box at frontend for backend -->
+
+                                    <div class="resend-status">
+                                        <button class="resend-btn" type="button" id="resendBtn" {% if not can_resend %}disabled{% endif %}>
+                                            Resend code
+                                        </button>
+                                        <span id="resendBadge"></span>
+                                    </div>
+
+                                    <br><br>
+                                    <button class="verify-btn" type="submit">Verify</button>
+                                </form>
+
+                                <div id="errorPopup" class="popup"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer>
+                <p>© 2026 MMU Lost Hub<br>
+                <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
+            </footer>
+        </div>
+
+        {{ otp_remaining|json_script:"otp-time" }} <!-- Pass python to JS, after pass <script><p id="otpTimer">60</script>-->
+        {{ resend_remaining|json_script:"resend-time" }}
+
+        <script>
+            function goBack() {
+                window.location.replace("{% url 'beginning' %}")
+            }
+
+            const popup = document.getElementById("errorPopup");
+
+            function showPopup(msg, type = "error") {
+                if (!popup) return;
+
+                popup.innerHTML = msg;
+
+                popup.classList.remove("error", "success");
+                popup.classList.add(type, "show");
+
+                setTimeout(() => {
+                    popup.classList.remove("show");
+                }, 2500);
+            }
+
+            let otpTime = 0;
+            let resendTime = 0;
+            
+            try {
+                otpTime = JSON.parse(document.getElementById("otp-time").textContent); // Convert string to number
+                resendTime = JSON.parse(document.getElementById("resend-time").textContent);
+            } catch (e) {
+                console.log("Timer init error", e);
+            }
+
+            const otpBadge = document.getElementById("otpBadge");
+            const resendBadge = document.getElementById("resendBadge");
+            const resendBtn = document.getElementById("resendBtn");
+
+            const inputs = document.querySelectorAll(".otp-digit");
+            const hiddenInput = document.getElementById("otpHidden");
+            const form = document.querySelector("form");
+            const otpBox = document.getElementById("otpBox");
+
+            if (inputs.length > 0) { // Focus first box
+                inputs[0].focus();
+            }
+
+            function updateHidden() {
+                hiddenInput.value = Array.from(inputs) // Combine OTP 6-digits
+                .map(i => i.value)
+                .join("");
+            }
+
+            inputs.forEach((input, index) => {
+                
+                input.addEventListener("input", (e) => { // Detect typing
+                    let value = e.target.value.replace(/\D/g, ""); // Remove non-numbers
+                    input.value = value;
+
+                    if (value && index < inputs.length - 1) {
+                        inputs[index + 1].focus(); // Auto move next box
+                    }
+
+                    updateHidden();
+
+                    if (hiddenInput.value.length === 6) {
+                        form.submit(); // Auto submit
+                    }
+                });
+
+                input.addEventListener("keydown", (e) => {
+                    if (e.key === "Backspace" && !input.value && index > 0) { // Move back when delete
+                        inputs[index - 1].focus();
+                    }
+                });
+
+                input.addEventListener("paste", (e) => { // Copy and paste
+                    e.preventDefault();
+
+                    let data = e.clipboardData
+                        .getData("text")
+                        .replace(/\D/g, "")
+                        .slice(0, 6); // Max 6-digits
+
+                    inputs.forEach((box, i) => {
+                        box.value = data[i] || "";
+                    });
+
+                    updateHidden();
+
+                    const nextIndex = Math.min(data.length, 5);
+                    inputs[nextIndex].focus();
+
+                    if (data.length === 6) {
+                        form.submit();
+                    }
+                });
+            });
+
+            window.addEventListener("load", () => {
+                const backendError = "{{ error|escapejs }}";
+
+                if (backendError && backendError !== "None" && backendError.trim() !== "") {
+                    showPopup(backendError);
+                }
+
+                if (otpBox && backendError) {
+                    otpBox.classList.add("shake");
+
+                    setTimeout(() => {
+                        otpBox.classList.remove("shake");
+                    }, 300);
+                }
+            });
+
+            function updateTimers() {
+                // OTP
+                if (otpTime > 0) {
+                    otpBadge.innerText = otpTime + " s";
+                    otpBadge.classList.remove("expired");
+                } else {
+                    otpBadge.innerText = "Expired";
+                    otpBadge.classList.add("expired");
+                }
+
+                // Resend
+                if (resendTime > 0) {
+                    resendBadge.innerText = resendTime + " s";
+                    resendBtn.disabled = true;
+                } else {
+                    resendBadge.innerText = "";
+                    resendBtn.disabled = false;
+                }
+
+                otpTime--;
+                resendTime--;
+    
+                setTimeout(updateTimers, 1000);
+            }
+
+            updateTimers();
+
+            function getCookie(name) {
+                let cookieValue = null;
+
+                if (document.cookie) {
+                    const cookies = document.cookie.split(';');
+
+                    for (let cookie of cookies) {
+                        cookie = cookie.trim();
+
+                        if (cookie.startsWith(name + '=')) {
+                            cookieValue = cookie.substring(name.length + 1);
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            resendBtn.addEventListener("click", function () {
+                fetch("{% url 'resend_otp' %}", { // Send request to backend
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": getCookie('csrftoken'), // CSRF token for security
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "same-origin"
+                })
+                .then(res => res.json()) // Convert to JSON
+                .then(data => {
+
+                    if (data.error) { // Show error
+                        showPopup(data.error, "error"); // Popup for error
+                        return;
+                    }
+
+                    showPopup("OTP sent!", "success");
+
+                    otpTime = 60; // Reset time
+                    resendTime = 30;
+                    resendBtn.disabled = true;
+
+                    inputs.forEach(i => i.value = ""); // Clear input boxes
+                    inputs[0].focus();
+                    hiddenInput.value = "";
+                })
+                .catch(err => {
+                    console.error(err);
+                    showPopup("Something went wrong");
+                });
+            });
+        </script>
+    </body>
+</html>

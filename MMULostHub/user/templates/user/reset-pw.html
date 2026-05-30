@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MMU Lost Hub</title>
+
+        <link rel="stylesheet" type="text/css" href="{% static 'user/css/reset-pw.css' %}">
+
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    </head>
+
+    <body>
+        <div class="whole-page">
+            <header>
+                <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
+            </header>
+
+            <div class="content">
+                <div class="banner">
+                    <div class="web-logo">
+                        <img src="{% static 'images/WebLogo-top.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo-top">
+                        <img src="{% static 'images/WebLogo-base.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo-base">
+                    </div>
+
+                    <div class="box-input">
+                        <div class="auth-panel">
+                            <div class="auth-card">
+                                <div class="auth-header">
+                                    <button class="back-button" onclick="goBack()"><</button>
+                                    <h2>Reset Password</h2>
+                                </div>
+                        
+                                <form id="resetpwForm" method="POST">
+                                    {% csrf_token %}
+                                    <div class="password-box">
+                                        <input type="password" id="password" name="password" placeholder="New Password" oninput="checkPassword()">
+                                        <span class="show-password material-icons" onclick="showPassword('password', this)">
+                                        visibility_off
+                                        </span>
+                                    </div>
+
+                                    <!-- Checklist -->
+                                    <div class="checklist">
+                                        <p id="letter" class="invalid">At least 1 letter</p>
+                                        <p id="symbol" class="invalid">At least 1 symbol (@#$*.)</p>
+                                        <p id="number" class="invalid">At least 1 number</p>
+                                        <p id="length" class="invalid">At least 8 characters</p>
+                                    </div>
+
+                                    <!-- Confirm Password -->
+                                    <div class="password-box">
+                                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm New Password" oninput="checkPassword()">
+                                        <span class="show-password material-icons" onclick="showPassword('confirm_password', this)">
+                                        visibility_off
+                                        </span>
+                                    </div>
+
+                                    <p id="match-text"></p>
+
+                                    <br><br><br>
+                                    <button class="resetpw-btn"type="submit" id="submitBtn">Reset Password</button>
+                                </form>
+
+                                <div id="errorPopup" class="popup"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer>
+                <p>© 2026 MMU Lost Hub<br>
+                <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
+            </footer>
+        </div>
+
+        <script>
+            const form = document.getElementById("resetpwForm");
+            const popup = document.getElementById("errorPopup");
+
+            function showPopup(msg){
+                popup.innerHTML = msg;
+                popup.classList.add("show");
+
+                setTimeout(() => {
+                    popup.classList.remove("show");
+                }, 2500);
+            }
+
+            form.addEventListener("submit", function(e){
+
+                const pw = document.getElementById("password").value.trim();
+                const cpw = document.getElementById("confirm_password").value.trim();
+
+                // empty check
+                if (!pw || !cpw) {
+                    e.preventDefault();
+                    showPopup("Please fill in all fields");
+                    return;
+                }
+
+                // password rule check
+                if (!passwordValid) {
+                    e.preventDefault();
+                    showPopup("Please check your input");
+                    return;
+                }
+
+                // confirm match check
+                if (!match) {
+                    e.preventDefault();
+                    showPopup("Please check your input");
+                    return;
+                }
+            });
+
+            let passwordValid = false;
+            let match = false;
+
+            function setValid(id, ok){
+                const el = document.getElementById(id);
+                el.classList.toggle("valid", ok);
+                el.classList.toggle("invalid", !ok);
+            }
+
+            function checkPassword() {
+                const pw = document.getElementById("password").value;
+                const cpw = document.getElementById("confirm_password").value;
+                const matchText = document.getElementById("match-text");
+
+                setValid("letter", /[A-Za-z]/.test(pw));
+                setValid("number", /[0-9]/.test(pw));
+                setValid("symbol", /[@#$*.]/.test(pw));
+                setValid("length", pw.length >= 8);
+
+                passwordValid =
+                    /[A-Za-z]/.test(pw) &&
+                    /[0-9]/.test(pw) &&
+                    /[@#$*.]/.test(pw) &&
+                    pw.length >= 8;
+
+                if (!cpw) {
+                    match = false;
+                    matchText.innerHTML = "";
+                    matchText.className = "message"; 
+                    return;
+                }
+
+                if (pw === cpw) {
+                    match = true;
+                    matchText.className = "message success-message";
+                    matchText.innerHTML = "Password match";
+                } else {
+                    match = false;
+                    matchText.className = "message error-message";
+                    matchText.innerHTML = "Password not match";
+                }
+            }
+
+            function showPassword(inputId, icon) {
+                const input = document.getElementById(inputId);
+
+                if (input.type === "password") {
+                    input.type = "text";
+                    icon.textContent = "visibility";
+                } else {
+                    input.type = "password";
+                    icon.textContent = "visibility_off";
+                }
+            }
+        </script>
+    </body>
+</html>
