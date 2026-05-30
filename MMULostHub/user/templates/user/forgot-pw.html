@@ -4,60 +4,80 @@
     <head>
         <title>MMU Lost Hub</title>
 
-        <link rel="stylesheet" type="text/css" href="{% static 'user/css/register.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'user/css/forgot-pw.css' %}">
     </head>
 
     <body>
         <div class="whole-page">
             <header>
-                <a href="{% url 'beginning' %}">
-                    <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class="mmu-logo">
-                </a>
+                <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
             </header>
 
             <div class="content">
                 <div class="banner">
                     <div class="web-logo">
-                        <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
+                        <img src="{% static 'images/WebLogo-top.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo-top">
+                        <img src="{% static 'images/WebLogo-base.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo-base">
                     </div>
 
-                    <div class="slogan">
-                        <p>
-                            What's lost can be found,<br>
-                        and found can find its way back.
-                        </p>
-
-                        <button onclick="goBack()">Back</button>
-
-                        <h2>Welcome to MMU Lost Hub</h2>
+                    <div class="box-input">
+                        <div class="auth-panel">
+                            <div class="auth-card">
+                                <div class="auth-header">
+                                    <button class="back-button" onclick="goBack()"><</button>
+                                    <h2>Forgot Password</h2>
+                                </div>
                         
-                        <form method="POST">
-                            {% csrf_token %}
-                            <input type="text" name="email" placeholder="Enter your email">
-                            <button type="submit">Send OTP</button>
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <input type="text" name="email" placeholder="Enter your email">
+                                    <button type="submit">Send OTP</button>
+                                </form>
 
-                            {% if error %}
-                                <p style="color:red;">{{ error }}</p>
-                            {% endif %}
-                        </form>
+                                <div id="errorPopup" class="popup"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+            
+            <footer>
+                <p>© 2026 MMU Lost Hub<br>
+                <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
+            </footer>
         </div>
-
-        <footer>
-            <p>© 2026 MMU Lost Hub<br>
-            <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
-        </footer>
 
         <script>
             function goBack() {
-                if (document.referrer !== "") { // Check previous page exists
-                    window.history.back(); // Go back
-                } else {
-                    window.location.href = "{% url 'beginning' %}";
-                }
+                window.location.replace("{% url 'beginning' %}")
             }
+
+            const popup = document.getElementById("errorPopup");
+
+            function showPopup(msg, type = "error") {
+                if (!popup) return;
+
+                popup.innerHTML = msg;
+
+                popup.classList.remove("error", "success");
+                popup.classList.add(type, "show");
+
+                setTimeout(() => {
+                    popup.classList.remove("show");
+                }, 2500);
+            }
+
+            window.addEventListener("load", () => {
+                const backendError = "{{ error|escapejs }}";
+
+                if (
+                    backendError &&
+                    backendError !== "None" &&
+                    backendError.trim() !== ""
+                ) {
+                    showPopup(backendError, "error");
+                }
+            });
         </script>
     </body>
 </html>
