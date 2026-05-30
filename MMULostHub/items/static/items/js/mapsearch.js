@@ -1,38 +1,322 @@
-document.addEventListener("DOMContentLoaded", function () {                 //  DOMContentLoaded = wait html to load first then load js file to avoid cannot get element by id        
+document.addEventListener("DOMContentLoaded", function () {
 
-    /* ============================================== 
-            Create Post Upload Image and Preview       
-     =============================================== */
-    document.getElementById("post_image").addEventListener("change", function (event) {     // addEventListener = see it's changes / changes = when user upload img
-        const file = event.target.files[0];                 // event = user action / target = input user added / files = user chosen file / [0] = first file
+    const map = document.getElementById("map");
+    if (!map) return;
 
-        if (file) {                 // when user choose img then will run this if
-            const preview = document.getElementById("image_preview");
+    const regions = getRegions();
 
-            preview.src = URL.createObjectURL(file);                // website cannot directly preview file but need to convert into url
-            preview.style.display = "block";                        // from html display:none change to block
+    const tooltip = document.getElementById("map-tooltip");
+
+    const canvas = document.getElementById("map-overlay");
+    const ctx = canvas.getContext("2d");
+
+    function resizeCanvas() {
+
+        canvas.width = map.clientWidth;
+        canvas.height = map.clientHeight;
+
+        canvas.style.width = map.clientWidth + "px";
+        canvas.style.height = map.clientHeight + "px";
+    }
+
+    resizeCanvas();
+
+    window.addEventListener("resize", resizeCanvas);
+
+    function drawRegion(region) {
+
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        ctx.fillStyle = "blue";
+
+        const scaleX =
+            map.clientWidth / map.naturalWidth;
+
+        const scaleY =
+            map.clientHeight / map.naturalHeight;
+
+        if (region.type === "rectangle") {
+
+            ctx.fillRect(
+                region.x1 * scaleX,
+                region.y1 * scaleY,
+                (region.x2 - region.x1) * scaleX,
+                (region.y2 - region.y1) * scaleY
+            );
+        }
+
+        if (region.type === "polygon") {
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                region.points[0][0] * scaleX,
+                region.points[0][1] * scaleY
+            );
+
+            for (let i = 1; i < region.points.length; i++) {
+
+                ctx.lineTo(
+                    region.points[i][0] * scaleX,
+                    region.points[i][1] * scaleY
+                );
+            }
+
+            ctx.closePath();
+
+            ctx.fill();
+        }
+
+        if (region.type === "circle") {
+
+            ctx.beginPath();
+
+            ctx.arc(
+                region.centerX * scaleX,
+                region.centerY * scaleY,
+                region.radius * scaleX,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+        }
+    }
+
+    function findRegion(x, y) {
+
+        for (let region of regions) {
+
+            if (region.type === "rectangle") {
+                if (
+                    x >= region.x1 &&
+                    x <= region.x2 &&
+                    y >= region.y1 &&
+                    y <= region.y2
+                ) {
+                    return region;
+                }
+            }
+
+            if (region.type === "polygon") {
+                if (isPointInsidePolygon(x, y, region.points)) {
+                    return region;
+                }
+            }
+
+            if (region.type === "circle") {
+
+                const dx = x - region.centerX;
+                const dy = y - region.centerY;
+
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance <= region.radius) {
+                    return region;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    // =========================
+    // LOAD FILTER FROM URL
+    // =========================
+    const urlParams = new URLSearchParams(window.location.search);
+    const locationCode = urlParams.get("location");
+
+    if (locationCode) {
+
+        const region = regions.find(
+            r => r.code === locationCode
+        );
+
+        if (region) {
+            filterPosts(region.code, region.name);
+
+            document.getElementById("back-btn").style.display = "block";
+        }
+    }
+
+    map.addEventListener("mousemove", function (event) {
+
+        const rect = map.getBoundingClientRect();
+
+        const scaleX = map.naturalWidth / map.clientWidth;
+        const scaleY = map.naturalHeight / map.clientHeight;
+
+        const x = (event.clientX - rect.left) * scaleX;
+        const y = (event.clientY - rect.top) * scaleY;
+
+        const found = findRegion(x, y);
+
+        if (found) {
+
+            map.style.cursor = "pointer";
+
+            drawRegion(found);
+
+            tooltip.style.display = "block";
+            tooltip.textContent = found.name;
+
+            tooltip.style.left =
+                (event.clientX - rect.left + 15) + "px";
+
+            tooltip.style.top =
+                (event.clientY - rect.top + 15) + "px";
+
+        } else {
+
+            map.style.cursor = "default";
+            tooltip.style.display = "none";
+
+            ctx.clearRect(
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
         }
     });
 
-    /* ====================================== 
-            Create Post Upload Image        
-     ====================================== */
-    const mapSmall = document.getElementById("smallMap");
-    const mapBig = document.getElementById("bigMap");
+    map.addEventListener("mouseleave", function () {
 
-    const modal = document.getElementById("map_modal");
-    const closeBtn = document.getElementById("close_map");
+        map.style.cursor = "default";
+        tooltip.style.display = "none";
 
-    const bigMarker = document.getElementById("bigMap_marker");
-    const smallMarker = document.getElementById("smallMap_marker");
+    });
 
-    const locationSelect = document.getElementById("post_location");
+    function showAllPosts() {
 
-    const locationLabel = document.getElementById("location_label");
+        const posts = document.querySelectorAll(".post");
+        const noneMsg = document.getElementById("related-none-msg");
 
-    // Coordinates for 43 areas in MMU
-    const regions = [
-        {
+        posts.forEach(post => {
+            post.style.display = "block";
+        });
+
+        noneMsg.style.display = "none";
+
+        document.getElementById("back-btn").style.display = "none";
+
+        const url = new URL(window.location.href);
+        url.searchParams.delete("location");
+        window.history.pushState({}, "", url);
+    }
+
+    // =========================
+    // MAP CLICK
+    // =========================
+    map.addEventListener("click", function (event) {
+
+        const rect = map.getBoundingClientRect();
+
+        const scaleX = map.naturalWidth / map.clientWidth;
+        const scaleY = map.naturalHeight / map.clientHeight;
+
+        const x = (event.clientX - rect.left) * scaleX;
+        const y = (event.clientY - rect.top) * scaleY;
+
+        const found = findRegion(x, y);
+
+        if (!found) {
+            showPopup("Invalid Area", "No region found", true, 1500);
+
+            showAllPosts();
+            
+            return;
+        }
+
+        // =========================
+        // ACTION: FILTER + URL
+        // =========================
+        filterPosts(found.code, found.name);
+        document.getElementById("back-btn").style.display = "block";
+        updateURL(found.code);
+    });
+
+    // =========================
+    // FILTER POSTS
+    // =========================
+    function filterPosts(locationCode,locationName = locationCode) {
+
+        isFiltered = true;
+
+        const posts = document.querySelectorAll(".post");
+        const noneMsg = document.getElementById("related-none-msg");
+
+        let visibleCount = 0;
+
+        posts.forEach(post => {
+
+            const postLocation = post.dataset.location || "";
+
+            const match =
+                postLocation.toLowerCase() ===
+                locationCode.toLowerCase();
+
+            post.style.display =
+                match ? "block" : "none";
+
+            if (match) {
+                visibleCount++;
+            }
+        });
+
+        if (visibleCount === 0) {
+            noneMsg.style.display = "block";
+            noneMsg.textContent =
+                `No posts in ${locationName}`;
+        } else {
+            noneMsg.style.display = "none";
+        }
+
+        document.getElementById("back-btn").style.display = "inline-block";
+    }
+
+    // =========================
+    // UPDATE URL (?location=xxx)
+    // =========================
+    function updateURL(code) {
+        const url = new URL(window.location.href);
+        url.searchParams.set("location", code);
+        window.history.pushState({}, "", url);
+    }
+
+    // =========================
+    // POLYGON CHECK
+    // =========================
+    function isPointInsidePolygon(x, y, polygon) {
+
+        let inside = false;
+
+        for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+
+            const xi = polygon[i][0], yi = polygon[i][1];
+            const xj = polygon[j][0], yj = polygon[j][1];
+
+            const intersect =
+                ((yi > y) !== (yj > y)) &&
+                (x < ((xj - xi) * (y - yi)) / (yj - yi + 0.000001) + xi);
+
+            if (intersect) inside = !inside;
+        }
+
+        return inside;
+    }
+
+    // =========================
+    // REGIONS DATA
+    // =========================
+    function getRegions() {
+        return [
+            {
             code: "fci",
             name: "FCI Building",
             type: "rectangle",
@@ -724,236 +1008,28 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             markerX: 726,
             markerY: 2702
         },        
-    ];
+    ]};
 
-    // open map modal when click small map
-    mapSmall.addEventListener("click", function(){
-        modal.style.display = "block";
-    });
-
-    //close map modal when click close button
-    closeBtn.addEventListener("click", function(){
-        modal.style.display = "none";
-        locationLabel.style.display = "none";       // Also close the label
-    });
-
-    /* ===============================================
-                Big Map Choose Area Functions            
-    ===================================================*/
-    mapBig.addEventListener("click", function(event){
-
-        const rect = mapBig.getBoundingClientRect();            // Get bigMap's position inside website
-
-        // natural = original width | client = width inside computer/website
-        const scaleX = mapBig.naturalWidth / mapBig.clientWidth;
-        const scaleY = mapBig.naturalHeight / mapBig.clientHeight;
-
-        // event = mouse click
-        // count the accurate coordinate in the map
-        const x = (event.clientX - rect.left) * scaleX;
-        const y = (event.clientY - rect.top) * scaleY;
-
-        // show inside console the accurate coordinate to add to above                                          CONSOLE
-        console.log("Clicked Position:", x, y);
-
-
-        /* ====================================== 
-                        Marker       
-        ====================================== */
-
-        // Display Marker inside bigMap
-        bigMarker.style.display = "block";
-        bigMarker.style.left = (event.clientX - rect.left) + "px";
-        bigMarker.style.top = (event.clientY - rect.top) + "px";
-
-        // To make marker position in smallMap smaller bcz SmallMap
-        const scaleSmallX = mapSmall.clientWidth / mapBig.clientWidth;
-        const scaleSmallY = mapSmall.clientHeight / mapBig.clientHeight;
-        
-        // Display Marker inside smallMap
-        smallMarker.style.display = "block";
-        smallMarker.style.left = (event.clientX - rect.left) * scaleSmallX + "px";
-        smallMarker.style.top = (event.clientY - rect.top) * scaleSmallY + "px";
-
-        /* =================================================================== 
-                Auto choose Loaction Dropdown after choosing are in Map        
-        ====================================================================== */
-        // location not found
-        let foundLocation = false;
-        
-        for (let region of regions){
-
-            // Region type = RECTANGLE | === nore accurate
-            if (region.type === "rectangle"){
-                if(
-                    // check if selection is in between
-                    x >= region.x1 && 
-                    x <= region.x2 && 
-                    y >= region.y1 && 
-                    y <= region.y2
-                ){
-                    // choose inside dropdown location list
-                    selectLocation(region.code);
-
-                    // show a label above bigMap to show the location area user choose
-                    locationLabel.style.display = "block";
-                    locationLabel.innerText = "Selected Location: " + region.name;
-
-                    // location found then end loop
-                    foundLocation = true;
-                    break;
-                }
-            }
-
-            // Region type = POLYGON
-            if (region.type === "polygon"){
-                
-                if(
-                    // check point user choose is inside region or not
-                    isPointInsidePolygon(
-                        x,
-                        y,
-                        region.points
-                    )
-                ){
-                    // auto choose location inside dropdown list
-                    selectLocation(region.code);
-
-                    // show a label above bigMap to show the lacation area name user choose
-                    locationLabel.style.display = "block";
-                    locationLabel.innerText = "Selected Location: " + region.name;
-                    
-                    // location found then end loop
-                    foundLocation = true;
-                    break;
-                }                
-            }
-
-            // Region type = CIRCLE
-            if (region.type === "circle"){
-
-                const dx = x - region.centerX;
-                const dy = y - region.centerY;
-
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance <= region.radius){
-
-                    selectLocation(region.code);
-
-                    locationLabel.style.display = "block";
-                    locationLabel.innerText = "Selected Location: " + region.name;
-
-                    foundLocation = true;
-                    break;
-                }
-            }
-        }
-
-        // User chosen point is not inside any location region
-        if(!foundLocation){
-            // show pop up
-            showPopup(
-                "Invalid Area",
-                "This area is not assigned to any MMU places. Please choose another area or choose a location inside the dropdown list.",
-                true,   // auto close
-                1500
-            );
-
-           
-            // auto change te dropdown list to default
-            selectLocation("");
-
-            // show a label above bigMap to show none are chosen
-            locationLabel.style.display = "block";
-            locationLabel.innerText = "None Location Chosen. Please choose an area again.";
-        }
-    });
-
-    // auto choose dropdown location
-    function selectLocation(locationCode){
-        
-        // load all dropdown selections
-        for (let option of locationSelect.options){
-            
-            if (option.value === locationCode){
-                option.selected = true;
-                break;
-            }
-        }
-    }
-
-    
-    /* ================================================ 
-        check point is inside region area or not       
-    ================================================= */
-    function isPointInsidePolygon(x,y,polygon){         // x & y = user chosen point | polygon = area all coordinate
-        
-        let inside = false;
-
-        for(let i = 0, j = polygon.length - 1; i < polygon.length; j = i++){
-            // j = last point
-            // loop 2 start, j take previouse i, then i +1
-            let xi = polygon[i][0]; 
-            let yi = polygon[i][1]; 
-
-            let xj = polygon[j][0]; 
-            let yj = polygon[j][1]; 
-            
-            // formula to calculate if user chosen point intersect in a certain area
-            let intersect = 
-                ( 
-                    // check point user choose o the line or not
-                    (yi > y) !== (yj > y) 
-                ) 
-                && 
-                ( 
-                    // check point user took intersect the line or not T
-                    x < ( ((xj - xi) * (y - yi)) / (yj - yi) ) + xi 
-                ); 
-            
-            if (intersect) { 
-                inside = !inside; 
-            }
-        }
-
-        return inside;
-    }
-
-    /* ==================================================================== 
-        Choose Location form dropdown and show a marker in the smallMap        
-    ======================================================================== */
-    locationSelect.addEventListener("change", function(){
-
-        // this = dropdown
-        const selectedCode = this.value;
-
-        // check all code inside regions
-        for (let region of regions){
-
-            if(region.code === selectedCode){
-
-                placeMarkerFromRegion(region);
-                break;
-            }
-        }
-
-    });
-
-    // function to put marker when selected dropdown location
-    function placeMarkerFromRegion(region){
-
-        // take coordinate from data above markerX and marker
-        let centerX = region.markerX;
-        let centerY = region.markerY;
-
-        // change to smallMap coordinate to mark
-        const scaleX = mapSmall.clientWidth / mapBig.naturalWidth;
-        const scaleY = mapSmall.clientHeight / mapBig.naturalHeight;
-
-        smallMarker.style.display = "block";
-        smallMarker.style.left = (centerX * scaleX) + "px";
-        smallMarker.style.top  = (centerY * scaleY) + "px";
-
-    }
 });
+
+window.showAllPosts = function () {
+
+    const posts =
+        document.querySelectorAll(".post");
+
+    const noneMsg =
+        document.getElementById("related-none-msg");
+
+    posts.forEach(post => {
+        post.style.display = "block";
+    });
+
+    noneMsg.style.display = "none";
+
+    document.getElementById("back-btn").style.display = "block";
+
+    const url = new URL(window.location.href);
+    url.searchParams.delete("location");
+
+    window.history.pushState({}, "", url);
+};

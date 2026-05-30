@@ -362,4 +362,17 @@ def lost_posts(request):
         'start_date': request.GET.get('start_date', ''),
         'end_date': request.GET.get('end_date', ''),
     })
-    
+
+@login_required(login_url='beginning')
+@never_cache
+def map_search(request):
+
+    post_box = Post.objects.all().order_by('-id')
+    location = request.GET.get("location")
+    if location:
+        post_box = post_box.filter(post_location__location_code=location)
+
+    return render(request, 'items/mapsearch.html', {
+        'posts': post_box,
+        'locations': MMULocation.objects.all(),
+    })

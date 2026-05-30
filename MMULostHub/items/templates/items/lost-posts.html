@@ -266,7 +266,7 @@
                 data-image="{% if post.post_image %}{{ post.post_image.url }}{% endif %}">
                 <div class = "post-box">
 
-                    <div class = "post">
+                    <div class = "post-view">
                         
                         <!-- ============================== -->
                         <!--          Post Navigation       -->
@@ -393,22 +393,32 @@
             </div>
         </div>
 
+        <!-- ============================== -->
+        <!--     Create Post Button         -->
+        <!-- ============================== -->
         <div class="create_post">
+
+            <!-- Check user got login anot -->
             {% if user.is_authenticated %}
+
                 <button type="button">
                     <a href="{% url 'createPost' %}"> 
                         Create Post 
                     </a>
                 </button>
+
             {% else %}
+
+                <!-- NO Login will show please Login Popup (mainpage.js)-->
                 <button type="button" onclick="pleaseLoginPopup()">
                     Create Post
                 </button>
+
             {% endif %}
         </div>
 
         <!-- ================================================== -->
-        <!--                  Popup Box Modal                   -->
+        <!--             Popup Box Modal                        -->
         <!-- ================================================== -->
         <div id = "popup" class = "popup hidden">
             <div class = "popup-box">
