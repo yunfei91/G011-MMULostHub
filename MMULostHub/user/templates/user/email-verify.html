@@ -10,48 +10,51 @@
     <body>
         <div class="whole-page">
             <header>
-                <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class="mmu-logo">
+                <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
             </header>
 
             <div class="content">
                 <div class="banner">
                     <div class="web-logo">
-                        <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
+                        <img src="{% static 'images/WebLogo-top.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo-top">
+                        <img src="{% static 'images/WebLogo-base.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo-base">
                     </div>
 
-                    <div class="slogan">
-                        <p>
-                            What's lost can be found,<br>
-                        and found can find its way back.
-                        </p>
+                    <div class="box-input">
+                        <div class="auth-panel">
+                            <div class="auth-card">
+                                <div class="auth-header">
+                                    <button class="back-button" onclick="goBack()"><</button>
+                                    <h2>Welcome to MMU Lost Hub</h2>
+                                </div>
 
-                    <button onclick="goBack()">Back</button>
+                                <p id="otpTimer"></p> <!-- Show OTP countdown -->
+                                
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <div class="otp-box" id="otpBox">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                        <input type="text" maxlength="1" class="otp-digit">
+                                    </div>
+                                    
+                                    <input type="hidden" name="otp" id="otpHidden"> <!-- Hidden input to store full OTP from each box at frontend for backend -->
+                                    <button type="submit">Verify</button>
 
-                    </div>
-                        <p id="otpTimer"></p> <!-- Show OTP countdown -->
-                        
-                        <form method="POST">
-                            {% csrf_token %}
-                            <div class="otp-box" id="otpBox">
-                                <input type="text" maxlength="1" class="otp-digit">
-                                <input type="text" maxlength="1" class="otp-digit">
-                                <input type="text" maxlength="1" class="otp-digit">
-                                <input type="text" maxlength="1" class="otp-digit">
-                                <input type="text" maxlength="1" class="otp-digit">
-                                <input type="text" maxlength="1" class="otp-digit">
+                                    {% if error %}
+                                        <p id="errorMsg" style="color:red;">{{ error }}</p>
+                                    {% endif %}
+                                </form>
+                                
+                                <button type="button" id="resendBtn" {% if not can_resend %}disabled{% endif %}>Resend OTP</button>
+
+                                <p id="resendTimer"></p>
                             </div>
-                            
-                            <input type="hidden" name="otp" id="otpHidden"> <!-- Hidden input to store full OTP from each box at frontend for backend -->
-                            <button type="submit">Verify</button>
-
-                            {% if error %}
-                                <p id="errorMsg" style="color:red;">{{ error }}</p>
-                            {% endif %}
-                        </form>
-                        
-                        <button type="button" id="resendBtn" {% if not can_resend %}disabled{% endif %}>Resend OTP</button>
-
-                        <p id="resendTimer"></p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
