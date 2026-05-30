@@ -215,6 +215,8 @@ def reset_pw(request):
 
         request.session.pop('reset_data', None)
 
+        messages.success(request, "Password reset successful!")
+        
         return redirect('user_login')
 
     return render(request, 'user/reset-pw.html')
