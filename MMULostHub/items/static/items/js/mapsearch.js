@@ -205,10 +205,55 @@ document.addEventListener("DOMContentLoaded", function () {
 
         document.getElementById("back-btn").style.display = "none";
 
+        document.getElementById("unknown-btn").style.display = "inline-block";
+
         const url = new URL(window.location.href);
         url.searchParams.delete("location");
         window.history.pushState({}, "", url);
     }
+
+    window.showAllPosts = showAllPosts;
+
+    function showUnknownPosts() {
+
+        const posts = document.querySelectorAll(".post");
+        const noneMsg = document.getElementById("related-none-msg");
+
+        let visibleCount = 0;
+
+        posts.forEach(post => {
+
+            const location =
+                post.dataset.location || "";
+
+            if (location.trim() === "") {
+
+                post.style.display = "block";
+                visibleCount++;
+
+            } else {
+
+                post.style.display = "none";
+            }
+        });
+
+        if (visibleCount === 0) {
+
+            noneMsg.style.display = "block";
+            noneMsg.textContent =
+                "No posts with unknown location";
+
+        } else {
+
+            noneMsg.style.display = "none";
+        }
+
+        document.getElementById("back-btn").style.display = "inline-block";
+
+        document.getElementById("unknown-btn").style.display = "none";
+    }
+
+    window.showUnknownPosts = showUnknownPosts;
 
     // =========================
     // MAP CLICK
@@ -278,6 +323,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         document.getElementById("back-btn").style.display = "inline-block";
+
+        document.getElementById("unknown-btn").style.display = "inline-block";
     }
 
     // =========================
@@ -1011,25 +1058,3 @@ document.addEventListener("DOMContentLoaded", function () {
     ]};
 
 });
-
-window.showAllPosts = function () {
-
-    const posts =
-        document.querySelectorAll(".post");
-
-    const noneMsg =
-        document.getElementById("related-none-msg");
-
-    posts.forEach(post => {
-        post.style.display = "block";
-    });
-
-    noneMsg.style.display = "none";
-
-    document.getElementById("back-btn").style.display = "block";
-
-    const url = new URL(window.location.href);
-    url.searchParams.delete("location");
-
-    window.history.pushState({}, "", url);
-};
