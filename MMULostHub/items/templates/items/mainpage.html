@@ -31,10 +31,6 @@
         <!-- Expire page immediately -->
         <meta http-equiv="Expires" content="0">
 
-        <script src="{% static 'items/js/mainpage.js' %}" defer></script>
-        <!-- yt added for view full post popup version-->
-        <script src="{% static 'items/js/popup.js' %}"></script>
-
     </head>
 
     <body>
@@ -121,22 +117,10 @@
                 <!-- ================================================== -->
                 <div class="search-container">
 
-                    <form method="GET">
+                    <!-- Keyword Search -->
+                    <div class="keywordsearch">
+                        <form method="GET" id="searchForm">
 
-                        <!-- Click Button Display Filter Panel (mainpage.js) -->
-                        <div class="search-bar">
-                            <button
-                                type="button"
-                                onclick="toggleFilter()"
-                            >
-                                Search🔍
-                            </button>
-                        </div>
-
-                        <!-- Filter Pannel -->
-                        <div class="filter-panel hidden" id="filterPanel">
-                            
-                            <!-- Search By Keyword -->
                             <input
                                 type="text"
                                 name="q"
@@ -144,72 +128,95 @@
                                 value="{{ query }}"
                             >
 
-                            <!-- Submit Buton -->
-                            <button type="submit">
-                                Apply Filters
-                            </button>
+                            <!-- ✖ clear button -->
+                            {% if query %}
+                            <span class="clear-search" onclick="clearSearch()">✖</span>
+                            {% endif %}
+                        </form>
+                    </div>
 
-                            <!--================================-->
-                            <!-- Search By Item Category Filter -->
-                            <h3>Item Category</h3>
-                            <div class="category-options">
+                    <div class = "filtersearch">            
+
+                        <!-- Filter Form -->
+                        <form method="GET" id="filterForm">
+
+                            <!-- Keep Search Keyword -->
+                            <input type="hidden" name="q" value="{{ query }}">
+
+                            <!-- Keep selected filters -->
+                            {% for cat in selected_category %}
+                                <input type="hidden" name="category" value="{{ cat }}">
+                            {% endfor %}
+
+                            <input type="hidden" name="start_date" value="{{ start_date }}">
+                            <input type="hidden" name="end_date" value="{{ end_date }}">
+
+                            <!-- Category -->
+                            <select id="categorySelect" onchange="addCategory(this)">
+                                <option value="">Category</option>
 
                                 {% for value, label in item_categories %}
-
-                                    <button
-                                        type="button"
-                                        class="category-btn"
-                                        onclick="toggleCategory('{{ value }}', '{{ label }}')"
-                                    >
+                                    <option value="{{ value }}">
                                         {{ label }}
-                                    </button>
-
+                                    </option>
                                 {% endfor %}
+                            </select>
 
+                            <div id="categoryChips">
+                                {% for value in selected_category %}
+                                    <span class="chip">
+                                        {{ value }}
+
+                                        <span onclick="removeFilter('category', '{{ value }}')">✖</span>
+                                    </span>
+                                {% endfor %}
                             </div>
-                            
-                            <!-- Display Selected Categories -->
-                            <div id="selectedCategories"></div>
 
-                            <!--================================-->
-                            <!--    Search By Location Filter   -->
-                            <h3>Location</h3>
-                            <select onchange="toggleLocation(this)">
-
-                                <option value="">
-                                    All Locations
-                                </option>
+                            <!-- Location -->
+                            <select name="location" onchange="this.form.submit()">
+                                <option value="">Location</option>
 
                                 {% for location in locations %}
-                                    <option
-                                        value="{{ location.id }}">
+                                    <option value="{{ location.id }}"
+                                        {% if location.id|stringformat:'s' in selected_location %}selected{% endif %}>
                                         {{ location.location_name }}
                                     </option>
                                 {% endfor %}
-
                             </select>
-                            
-                            <!-- Display Selected Locations -->
-                            <div id="selectedLocations"></div>
 
-                            <!-- ================================ -->
-                            <!--    Search By Date Range Filter   -->
-                            <h3>Start Date</h3>
-                            <input
-                                type="date"
+                            {% if selected_location %}
+                                <span class="clear-btn" onclick="clearSingleFilter('location')">✖</span>
+                            {% endif %}
+
+                            <lable>Start Date:</lable>
+                            <input type="date"
                                 name="start_date"
                                 value="{{ start_date }}"
-                            >
+                                onchange="this.form.submit()">
 
-                            <h3>End Date</h3>
-                            <input
-                                type="date"
+                            {% if start_date %}
+                                <span class="clear-btn" onclick="clearSingleFilter('start_date')">✖</span>
+                            {% endif %}
+
+                            <lable>End Date:</lable>
+                            <input type="date"
                                 name="end_date"
                                 value="{{ end_date }}"
-                            >
+                                onchange="this.form.submit()">
 
+                            {% if end_date %}
+                                <span class="clear-btn" onclick="clearSingleFilter('end_date')">✖</span>
+                            {% endif %}
+
+                        </form>
+
+                        <div class = "map-search">
+                            <a href="{% url 'mapSearch' %}">
+                                Map
+                            </a>
                         </div>
-                    </form>
+                    </div>
+
                 </div>
 
                 {% if query %}
@@ -234,7 +241,8 @@
                         data-type="{{ post.post_type }}"
                         data-date="{{ post.post_datetime }}"
                         data-category="{{ post.get_post_itemcategory_display }}"
-                        data-location="{{ post.post_location.location_name }}"
+                        data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
+                        data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
                         data-description="{{ post.post_description }}"
                         data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
                         
@@ -243,7 +251,7 @@
                             <!-- ============================== -->
                             <!--     YF - Post Small View       -->
                             <!-- ============================== -->
-                            <div class = "post">
+                            <div class = "post-view">
 
                                 <h4> {{ post.post_type|upper }} POST </h4>
                                 
@@ -373,64 +381,109 @@
                     </div>
                 </div>
 
-                <!-- ============================== -->
-                <!--     Create Post Button         -->
-                <!-- ============================== -->
-                <div class="create_post">
+                <!-- YT - Post View Popup Modal -->
+                <div id="postModal" class="modal">
 
-                    <!-- Check user got login anot -->
-                    {% if user.is_authenticated %}
+                    <div class="modal-content">
 
-                        <button type="button">
-                            <a href="{% url 'createPost' %}"> 
-                                Create Post 
-                            </a>
-                        </button>
+                        <span class="close" onclick="closePost()">&times;</span> <!-- Symbol display cross -->
 
-                    {% else %}
+                        <div class="modal-body">
 
-                        <!-- NO Login will show please Login Popup (mainpage.js)-->
-                        <button type="button" onclick="pleaseLoginPopup()">
-                            Create Post
-                        </button>
+                            <div class="modal-left">
+                                <p>
+                                    <a id="m_user_link" href="">
+                                        <span id="m_user"></span>
+                                    </a>
+                                </p> <!-- JS inserts username -->
 
-                    {% endif %}
+                                <img id="m_image" style="max-width:100%; display:none;">
+                            </div>
 
-                    <!-- ================================================== -->
-                    <!--             Popup Box Modal                        -->
-                    <!-- ================================================== -->
-                    <div id = "popup" class = "popup hidden">
-                        <div class = "popup-box">
-                            <h3 id = "popup-title"></h3>
-                            <p id = "popup-message"></p>
-                            <button id = "popup-confirm"> OK </button>
-                            <button id = "popup-cancel"> Cancel </button>
+                            <div class="modal-right">
+                                <h2 id="m_type"></h2> <!-- JS inserts post type -->
+
+                                <p><b>Date:</b> <span id="m_date"></span></p>
+
+                                <p><b>Category:</b> <span id="m_category"></span></p>
+
+                                <p><b>Location:</b> <span id="m_location"></span></p>
+
+                                <p><b>Description:</b></p>
+                                <p id="m_description"></p>
+
+                                <div class="chatBtn">
+                                    <button type="button">
+                                        <a href="#">Chat</a>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- yt added -->
-                <!-- Confirm Logout Popup -->
-                <div id="confirmPopup" class="popup-modal">
-                    <div class="popup-box">
-                        <p>Are you sure you want to logout?</p>
-
-                        <div class="popup-btns">
-                            <button onclick="confirmLogout()">OK</button>
-                            <button onclick="cancelLogout()">Cancel</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Success Popup -->
-                <div id="successPopup" class="popup"></div>
             </div>
-            
+
+            <!-- ============================== -->
+            <!--     Create Post Button         -->
+            <!-- ============================== -->
+            <div class="create_post">
+
+                <!-- Check user got login anot -->
+                {% if user.is_authenticated %}
+
+                    <button type="button">
+                        <a href="{% url 'createPost' %}"> 
+                            Create Post 
+                        </a>
+                    </button>
+
+                {% else %}
+
+                    <!-- NO Login will show please Login Popup (mainpage.js)-->
+                    <button type="button" onclick="pleaseLoginPopup()">
+                        Create Post
+                    </button>
+
+                {% endif %}
+            </div>
+
+            <!-- ================================================== -->
+            <!--             Popup Box Modal                        -->
+            <!-- ================================================== -->
+            <div id = "popup" class = "popup hidden">
+                <div class = "popup-box">
+                    <h3 id = "popup-title"></h3>
+                    <p id = "popup-message"></p>
+                    <button id = "popup-confirm"> OK </button>
+                    <button id = "popup-cancel"> Cancel </button>
+                </div>
+            </div>
+
+            <!-- yt added -->
+            <!-- Confirm Logout Popup -->
+            <div id="confirmPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Are you sure you want to logout?</p>
+
+                    <div class="popup-btns">
+                        <button onclick="confirmLogout()">OK</button>
+                        <button onclick="cancelLogout()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Popup -->
+            <div id="successPopup" class="popup"></div>
+
+
             <footer>
-                <p>© 2026 MMU Lost Hub<br>
-                <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
+                <p>
+                    © 2026 MMU Lost Hub
+                    <br>
+                    Designed by: Kho Yee Theng / Tan Yun Fee / Lim Tze Ying
+                </p>
             </footer>
         </div>
-            
+        
     </body>
 </html>

@@ -107,7 +107,7 @@ function openPost(el) { // el=this connection
 
     document.getElementById("m_date").innerText = el.dataset.date;
     document.getElementById("m_category").innerText = el.dataset.category;
-    document.getElementById("m_location").innerText = el.dataset.location;
+    document.getElementById("m_location").innerText = el.dataset.locationName || "Unknown Location";
     document.getElementById("m_description").innerText = el.dataset.description;
 
     images = el.dataset.images

@@ -114,13 +114,21 @@
     right:10px;
 }
 
-.crop-again-btn{
+.cover-button{
     position:absolute;
     bottom:50px;
     right:80px;
 }
 
-.cover-button{
+.cover-button.disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.crop-again-btn{
     position:absolute;
     bottom:50px;
     right:180px;

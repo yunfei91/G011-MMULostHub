@@ -112,10 +112,122 @@
                     </script>
                 {% endif %}
 
-                <div class="search_bar">                                        <!-- after need to be changed when starting to do search feature -->
-                    <input type="text" placeholder="Search for items...">
-                    <button type="submit"> Search </button>
+                <!-- ================================================== -->
+                <!--                    Search Feature                  -->
+                <!-- ================================================== -->
+                <div class="search-container">
+
+                    <!-- Keyword Search -->
+                    <div class="keywordsearch">
+                        <form method="GET" id="searchForm">
+
+                            <input
+                                type="text"
+                                name="q"
+                                placeholder="Search..."
+                                value="{{ query }}"
+                            >
+
+                            <!-- ✖ clear button -->
+                            {% if query %}
+                            <span class="clear-search" onclick="clearSearch()">✖</span>
+                            {% endif %}
+                        </form>
+                    </div>
+
+                    <div class = "filtersearch">            
+
+                        <!-- Filter Form -->
+                        <form method="GET" id="filterForm">
+
+                            <!-- Keep Search Keyword -->
+                            <input type="hidden" name="q" value="{{ query }}">
+
+                            <!-- Keep selected filters -->
+                            {% for cat in selected_category %}
+                                <input type="hidden" name="category" value="{{ cat }}">
+                            {% endfor %}
+
+                            <input type="hidden" name="start_date" value="{{ start_date }}">
+                            <input type="hidden" name="end_date" value="{{ end_date }}">
+
+                            <!-- Category -->
+                            <select id="categorySelect" onchange="addCategory(this)">
+                                <option value="">Category</option>
+
+                                {% for value, label in item_categories %}
+                                    <option value="{{ value }}">
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+
+                            <div id="categoryChips">
+
+                                {% for value in selected_category %}
+
+                                    <span class="chip">
+                                        {{ value }}
+
+                                        <span onclick="removeFilter('category', '{{ value }}')">✖</span>
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
+                            <!-- Location -->
+                            <select name="location" onchange="this.form.submit()">
+                                <option value="">Location</option>
+
+                                {% for location in locations %}
+                                    <option value="{{ location.id }}"
+                                        {% if location.id|stringformat:'s' in selected_location %}selected{% endif %}>
+                                        {{ location.location_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+
+                            {% if selected_location %}
+                                <span class="clear-btn" onclick="clearSingleFilter('location')">✖</span>
+                            {% endif %}
+
+                            <lable>Start Date:</lable>
+                            <input type="date"
+                                name="start_date"
+                                value="{{ start_date }}"
+                                onchange="this.form.submit()">
+
+                            {% if start_date %}
+                                <span class="clear-btn" onclick="clearSingleFilter('start_date')">✖</span>
+                            {% endif %}
+
+                            <lable>End Date:</lable>
+                            <input type="date"
+                                name="end_date"
+                                value="{{ end_date }}"
+                                onchange="this.form.submit()">
+
+                            {% if end_date %}
+                                <span class="clear-btn" onclick="clearSingleFilter('end_date')">✖</span>
+                            {% endif %}
+
+                        </form>
+
+                        <div class = "map-search">
+                            <a href="{% url 'mapSearch' %}">
+                                Map
+                            </a>
+                        </div>
+                    </div>
+
                 </div>
+
+                {% if query %}
+                    <p>
+                        Search result for "{{ query }}"
+                    </p>
+                {% endif %}
 
                 <h2>Lost Posts</h2>
                 
@@ -132,12 +244,13 @@
                         data-type="{{ post.post_type }}"
                         data-date="{{ post.post_datetime }}"
                         data-category="{{ post.get_post_itemcategory_display }}"
-                        data-location="{{ post.post_location.location_name }}"
+                        data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
+                        data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
                         data-description="{{ post.post_description }}"
                         data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
                         <div class = "post-box">
 
-                            <div class = "post">
+                            <div class = "post-view">
                                 
                                 <!-- ============================== -->
                                 <!--          Post Navigation       -->
@@ -269,50 +382,59 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="create_post">
-                    {% if user.is_authenticated %}
-                        <button type="button">
-                            <a href="{% url 'createPost' %}"> 
-                                Create Post 
-                            </a>
-                        </button>
-                    {% else %}
-                        <button type="button" onclick="pleaseLoginPopup()">
-                            Create Post
-                        </button>
-                    {% endif %}
+            <!-- ============================== -->
+            <!--     Create Post Button         -->
+            <!-- ============================== -->
+            <div class="create_post">
 
-                    <!-- ================================================== -->
-                    <!--                  Popup Box Modal                   -->
-                    <!-- ================================================== -->
-                    <div id = "popup" class = "popup hidden">
-                        <div class = "popup-box">
-                            <h3 id = "popup-title"></h3>
-                            <p id = "popup-message"></p>
-                            <button id = "popup-confirm"> OK </button>
-                            <button id = "popup-cancel"> Cancel </button>
-                        </div>
-                    </div>
+                <!-- Check user got login anot -->
+                {% if user.is_authenticated %}
+
+                    <button type="button">
+                        <a href="{% url 'createPost' %}"> 
+                            Create Post 
+                        </a>
+                    </button>
+
+                {% else %}
+
+                    <!-- NO Login will show please Login Popup (mainpage.js)-->
+                    <button type="button" onclick="pleaseLoginPopup()">
+                        Create Post
+                    </button>
+
+                {% endif %}
+            </div>
+
+            <!-- ================================================== -->
+            <!--                  Popup Box Modal                   -->
+            <!-- ================================================== -->
+            <div id = "popup" class = "popup hidden">
+                <div class = "popup-box">
+                    <h3 id = "popup-title"></h3>
+                    <p id = "popup-message"></p>
+                    <button id = "popup-confirm"> OK </button>
+                    <button id = "popup-cancel"> Cancel </button>
                 </div>
             </div>
 
             <!-- yt added -->
-                <!-- Confirm Logout Popup -->
-                <div id="confirmPopup" class="popup-modal">
-                    <div class="popup-box">
-                        <p>Are you sure you want to logout?</p>
+            <!-- Confirm Logout Popup -->
+            <div id="confirmPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Are you sure you want to logout?</p>
 
-                        <div class="popup-btns">
-                            <button onclick="confirmLogout()">OK</button>
-                            <button onclick="cancelLogout()">Cancel</button>
-                        </div>
+                    <div class="popup-btns">
+                        <button onclick="confirmLogout()">OK</button>
+                        <button onclick="cancelLogout()">Cancel</button>
                     </div>
                 </div>
-
-                <!-- Success Popup -->
-                <div id="successPopup" class="popup"></div>
             </div>
+
+            <!-- Success Popup -->
+            <div id="successPopup" class="popup"></div>
             
             <footer>
                 <p>© 2026 MMU Lost Hub<br>

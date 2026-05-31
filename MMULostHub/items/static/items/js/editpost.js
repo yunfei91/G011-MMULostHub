@@ -47,19 +47,10 @@ function confirmEdit(event) {
     /* ====================================== 
                     Check Image        
      ====================================== */
-    const imageInput = form.querySelector("[name='userposts_images']");         // user input new image to edit
-    const image = imageInput.files[0];                                          // 
+    const hasImages = window.croppedImages && window.croppedImages.length > 0;
 
-    const existingImage = document.getElementById("image_preview").src;         // old image
-
-    const hasExistingImage =                                                    // check old image have or not only can use
-        existingImage &&
-        !existingImage.includes("undefined") &&
-        !existingImage.includes("null") &&
-        existingImage !== "";
-
-    if (!image && !hasExistingImage) {
-        showPopup("Error", "Please upload an image.");                     // if no new img and no old image 
+    if (!hasImages) {
+        showPopup("Error", "Please upload an image.");
         return;
     }
 
@@ -67,6 +58,19 @@ function confirmEdit(event) {
     /* ====================================== 
             Confirmation to edit post        
      ====================================== */
+    const imageData = window.croppedImages.map((img, index) => ({
+        id: img.id,
+        image: img.image,
+        type: img.type,
+        order: index
+    }));
+
+    const coverIndex = 0;
+    document.getElementById("cover_index").value = coverIndex;
+
+    document.getElementById("cropped_images").value =
+        JSON.stringify(imageData);
+
     showConfirmPopup("Confirm", "Are you sure you want to edit this post?", () => {
         form.requestSubmit();
     });

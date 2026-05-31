@@ -7,6 +7,7 @@ from django.utils import timezone
 import json
 import base64
 from django.core.files.base import ContentFile
+import uuid
 
 # yt added
 # Prevent browser cache, user cannot press back to access previous page
@@ -25,76 +26,17 @@ def mainPage(request):
     query = request.GET.get('q', '').strip()
 
     # search by filter many | getlist = can choose many to filter
-    selected_category = request.GET.getlist('category', '')
+    selected_category = request.GET.getlist('category')
     selected_locations = request.GET.getlist('location')
+    selected_category = [c for c in selected_category if c]
 
     # search by filter date range
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
 
     # display all post in main page and order by datetime (latest post will be on top)
-    post_box = Post.objects.all().order_by('-id')       
-    
-    #=================================
-    #        Search By Keyword       #
-    if query:
-
-        # Search category can no full words also can search
-        matching_categories = [
-            value
-            for value, label in CATEGORY_CHOICES
-            if query.lower() in label.lower()
-        ]
-
-        post_box = post_box.filter(
-            Q(post_location__location_name__icontains=query) |          # icontains = ignore case sencitive (HI\hi\Hi..)
-            Q(post_description__icontains=query) |                       # | = or
-            Q(post_itemcategory__in=matching_categories)
-        ).distinct()
-
-    #=================================
-    #        Category Filter         #
-    if selected_category:
-        post_box = post_box.filter(
-
-            # show post related to category choosed
-            post_itemcategory__in = selected_category
-
-        )
-
-    #=================================
-    #        Location Filter         #
-    
-    # remove empty string (none value)
-    selected_locations = [
-        loc for loc in selected_locations if loc
-    ]
-
-    if selected_locations:
-        post_box = post_box.filter(
-
-            # show post related to location choosed
-            post_location_id__in=selected_locations
-
-        )
-
-    #=================================
-    #        Date Range Filter       #
-    if start_date:
-        post_box = post_box.filter(
-
-            # show post after/when start date choosed
-            post_datetime__date__gte=start_date             # gte = greater than or equal
-        
-        )
-
-    if end_date:
-        post_box = post_box.filter(
-
-            # show post before/when end date choosed
-            post_datetime__date__lte=end_date                # lte = less than or equal
-        
-        )
+    post_box = Post.objects.all().order_by('-id')
+    post_box = apply_filters(request, post_box)    
     
     return render(request, 'items/mainpage.html', {
         'posts': post_box,
@@ -107,6 +49,62 @@ def mainPage(request):
         'end_date': end_date,
     })
 
+def apply_filters(request, post_box):
+
+    # search by keyword (q= query) if keyword not match = 'empty'
+    query = request.GET.get('q', '').strip()
+
+    # search by filter many | getlist = can choose many to filter
+    selected_category = request.GET.getlist('category')
+    selected_locations = request.GET.getlist('location')
+
+    # search by filter date range
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+
+    selected_category = [c for c in selected_category if c]
+    selected_locations = [l for l in selected_locations if l]
+
+    # keyword
+    if query:
+        matching_categories = [
+            value for value, label in CATEGORY_CHOICES
+            if query.lower() in label.lower()
+        ]
+
+        post_box = post_box.filter(
+            Q(post_location__location_name__icontains=query) |
+            Q(post_description__icontains=query) |
+            Q(post_itemcategory__in=matching_categories)
+        ).distinct()
+
+    # category
+    if selected_category:
+        post_box = post_box.filter(
+            post_itemcategory__in=selected_category
+        )
+
+    # location
+    if selected_locations:
+        post_box = post_box.filter(
+            Q(post_location_id__in=selected_locations) | Q(post_location__isnull=True)
+        )
+
+    # start date
+    if start_date:
+        post_box = post_box.filter(
+            post_datetime__date__gte=start_date
+        )
+
+    # end date
+    if end_date:
+        post_box = post_box.filter(
+            post_datetime__date__lte=end_date
+        )
+
+    print("RESULT COUNT:", post_box.count())
+
+    return post_box
 
 # ======================================================
 #                 CREATE POST PAGE
@@ -201,11 +199,61 @@ def editPost(request,post_id):
     if request.method == "POST":
         try:
 
-            # check service.py to update data
+            # =====================================
+            #     Get cropped image from JS
+            # =====================================
+
+            cropped = request.POST.get("cropped_images")
+            
+            existing_ids = []
+            images_order = []
+
+            if cropped:
+                images_data = json.loads(cropped)
+
+                for img in images_data:
+
+                    # keep existing image
+                    if img["type"] == "existing":
+                        existing_ids.append(img["id"])
+
+                        images_order.append({
+                        "type": "existing",
+                        "id": img["id"],
+                        "order": img["order"]
+                    })
+
+                    # new cropped image
+                    elif img["type"] == "new":
+
+                        image_data = img["image"]
+
+                        if ';base64,' in image_data:
+
+                            format, imgstr = image_data.split(';base64,')
+
+                            ext = format.split('/')[-1]
+
+                            image_file = ContentFile(
+                                base64.b64decode(imgstr),
+                                name=f"{uuid.uuid4()}.{ext}"
+                            )
+
+                            images_order.append({
+                                "type": "new",
+                                "file": image_file,
+                                "order": img["order"]
+                            })
+
+            # =====================================
+            #         Update post
+            # =====================================
+
             edit_post(post,{
                 'post_type': request.POST.get('post_type'),
                 'post_datetime': request.POST.get('post_datetime'),
-                'images': request.FILES.getlist('userposts_images'),
+                'images_order': images_order,
+                'existing_ids': existing_ids,
                 'post_itemcategory': request.POST.get('post_itemcategory'),
                 'post_location': request.POST.get('post_location'),
                 'post_description': request.POST.get('post_description'),
@@ -233,6 +281,13 @@ def editPost(request,post_id):
         'post_data': {},
         'item_categories': CATEGORY_CHOICES,
         'locations': MMULocation.objects.all(),
+        'existing_images': [
+            {
+                'id': img.id,
+                'url': img.image.url
+            }
+            for img in post.images.all().order_by('order')
+        ]
     })
 
 
@@ -266,19 +321,58 @@ def deletePost(request, post_id):
 # yt added for lost and found posts page
 @login_required(login_url='beginning')
 @never_cache
-def lost_posts(request):
-    lost_posts = Post.objects.filter(post_type='lost').order_by('-id')
+def found_posts(request):
 
-    return render(request, 'items/lost-posts.html', {
-        'posts': lost_posts
+    post_box = Post.objects.filter(post_type='found').order_by('-id')
+
+    # ydf add to search 
+    post_box = apply_filters(request, post_box)
+
+    return render(request, 'items/found-posts.html', {
+        'posts': post_box,
+
+        #yf add to search
+        'item_categories': CATEGORY_CHOICES,
+        'locations': MMULocation.objects.all(),
+        'query': request.GET.get('q', ''),
+        'selected_category': request.GET.getlist('category'),
+        'selected_location': request.GET.getlist('location'),
+        'start_date': request.GET.get('start_date', ''),
+        'end_date': request.GET.get('end_date', ''),
     })
 
 @login_required(login_url='beginning')
 @never_cache
-def found_posts(request):
-    found_posts = Post.objects.filter(post_type='found').order_by('-id')
+def lost_posts(request):
 
-    return render(request, 'items/found-posts.html', {
-        'posts': found_posts
+    post_box = Post.objects.filter(post_type='lost').order_by('-id')
+
+    #yf add to search
+    post_box = apply_filters(request, post_box)
+
+    return render(request, 'items/lost-posts.html', {
+        'posts': post_box,
+
+        # yf add to sesrch
+        'item_categories': CATEGORY_CHOICES,
+        'locations': MMULocation.objects.all(),
+        'query': request.GET.get('q', ''),
+        'selected_category': request.GET.getlist('category'),
+        'selected_location': request.GET.getlist('location'),
+        'start_date': request.GET.get('start_date', ''),
+        'end_date': request.GET.get('end_date', ''),
     })
-    
+
+@login_required(login_url='beginning')
+@never_cache
+def map_search(request):
+
+    post_box = Post.objects.all().order_by('-id')
+    location = request.GET.get("location")
+    if location:
+        post_box = post_box.filter(post_location__location_code=location)
+
+    return render(request, 'items/mapsearch.html', {
+        'posts': post_box,
+        'locations': MMULocation.objects.all(),
+    })

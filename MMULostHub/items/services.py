@@ -98,11 +98,12 @@ def create_post (post_data, user):
 
     saved_images = []
 
-    for img in images:
+    for index, img in enumerate(images):
 
         post_image = PostImage.objects.create(
             post = new_post,
-            image = img
+            image = img,
+            order=index
         )
 
         saved_images.append(post_image)
@@ -179,17 +180,53 @@ def edit_post(post, data):
 
     post.save()
 
-    if images:
+    images_order = data.get('images_order', [])
+    existing_ids = data.get('existing_ids', [])
 
-        # delete old images
-        post.images.all().delete()
+    # delete removed old images
+    post.images.exclude(id__in=existing_ids).delete()
 
-        # save new images
-        for img in images:
-            PostImage.objects.create(
+    final_images = []
+
+    for item in images_order:
+
+        # existing image
+        if item["type"] == "existing":
+
+            img = post.images.filter(id=item["id"]).first()
+            if img:
+                img.order = item["order"]
+                img.save()
+                final_images.append(img)
+
+        # new uploaded image
+        elif item["type"] == "new":
+
+            post_image = PostImage.objects.create(
                 post=post,
-                image=img
+                image=item["file"],
+                order=item["order"]
             )
-    
+
+            final_images.append(post_image)
+
+    # sort by frontend order
+    final_images.sort(key=lambda x: x.order)
+
+    # set cover image
+    if final_images:
+
+        post.cover_image = final_images[0]
+
+    else:
+
+        post.cover_image = None
+
+    if post.cover_image and not post.images.filter(id=post.cover_image.id).exists():
+        post.cover_image = None
+
+    post.save()
+
     return post
     
+ 

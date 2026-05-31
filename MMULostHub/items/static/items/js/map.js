@@ -153,8 +153,8 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             name: "Misri Plaza",
             type: "circle",
 
-            centerX: 956,
-            centerY: 1461,
+            centerX: 958,
+            centerY: 1465,
             radius: 43,
 
             markerX: 956,
@@ -191,8 +191,8 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             name: "MMU Chancellery",
             type: "rectangle",
 
-            x1:922, y1:103,
-            x2:1061, y2:1131,
+            x1:918, y1:993,
+            x2:1067, y2:1134,
 
             markerX: 990,
             markerY: 1079
@@ -577,26 +577,26 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
             type: "polygon",
 
             points: [
-                [1697,2407],
-                [1834,2487],
-                [1823,2617],
-                [1688,2606],               
+                [1699,2470],
+                [1836,2490],
+                [1827,2616],
+                [1687,2603],               
             ],
 
             markerX: 1777,
             markerY: 2542
         },
 
-	{
+	    {
             code: "badminton",
             name: "Badminton Court",
             type: "polygon",
 
             points: [
-                [1508,2465],
-                [1697,2407],
-                [1688,2606],
-                [1562,2604],               
+                [1584,2463],
+                [1699,2470],
+                [1687,2603],
+                [1570,2594],               
             ],
 
             markerX: 1628,

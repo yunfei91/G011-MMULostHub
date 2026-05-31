@@ -29,215 +29,52 @@ function confirmDelete(event, form) {
     );
 }
 
-/* ====================================== 
-            FILTER PANEL       
-   ======================================= */
-// toggle = show/hide filter panel
-// run everytime click filter button
-function toggleFilter() {
-
-    const panel = document.getElementById("filterPanel");
-
-    // hide panel from setting css(class list)
-    panel.classList.toggle("hidden");
+function clearSearch() {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("q");
+    window.location.href = url.toString();
 }
 
-/* ====================================== 
-        CATEGORY FILTER       
-   ======================================= */
+function clearSingleFilter(key) {
+    const url = new URL(window.location.href);
 
-// set selection as empty
-let selectedCategories = [];
+    url.searchParams.delete(key);
 
-// =============================
-//   SELECT/UNSELECT CATEGORY 
-function toggleCategory(value, label){
+    window.location.href = url.toString();
+}
 
-    // check user selected category exist
-    const exists = selectedCategories.some(
-        item => item.value === value
-    );
+function addCategory(select) {
+    const value = select.value;
+    if (!value) return;
 
-    // exist then press again will remove selection
-    if(exists){
+    const url = new URL(window.location.href);
 
-        selectedCategories =
-            selectedCategories.filter(
-                item => item.value !== value
-            );
+    let categories = url.searchParams.getAll("category");
 
-    //not exist then add selection 
-    }else {
-
-        // push = add
-        selectedCategories.push({
-            value: value,
-            label: label
-        });
+    // avoid duplicate
+    if (!categories.includes(value)) {
+        categories.push(value);
     }
 
-    // run render function below
-    renderCategories();
-}
-//============================================
-// SHOW ALL SELECTED CATEGORY IN FILTER PANEL
-function renderCategories(){
+    url.searchParams.delete("category");
 
-    const container =
-        document.getElementById("selectedCategories");
-
-    // clear old data before render new 
-    container.innerHTML = "";
-
-    // for each = loop all selected category and display in filter panel
-    selectedCategories.forEach(category => {
-
-        // add new html
-        container.innerHTML += `
-            <div class="chip">
-
-                ${category.label}
-
-                <span onclick="removeCategory(event, '${category.value}')">
-                    ✕
-                </span>
-
-                <input
-                    type="hidden"
-                    name="category"
-                    value="${category.value}"
-                >
-
-            </div>
-        `; 
-        // final diplay every selected categoy in filter panel = [ category ✕ ]
+    categories.forEach(c => {
+        url.searchParams.append("category", c);
     });
+
+    window.location.href = url.toString();
 }
 
-// =============================
-//    REMOVE SELECTED CATEGORY
-function removeCategory(event, value){
+function removeFilter(key, value) {
+    const url = new URL(window.location.href);
 
-    // only run click on ✕ to remove category
-    event.stopPropagation();
+    let values = url.searchParams.getAll(key);
 
-    // remove selected category
-    selectedCategories =
-        selectedCategories.filter(
-            item => item.value !== value
-        );
+    values = values.filter(v => v !== value);
 
-    // run render function to update display
-    renderCategories();
+    url.searchParams.delete(key);
+
+    values.forEach(v => url.searchParams.append(key, v));
+
+    window.location.href = url.toString();
 }
-
-
-/* ====================================== 
-            LOCATION FILTER     
-   ======================================= */
-
-// let selected location is empty
-let selectedLocations = [];
-
-// =============================
-//   SELECT/UNSELECT LOCATION
-function toggleLocation(selectElement){
-
-    const value = selectElement.value;
-
-    // dropdown list
-    const label =
-        selectElement.options[
-            selectElement.selectedIndex
-        ].text;
-
-    // if value is empty stop function
-    if(value === ""){
-        return;
-    }
-
-    // check user selected location exist
-    const exists = selectedLocations.some(
-        item => item.value === value
-    );
-
-    // exist then press again will remove selection
-    if(!exists){
-
-        // push = add
-        selectedLocations.push({
-            value: value,
-            label: label
-        });
-
-        // run render function below
-        renderLocations();
-    }
-
-    // let dropdown go back default to display "Select Location"
-    selectElement.value = "";
-}
-
-//============================================
-// SHOW ALL SELECTED LOCATION IN FILTER PANEL
-function renderLocations(){
-
-    const container =
-        document.getElementById("selectedLocations");
-
-    // clear old data before render new
-    container.innerHTML = "";
-
-    // for each = loop all selected location and display in filter panel
-    selectedLocations.forEach(location => {
-
-        // add new html
-        container.innerHTML += `
-            <div class="chip">
-
-                ${location.label}
-
-                <span onclick="removeLocation(event, '${location.value}')">
-                    ✕
-                </span>
-
-                <input
-                    type="hidden"
-                    name="location"
-                    value="${location.value}"
-                >
-
-            </div>
-        `;
-    }); // final diplay every selected location in filter panel = [ location ✕ ]
-}
-
-// =============================
-//    REMOVE SELECTED LOCATION
-function removeLocation(event, value){
-
-    // only run click on ✕ to remove location
-    event.stopPropagation();
-
-    // remove selected location
-    selectedLocations =
-        selectedLocations.filter(
-            item => item.value !== value
-        );
-
-    // run render function to update display
-    renderLocations();
-}
-
-/* =============================================== 
-        CLICK OUTSIDE AREA CLOSE FILTER PANEL       
-   =============================================== */
-document.addEventListener("click", function(event){
-
-    const panel = document.getElementById("filterPanel");
-    const container = document.querySelector(".search-container");
-
-    if(!container.contains(event.target)){
-        panel.classList.add("hidden");
-    }
-});
