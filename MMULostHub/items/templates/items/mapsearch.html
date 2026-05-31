@@ -323,30 +323,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- ============================== -->
-                <!--     Create Post Button         -->
-                <!-- ============================== -->
-                <div class="create_post">
-
-                    <!-- Check user got login anot -->
-                    {% if user.is_authenticated %}
-
-                        <button type="button">
-                            <a href="{% url 'createPost' %}"> 
-                                Create Post 
-                            </a>
-                        </button>
-
-                    {% else %}
-
-                        <!-- NO Login will show please Login Popup (mainpage.js)-->
-                        <button type="button" onclick="pleaseLoginPopup()">
-                            Create Post
-                        </button>
-
-                    {% endif %}
-                </div>
             </div>
         </div>
 
