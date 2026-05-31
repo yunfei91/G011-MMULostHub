@@ -15,6 +15,8 @@
         <link rel="stylesheet" href="{% static 'items/css/post-popup.css' %}">
 
         <script src="{% static 'items/js/header.js' %}" defer></script>
+        <script src="{% static 'items/js/logout.js' %}" defer></script>
+        <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
 
         <title> 
             MMU Lost Hub 
@@ -74,7 +76,7 @@
                         <a href="{% url 'feedback_form' %}"> Feedback </a>
                         </li>
                         <li class="logout">
-                        <a href="{% url 'logout' %}"> Logout </a> 
+                        <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a> 
                         </li>
                     </ul>
                 </nav>
@@ -294,6 +296,23 @@
                 </div>
             </div>
             
+            <!-- yt added -->
+                <!-- Confirm Logout Popup -->
+                <div id="confirmPopup" class="popup-modal">
+                    <div class="popup-box">
+                        <p>Are you sure you want to logout?</p>
+
+                        <div class="popup-btns">
+                            <button onclick="confirmLogout()">OK</button>
+                            <button onclick="cancelLogout()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Popup -->
+                <div id="successPopup" class="popup"></div>
+            </div>
+
             <footer>
                 <p>© 2026 MMU Lost Hub<br>
                 <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>

@@ -107,7 +107,7 @@
                 {% if messages %}
                     {% for message in messages %}
                         if ("{{ message }}" === "logout_success" || "{{ message.tags }}" === "success") {
-                            showPopup("Logout successful", "success");
+                            showPopup("Logout successful!", "success");
                         } else {
                             showPopup("{{ message|escapejs }}", "error");
                         }

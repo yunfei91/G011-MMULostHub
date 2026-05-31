@@ -16,6 +16,8 @@
 
         <script src="{% static 'items/js/header.js' %}" defer></script>
         <script src="{% static 'items/js/popup.js' %}" defer></script>
+        <script src="{% static 'items/js/logout.js' %}" defer></script>
+        <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
 
         <!-- Import Cropper.js library for image cropping -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" rel="stylesheet"/>
@@ -67,7 +69,7 @@
                         <a href="{% url 'feedback_form' %}"> Feedback </a>
                         </li>
                         <li class="logout">
-                        <a href="{% url 'logout' %}"> Logout </a> 
+                        <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
                         </li>
                     </ul>
                 </nav>
@@ -300,6 +302,23 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- yt added -->
+                <!-- Confirm Logout Popup -->
+                <div id="confirmPopup" class="popup-modal">
+                    <div class="popup-box">
+                        <p>Are you sure you want to logout?</p>
+
+                        <div class="popup-btns">
+                            <button onclick="confirmLogout()">OK</button>
+                            <button onclick="cancelLogout()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Popup -->
+                <div id="successPopup" class="popup"></div>
             </div>
 
             <footer>

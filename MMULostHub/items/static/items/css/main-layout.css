@@ -604,10 +604,6 @@ footer{
     transform: translateX(-50%) translateY(0);
 }
 
-/* ===================================== */
-/*              Animation                */
-/* ===================================== */
-
 @keyframes popupIn{
     from{
         opacity: 0;

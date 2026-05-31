@@ -445,3 +445,173 @@ footer{
     font-family: 'Sansation';
     line-height: 1.2;
 }
+
+/* ===================================== */
+/*                Logout                 */
+/* ===================================== */
+
+/* Dark overlay */
+.popup-modal{
+    display: none;
+    position: fixed;
+    inset: 0;
+
+    background: rgba(115,115,115,0.45);
+    backdrop-filter: blur(4px);
+
+    justify-content: center;
+    align-items: center;
+
+    z-index: 10050;
+}
+
+.popup-modal.show{
+    display: flex;
+}
+
+/* Popup box */
+.popup-box{
+    width: 320px;
+
+    padding: 30px 25px;
+    border-radius: 25px;
+
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(18px);
+
+    text-align: center;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.6);
+
+    animation: popupIn 0.25s ease;
+}
+
+/* Message */
+.popup-box p{
+    margin: 0 0 25px;
+
+    font-family: 'Slackey';
+    font-size: 15px;
+    line-height: 1.4;
+
+    color: #6a7184;
+
+    text-shadow:
+        0 1px 0 #ffffff,
+        0 2px 0 #d6dbe8,
+        0 3px 6px rgba(0,0,0,0.15);
+}
+
+/* Button container */
+.popup-btns{
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* Buttons */
+.popup-btns button{
+    min-width: 100px;
+
+    border: none;
+    border-radius: 20px;
+
+    padding: 10px 0;
+
+    background: #7e8599;
+    color: white;
+
+    font-family: 'Slackey';
+    font-size: 12px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.35) inset,
+        0 -2px 4px rgba(0,0,0,0.10) inset,
+        0 4px 0 #6a7184,
+        0 6px 12px rgba(0,0,0,0.20);
+
+    transition: all 0.2s ease;
+}
+
+.popup-btns button:hover{
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.32) inset,
+        0 -2px 5px rgba(0,0,0,0.12) inset,
+        0 7px 0 #565c6e,
+        0 12px 20px rgba(0,0,0,0.28);
+}
+
+.popup-btns button:active{
+    transform: translateY(2px);
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.25) inset,
+        0 -2px 4px rgba(0,0,0,0.18) inset,
+        0 3px 0 #565c6e,
+        0 5px 10px rgba(0,0,0,0.25);
+}
+
+/* ===================================== */
+/*         Logout Success Popup          */
+/* ===================================== */
+
+.popup{
+    position: fixed;
+
+    top: 25px;
+    left: 50%;
+
+    min-width: 250px;
+    padding: 14px 24px;
+
+    border-radius: 20px;
+
+    background: rgba(255,255,255,0.65);
+    backdrop-filter: blur(18px);
+
+    border: 1px solid rgba(126,133,153,0.15);
+
+    color: #6a7184;
+
+    text-align: center;
+    font-family: 'Sansation';
+    font-size: 14px;
+    font-weight: bold;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,0.15);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: translateX(-50%) translateY(-20px);
+
+    transition: all 0.3s ease;
+
+    z-index: 10060;
+}
+
+.popup.show{
+    opacity: 1;
+    visibility: visible;
+
+    transform: translateX(-50%) translateY(0);
+}
+
+@keyframes popupIn{
+    from{
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to{
+        opacity: 1;
+        transform: scale(1);
+    }
+}
