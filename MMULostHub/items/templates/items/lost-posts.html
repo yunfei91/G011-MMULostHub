@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="{% static 'items/css/mainpage.css' %}">
         <script src="{% static 'items/js/popup.js' %}" defer></script>
         <script src="{% static 'items/js/mainpage.js' %}" defer></script>
+        <script>const CURRENT_USER_ID = "{{ request.user.id }}";</script>
 
         <title> 
             MMU Lost Hub 
@@ -152,6 +153,7 @@
             <div class="post"
                 onclick="openPost(this)"
                 data-user="{{ post.post_user.username }}" 
+                data-user-id="{{ post.post_user.id }}"
                 data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
                 data-profile="{% url 'userProfile' post.post_user.username %}"
                 data-type="{{ post.post_type }}"
@@ -277,6 +279,7 @@
                                 <button type="button">Chat</button>
                             </a>
                         </div>
+
                     </div>
                 </div>
             </div>

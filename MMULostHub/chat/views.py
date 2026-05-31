@@ -55,6 +55,8 @@ def chat_room(request, room_id):
     if request.user != room.user1 and request.user != room.user2:
         return redirect('chat_inbox')
     
+    next_url = request.GET.get('next', '')
+    
     if request.method == 'POST':
         content = request.POST.get('content')
         uploaded_file = request.FILES.get('file')
@@ -86,8 +88,21 @@ def chat_room(request, room_id):
                 file=uploaded_file
             )
 
+        if next_url:
+            return redirect(f"{reverse('chat_room', kwargs={'room_id': room.id})}?next={next_url}")
+
         return redirect('chat_room', room_id=room.id)
     
     messages = Message.objects.filter(room=room).order_by('created_at')
 
-    return render(request, 'chat/room.html', {'room': room, 'messages': messages})
+    if room.user1 == request.user:
+        other_user = room.user2
+    else:
+        other_user = room.user1
+
+    return render(request, 'chat/room.html', {
+        'room': room,
+        'messages': messages,
+        'other_user': other_user,
+        'next_url': next_url,
+    })

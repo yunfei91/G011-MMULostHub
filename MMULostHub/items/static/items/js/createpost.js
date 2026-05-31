@@ -49,10 +49,12 @@ function confirmCreate(event) {
     /* ====================================== 
                     Check Image        
      ====================================== */
+     /* zinc close for feature haven't implemented yet
     if (!image) {
         showPopup("Error", "Please upload an image.");
         return;
     }
+    */
 
     /* ====================================== 
             Confirmation to create post        

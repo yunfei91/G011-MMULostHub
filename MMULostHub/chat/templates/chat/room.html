@@ -1,66 +1,235 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Chat Room</title>
-    </head>
-    <body>
-        <div class="dropdown-nav">
-            <nav>
-                Menu Button
-            </nav>
-            
-            <div class="dropdown-content">
-                <a href="{% url 'mainPage' %}"> Home </a>
-                <a href="{% url 'lost_posts' %}"> Lost Post </a>                 
-                <a href="{% url 'found_posts' %}"> Found Post </a>                
-                <a href="{% url 'profile' %}"> Profile </a> 
-                <a href="{% url 'chat_inbox' %}">Chat</a>                       
-                <a href="{% url 'feedback_form' %}">Feedback/Report </a> 
-                <a href="{% url 'logout' %}"> Logout </a>
-            </div>
+<head>
+    <title>Chat Room</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #E1E8E5;
+        }
+
+        .chat-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #F7F9FB;
+        }
+
+        .chat-header {
+            background: #72788A;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back {
+            color: white;
+            text-decoration: none;
+            font-size: 28px;
+        }
+
+        .header-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #CED8D4;
+        }
+
+        .chat-name {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .message-row {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .mine {
+            justify-content: flex-end;
+        }
+
+        .other {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #CED8D4;
+        }
+
+        .bubble {
+            max-width: 350px;
+            padding: 12px 15px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+
+        .mine .bubble {
+            background: #D9E7FD;
+        }
+
+        .other .bubble {
+            background: white;
+        }
+
+        .time {
+            display: block;
+            font-size: 11px;
+            margin-top: 5px;
+            color: #72788A;
+            text-align: right;
+        }
+
+        .chat-image {
+            max-width: 250px;
+            border-radius: 10px;
+            margin-top: 5px;
+        }
+
+        .chat-footer {
+            background: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: 1px solid #CED8D4;
+            border-radius: 30px;
+            padding: 12px 20px;
+            outline: none;
+            resize: none;
+        }
+
+        .file-label {
+            cursor: pointer;
+            font-size: 22px;
+            color: #72788A;
+        }
+
+        .file-label input {
+            display: none;
+        }
+
+        .send-btn {
+            border: none;
+            background: #72788A;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <div class="chat-header">
+        {% if next_url %}
+            <a href="{{ next_url }}" class="back">←</a>
+        {% else %}
+            <a href="{% url 'chat_inbox' %}" class="back">←</a>
+        {% endif %}
+
+        {% if other_user.profile.avatar %}
+            <img src="{{ other_user.profile.avatar.url }}" class="header-avatar">
+        {% else %}
+            <div class="header-avatar"></div>
+        {% endif %}
+
+        <div class="chat-name">
+            {{ other_user.profile.name|default:other_user.username }}
         </div>
+    </div>
 
-        <h1>Private Chat</h1>
-        
-        <a href="javascript:history.back()">Back</a>
+    <div class="messages">
+        {% for message in messages %}
 
-        <hr>
-        <div>
-            {% for message in messages %}
+            {% if message.sender == request.user %}
+                <div class="message-row mine">
+                    <div class="bubble">
+            {% else %}
+                <div class="message-row other">
+                    <div class="message-content">
+                        {% if message.sender.profile.avatar %}
+                            <img src="{{ message.sender.profile.avatar.url }}" class="message-avatar">
+                        {% else %}
+                            <div class="message-avatar"></div>
+                        {% endif %}
 
-                <div>
-                    <strong>{{ message.sender.username }}</strong>
-                    <small>{{ message.created_at }}</small>
+                        <div class="bubble">
+            {% endif %}
 
                     {% if message.content %}
                         <p>{{ message.content }}</p>
                     {% endif %}
 
                     {% if message.file %}
-
                         {% if message.message_type == 'image' %}
-                            <img src="{{ message.file.url }}" width="250">
+                            <img src="{{ message.file.url }}" class="chat-image">
                         {% elif message.message_type == 'audio' %}
                             <audio controls>
                                 <source src="{{ message.file.url }}">
                             </audio>
-                        {% elif message.message_type == 'file' %}
-                            <p><a href="{{ message.file.url }}" target="_blank">View / Download File</a></p>
+                        {% else %}
+                            <a href="{{ message.file.url }}" target="_blank">View File</a>
                         {% endif %}
                     {% endif %}
-                </div>
-                <hr>
-            {% empty %}
-                <p>No messages yet. Start the conversation!</p>
-            {% endfor %}
-        </div>
 
-        <h3>Send a Message</h3>
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <textarea name="content" rows="3" cols="50" placeholder="Type your message here..."></textarea><br><br>
-            <input type="file" name="file"><br><br>
-            <button type="submit">Send</button>
-        </form>
-    </body>
+                    <span class="time">{{ message.created_at|date:"h:i A" }}</span>
+                </div>
+
+            {% if message.sender != request.user %}
+                    </div>
+            {% endif %}
+
+            </div>
+
+        {% empty %}
+            <p>No messages yet. Start the conversation!</p>
+        {% endfor %}
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="chat-footer" action="?next={{ next_url }}">
+        {% csrf_token %}
+
+        <label class="file-label">
+            📎
+            <input type="file" name="file">
+        </label>
+
+        <textarea name="content" rows="1" class="chat-input" placeholder="Type a message..."></textarea>
+
+        <button type="submit" class="send-btn">Send</button>
+    </form>
+
+</div>
+
+</body>
 </html>

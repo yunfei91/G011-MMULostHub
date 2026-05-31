@@ -111,7 +111,7 @@ function openPost(el) { // el=this connection
     const chatContainer =
     document.getElementById("chat_btn_container");
 
-    if (el.dataset.user === CURRENT_USERNAME) {
+    if (String(el.dataset.userId) === String(CURRENT_USER_ID)) {
         chatContainer.style.display = "none";
     } else {
         chatContainer.style.display = "block";
