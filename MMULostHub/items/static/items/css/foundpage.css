@@ -513,7 +513,8 @@ footer{
 
 /* Buttons */
 .popup-btns button{
-    min-width: 100px;
+    width: 170px;
+    height: 38.4px;
 
     border: none;
     border-radius: 20px;
@@ -524,7 +525,7 @@ footer{
     color: white;
 
     font-family: 'Slackey';
-    font-size: 12px;
+    font-size: 13px;
 
     cursor: pointer;
 
