@@ -75,6 +75,10 @@
         </div>
 
         <script>
+            function goBack() {
+                window.location.replace("{% url 'beginning' %}")
+            }
+            
             const form = document.getElementById("resetpwForm");
             const popup = document.getElementById("errorPopup");
 
