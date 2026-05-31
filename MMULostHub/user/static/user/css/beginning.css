@@ -242,10 +242,10 @@ footer{
 /*                Popup                  */
 /* ===================================== */
 .popup {
-    position: absolute;
+    position: fixed;
 
     top: 20px;
-    right: 88px;
+    right: 20px;
     width: 200px;
     padding: 12px 20px;
 

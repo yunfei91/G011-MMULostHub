@@ -93,12 +93,12 @@
             document.addEventListener("DOMContentLoaded", function () { // Run after page loads
                 const params = new URLSearchParams(window.location.search); // Read URL parameters
                 if (params.has("next")) { // If redirect happened
-                    showPopup("Please login first to continue.", "error");
+                    showPopup("Please login first to continue", "error");
                     window.history.replaceState({}, document.title, window.location.pathname); // Clear URL
                 }
 
                 if (sessionStorage.getItem("show_back_warning") === "true") {
-                    showPopup("Please login first to continue.", "error");
+                    showPopup("Please login first to continue", "error");
                     sessionStorage.removeItem("show_back_warning");
                 }
             });
