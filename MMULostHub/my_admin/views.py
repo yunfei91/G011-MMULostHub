@@ -336,9 +336,7 @@ def delete_selected(request):
         if selected_ids:
             User.objects.filter(
                 id__in=selected_ids
-            ).update(
-                is_active=False
-            )
+            ).delete()
 
     return redirect('admin_user')
 
