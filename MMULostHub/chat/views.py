@@ -12,7 +12,7 @@ from user.models import Profile
 # Create your views here.
 @login_required
 def inbox(request):
-    rooms = ChatRoom.objects.filter(Q(user1=request.user) | Q(user2=request.user), messages__isnull=False).order_by('-created_at')
+    rooms = ChatRoom.objects.filter(Q(user1=request.user) | Q(user2=request.user), messages__isnull=False).distinct().order_by('-created_at')
 
     return render(request, 'chat/inbox.html', {'rooms': rooms})
 
