@@ -60,3 +60,32 @@ def submit_report(request):
 
     return render(request, 'report/reportfunction.html', {'post':post})
 
+@login_required
+@reverify_required
+def report_user(request, user_id):
+    reported_user = get_object_or_404(User, id=user_id)
+
+    if request.method == "POST":
+        comments = request.POST.get('comments')
+        image = request.FILES.get('image')
+
+        if request.user.id == reported_user.id:
+            return redirect('profile')
+
+        if not image:
+            messages.error(request, "Proof image is required.")
+            return redirect('userProfile', username=reported_user.username)
+
+        UserReport.objects.create(
+            user=reported_user,
+            reported_by=request.user,
+            comments=comments,
+            image=image,
+            status="Pending"
+        )
+
+        return redirect('userProfile', username=reported_user.username)
+
+    return render(request, 'report/reportuser.html', {
+        'reported_user': reported_user
+    })
