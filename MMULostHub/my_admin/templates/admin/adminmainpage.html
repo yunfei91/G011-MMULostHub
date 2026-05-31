@@ -39,30 +39,30 @@
                 </div>
             </header>
 
-            <main>
-                <br>
+            <main class="admin-main">
 
-                <section>
-                    <!-- User Button-->
-                    <button type="button">
-                        User
-                    </button>
+                <div class="admin-cards">
 
-                    <!-- Feedback Button -->
-                    <a href="{% url 'admin_feedback' %}">
-                        <button type="button">
-                        Feedback
-                        </button>
+                    <a href="#" class="admin-card">
+                        <div class="card-icon">👤</div>
+                        <h3>User</h3>
+                        <p>Manage user accounts</p>
                     </a>
 
-                    <!-- Report Button-->
-                    <a href="{% url 'admin_report' %}">
-                        <button type="button">
-                        Report
-                        </button>
+                    <a href="{% url 'admin_feedback' %}" class="admin-card">
+                        <div class="card-icon">💬</div>
+                        <h3>Feedback</h3>
+                        <p>View user feedback</p>
                     </a>
-                    
-                </section>
+
+                    <a href="{% url 'admin_report' %}" class="admin-card">
+                        <div class="card-icon">🚨</div>
+                        <h3>Report</h3>
+                        <p>Handle reported posts</p>
+                    </a>
+
+                </div>
+
             </main>
 
             <!-- yt added -->
