@@ -44,19 +44,25 @@
                 <div class="admin-cards">
 
                     <a href="#" class="admin-card">
-                        <div class="card-icon">👤</div>
+                        <div class="card-icon">
+                            <img src="{% static 'images/usericon.png' %}" alt="User">
+                        </div>
                         <h3>User</h3>
                         <p>Manage user accounts</p>
                     </a>
 
                     <a href="{% url 'admin_feedback' %}" class="admin-card">
-                        <div class="card-icon">💬</div>
+                        <div class="card-icon">
+                            <img src="{% static 'images/feedbackicon.png' %}" alt="Feedback">
+                        </div>
                         <h3>Feedback</h3>
                         <p>View user feedback</p>
                     </a>
 
                     <a href="{% url 'admin_report' %}" class="admin-card">
-                        <div class="card-icon">🚨</div>
+                        <div class="card-icon">
+                            <img src="{% static 'images/reporticon.png' %}" alt="Report">
+                        </div>
                         <h3>Report</h3>
                         <p>Handle reported posts</p>
                     </a>

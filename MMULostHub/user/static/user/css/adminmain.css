@@ -273,10 +273,23 @@ header.shrink .losthub-logo{
 }
 
 .card-icon{
-    font-size: 65px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-bottom: 15px;
 
-    transition: transform 0.35s ease;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+.card-icon img{
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+
+    backface-visibility: hidden;
+    transform: translateZ(0);
 }
 
 .admin-card h3{
@@ -297,6 +310,11 @@ header.shrink .losthub-logo{
     color: #7e8599;
 }
 
+.admin-card{
+    transform: translateZ(0);
+    will-change: transform;
+}
+
 .admin-card:hover{
     transform: translateY(-10px);
 
@@ -306,7 +324,7 @@ header.shrink .losthub-logo{
 }
 
 .admin-card:hover .card-icon{
-    transform: scale(1.15);
+    transform: scale(1.15) translateZ(0);
 }
 
 /* ===================================== */
