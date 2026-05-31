@@ -12,11 +12,8 @@
         <!-- Expire page immediately -->
         <meta http-equiv="Expires" content="0">
 
-        <link rel="stylesheet" href="{% static 'items/css/post-popup.css' %}">
         <link rel="stylesheet" href="{% static 'user/css/adminmain.css' %}">
 
-        <script src="{% static 'items/js/header.js' %}" defer></script>
-        <script src="{% static 'items/js/popup.js' %}" defer></script>
         <script src="{% static 'items/js/logout.js' %}" defer></script>
         <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
     </head>
@@ -31,46 +28,16 @@
 
                 <div class="header-right"> <!-- yt adjusted for css uses-->
                     <!-- Home icon -->
-                    <a href="{% url 'mainPage' %}" class="home-icon">
+                    <a href="{% url 'admin_mainpage' %}" class="home-icon">
                         <img src="{% static 'images/homeicon.png' %}" alt="Home">
                     </a>
 
-                    <!-- Menu button --> <!-- yt adjusted for css uses-->
-                    <button type="button" class="menu-icon" onclick="toggleMenu()">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </button>
+                    <!-- Logout button --> <!-- yt adjusted for css uses-->
+                    <a href="javascript:void(0);" onclick="showLogoutConfirm()" class="logout-icon">
+                        <img src="{% static 'images/logouticon.png' %}" alt="Logout">
+                    </a>
                 </div>
             </header>
-
-            <div id="overlay" class="overlay"></div> <!-- yt adjusted for css uses-->
-
-            <!-- ================================================== -->
-            <!--            YT-Dropdown Menu Navigation             -->
-            <!-- ================================================== -->
-            <div class = "dropdown-nav">
-                
-                <nav id="menu" class="menu"> <!-- yt adjusted for css uses-->
-                    <ul>
-                        <li>
-                        <a href="{% url 'lost_posts' %}"> Lost Post </a>  
-                        </li>
-                        <li>
-                        <a href="{% url 'found_posts' %}"> Found Post </a>
-                        </li>
-                        <li>
-                        <a href="{% url 'profile' %}"> Profile </a>
-                        </li>
-                        <li>
-                        <a href="{% url 'feedback_form' %}"> Feedback </a>
-                        </li>
-                        <li class="logout">
-                        <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
 
             <main>
                 <br>
