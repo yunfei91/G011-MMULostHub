@@ -216,6 +216,27 @@
             opacity:0.9;
         }
 
+        .preview-box{
+            display:none;
+            padding:10px;
+            background:white;
+            border-top:1px solid #CED8D4;
+        }
+
+        .preview-box img{
+            max-width:180px;
+            max-height:180px;
+            border-radius:10px;
+           display:block;
+        }
+
+         .remove-preview{
+            margin-top:5px;
+            color:#72788A;
+            cursor:pointer;
+            font-size:14px;
+        }
+
     </style>
 </head>
 
@@ -278,11 +299,6 @@
                 {% endif %}
 
                 <div class="message-bubble">
-
-                    {% if message.content %}
-                        <div>{{ message.content }}</div>
-                    {% endif %}
-
                     {% if message.file %}
 
                         {% if message.message_type == 'image' %}
@@ -306,6 +322,12 @@
                         {% endif %}
 
                     {% endif %}
+                    
+                    {% if message.content %}
+                        <div>{{ message.content }}</div>
+                    {% endif %}
+
+
 
                     <div class="message-time">
                         {{ message.created_at|date:"h:i A" }}
@@ -324,6 +346,12 @@
     </div>
 
     <div class="chat-footer">
+        <div id="previewBox" class="preview-box">
+            <img id="imagePreview">
+        <div class="remove-preview" onclick="removePreview()">
+            Remove Image
+        </div>
+    </div>
 
         <form
             method="POST"
@@ -334,7 +362,7 @@
 
             <label class="file-label">
                 📎
-                <input type="file" name="file">
+                <input type="file" name="file" id="fileInput" onchange="previewImage(this)">
             </label>
 
             <textarea
@@ -390,6 +418,60 @@
 
                 }
             }
+        }
+
+        function previewImage(input){
+
+            const file = input.files[0];
+
+            const previewBox =
+                document.getElementById(
+                    "previewBox"
+                );
+
+            const imagePreview =
+                document.getElementById(
+                    "imagePreview"
+                );
+
+            if(
+                file &&
+                file.type.startsWith(
+                    "image/"
+                )
+            ){
+
+                imagePreview.src =
+                    URL.createObjectURL(file);
+
+                previewBox.style.display =
+                    "block";
+
+            }
+
+            else{
+
+                previewBox.style.display =
+                    "none";
+
+                imagePreview.src = "";
+
+            }
+        }
+
+        function removePreview(){
+
+            document.getElementById(
+                "fileInput"
+            ).value = "";
+
+            document.getElementById(
+                "imagePreview"
+            ).src = "";
+
+            document.getElementById(
+                "previewBox"
+             ).style.display = "none";
         }
 
     </script>
