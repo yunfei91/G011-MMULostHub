@@ -40,7 +40,7 @@ def inbox(request):
             unread_count = Message.objects.filter(
                 room=room,
                 sender=other_user,
-                created_at__gt=my_last_message.created_at
+                is_read=False,
             ).count()
         else:
             unread_count = Message.objects.filter(
@@ -53,6 +53,7 @@ def inbox(request):
             'other_user': other_user,
             'last_message': last_message,
             'unread_count': unread_count,
+            'last_time': last_message.created_at
         })
 
     room_data.sort(
