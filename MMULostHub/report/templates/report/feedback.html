@@ -15,17 +15,26 @@
          
     </head>
     <body>
-        <div class="container">
-            <header>
-                <div class="menu-icon"></div>
-            </header>
-
-            <main>
-                 <div class="container">
             <header>
                 <div class="menu-icon"></div>
                 <h1>MMU Lost Hub</h1>
             </header>
+            <div class="dropdown-nav">
+            <nav>
+                Menu Button
+            </nav>
+            
+            <div class="dropdown-content">
+                <a href="{% url 'mainPage' %}"> Home </a>
+                <a href="{% url 'lost_posts' %}"> Lost Post </a>                 
+                <a href="{% url 'found_posts' %}"> Found Post </a>                
+                <a href="{% url 'profile' %}"> Profile </a> 
+                <a href="{% url 'chat_inbox' %}">Inbox</a>                       
+                <a href="{% url 'feedback_form' %}">Feedback/Report </a> 
+                <a href="{% url 'logout' %}"> Logout </a>
+            </div>
+        </div>
+        
                     <h2>Feedback / Report</h2>
                     <p>Leave your comments / suggestions here!</p>
 

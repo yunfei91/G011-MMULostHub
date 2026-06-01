@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Inbox</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #E1E8E5;
+        }
+
+        .dropdown-nav {
+            padding: 10px;
+            background: white;
+        }
+
+        .inbox-header {
+            background: #72788A;
+            color: white;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .chat-list {
+            padding: 15px;
+        }
+
+        .chat-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: white;
+            margin-bottom: 12px;
+            padding: 15px;
+            border-radius: 15px;
+            text-decoration: none;
+            color: black;
+        }
+
+        .chat-card:hover {
+            background: #CED8D4;
+        }
+
+        .avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #CED8D4;
+        }
+
+        .username {
+            font-size: 18px;
+            font-weight: bold;
+            color: #72788A;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="dropdown-nav">
+    <nav>
+        Menu Button
+    </nav>
+    
+    <div class="dropdown-content">
+        <a href="{% url 'mainPage' %}"> Home </a>
+        <a href="{% url 'lost_posts' %}"> Lost Post </a>                 
+        <a href="{% url 'found_posts' %}"> Found Post </a>                
+        <a href="{% url 'profile' %}"> Profile </a> 
+        <a href="{% url 'chat_inbox' %}">Inbox</a>                       
+        <a href="{% url 'feedback_form' %}">Feedback/Report </a> 
+        <a href="{% url 'logout' %}"> Logout </a>
+    </div>
+</div>
+
+<div class="inbox-header">
+    Chat Inbox
+</div>
+
+<div class="chat-list">
+
+    {% for room in rooms %}
+
+        {% if room.user1 == request.user %}
+            {% with other_user=room.user2 %}
+                <a href="{% url 'chat_room' room.id %}" class="chat-card">
+                    {% if other_user.profile.avatar %}
+                        <img src="{{ other_user.profile.avatar.url }}" class="avatar">
+                    {% else %}
+                        <img src="{% static 'images/default.png' %}" class="avatar">
+                    {% endif %}
+
+                    <div class="username">
+                        {{ other_user.profile.name|default:other_user.username }}
+                    </div>
+                </a>
+            {% endwith %}
+        {% else %}
+            {% with other_user=room.user1 %}
+                <a href="{% url 'chat_room' room.id %}" class="chat-card">
+                    {% if other_user.profile.avatar %}
+                        <img src="{{ other_user.profile.avatar.url }}" class="avatar">
+                    {% else %}
+                        <img src="{% static 'images/default.png' %}" class="avatar">
+                    {% endif %}
+
+                    <div class="username">
+                        {{ other_user.profile.name|default:other_user.username }}
+                    </div>
+                </a>
+            {% endwith %}
+        {% endif %}
+
+    {% empty %}
+        <p>No chats yet.</p>
+    {% endfor %}
+
+</div>
+
+</body>
+</html>

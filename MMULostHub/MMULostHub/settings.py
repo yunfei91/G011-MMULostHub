@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     'report',
     'my_admin',
+    'chat',
     ]
 
 MIDDLEWARE = [
@@ -116,6 +117,9 @@ USE_TZ = True
 LOGIN_URL = 'beginning'
 
 STATIC_URL = 'static/' #Used for css
+
+
+LOGIN_URL = '/user/user-login/'
 
 TIME_ZONE = 'Asia/Kuala_Lumpur'
 

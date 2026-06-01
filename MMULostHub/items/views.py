@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
+
+from user.views import profile
 from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post, edit_post
 from django.contrib.auth.decorators import login_required
@@ -8,6 +10,10 @@ import json
 import base64
 from django.core.files.base import ContentFile
 import uuid
+
+#zinc add to check if user is verified before create post
+from user.models import Profile
+from user.decorators import reverify_required
 
 # yt added
 # Prevent browser cache, user cannot press back to access previous page
@@ -111,7 +117,22 @@ def apply_filters(request, post_box):
 # ======================================================
 @login_required(login_url='beginning')
 @never_cache
+@reverify_required
 def createPost(request):
+
+    #zinc add to check if user is verified before create post
+
+    profile, _ = Profile.objects.get_or_create(
+    user=request.user
+    )
+    
+    if profile.need_reverify:
+        messages.error(
+            request,
+            "Please verify your account again."
+            )
+
+        return redirect('profile')
 
     # when user submit create post form
     if request.method == "POST":
@@ -149,6 +170,7 @@ def createPost(request):
 
             # run service.py to check data accuratecy
             create_post({
+                'post_user': request.POST.get('post_user'), #zinc
                 'post_type': request.POST.get('post_type'),
                 'post_datetime': request.POST.get('post_datetime'),
                 'images': image_files,
@@ -183,6 +205,7 @@ def createPost(request):
 # ======================================================
 @login_required(login_url='beginning')
 @never_cache
+@reverify_required
 def editPost(request,post_id):
 
     # post not exist = 404 page 
@@ -296,6 +319,7 @@ def editPost(request,post_id):
 # ======================================================
 @login_required(login_url='beginning')
 @never_cache
+@reverify_required
 def deletePost(request, post_id):
 
     # post not exist = 404 page

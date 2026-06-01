@@ -18,10 +18,17 @@ urlpatterns = [
     path('resend-otp/', views.resend_otp, name='resend_otp'),
 
     path('profile/', views.profile, name='profile'),
+    path('profile/<int:user_id>/', views.profile, name='view_profile'), #zinc support others view profile
     path('update-bio/', views.update_bio, name='update_bio'),
     path('update-avatar/', views.update_avatar, name='update_avatar'),
     path('update-name/', views.update_name, name='update_name'),
 
+    #zinc add to report user
+    path('report-user/<int:user_id>/',views.report_user,name='report_user'),
+    path('start-reverify/',views.start_reverify,name='start_reverify'),
+    path('reverify-otp/',views.reverify_otp,name='reverify_otp'),
+    path('resend-reverify-otp/',views.resend_reverify_otp,name='resend_reverify_otp'),
+    
     # yunfee add to check other user's profile
     path('profile/<str:username>/', views.userProfile, name='userProfile'),
 

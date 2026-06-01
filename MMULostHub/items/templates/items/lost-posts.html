@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="{% static 'items/css/mainpage.css' %}">
         <script src="{% static 'items/js/popup.js' %}" defer></script>
         <script src="{% static 'items/js/mainpage.js' %}" defer></script>
+        <script>const CURRENT_USER_ID = "{{ request.user.id }}";</script>
 
         <!-- yt added -->
         <link rel="stylesheet" href="{% static 'items/css/lostpage.css' %}">
@@ -238,11 +239,13 @@
                     <!-- Open popup modal after clicked -->
                     <!-- Store username into HTML attribute, so JS can read it-->
                     <div class="post"
-                        onclick="openPost(this)"
-                        data-user="{{ post.post_user.username }}" 
-                        data-profile="{% url 'userProfile' post.post_user.username %}"
+                        onclick="openPost(this)" 
+                        data-user="{{ post.post_user.username }}"
+                        data-user-id="{{ post.post_user.id }}"
+                        data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
+                        data-profile="{% url 'userProfile' post.post_user.username %}" 
                         data-type="{{ post.post_type }}"
-                        data-date="{{ post.post_datetime }}"
+                        data-date="{{ post.post_datetime }}" 
                         data-category="{{ post.get_post_itemcategory_display }}"
                         data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
                         data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
@@ -374,10 +377,11 @@
                                 <p><b>Description:</b></p>
                                 <p id="m_description"></p>
 
-                                <div class="chatBtn">
-                                    <button type="button">
-                                        <a href="#">Chat</a>
-                                    </button>
+                                <div class="chatBtn" id="chat_btn_container" style="display:none;">
+                                    <!-- zinc add chat url-->
+                                    <a id="chat_link" href="#">
+                                        <button type="button">Chat</button>
+                                    </a>
                                 </div>
                             </div>
                         </div>

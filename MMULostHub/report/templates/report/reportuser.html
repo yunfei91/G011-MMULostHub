@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Report User</title>
+</head>
+
+<body>
+<div class="dropdown-nav">
+            <nav>
+                Menu Button
+            </nav>
+            
+            <div class="dropdown-content">
+                <a href="{% url 'mainPage' %}"> Home </a>
+                <a href="{% url 'lost_posts' %}"> Lost Post </a>                 
+                <a href="{% url 'found_posts' %}"> Found Post </a>                
+                <a href="{% url 'profile' %}"> Profile </a> 
+                <a href="{% url 'chat_inbox' %}">Inbox</a>                       
+                <a href="{% url 'feedback_form' %}">Feedback/Report </a> 
+                <a href="{% url 'logout' %}"> Logout </a>
+            </div>
+</div>
+<h2>Report User</h2>
+<p> Reporting User: {{ reported_user.username }}</p>
+
+<form method="POST" enctype="multipart/form-data" action="{% url 'report_user' reported_user.id %}">
+    {% csrf_token %}
+    <input type="hidden" name="user_id" value="{{ reported_user.id }}">
+
+    <!-- Reason -->
+    <label>Reason:</label>
+    <br>
+    <textarea name="comments" rows="5" cols="40" required></textarea>
+    <br><br>
+
+    <!-- Proof Image -->
+    <label>Upload Proof:</label>
+    <br>
+     <input type="file" name="image">
+    <br><br>
+
+    <button 
+    type="submit"
+    onclick="return confirm('Are you sure you want to submit?')">
+    Submit Report
+    </button>
+</form>
+</body>
+</html>

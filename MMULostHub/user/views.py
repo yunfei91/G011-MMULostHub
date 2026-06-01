@@ -14,6 +14,8 @@ from django.shortcuts import get_object_or_404
 from .services import create_user_account # Custom function for create user
 from .models import Profile 
 from items.models import Post
+from report.models import UserReport #zinc add for report user
+from .decorators import reverify_required #zinc add for reverify decorator  
 
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -466,10 +468,15 @@ def update_name(request):
 
 @login_required(login_url='beginning')
 @never_cache
-def profile(request):
+def profile(request, user_id=None): #zinc add if else
 
-    user = request.user
+    if user_id:
+        user = User.objects.get(id=user_id)
+    else:
+        user = request.user
+
     profile, created = Profile.objects.get_or_create(user=user)
+    need_reverify = profile.need_reverify #zinc add reverify acc
 
     all_posts = Post.objects.filter(
         post_user=user
@@ -485,13 +492,19 @@ def profile(request):
         post_type='found'
     ).order_by('-id')
 
+    #zinc add is_owner
+    is_owner = (request.user == user)
+
     return render(request, 'user/profile.html', {
         'user': user,
         'profile': profile,
         'all_posts': all_posts,
         'lost_posts': lost_posts,
         'found_posts': found_posts,
-        'is_owner': True # Own profile
+
+        'is_owner': is_owner, #zinc add
+        'need_reverify': need_reverify #zinc add
+        #'is_owner': True # Own profile
     })
 
 @login_required(login_url='beginning')
@@ -529,6 +542,35 @@ def update_avatar(request):
 
     return redirect('profile')
 
+
+#zinc add def report_user 
+@login_required
+@reverify_required
+def report_user(request, user_id):
+    reported_user = get_object_or_404(User, id=user_id)
+    if request.method == "POST":
+        comments = request.POST.get('comments')
+        image = request.FILES.get('image')
+
+        # prevent self report
+        if request.user.id == reported_user.id:
+            return redirect('profile')
+
+        # create report
+        UserReport.objects.create(
+            user=reported_user,
+            reported_by=request.user,
+            comments=comments,
+            image=image,
+            status="Pending"
+        )
+
+        return redirect('userProfile', username=reported_user.username)
+    return render(request,'report/reportuser.html', {
+            'reported_user': reported_user
+        })
+
+
 @login_required(login_url='beginning')
 @never_cache
 # yunfee add to check other user's profile
@@ -536,6 +578,18 @@ def userProfile(request, username):
     user_obj = get_object_or_404(User, username=username)
 
     profile, created = Profile.objects.get_or_create(user=user_obj)
+
+    #check current login user #zinc add
+    profile_self, _ = Profile.objects.get_or_create(user=request.user)
+
+    #block reported user from veiwing other #zinc add
+    if (
+        profile_self.need_reverify and request.user != user_obj
+    ):
+
+        return redirect('profile')
+    
+    need_reverify = profile.need_reverify #zinc add reverify acc
 
     all_posts = Post.objects.filter(
         post_user=user_obj
@@ -557,5 +611,164 @@ def userProfile(request, username):
         'all_posts': all_posts,
         'lost_posts': lost_posts,
         'found_posts': found_posts,
-        'is_owner': request.user == user_obj
+        'is_owner': request.user == user_obj,
+        'need_reverify': need_reverify
+    })
+
+#zinc add def start_reverify 
+@login_required
+def start_reverify(request):
+
+    otp = str(random.randint(100000, 999999))
+
+    request.session['reverify_data'] = {
+
+        'otp': otp,
+        'otp_time': time.time(),
+
+    }
+
+    send_otp_email(
+        request.user.email,
+        otp
+    )
+
+    return redirect('reverify_otp')
+
+#zinc add def reverify_otp
+@login_required
+def reverify_otp(request):
+
+    data = request.session.get(
+        'reverify_data'
+    )
+
+    if not data:
+        return redirect('profile')
+
+    now = time.time()
+    otp_valid_seconds = 60
+    otp_remaining = int(
+        otp_valid_seconds - (
+            now - data['otp_time']
+        )
+    )
+
+    otp_remaining = max(0, otp_remaining)
+    resend_cooldown = 30
+    resend_remaining = int(
+        resend_cooldown - (
+            now - data['otp_time']
+        )
+    )
+
+    resend_remaining = max(0, resend_remaining)
+
+    context = {
+        'otp_remaining': otp_remaining,
+        'resend_remaining': resend_remaining,
+        'can_resend': resend_remaining == 0,
+        'expired': otp_remaining == 0
+    }
+
+    if request.method == 'POST':
+
+        user_otp = request.POST.get(
+            'otp',
+            ''
+        )
+
+        if context['expired']:
+            context['error'] = "OTP expired"
+
+            return render(
+                request,
+                'user/email-verify.html',
+                context
+            )
+
+        if user_otp != data['otp']:
+            context['error'] = "Invalid OTP"
+
+            return render(
+                request,
+                'user/email-verify.html',
+                context
+            )
+
+        profile, _ = Profile.objects.get_or_create(
+            user=request.user
+        )
+
+        profile.need_reverify = False
+        profile.is_reverified = True
+        profile.is_reported = False
+        profile.save()
+
+        # latest user report
+        report = UserReport.objects.filter(
+            user=request.user,
+            status="Waiting for Reverify"
+        ).update(
+            status="Verified"
+        )
+
+        if not report:
+            return redirect('profile')
+
+        request.session.pop(
+            'reverify_data',
+            None
+        )
+
+        return redirect('mainPage')
+
+    return render(
+        request,
+        'user/email-verify.html',
+        context
+    )
+
+#zinc add def resend_reverify_otp
+@login_required
+def resend_reverify_otp(request):
+
+    if request.method != "POST":
+
+        return JsonResponse({
+            'error': 'Invalid request'
+        }, status=400)
+
+    data = request.session.get(
+        'reverify_data'
+    )
+
+    if not data:
+
+        return JsonResponse({
+            'error': 'Session expired'
+        }, status=400)
+
+    now = time.time()
+
+    if now - data['otp_time'] < 30:
+
+        return JsonResponse({
+            'error':
+            'Please wait before requesting a new OTP.'
+        }, status=400)
+
+    otp = str(random.randint(100000, 999999))
+    data['otp'] = otp
+    data['otp_time'] = now
+    request.session['reverify_data'] = data
+    request.session.modified = True
+
+    send_otp_email(
+        request.user.email,
+        otp
+    )
+
+    return JsonResponse({
+        'success': True
     })
