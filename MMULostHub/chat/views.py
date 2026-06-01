@@ -12,9 +12,57 @@ from user.models import Profile
 # Create your views here.
 @login_required
 def inbox(request):
-    rooms = ChatRoom.objects.filter(Q(user1=request.user) | Q(user2=request.user), messages__isnull=False).distinct().order_by('-created_at')
 
-    return render(request, 'chat/inbox.html', {'rooms': rooms})
+    rooms = ChatRoom.objects.filter(
+        Q(user1=request.user) | Q(user2=request.user),
+        messages__isnull=False
+    ).distinct()
+
+    room_data = []
+
+    for room in rooms:
+
+        if room.user1 == request.user:
+            other_user = room.user2
+        else:
+            other_user = room.user1
+
+        last_message = Message.objects.filter(
+            room=room
+        ).order_by('-created_at').first()
+
+        my_last_message = Message.objects.filter(
+            room=room,
+            sender=request.user
+        ).order_by('-created_at').first()
+
+        if my_last_message:
+            unread_count = Message.objects.filter(
+                room=room,
+                sender=other_user,
+                created_at__gt=my_last_message.created_at
+            ).count()
+        else:
+            unread_count = Message.objects.filter(
+                room=room,
+                sender=other_user
+            ).count()
+
+        room_data.append({
+            'room': room,
+            'other_user': other_user,
+            'last_message': last_message,
+            'unread_count': unread_count,
+        })
+
+    room_data.sort(
+        key=lambda item: item['last_message'].created_at,
+        reverse=True
+    )
+
+    return render(request, 'chat/inbox.html', {
+        'room_data': room_data
+    })
 
 @login_required
 def start_chat(request, username):
@@ -92,6 +140,14 @@ def chat_room(request, room_id):
             return redirect(f"{reverse('chat_room', kwargs={'room_id': room.id})}?next={next_url}")
 
         return redirect('chat_room', room_id=room.id)
+    
+    Message.objects.filter(
+        room=room
+    ).exclude(
+        sender=request.user
+    ).update(
+        is_read=True
+    ) 
     
     messages = Message.objects.filter(room=room).order_by('created_at')
 

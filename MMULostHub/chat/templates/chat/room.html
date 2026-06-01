@@ -124,6 +124,7 @@
         .message-row{
             display:flex;
             margin-bottom:15px;
+            width:100%;
         }
 
         .message-row.mine{
@@ -144,9 +145,26 @@
         }
 
         .message-bubble{
-            max-width:300px;
+            display:inline-block;
+            max-width:60%;
+
             padding:12px;
             border-radius:18px;
+
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        .message-row.mine .message-bubble{
+            margin-left:auto;
+        }
+
+        .message-row.other .message-bubble{
+            margin-right:auto;
+        }
+
+        .message-content{
+            white-space: normal;
         }
 
         .other .message-bubble{
@@ -295,7 +313,6 @@
                     {% else %}
                         <img src="{% static 'images/default.png' %}" class="message-avatar">
                     {% endif %}
-
                 {% endif %}
 
                 <div class="message-bubble">
@@ -320,29 +337,23 @@
                             </a>
 
                         {% endif %}
-
                     {% endif %}
                     
                     {% if message.content %}
-                        <div>{{ message.content }}</div>
+                        <div class="message-content">
+                            {{ message.content|linebreaksbr }}
+                        </div>
                     {% endif %}
-
-
 
                     <div class="message-time">
                         {{ message.created_at|date:"h:i A" }}
                     </div>
-
                 </div>
-
             </div>
-
         {% empty %}
-
             <p>No messages yet. Start the conversation!</p>
-
         {% endfor %}
-
+        <div id="bottom"></div>
     </div>
 
     <div class="chat-footer">
@@ -361,20 +372,14 @@
             {% csrf_token %}
 
             <label class="file-label">
-                📎
+                +
                 <input type="file" name="file" id="fileInput" onchange="previewImage(this)">
             </label>
 
-            <textarea
-                name="content"
-                placeholder="Type a message..."></textarea>
+            <textarea name="content" placeholder="Type a message..."></textarea>
 
-            <button
-                type="submit"
-                class="send-btn">
-
+            <button type="submit" class="send-btn">
                 Send
-
             </button>
 
         </form>
@@ -472,6 +477,14 @@
             document.getElementById(
                 "previewBox"
              ).style.display = "none";
+        }
+
+        // Scroll to bottom on page load
+        window.onload = function() {
+            const bottom = document.getElementById("bottom");
+            if (bottom) {
+                bottom.scrollIntoView({ behavior: "auto" });
+            }
         }
 
     </script>
