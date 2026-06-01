@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404
 from .services import create_user_account # Custom function for create user
 from .models import Profile 
 from items.models import Post
-from report.models import UserReport #zinc add for report user
+from report.models import UserReport #zinc add for user report
 from .decorators import reverify_required #zinc add for reverify decorator  
 
 from django.contrib.auth.password_validation import validate_password
@@ -541,34 +541,6 @@ def update_avatar(request):
             profile.save()
 
     return redirect('profile')
-
-
-#zinc add def report_user 
-@login_required
-@reverify_required
-def report_user(request, user_id):
-    reported_user = get_object_or_404(User, id=user_id)
-    if request.method == "POST":
-        comments = request.POST.get('comments')
-        image = request.FILES.get('image')
-
-        # prevent self report
-        if request.user.id == reported_user.id:
-            return redirect('profile')
-
-        # create report
-        UserReport.objects.create(
-            user=reported_user,
-            reported_by=request.user,
-            comments=comments,
-            image=image,
-            status="Pending"
-        )
-
-        return redirect('userProfile', username=reported_user.username)
-    return render(request,'report/reportuser.html', {
-            'reported_user': reported_user
-        })
 
 
 @login_required(login_url='beginning')

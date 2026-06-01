@@ -173,12 +173,17 @@ def admin_view_user(request):
     if query:
 
         users = User.objects.filter(
-            username__icontains=query
+            username__icontains=query,
+            is_staff=False,
+            is_superuser=False
         )
 
     else:
 
-        users = User.objects.all()
+        users = User.objects.filter(
+            is_staff=False,
+            is_superuser=False
+        )
 
     # Ensure Profile Exists
     for user in users:
@@ -331,9 +336,7 @@ def delete_selected(request):
         if selected_ids:
             User.objects.filter(
                 id__in=selected_ids
-            ).update(
-                is_active=False
-            )
+            ).delete()
 
     return redirect('admin_user')
 
