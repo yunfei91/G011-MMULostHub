@@ -161,7 +161,8 @@
                         data-type="{{ post.post_type }}"
                         data-date="{{ post.post_datetime }}"
                         data-category="{{ post.get_post_itemcategory_display }}"
-                        data-location="{{ post.post_location.location_name }}"
+                        data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
+                        data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
                         data-description="{{ post.post_description }}"
                         data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
                         
@@ -201,7 +202,8 @@
                         data-type="{{ post.post_type }}"
                         data-date="{{ post.post_datetime }}"
                         data-category="{{ post.get_post_itemcategory_display }}"
-                        data-location="{{ post.post_location.location_name }}"
+                        data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
+                        data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
                         data-description="{{ post.post_description }}"
                         data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
                         
@@ -238,7 +240,8 @@
                         data-type="{{ post.post_type }}"
                         data-date="{{ post.post_datetime }}"
                         data-category="{{ post.get_post_itemcategory_display }}"
-                        data-location="{{ post.post_location.location_name }}"
+                        data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
+                        data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
                         data-description="{{ post.post_description }}"
                         data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
                         
