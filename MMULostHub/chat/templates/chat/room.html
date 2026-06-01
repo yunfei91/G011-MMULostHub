@@ -492,14 +492,20 @@
              ).style.display = "none";
         }
 
-        // Scroll to bottom on page load
-        window.onload = function() {
-            const bottom = document.getElementById("bottom");
-            if (bottom) {
-                bottom.scrollIntoView({ behavior: "auto" });
-            }
+       document.addEventListener("DOMContentLoaded", function() {
+
+        const chatBody =
+            document.querySelector(".chat-body");
+
+        if (chatBody) {
+
+            chatBody.scrollTop =
+                chatBody.scrollHeight;
+
         }
 
+        });
+        
     </script>
 
 </body>
