@@ -16,9 +16,6 @@
         body{
             background:#E1E8E5;
             height:100vh;
-            display:flex;
-            justify-content:center;
-            align-items:center;
         }
 
         .chat-wrapper{
@@ -30,6 +27,7 @@
             border-radius:12px;
             overflow:hidden;
             box-shadow:0 4px 20px rgba(0,0,0,0.12);
+            margin: 40px auto;
         }
 
         /* =========================
@@ -37,8 +35,7 @@
         ========================= */
 
         .dropdown-nav{
-            background:#72788A;
-            color:white;
+            background:#f8f9f9;
             padding:10px 20px;
         }
 
@@ -47,7 +44,6 @@
         }
 
         .dropdown-content a{
-            color:white;
             text-decoration:none;
             margin-right:15px;
         }
@@ -284,6 +280,22 @@
 </head>
 
 <body>
+<div class="dropdown-nav">
+    <nav>
+        Menu Button
+    </nav>
+    
+    <div class="dropdown-content">
+        <a href="{% url 'mainPage' %}"> Home </a>
+        <a href="{% url 'lost_posts' %}"> Lost Post </a>                 
+        <a href="{% url 'found_posts' %}"> Found Post </a>                
+        <a href="{% url 'profile' %}"> Profile </a> 
+        <a href="{% url 'chat_inbox' %}">Inbox</a>                       
+        <a href="{% url 'feedback_form' %}">Feedback/Report </a> 
+        <a href="{% url 'logout' %}"> Logout </a>
+    </div>
+</div>
+
     <div class="chat-wrapper">
     <div class="chat-header">
 
