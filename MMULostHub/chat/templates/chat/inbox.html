@@ -58,69 +58,136 @@
             color: #72788A;
         }
     </style>
-</head>
+        <!-- yt added -->
+        <link rel="stylesheet" href="{% static 'chat/css/room.css' %}">
 
-<body>
+        <script src="{% static 'items/js/logout.js' %}" defer></script>
+        <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
 
-<div class="dropdown-nav">
-    <nav>
-        Menu Button
-    </nav>
-    
-    <div class="dropdown-content">
-        <a href="{% url 'mainPage' %}"> Home </a>
-        <a href="{% url 'lost_posts' %}"> Lost Post </a>                 
-        <a href="{% url 'found_posts' %}"> Found Post </a>                
-        <a href="{% url 'profile' %}"> Profile </a> 
-        <a href="{% url 'chat_inbox' %}">Inbox</a>                       
-        <a href="{% url 'feedback_form' %}">Feedback/Report </a> 
-        <a href="{% url 'logout' %}"> Logout </a>
-    </div>
-</div>
+        <title> 
+            MMU Lost Hub 
+        </title>
+        
+        <!-- Prevent browser cache, user cannot press back to access previous page -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
+        <!-- Older browser cache prevention -->
+        <meta http-equiv="Pragma" content="no-cache">
+        <!-- Expire page immediately -->
+        <meta http-equiv="Expires" content="0">
 
-<div class="inbox-header">
-    Chat Inbox
-</div>
+    </head>
 
-<div class="chat-list">
+    <body>
+        <div class="whole-page">
+            <header>
+                <div class="header-left"> <!-- yt adjusted for css uses-->              
+                    <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
+                    <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
+                </div>
 
-    {% for room in rooms %}
+                <div class="header-right"> <!-- yt adjusted for css uses-->
+                    <!-- Home icon -->
+                    <a href="{% url 'mainPage' %}" class="home-icon">
+                        <img src="{% static 'images/homeicon.png' %}" alt="Home">
+                    </a>
 
-        {% if room.user1 == request.user %}
-            {% with other_user=room.user2 %}
-                <a href="{% url 'chat_room' room.id %}" class="chat-card">
-                    {% if other_user.profile.avatar %}
-                        <img src="{{ other_user.profile.avatar.url }}" class="avatar">
+                    <a href="{% url 'chat_inbox' %}" class="chat-icon">
+                        <img src="{% static 'images/chaticon.png' %}" alt="Chat">
+                    </a>
+
+                    <!-- Menu button --> <!-- yt adjusted for css uses-->
+                    <button type="button" class="menu-icon" onclick="toggleMenu()">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </header>
+
+            <div id="overlay" class="overlay"></div> <!-- yt adjusted for css uses-->
+
+            <!-- ================================================== -->
+            <!--            Dropdown Menu Navigation                -->
+            <!-- ================================================== -->
+            <div class = "dropdown-nav">
+                
+                <nav id="menu" class="menu"> <!-- yt adjusted for css uses-->
+                    <ul>
+                        <li>
+                        <a href="{% url 'lost_posts' %}"> Lost Post </a>  
+                        </li>
+                        <li>
+                        <a href="{% url 'found_posts' %}"> Found Post </a>
+                        </li>
+                        <li>
+                        <a href="{% url 'profile' %}"> Profile </a>
+                        </li>
+                        <li>
+                        <a href="{% url 'feedback_form' %}"> Feedback </a>
+                        </li>
+                        <li class="logout">
+                        <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a> 
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="inbox-header">
+                Chat Inbox
+            </div>
+
+            <div class="chat-list">
+
+                {% for room in rooms %}
+
+                    {% if room.user1 == request.user %}
+                        {% with other_user=room.user2 %}
+                            <a href="{% url 'chat_room' room.id %}" class="chat-card">
+                                {% if other_user.profile.avatar %}
+                                    <img src="{{ other_user.profile.avatar.url }}" class="avatar">
+                                {% else %}
+                                    <img src="{% static 'images/default.png' %}" class="avatar">
+                                {% endif %}
+
+                                <div class="username">
+                                    {{ other_user.profile.name|default:other_user.username }}
+                                </div>
+                            </a>
+                        {% endwith %}
                     {% else %}
-                        <img src="{% static 'images/default.png' %}" class="avatar">
+                        {% with other_user=room.user1 %}
+                            <a href="{% url 'chat_room' room.id %}" class="chat-card">
+                                {% if other_user.profile.avatar %}
+                                    <img src="{{ other_user.profile.avatar.url }}" class="avatar">
+                                {% else %}
+                                    <img src="{% static 'images/default.png' %}" class="avatar">
+                                {% endif %}
+
+                                <div class="username">
+                                    {{ other_user.profile.name|default:other_user.username }}
+                                </div>
+                            </a>
+                        {% endwith %}
                     {% endif %}
 
-                    <div class="username">
-                        {{ other_user.profile.name|default:other_user.username }}
+                {% empty %}
+                    <p>No chats yet.</p>
+                {% endfor %}
+
+            </div>
+
+            <!-- yt added -->
+            <!-- Confirm Logout Popup -->
+            <div id="confirmPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Are you sure you want to logout?</p>
+
+                    <div class="popup-btns">
+                        <button onclick="confirmLogout()">OK</button>
+                        <button onclick="cancelLogout()">Cancel</button>
                     </div>
-                </a>
-            {% endwith %}
-        {% else %}
-            {% with other_user=room.user1 %}
-                <a href="{% url 'chat_room' room.id %}" class="chat-card">
-                    {% if other_user.profile.avatar %}
-                        <img src="{{ other_user.profile.avatar.url }}" class="avatar">
-                    {% else %}
-                        <img src="{% static 'images/default.png' %}" class="avatar">
-                    {% endif %}
-
-                    <div class="username">
-                        {{ other_user.profile.name|default:other_user.username }}
-                    </div>
-                </a>
-            {% endwith %}
-        {% endif %}
-
-    {% empty %}
-        <p>No chats yet.</p>
-    {% endfor %}
-
-</div>
-
-</body>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>
