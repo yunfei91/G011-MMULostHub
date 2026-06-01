@@ -183,6 +183,34 @@
                         data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
                         
                         <div class="post-item" data-type="{{ post.post_type }}">
+
+                            <!-- Post Navigation (differ own post / other user post to show nav) -->
+                            <div class = "post-nav">
+
+                                <!-- user themselves-->
+                                {% if request.user == post.post_user %}
+                                    
+                                    <a href="{% url 'editPost' post.id %}">
+                                        Edit Post
+                                    </a>
+
+                                    <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
+                                    <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
+                                        {% csrf_token %}
+
+                                        <button type="submit">
+                                            Delete Post
+                                        </button>
+                                    </form>
+
+                                {%else %}
+
+                                    <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                                        <button type="button">Report Post</button>
+                                    </a>
+
+                                {% endif %}
+                            </div>
                         
                             <h4>{{ post.post_type|upper }} POST</h4>
 
@@ -238,6 +266,35 @@
                         
                         <div class="post-item">
 
+                            <!-- Post Navigation (differ own post / other user post to show nav) -->
+                            <div class = "post-nav">
+
+                                <!-- user themselves-->
+                                {% if request.user == post.post_user %}
+                                    
+                                    <a href="{% url 'editPost' post.id %}">
+                                        Edit Post
+                                    </a>
+
+                                    <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
+                                    <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
+                                        {% csrf_token %}
+
+                                        <button type="submit">
+                                            Delete Post
+                                        </button>
+                                    </form>
+
+                                {%else %}
+
+                                    <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                                        <button type="button">Report Post</button>
+                                    </a>
+
+                                {% endif %}
+                            </div>
+                        
+
                             <div class="image-wrapper">
 
                                 {% if post.cover_image %}
@@ -289,6 +346,35 @@
                         data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
                         
                         <div class="post-item">
+
+                            <!-- Post Navigation (differ own post / other user post to show nav) -->
+                            <div class = "post-nav">
+
+                                <!-- user themselves-->
+                                {% if request.user == post.post_user %}
+                                    
+                                    <a href="{% url 'editPost' post.id %}">
+                                        Edit Post
+                                    </a>
+
+                                    <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
+                                    <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
+                                        {% csrf_token %}
+
+                                        <button type="submit">
+                                            Delete Post
+                                        </button>
+                                    </form>
+
+                                {%else %}
+
+                                    <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                                        <button type="button">Report Post</button>
+                                    </a>
+
+                                {% endif %}
+                            </div>
+                        
                             
                             <div class="image-wrapper">
 

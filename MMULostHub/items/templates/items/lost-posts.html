@@ -286,6 +286,10 @@
                                         <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
                                             <button type="button">Report</button>
                                         </a>
+
+                                        <a href="{% url 'report_user' user.id %}">
+                                            <button type="button">Report User</button>
+                                        </a>
                                         
                                     {% endif %}
                                 </div>
