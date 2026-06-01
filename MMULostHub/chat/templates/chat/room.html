@@ -17,7 +17,19 @@
             background:#E1E8E5;
             height:100vh;
             display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+
+        .chat-wrapper{
+            width:65%;
+            height:80vh;
+            background:white;
+            display:flex;
             flex-direction:column;
+            border-radius:12px;
+            overflow:hidden;
+            box-shadow:0 4px 20px rgba(0,0,0,0.12);
         }
 
         /* =========================
@@ -49,7 +61,7 @@
             color:white;
             display:flex;
             align-items:center;
-            padding:18px 25px;
+            padding:10px 20px;
         }
 
         .back{
@@ -60,8 +72,8 @@
         }
 
         .header-avatar{
-            width:55px;
-            height:55px;
+            width:42px;
+            height:42px;
             border-radius:50%;
             object-fit:cover;
             background:#E1E8E5;
@@ -69,7 +81,7 @@
         }
 
         .chat-name{
-            font-size:20px;
+            font-size:18px;
             font-weight:bold;
         }
 
@@ -148,11 +160,12 @@
             display:inline-block;
             max-width:60%;
 
-            padding:12px;
-            border-radius:18px;
+            padding:8px 12px;
+            border-radius:12px;
 
             word-wrap: break-word;
             overflow-wrap: anywhere;
+            position:relative;
         }
 
         .message-row.mine .message-bubble{
@@ -176,9 +189,10 @@
         }
 
         .message-time{
-            font-size:12px;
+            font-size:11px;
             color:#72788A;
-            margin-top:5px;
+            margin-top:4px;
+            text-align:right;
         }
 
         .chat-image{
@@ -192,7 +206,7 @@
 
         .chat-footer{
             background:white;
-            padding:15px;
+            padding:8px 12px;
             border-top:1px solid #ccc;
         }
 
@@ -206,9 +220,9 @@
             flex:1;
             resize:none;
             border:1px solid #CED8D4;
-            border-radius:25px;
+            border-radius:12px;
             padding:12px 18px;
-            height:50px;
+            height:42px;
         }
 
         .file-label{
@@ -225,8 +239,8 @@
             background:#72788A;
             color:white;
             border:none;
-            padding:12px 25px;
-            border-radius:25px;
+            padding:8px 18px;
+            border-radius:10px;
             cursor:pointer;
         }
 
@@ -270,6 +284,7 @@
 </head>
 
 <body>
+    <div class="chat-wrapper">
     <div class="chat-header">
 
         {% if next_url %}
@@ -399,6 +414,7 @@
 
     </div>
 
+
     <script>
 
         function toggleChatMenu() {
@@ -505,8 +521,8 @@
         }
 
         });
-        
-    </script>
 
+    </script>
+    </div>
 </body>
 </html>

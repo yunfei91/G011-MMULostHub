@@ -11,6 +11,18 @@
             background: #E1E8E5;
         }
 
+        .chat-wrapper{
+            width:65%;
+            height:80vh;
+            background:white;
+            display:flex;
+            flex-direction:column;
+            border-radius:12px;
+            overflow:hidden;
+            box-shadow:0 4px 20px rgba(0,0,0,0.12);
+            margin: 40px auto;
+        }
+
         .dropdown-nav {
             padding: 10px;
             background: white;
@@ -71,25 +83,28 @@
         .unread-badge {
             background: red;
             color: white;
-            min-width: 22px;
+            width: 22px;
             height: 22px;
             border-radius: 50%;
-            font-size: 13px;
+            font-size: 12px;
 
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .chat-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin-top: 6px;
         }
 
         .last-time {
             font-size: 12px;
             color: #72788A;
+        }
+
+        .chat-right {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 50px;
         }
         
     </style>
@@ -112,7 +127,7 @@
         <a href="{% url 'logout' %}"> Logout </a>
     </div>
 </div>
-
+<div class="chat-wrapper">
 <div class="inbox-header">
     Chat Inbox
 </div>
@@ -131,48 +146,49 @@
 
             <div class="chat-info">
 
-                <div class="chat-top">
                     <div class="username">
                         {{ item.other_user.profile.name|default:item.other_user.username }}
                     </div>
 
-                    <div class="last-time">
-                        {% now "Y-m-d" as today %}
-
-                        {% if item.last_time|date:"Y-m-d" == today %}
-                            {{ item.last_time|date:"h:i A" }}
+                    <div class="last-message">
+                        {% if item.last_message.message_type == "image" %}
+                            Image
+                        {% elif item.last_message.message_type == "audio" %}
+                            Audio
+                        {% elif item.last_message.file %}
+                            File
                         {% else %}
-                            {{ item.last_time|date:"d/m/Y" }}
+                            {{ item.last_message.content|truncatechars:40 }}
                         {% endif %}
                     </div>
-                </div>
-
-                <div class="last-message">
-                    {% if item.last_message.message_type == "image" %}
-                        Image
-                    {% elif item.last_message.message_type == "audio" %}
-                        Audio
-                    {% elif item.last_message.file %}
-                        File
-                    {% else %}
-                        {{ item.last_message.content|truncatechars:40 }}
-                    {% endif %}
-                </div>
 
             </div>
 
-            {% if item.unread_count > 0 %}
-                <div class="unread-badge">
-                    {{ item.unread_count }}
-                </div>
-            {% endif %}
+            <div class="chat-right">
 
+                <div class="last-time">
+                    {% now "Y-m-d" as today %}
+
+                    {% if item.last_time|date:"Y-m-d" == today %}
+                        {{ item.last_time|date:"h:i A" }}
+                    {% else %}
+                        {{ item.last_time|date:"d/m/Y" }}
+                    {% endif %}
+                </div> 
+
+                {% if item.unread_count > 0 %}
+                    <div class="unread-badge">
+                        {{ item.unread_count }}
+                    </div>
+                {% endif %}
+            </div>
         </a>
 
     {% empty %}
         <p>No chats yet.</p>
     {% endfor %}
 
+</div>
 </div>
 
 </body>
