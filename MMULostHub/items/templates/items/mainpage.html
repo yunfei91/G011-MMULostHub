@@ -14,10 +14,8 @@
 
         <script src="{% static 'items/js/header.js' %}" defer></script>
         <script src="{% static 'items/js/logout.js' %}" defer></script>
-        <script>
-            window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";
-            const CURRENT_USER_ID = "{{ request.user.id|default:'' }}";
-        </script>
+        <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
+        <script>window.CURRENT_USER_ID = "{{ request.user.id|default:'null' }}";</script>
 
         <title> 
             MMU Lost Hub 
@@ -240,6 +238,8 @@
                     <!-- Store username into HTML attribute, so JS can read it-->
                     <div class="post"
                         onclick="openPost(this)" 
+                        data-status="{{ post.post_status }}"
+                        data-status-display="{{ post.get_post_status_display }}"
                         data-user="{{ post.post_user.username }}"
                         data-user-id="{{ post.post_user.id }}"
                         data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
@@ -332,6 +332,13 @@
                                     <p> Location: Unknown Lost Location</p>
                                 {% endif %}
 
+                                <p>
+                                    Status:
+                                    <span class="status-badge {{ post.post_status }}">
+                                        {{ post.get_post_status_display }}
+                                    </span>
+                                </p>
+
                             </div>
                         </div>
                     </div>
@@ -381,6 +388,9 @@
 
                                 <p><b>Description:</b></p>
                                 <p id="m_description"></p>
+
+                                <p><b>Status:</b> <span id="m_status"></span></p>
+                                <div id="status_btn_container"></div>
 
                                 <div class="chatBtn" id="chat_btn_container" style="display:none;">
                                     <!-- zinc add chat url-->
@@ -442,10 +452,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Success Popup -->
-            <div id="successPopup" class="popup"></div>
-
         </div>
     </body>
     <footer>

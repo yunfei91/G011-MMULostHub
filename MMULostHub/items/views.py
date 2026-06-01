@@ -400,3 +400,30 @@ def map_search(request):
         'posts': post_box,
         'locations': MMULocation.objects.all(),
     })
+
+@login_required(login_url='beginning')
+@never_cache
+def update_post_status(request, post_id):
+
+    post = get_object_or_404(
+        Post,
+        id=post_id,
+        post_user=request.user
+    )
+
+    if request.method == "POST":
+
+        if post.post_type == "found":
+            post.post_status = "claimed"
+
+        elif post.post_type == "lost":
+            post.post_status = "returned"
+
+        post.save()
+
+        messages.success(
+            request,
+            "Post status updated successfully."
+        )
+
+    return redirect("mainPage")

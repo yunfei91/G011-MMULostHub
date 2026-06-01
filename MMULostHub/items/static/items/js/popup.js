@@ -74,11 +74,26 @@ document.addEventListener("DOMContentLoaded", () => {
             POPUP CONFIRMATION         
      ====================================== */
     window.showConfirmPopup = function (title, message, callback) {
+
+        const popup = document.getElementById("popup");
+
+        if (!popup) {
+            console.error("popup not found in DOM");
+            return;
+        }
+
+        const popupTitle = document.getElementById("popup-title");
+        const popupText = document.getElementById("popup-message");
+        const popupConfirm = document.getElementById("popup-confirm");
+        const popupCancel = document.getElementById("popup-cancel");
+
         popupTitle.innerText = title;
         popupText.innerText = message;
         popupConfirm.innerText = "Confirm";
         popupCancel.style.display = "inline-block";
+
         confirmCallback = callback;
+
         popup.classList.remove("hidden");
     };
 
@@ -111,17 +126,46 @@ function openPost(el) { // el=this connection
         chatLink.href = el.dataset.chatUrl;
     }
 
-    const chatContainer =
-    document.getElementById("chat_btn_container");
+    window.currentPostType = el.dataset.type;
+    window.currentStatusUrl = el.dataset.statusUrl;
 
-    if (String(el.dataset.userId) === String(CURRENT_USER_ID)) {
+    const chatContainer = document.getElementById("chat_btn_container");
+
+    const statusContainer = document.getElementById("status_btn_container");
+
+    statusContainer.innerHTML = "";
+
+    if ((el.dataset.userId) === String(CURRENT_USER_ID)) {
+
         chatContainer.style.display = "none";
+
+        if (el.dataset.status === "open") {
+
+            let label = "";
+
+            if (el.dataset.type === "found") {
+                label = "Mark as Claimed";
+            }
+
+            if (el.dataset.type === "lost") {
+                label = "Mark as Returned";
+            }
+
+            statusContainer.innerHTML = `
+                <button id="statusBtn">
+                    ${label}
+                </button>
+            `;
+        }
+
     } else {
+
         chatContainer.style.display = "block";
     }
 
     document.getElementById("m_date").innerText = el.dataset.date;
     document.getElementById("m_category").innerText = el.dataset.category;
+    document.getElementById("m_status").innerText = el.dataset.statusDisplay;
     document.getElementById("m_location").innerText = el.dataset.locationName || "Unknown Location";
     document.getElementById("m_description").innerText = el.dataset.description;
 
@@ -191,3 +235,42 @@ window.addEventListener("click", function (event) {
         modal.style.display = "none";
     }
 });
+
+document.addEventListener("click", function (e) {
+
+    const btn = e.target.closest("#statusBtn");
+    if (!btn) return;
+
+    console.log("STATUS BUTTON CLICKED");
+
+    const message =
+        window.currentPostType === "found"
+            ? "Are you sure this item has been claimed?"
+            : "Are you sure this item has been returned?";
+
+    showConfirmPopup(
+        "Update Status",
+        message,
+        function () {
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = window.currentStatusUrl;
+
+            const csrf = document.createElement("input");
+            csrf.type = "hidden";
+            csrf.name = "csrfmiddlewaretoken";
+            csrf.value = getCSRFToken();
+
+            form.appendChild(csrf);
+            document.body.appendChild(form);
+
+            form.submit();
+        }
+    );
+});
+
+function getCSRFToken() {
+    return document.querySelector(
+        '[name=csrfmiddlewaretoken]'
+    )?.value || '';
+}
