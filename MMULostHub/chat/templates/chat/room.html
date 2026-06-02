@@ -3,538 +3,295 @@
 <html>
 <head>
     <title>Chat Room</title>
+        <!-- yt added -->
+        <link rel="stylesheet" href="{% static 'chat/css/room.css' %}">
 
-    <style>
+        <script src="{% static 'items/js/logout.js' %}" defer></script>
+        <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
 
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Arial,sans-serif;
-        }
+        <title> 
+            MMU Lost Hub 
+        </title>
+        
+        <!-- Prevent browser cache, user cannot press back to access previous page -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
+        <!-- Older browser cache prevention -->
+        <meta http-equiv="Pragma" content="no-cache">
+        <!-- Expire page immediately -->
+        <meta http-equiv="Expires" content="0">
 
-        body{
-            background:#E1E8E5;
-            height:100vh;
-        }
+    </head>
 
-        .chat-wrapper{
-            width:65%;
-            height:80vh;
-            background:white;
-            display:flex;
-            flex-direction:column;
-            border-radius:12px;
-            overflow:hidden;
-            box-shadow:0 4px 20px rgba(0,0,0,0.12);
-            margin: 40px auto;
-        }
+    <body>
+        <div class="whole-page">
+            <header>
+                <div class="header-left"> <!-- yt adjusted for css uses-->              
+                    <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
+                    <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
+                </div>
 
-        /* =========================
-                NAVBAR
-        ========================= */
+                <div class="header-right"> <!-- yt adjusted for css uses-->
+                    <!-- Home icon -->
+                    <a href="{% url 'mainPage' %}" class="home-icon">
+                        <img src="{% static 'images/homeicon.png' %}" alt="Home">
+                    </a>
 
-        .dropdown-nav{
-            background:#f8f9f9;
-            padding:10px 20px;
-        }
+                    <a href="{% url 'chat_inbox' %}" class="chat-icon">
+                        <img src="{% static 'images/chaticon.png' %}" alt="Chat">
+                    </a>
 
-        .dropdown-nav nav{
-            font-weight:bold;
-        }
+                    <!-- Menu button --> <!-- yt adjusted for css uses-->
+                    <button type="button" class="menu-icon" onclick="toggleMenu()">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </header>
 
-        .dropdown-content a{
-            text-decoration:none;
-            margin-right:15px;
-        }
+            <div id="overlay" class="overlay"></div> <!-- yt adjusted for css uses-->
 
-        /* =========================
-                HEADER
-        ========================= */
+            <!-- ================================================== -->
+            <!--            Dropdown Menu Navigation                -->
+            <!-- ================================================== -->
+            <div class = "dropdown-nav">
+                
+                <nav id="menu" class="menu"> <!-- yt adjusted for css uses-->
+                    <ul>
+                        <li>
+                        <a href="{% url 'lost_posts' %}"> Lost Post </a>  
+                        </li>
+                        <li>
+                        <a href="{% url 'found_posts' %}"> Found Post </a>
+                        </li>
+                        <li>
+                        <a href="{% url 'profile' %}"> Profile </a>
+                        </li>
+                        <li>
+                        <a href="{% url 'feedback_form' %}"> Feedback </a>
+                        </li>
+                        <li class="logout">
+                        <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a> 
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="chat-wrapper">
+                <div class="chat-header">
 
-        .chat-header{
-            background:#72788A;
-            color:white;
-            display:flex;
-            align-items:center;
-            padding:10px 20px;
-        }
+                    {% if next_url %}
+                        <a href="{{ next_url }}" class="back">←</a>
+                    {% else %}
+                        <a href="{% url 'chat_inbox' %}" class="back">←</a>
+                    {% endif %}
 
-        .back{
-            color:white;
-            text-decoration:none;
-            font-size:28px;
-            margin-right:15px;
-        }
+                    {% if other_user.profile.avatar %}
+                        <img src="{{ other_user.profile.avatar.url }}" class="header-avatar">
+                    {% else %}
+                        <img src="{% static 'images/default.png' %}" class="header-avatar">
+                    {% endif %}
 
-        .header-avatar{
-            width:42px;
-            height:42px;
-            border-radius:50%;
-            object-fit:cover;
-            background:#E1E8E5;
-            margin-right:15px;
-        }
+                    <div class="chat-name">
+                        <a href="{% url 'userProfile' other_user.username %}" class="chat-name-link">
+                            {{ other_user.profile.name|default:other_user.username }}
+                        </a>
+                    </div>
 
-        .chat-name{
-            font-size:18px;
-            font-weight:bold;
-        }
+                    <div class="chat-menu">
 
-        .chat-menu{
-            margin-left:auto;
-            position:relative;
-        }
+                        <button
+                            type="button"
+                            class="menu-btn"
+                            onclick="toggleChatMenu()">
+                            ⋮
+                        </button>
 
-        .menu-btn{
-            background:none;
-            border:none;
-            color:white;
-            font-size:28px;
-            cursor:pointer;
-        }
+                        <div
+                            id="chatMenuDropdown"
+                            class="chat-menu-dropdown">
 
-        .chat-menu-dropdown{
-            display:none;
-            position:absolute;
-            right:0;
-            top:40px;
-            background:white;
-            min-width:150px;
-            border-radius:10px;
-            overflow:hidden;
-            box-shadow:0 4px 10px rgba(0,0,0,0.2);
-            z-index:999;
-        }
+                            <a href="{% url 'report_user' other_user.id %}">
+                                Report User
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-body">
 
-        .chat-menu-dropdown a{
-            display:block;
-            padding:12px;
-            text-decoration:none;
-            color:#72788A;
-        }
+                    {% for message in messages %}
 
-        .chat-menu-dropdown a:hover{
-            background:#E1E8E5;
-        }
+                        <div class="message-row {% if message.sender == request.user %}mine{% else %}other{% endif %}">
 
-        /* =========================
-                CHAT BODY
-        ========================= */
+                            {% if message.sender != request.user %}
 
-        .chat-body{
-            flex:1;
-            overflow-y:auto;
-            padding:20px;
-            background:#E1E8E5;
-        }
+                                {% if other_user.profile.avatar %}
+                                    <img src="{{ other_user.profile.avatar.url }}" class="message-avatar">
+                                {% else %}
+                                    <img src="{% static 'images/default.png' %}" class="message-avatar">
+                                {% endif %}
+                            {% endif %}
 
-        .message-row{
-            display:flex;
-            margin-bottom:15px;
-            width:100%;
-        }
+                            <div class="message-bubble">
+                                {% if message.file %}
 
-        .message-row.mine{
-            justify-content:flex-end;
-        }
+                                    {% if message.message_type == 'image' %}
 
-        .message-row.other{
-            justify-content:flex-start;
-        }
+                                        <img
+                                            src="{{ message.file.url }}"
+                                            class="chat-image">
 
-        .message-avatar{
-            width:45px;
-            height:45px;
-            border-radius:50%;
-            object-fit:cover;
-            background:#CED8D4;
-            margin-right:10px;
-        }
+                                    {% elif message.message_type == 'audio' %}
 
-        .message-bubble{
-            display:inline-block;
-            max-width:60%;
+                                        <audio controls>
+                                            <source src="{{ message.file.url }}">
+                                        </audio>
 
-            padding:8px 12px;
-            border-radius:12px;
+                                    {% else %}
 
-            word-wrap: break-word;
-            overflow-wrap: anywhere;
-            position:relative;
-        }
+                                        <a href="{{ message.file.url }}" target="_blank">
+                                            Download File
+                                        </a>
 
-        .message-row.mine .message-bubble{
-            margin-left:auto;
-        }
+                                    {% endif %}
+                                {% endif %}
+                                
+                                {% if message.content %}
+                                    <div class="message-content">
+                                        {{ message.content|linebreaksbr }}
+                                    </div>
+                                {% endif %}
 
-        .message-row.other .message-bubble{
-            margin-right:auto;
-        }
+                                <div class="message-time">
+                                    {{ message.created_at|date:"h:i A" }}
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>No messages yet. Start the conversation!</p>
+                    {% endfor %}
 
-        .message-content{
-            white-space: normal;
-        }
+                    <div id="bottom"></div>
 
-        .other .message-bubble{
-            background:white;
-        }
+                </div>
 
-        .mine .message-bubble{
-            background:#B5D1FA;
-        }
+                <div class="chat-footer">
+                    <div id="previewBox" class="preview-box">
+                        <img id="imagePreview">
+                    </div>
+                    <div class="remove-preview" onclick="removePreview()">
+                        Remove Image
+                    </div>
+                </div>
 
-        .message-time{
-            font-size:11px;
-            color:#72788A;
-            margin-top:4px;
-            text-align:right;
-        }
+                <form
+                    method="POST"
+                    enctype="multipart/form-data"
+                    class="chat-form">
 
-        .chat-image{
-            max-width:250px;
-            border-radius:10px;
-        }
+                    {% csrf_token %}
 
-        /* =========================
-                INPUT BAR
-        ========================= */
+                    <label class="file-label">
+                        +
+                        <input type="file" name="file" id="fileInput" onchange="previewImage(this)">
+                    </label>
 
-        .chat-footer{
-            background:white;
-            padding:8px 12px;
-            border-top:1px solid #ccc;
-        }
+                    <textarea name="content" placeholder="Type a message..."></textarea>
 
-        .chat-form{
-            display:flex;
-            align-items:center;
-            gap:10px;
-        }
+                    <button type="submit" class="send-btn">
+                        Send
+                    </button>
 
-        .chat-form textarea{
-            flex:1;
-            resize:none;
-            border:1px solid #CED8D4;
-            border-radius:12px;
-            padding:12px 18px;
-            height:42px;
-        }
-
-        .file-label{
-            font-size:24px;
-            cursor:pointer;
-            color:#72788A;
-        }
-
-        .chat-form input[type=file]{
-            display:none;
-        }
-
-        .send-btn{
-            background:#72788A;
-            color:white;
-            border:none;
-            padding:8px 18px;
-            border-radius:10px;
-            cursor:pointer;
-        }
-
-        .send-btn:hover{
-            opacity:0.9;
-        }
-
-        .preview-box{
-            display:none;
-            padding:10px;
-            background:white;
-            border-top:1px solid #CED8D4;
-        }
-
-        .preview-box img{
-            max-width:180px;
-            max-height:180px;
-            border-radius:10px;
-           display:block;
-        }
-
-         .remove-preview{
-            margin-top:5px;
-            color:#72788A;
-            cursor:pointer;
-            font-size:14px;
-        }
-
-        .chat-name-link{
-            color:white;
-            text-decoration:none;
-            font-size:20px;
-            font-weight:bold;
-        }
-
-        .chat-name-link:hover{
-            text-decoration:underline;
-        }
-
-    </style>
-</head>
-
-<body>
-<div class="dropdown-nav">
-    <nav>
-        Menu Button
-    </nav>
-    
-    <div class="dropdown-content">
-        <a href="{% url 'mainPage' %}"> Home </a>
-        <a href="{% url 'lost_posts' %}"> Lost Post </a>                 
-        <a href="{% url 'found_posts' %}"> Found Post </a>                
-        <a href="{% url 'profile' %}"> Profile </a> 
-        <a href="{% url 'chat_inbox' %}">Inbox</a>                       
-        <a href="{% url 'feedback_form' %}">Feedback/Report </a> 
-        <a href="{% url 'logout' %}"> Logout </a>
-    </div>
-</div>
-
-    <div class="chat-wrapper">
-    <div class="chat-header">
-
-        {% if next_url %}
-            <a href="{{ next_url }}" class="back">←</a>
-        {% else %}
-            <a href="{% url 'chat_inbox' %}" class="back">←</a>
-        {% endif %}
-
-        {% if other_user.profile.avatar %}
-            <img src="{{ other_user.profile.avatar.url }}" class="header-avatar">
-        {% else %}
-            <img src="{% static 'images/default.png' %}" class="header-avatar">
-        {% endif %}
-
-        <div class="chat-name">
-            <a href="{% url 'userProfile' other_user.username %}" class="chat-name-link">
-                {{ other_user.profile.name|default:other_user.username }}
-            </a>
-        </div>
-
-        <div class="chat-menu">
-
-            <button
-                type="button"
-                class="menu-btn"
-                onclick="toggleChatMenu()">
-                ⋮
-            </button>
-
-            <div
-                id="chatMenuDropdown"
-                class="chat-menu-dropdown">
-
-                <a href="{% url 'report_user' other_user.id %}">
-                    Report User
-                </a>
+                </form>
 
             </div>
 
-        </div>
+            <!-- yt added -->
+            <!-- Confirm Logout Popup -->
+            <div id="confirmPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Are you sure you want to logout?</p>
 
-    </div>
-
-    <div class="chat-body">
-
-        {% for message in messages %}
-
-            <div class="message-row {% if message.sender == request.user %}mine{% else %}other{% endif %}">
-
-                {% if message.sender != request.user %}
-
-                    {% if other_user.profile.avatar %}
-                        <img src="{{ other_user.profile.avatar.url }}" class="message-avatar">
-                    {% else %}
-                        <img src="{% static 'images/default.png' %}" class="message-avatar">
-                    {% endif %}
-                {% endif %}
-
-                <div class="message-bubble">
-                    {% if message.file %}
-
-                        {% if message.message_type == 'image' %}
-
-                            <img
-                                src="{{ message.file.url }}"
-                                class="chat-image">
-
-                        {% elif message.message_type == 'audio' %}
-
-                            <audio controls>
-                                <source src="{{ message.file.url }}">
-                            </audio>
-
-                        {% else %}
-
-                            <a href="{{ message.file.url }}" target="_blank">
-                                Download File
-                            </a>
-
-                        {% endif %}
-                    {% endif %}
-                    
-                    {% if message.content %}
-                        <div class="message-content">
-                            {{ message.content|linebreaksbr }}
-                        </div>
-                    {% endif %}
-
-                    <div class="message-time">
-                        {{ message.created_at|date:"h:i A" }}
+                    <div class="popup-btns">
+                        <button onclick="confirmLogout()">OK</button>
+                        <button onclick="cancelLogout()">Cancel</button>
                     </div>
                 </div>
             </div>
-        {% empty %}
-            <p>No messages yet. Start the conversation!</p>
-        {% endfor %}
-        <div id="bottom"></div>
-    </div>
-
-    <div class="chat-footer">
-        <div id="previewBox" class="preview-box">
-            <img id="imagePreview">
-        <div class="remove-preview" onclick="removePreview()">
-            Remove Image
         </div>
-    </div>
-
-        <form
-            method="POST"
-            enctype="multipart/form-data"
-            class="chat-form">
-
-            {% csrf_token %}
-
-            <label class="file-label">
-                +
-                <input type="file" name="file" id="fileInput" onchange="previewImage(this)">
-            </label>
-
-            <textarea name="content" placeholder="Type a message..."></textarea>
-
-            <button type="submit" class="send-btn">
-                Send
-            </button>
-
-        </form>
-
-    </div>
 
 
-    <script>
+        <script>
 
-        function toggleChatMenu() {
+            function toggleChatMenu() {
 
-            const menu =
-                document.getElementById(
-                    "chatMenuDropdown"
-                );
+                const menu = document.getElementById("chatMenuDropdown");
 
-            if (menu.style.display === "block") {
-
-                menu.style.display = "none";
-
-            } else {
-
-                menu.style.display = "block";
-
-            }
-        }
-
-        window.onclick = function(event) {
-
-            if (
-                !event.target.matches('.menu-btn')
-            ) {
-
-                const menu =
-                    document.getElementById(
-                        "chatMenuDropdown"
-                    );
-
-                if (menu) {
+                if (menu.style.display === "block") {
 
                     menu.style.display = "none";
 
+                } else {
+
+                    menu.style.display = "block";
+
                 }
             }
-        }
 
-        function previewImage(input){
+            window.onclick = function(event) {
 
-            const file = input.files[0];
+                if (!event.target.matches('.menu-btn')) {
 
-            const previewBox =
-                document.getElementById(
-                    "previewBox"
-                );
+                    const menu = document.getElementById("chatMenuDropdown");
 
-            const imagePreview =
-                document.getElementById(
-                    "imagePreview"
-                );
-
-            if(
-                file &&
-                file.type.startsWith(
-                    "image/"
-                )
-            ){
-
-                imagePreview.src =
-                    URL.createObjectURL(file);
-
-                previewBox.style.display =
-                    "block";
-
+                    if (menu) {
+                        menu.style.display = "none";
+                    }
+                }
             }
 
-            else{
+            function previewImage(input){
 
-                previewBox.style.display =
-                    "none";
+                const file = input.files[0];
 
-                imagePreview.src = "";
+                const previewBox = document.getElementById("previewBox");
 
+                const imagePreview = document.getElementById("imagePreview");
+
+                if(
+                    file && file.type.startsWith(
+                        "image/"
+                    )
+                ){
+                    imagePreview.src = URL.createObjectURL(file);
+
+                    previewBox.style.display = "block";
+                }
+
+                else{
+                    previewBox.style.display = "none";
+
+                    imagePreview.src = "";
+                }
             }
-        }
 
-        function removePreview(){
+            function removePreview(){
 
-            document.getElementById(
-                "fileInput"
-            ).value = "";
+                document.getElementById("fileInput").value = "";
 
-            document.getElementById(
-                "imagePreview"
-            ).src = "";
+                document.getElementById("imagePreview").src = "";
 
-            document.getElementById(
-                "previewBox"
-             ).style.display = "none";
-        }
+                document.getElementById("previewBox").style.display = "none";
+            }
 
-       document.addEventListener("DOMContentLoaded", function() {
+            document.addEventListener("DOMContentLoaded", function() {
 
-        const chatBody =
-            document.querySelector(".chat-body");
+                const chatBody = document.querySelector(".chat-body");
 
-        if (chatBody) {
+                if (chatBody) {
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                }
 
-            chatBody.scrollTop =
-                chatBody.scrollHeight;
-
-        }
-
-        });
-
-    </script>
-    </div>
-</body>
+            });
+        </script>
+    </body>
 </html>

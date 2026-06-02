@@ -82,6 +82,10 @@ document.addEventListener("DOMContentLoaded", () => {
         popup.classList.remove("hidden");
     };
 
+    window.closePopup = function () {
+        popup.classList.add("hidden");
+    };
+
 });
 
 

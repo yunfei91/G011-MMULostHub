@@ -4,197 +4,159 @@
 <head>
     <title>Chat Inbox</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #E1E8E5;
-        }
+        <!-- yt added -->
+        <link rel="stylesheet" href="{% static 'chat/css/inbox.css' %}">
 
-        .chat-wrapper{
-            width:65%;
-            height:80vh;
-            background:white;
-            display:flex;
-            flex-direction:column;
-            border-radius:12px;
-            overflow:hidden;
-            box-shadow:0 4px 20px rgba(0,0,0,0.12);
-            margin: 40px auto;
-        }
+        <script src="{% static 'items/js/header.js' %}" defer></script>
+        <script src="{% static 'items/js/logout.js' %}" defer></script>
+        <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
 
-        .dropdown-nav {
-            padding: 10px;
-            background: white;
-        }
-
-        .dropdown-content a{
-            text-decoration:none;
-            margin-right:15px;
-        }
-
-        .inbox-header {
-            background: #72788A;
-            color: white;
-            padding: 20px;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .chat-list {
-            padding: 15px;
-        }
-
-        .chat-card {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: white;
-            margin-bottom: 12px;
-            padding: 15px;
-            border-radius: 15px;
-            text-decoration: none;
-            color: black;
-        }
-
-        .chat-card:hover {
-            background: #CED8D4;
-        }
-
-        .avatar {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #CED8D4;
-        }
-
-        .username {
-            font-size: 18px;
-            font-weight: bold;
-            color: #72788A;
-        }
-
-        .chat-info {
-            flex: 1;
-        }
-
-        .last-message {
-            color: #72788A;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        .unread-badge {
-            background: red;
-            color: white;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            font-size: 12px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 6px;
-        }
-
-        .last-time {
-            font-size: 12px;
-            color: #72788A;
-        }
-
-        .chat-right {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-width: 50px;
-        }
+        <title> 
+            MMU Lost Hub 
+        </title>
         
-    </style>
-</head>
+        <!-- Prevent browser cache, user cannot press back to access previous page -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
+        <!-- Older browser cache prevention -->
+        <meta http-equiv="Pragma" content="no-cache">
+        <!-- Expire page immediately -->
+        <meta http-equiv="Expires" content="0">
 
-<body>
+    </head>
 
-<div class="dropdown-nav">
-    <nav>
-        Menu Button
-    </nav>
-    
-    <div class="dropdown-content">
-        <a href="{% url 'mainPage' %}"> Home </a>
-        <a href="{% url 'lost_posts' %}"> Lost Post </a>                 
-        <a href="{% url 'found_posts' %}"> Found Post </a>                
-        <a href="{% url 'profile' %}"> Profile </a> 
-        <a href="{% url 'chat_inbox' %}">Inbox</a>                       
-        <a href="{% url 'feedback_form' %}">Feedback/Report </a> 
-        <a href="{% url 'logout' %}"> Logout </a>
-    </div>
-</div>
-<div class="chat-wrapper">
-<div class="inbox-header">
-    Chat Inbox
-</div>
+    <body>
+        <div class="whole-page">
+            <header>
+                <div class="header-left"> <!-- yt adjusted for css uses-->              
+                    <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
+                    <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
+                </div>
 
-<div class="chat-list">
+                <div class="header-right"> <!-- yt adjusted for css uses-->
+                    <!-- Home icon -->
+                    <a href="{% url 'mainPage' %}" class="home-icon">
+                        <img src="{% static 'images/homeicon.png' %}" alt="Home">
+                    </a>
 
-    {% for item in room_data %}
+                    <a href="{% url 'chat_inbox' %}" class="chat-icon">
+                        <img src="{% static 'images/chaticon.png' %}" alt="Chat">
+                    </a>
 
-        <a href="{% url 'chat_room' item.room.id %}" class="chat-card">
+                    <!-- Menu button --> <!-- yt adjusted for css uses-->
+                    <button type="button" class="menu-icon" onclick="toggleMenu()">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </header>
 
-            {% if item.other_user.profile.avatar %}
-                <img src="{{ item.other_user.profile.avatar.url }}" class="avatar">
-            {% else %}
-                <img src="{% static 'images/default.png' %}" class="avatar">
-            {% endif %}
+            <div id="overlay" class="overlay"></div> <!-- yt adjusted for css uses-->
 
-            <div class="chat-info">
-
-                    <div class="username">
-                        {{ item.other_user.profile.name|default:item.other_user.username }}
-                    </div>
-
-                    <div class="last-message">
-                        {% if item.last_message.message_type == "image" %}
-                            Image
-                        {% elif item.last_message.message_type == "audio" %}
-                            Audio
-                        {% elif item.last_message.file %}
-                            File
-                        {% else %}
-                            {{ item.last_message.content|truncatechars:40 }}
-                        {% endif %}
-                    </div>
-
+            <!-- ================================================== -->
+            <!--            Dropdown Menu Navigation                -->
+            <!-- ================================================== -->
+            <div class = "dropdown-nav">
+                
+                <nav id="menu" class="menu"> <!-- yt adjusted for css uses-->
+                    <ul>
+                        <li>
+                        <a href="{% url 'lost_posts' %}"> Lost Post </a>  
+                        </li>
+                        <li>
+                        <a href="{% url 'found_posts' %}"> Found Post </a>
+                        </li>
+                        <li>
+                        <a href="{% url 'profile' %}"> Profile </a>
+                        </li>
+                        <li>
+                        <a href="{% url 'feedback_form' %}"> Feedback </a>
+                        </li>
+                        <li class="logout">
+                        <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a> 
+                        </li>
+                    </ul>
+                </nav>
             </div>
 
-            <div class="chat-right">
+            <div class="content">
+                <div class="inbox-header">
+                    Chat Inbox
+                </div>
 
-                <div class="last-time">
-                    {% now "Y-m-d" as today %}
+                <div class="chat-list">
 
-                    {% if item.last_time|date:"Y-m-d" == today %}
-                        {{ item.last_time|date:"h:i A" }}
-                    {% else %}
-                        {{ item.last_time|date:"d/m/Y" }}
-                    {% endif %}
-                </div> 
+                    {% for item in room_data %}
 
-                {% if item.unread_count > 0 %}
-                    <div class="unread-badge">
-                        {{ item.unread_count }}
-                    </div>
-                {% endif %}
+                        <a href="{% url 'chat_room' item.room.id %}" class="chat-card">
+
+                            {% if item.other_user.profile.avatar %}
+                                <img src="{{ item.other_user.profile.avatar.url }}" class="avatar">
+                            {% else %}
+                                <img src="{% static 'images/default.png' %}" class="avatar">
+                            {% endif %}
+
+                            <div class="chat-info">
+
+                                    <div class="username">
+                                        {{ item.other_user.profile.name|default:item.other_user.username }}
+                                    </div>
+
+                                    <div class="last-message">
+                                        {% if item.last_message.message_type == "image" %}
+                                            Image
+                                        {% elif item.last_message.message_type == "audio" %}
+                                            Audio
+                                        {% elif item.last_message.file %}
+                                            File
+                                        {% else %}
+                                            {{ item.last_message.content|truncatechars:40 }}
+                                        {% endif %}
+                                    </div>
+
+                            </div>
+
+                            <div class="chat-right">
+
+                                <div class="last-time">
+                                    {% now "Y-m-d" as today %}
+
+                                    {% if item.last_time|date:"Y-m-d" == today %}
+                                        {{ item.last_time|date:"h:i A" }}
+                                    {% else %}
+                                        {{ item.last_time|date:"d/m/Y" }}
+                                    {% endif %}
+                                </div> 
+
+                                {% if item.unread_count > 0 %}
+                                    <div class="unread-badge">
+                                        {{ item.unread_count }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </a>
+
+                    {% empty %}
+                        <p>No chats yet.</p>
+                    {% endfor %}
+
+                </div>
             </div>
-        </a>
+            <!-- yt added -->
+            <!-- Confirm Logout Popup -->
+            <div id="confirmPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Are you sure you want to logout?</p>
 
-    {% empty %}
-        <p>No chats yet.</p>
-    {% endfor %}
-
-</div>
-</div>
-
-</body>
+                    <div class="popup-btns">
+                        <button onclick="confirmLogout()">OK</button>
+                        <button onclick="cancelLogout()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <footer>
+        <p>© 2026 MMU Lost Hub<br></p>
+    </footer>
 </html>

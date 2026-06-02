@@ -47,8 +47,8 @@
                         <img src="{% static 'images/homeicon.png' %}" alt="Home">
                     </a>
 
-                    <a href="{% url 'chat_inbox' %}" class="home-icon">
-                        Inbox
+                    <a href="{% url 'chat_inbox' %}" class="chat-icon">
+                        <img src="{% static 'images/chaticon.png' %}" alt="Chat">
                     </a>
 
                     <!-- Menu button --> <!-- yt adjusted for css uses-->
@@ -262,7 +262,7 @@
                                 <h4> {{ post.post_type|upper }} POST </h4>
                                 
                                 <!-- Post Navigation (differ own post / other user post to show nav) -->
-                                <div class = "post-nav">
+                                <div class = "post-nav" onclick="event.stopPropagation()">
 
                                     <!-- user themselves-->
                                     {% if request.user == post.post_user %}
@@ -272,7 +272,9 @@
                                         </a>
 
                                         <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
-                                        <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
+                                        <form method = "POST" 
+                                            action = "{% url 'deletePost' post.id %}" 
+                                            onsubmit = "confirmDelete(event, this)" >
                                             {% csrf_token %}
 
                                             <button type="submit">
@@ -425,8 +427,10 @@
                 <div class="popup-box">
                     <h3 id="popup-title"></h3>
                     <p id="popup-message"></p>
-                    <button id="popup-confirm"> OK </button>
-                    <button id="popup-cancel"> Cancel </button>
+                    <div class="popup-buttons">
+                        <button id="popup-confirm">OK</button>
+                        <button id="popup-cancel">Cancel</button>
+                    </div>
                 </div>
             </div>
 
@@ -442,14 +446,9 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Success Popup -->
-            <div id="successPopup" class="popup"></div>
-
         </div>
     </body>
     <footer>
         <p>© 2026 MMU Lost Hub<br>
-        <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
     </footer>
 </html>
