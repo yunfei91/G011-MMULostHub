@@ -11,9 +11,26 @@
             background: #E1E8E5;
         }
 
+        .chat-wrapper{
+            width:65%;
+            height:80vh;
+            background:white;
+            display:flex;
+            flex-direction:column;
+            border-radius:12px;
+            overflow:hidden;
+            box-shadow:0 4px 20px rgba(0,0,0,0.12);
+            margin: 40px auto;
+        }
+
         .dropdown-nav {
             padding: 10px;
             background: white;
+        }
+
+        .dropdown-content a{
+            text-decoration:none;
+            margin-right:15px;
         }
 
         .inbox-header {
@@ -57,6 +74,44 @@
             font-weight: bold;
             color: #72788A;
         }
+
+        .chat-info {
+            flex: 1;
+        }
+
+        .last-message {
+            color: #72788A;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .unread-badge {
+            background: red;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-size: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 6px;
+        }
+
+        .last-time {
+            font-size: 12px;
+            color: #72788A;
+        }
+
+        .chat-right {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 50px;
+        }
+        
     </style>
 </head>
 
@@ -77,49 +132,68 @@
         <a href="{% url 'logout' %}"> Logout </a>
     </div>
 </div>
-
+<div class="chat-wrapper">
 <div class="inbox-header">
     Chat Inbox
 </div>
 
 <div class="chat-list">
 
-    {% for room in rooms %}
+    {% for item in room_data %}
 
-        {% if room.user1 == request.user %}
-            {% with other_user=room.user2 %}
-                <a href="{% url 'chat_room' room.id %}" class="chat-card">
-                    {% if other_user.profile.avatar %}
-                        <img src="{{ other_user.profile.avatar.url }}" class="avatar">
-                    {% else %}
-                        <img src="{% static 'images/default.png' %}" class="avatar">
-                    {% endif %}
+        <a href="{% url 'chat_room' item.room.id %}" class="chat-card">
 
-                    <div class="username">
-                        {{ other_user.profile.name|default:other_user.username }}
-                    </div>
-                </a>
-            {% endwith %}
-        {% else %}
-            {% with other_user=room.user1 %}
-                <a href="{% url 'chat_room' room.id %}" class="chat-card">
-                    {% if other_user.profile.avatar %}
-                        <img src="{{ other_user.profile.avatar.url }}" class="avatar">
-                    {% else %}
-                        <img src="{% static 'images/default.png' %}" class="avatar">
-                    {% endif %}
+            {% if item.other_user.profile.avatar %}
+                <img src="{{ item.other_user.profile.avatar.url }}" class="avatar">
+            {% else %}
+                <img src="{% static 'images/default.png' %}" class="avatar">
+            {% endif %}
+
+            <div class="chat-info">
 
                     <div class="username">
-                        {{ other_user.profile.name|default:other_user.username }}
+                        {{ item.other_user.profile.name|default:item.other_user.username }}
                     </div>
-                </a>
-            {% endwith %}
-        {% endif %}
+
+                    <div class="last-message">
+                        {% if item.last_message.message_type == "image" %}
+                            Image
+                        {% elif item.last_message.message_type == "audio" %}
+                            Audio
+                        {% elif item.last_message.file %}
+                            File
+                        {% else %}
+                            {{ item.last_message.content|truncatechars:40 }}
+                        {% endif %}
+                    </div>
+
+            </div>
+
+            <div class="chat-right">
+
+                <div class="last-time">
+                    {% now "Y-m-d" as today %}
+
+                    {% if item.last_time|date:"Y-m-d" == today %}
+                        {{ item.last_time|date:"h:i A" }}
+                    {% else %}
+                        {{ item.last_time|date:"d/m/Y" }}
+                    {% endif %}
+                </div> 
+
+                {% if item.unread_count > 0 %}
+                    <div class="unread-badge">
+                        {{ item.unread_count }}
+                    </div>
+                {% endif %}
+            </div>
+        </a>
 
     {% empty %}
         <p>No chats yet.</p>
     {% endfor %}
 
+</div>
 </div>
 
 </body>
