@@ -3,6 +3,9 @@
 <html>
     <head>
         <title>MMU Lost Hub</title>
+
+        <!--Yf -->
+        <link rel="stylesheet" href="{% static 'items/css/popup.css' %}">
         
         <!-- Prevent browser cache, user cannot press back to access previous page -->
         <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
@@ -185,7 +188,7 @@
                         <div class="post-item" data-type="{{ post.post_type }}">
 
                             <!-- Post Navigation (differ own post / other user post to show nav) -->
-                            <div class = "post-nav">
+                            <div class = "post-nav" onclick="event.stopPropagation()">
 
                                 <!-- user themselves-->
                                 {% if request.user == post.post_user %}
@@ -451,6 +454,22 @@
                 </div>
             </div>
 
+            <!-- ================================================== -->
+            <!--           Delete Post Confirmation Modal           -->
+            <!-- ================================================== -->
+            <div id="deletePostPopup" class="dlt-popup-modal">
+                <div class="dlt-popup-box">
+
+                    <p>Are you sure you want to delete this post?</p>
+
+                    <div class="dlt-popup-btns">
+                        <button id="deleteConfirmBtn" onclick="confirmDeletePost()">Delete</button>
+                        <button onclick="closeDeletePopup()">Cancel</button>
+                    </div>
+
+                </div>
+            </div>
+
             <!-- yt added -->
                 <!-- Confirm Logout Popup -->
                 <div id="confirmPopup" class="popup-modal">
@@ -621,6 +640,30 @@
                 document.getElementById("all-posts").style.display = "none";
                 document.getElementById("lost-posts").style.display = "none";
                 document.getElementById("found-posts").style.display = "block";
+            }
+
+            /* ====================================== 
+                YF - DELETE POST CONFIRMATION       
+            ======================================= */
+            let deleteForm = null;
+
+            function confirmDelete(event, form) {
+                event.preventDefault();
+
+                deleteForm = form;
+
+                document.getElementById("deletePostPopup").style.display = "flex";
+            }
+
+            function confirmDeletePost() {
+
+                if (deleteForm) {
+                    deleteForm.submit();
+                }
+            }
+
+            function closeDeletePopup() {
+                document.getElementById("deletePostPopup").style.display = "none";
             }
         </script>
     </body>
