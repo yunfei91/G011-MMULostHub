@@ -5,6 +5,8 @@ from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post, edit_post
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_protect
 # for crop image
 import json
 import base64
@@ -399,4 +401,50 @@ def map_search(request):
     return render(request, 'items/mapsearch.html', {
         'posts': post_box,
         'locations': MMULocation.objects.all(),
+    })
+
+
+@login_required
+def update_post_status(request, post_id):
+    if request.method != "POST":
+        return JsonResponse({"success": False})
+
+    post = get_object_or_404(Post, id=post_id)
+
+    if request.user != post.post_user:
+        return JsonResponse({"success": False})
+
+    data = json.loads(request.body)
+    new_status = data.get("status")
+
+    VALID_STATUS = ["open", "claimed", "returned"]
+    if new_status not in VALID_STATUS:
+        return JsonResponse({"success": False})
+
+    current = post.post_status
+    post_type = post.post_type
+
+    if current in ["claimed", "returned"]:
+        return JsonResponse({"success": False})
+
+    if post_type == "lost":
+        if current == "open" and new_status == "claimed":
+            post.post_status = "claimed"
+        else:
+            return JsonResponse({"success": False})
+
+    elif post_type == "found":
+        if current == "open" and new_status == "returned":
+            post.post_status = "returned"
+        else:
+            return JsonResponse({"success": False})
+
+    else:
+        return JsonResponse({"success": False})
+
+    post.save()
+
+    return JsonResponse({
+        "success": True,
+        "new_status": post.post_status
     })

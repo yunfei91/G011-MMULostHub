@@ -19,7 +19,7 @@
         <script src="{% static 'items/js/logout.js' %}" defer></script>
         <script>
             window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";
-            const CURRENT_USER_ID = "{{ request.user.id|default:'' }}";
+            const CURRENT_USER_ID = String("{{ request.user.id|default:'' }}");
         </script>
 
         <title> 
@@ -242,7 +242,10 @@
                     <!-- Open popup modal after clicked -->
                     <!-- Store username into HTML attribute, so JS can read it-->
                     <div class="post"
-                        onclick="openPost(this)" 
+                        onclick="openPost(this)"
+                        data-status="{{ post.post_status }}"
+                        data-post-id="{{ post.id }}"
+                        data-post-type="{{ post.post_type }}" 
                         data-user="{{ post.post_user.username }}"
                         data-user-id="{{ post.post_user.id }}"
                         data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
@@ -337,6 +340,9 @@
                                     <p> Location: Unknown Lost Location</p>
                                 {% endif %}
 
+                                <span class="status-badge {{ post.post_status }}">
+                                    {{ post.post_status|upper }}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -386,6 +392,14 @@
 
                                 <p><b>Description:</b></p>
                                 <p id="m_description"></p>
+                                <p>
+                                    <b>Status:</b>
+                                    <span id="m_status"></span>
+                                </p>
+
+                                <div id="status_btn_container" style="display:none;">
+                                    <button id="statusBtn" onclick="updateStatus()">Update Status</button>
+                                </div>
 
                                 <div class="chatBtn" id="chat_btn_container" style="display:none;">
                                     <!-- zinc add chat url-->

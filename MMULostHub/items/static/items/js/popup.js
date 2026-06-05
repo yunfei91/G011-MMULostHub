@@ -88,6 +88,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+function getCSRFToken() {
+    return document.cookie
+        .split("; ")
+        .find(row => row.startsWith("csrftoken="))
+        ?.split("=")[1];
+}
 
 // yt added
 // Create a function "openPost"
@@ -135,6 +141,69 @@ function openPost(el) { // el=this connection
 
     currentIndex = 0;
     showImg();
+
+    document.getElementById("m_status").innerText = el.dataset.status;
+    document.getElementById("m_status").dataset.value = el.dataset.status;
+    document.getElementById("m_status").dataset.id = el.dataset.postId;
+    document.getElementById("m_status").dataset.type = el.dataset.postType;
+
+    const statusBtn = document.getElementById("status_btn_container");
+    const btn = document.getElementById("statusBtn");
+
+    if (
+        el.dataset.userId === CURRENT_USER_ID &&
+        el.dataset.status === "open"
+    ) {
+        statusBtn.style.display = "block";
+
+        if (el.dataset.postType === "lost") {
+            btn.innerText = "Mark as Claimed";
+        } else {
+            btn.innerText = "Mark as Returned";
+        }
+    } else {
+        statusBtn.style.display = "none";
+    }
+}
+
+function updateStatus() {
+    const statusEl = document.getElementById("m_status");
+
+    const currentStatus = statusEl.dataset.value;
+    const postType = statusEl.dataset.type;
+    const postId = statusEl.dataset.id;
+
+    let newStatus = currentStatus;
+
+    if (currentStatus === "open") {
+        if (postType === "lost") {
+            newStatus = "claimed";
+        } else if (postType === "found") {
+            newStatus = "returned";
+        }
+    }
+
+    fetch(`/update-post-status/${postId}/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRFToken()
+        },
+        body: JSON.stringify({ status: newStatus })
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("HTTP error " + res.status);
+        return res.json();
+    })
+    .then(data => {
+        if (data.success) {
+            statusEl.innerText = data.new_status.toUpperCase();
+            statusEl.dataset.value = data.new_status;
+        }
+    })
+    .catch(err => {
+        console.error("Status update failed:", err);
+    });
 }
 
 function showImg() {

@@ -9,7 +9,8 @@ urlpatterns = [
     path('editpost/<int:post_id>/', views.editPost, name='editPost'),       #editpost/（show edit post id)
     path('deletepost/<int:post_id>/', views.deletePost, name = 'deletePost'),
     path('mapsearch/', views.map_search, name = 'mapSearch'),
-
+    path('update-post-status/<int:post_id>/', views.update_post_status, name='update_post_status'),
+    
     # yt urls in item app
     path('lost-posts/', views.lost_posts, name='lost_posts'),
     path('found-posts/', views.found_posts, name='found_posts'),
