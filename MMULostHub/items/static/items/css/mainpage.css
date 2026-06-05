@@ -1,8 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Slackey&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sansation&display=swap');
+
+/* ========================= */
+/*           POSTS           */
+/* ========================= */
+.post-list{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 50px 20px;
+    align-items: start;
+    justify-items: center;
+    margin: 0 50px;
+}
+
+.post-view{
+    width: 500px;
+    padding: 30px 50px;
+    border-radius: 10px;
+    background: #7e8599;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.35) inset,
+        0 -2px 4px rgba(0,0,0,0.10) inset,
+        0 4px 0 #6a7184,
+        0 6px 12px rgba(0,0,0,0.20);
+
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.post-view:hover{
+    transform: translateY(-5px);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.35) inset,
+        0 -2px 4px rgba(0,0,0,0.10) inset,
+        0 6px 0 #6a7184,
+        0 12px 24px rgba(0,0,0,0.20);
+}
+
+.post-view:active{
+    transform: translateY(0);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.35) inset,
+        0 -2px 4px rgba(0,0,0,0.10) inset,
+        0 4px 0 #6a7184,
+        0 6px 12px rgba(0,0,0,0.20);
+}
+
+.post-view h4{
+    font-size: 24px;
+    font-family: 'Slackey', cursive;
+    color: white;
+    margin: 20px 0 10px 0;
+}
+
+.post-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: auto;
+}
+
+.post-nav{
+    position: relative;
+}
+
+.post-nav-dropdown-btn{
+    background: none;
+    border: 1px solid black;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.post-nav-menu{
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 30px;
+
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    min-width: 140px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+
+    z-index: 10000;
+}
+
+.post-nav-dropdown.show .post-nav-menu {
+  display: block;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.name {
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+}
+
 .post-image{
     width: 500px;
     height: auto;
 }
 
+.create_post {
+    position: fixed;
+    right: 30px;
+    bottom: 60px;
+
+    z-index: 8888;
+}
+
+
+/* ========================= */
+/*           SEARCH          */
+/* ========================= */
 .search-container{
 
     display: flex;

@@ -74,3 +74,10 @@ function removeFilter(key, value) {
 
     window.location.href = url.toString();
 }
+
+function toggleDropdown(event) {
+  event.stopPropagation();
+
+  const dropdown = event.target.closest(".post-nav-dropdown");
+  dropdown.classList.toggle("show");
+}
