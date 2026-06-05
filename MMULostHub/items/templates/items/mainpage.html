@@ -92,7 +92,33 @@
             </div>
             
             <div class="content">
+                <!-- ================================================== -->
+                <!--    Backend to Check Which Popup Msg To Display     -->
+                <!-- ================================================== -->
+                {% if messages %}
+                    <script>                                                    // js code
+                        window.addEventListener("load", function () {
 
+                            //loop messages inside createpost.js
+                            {% for message in messages %} 
+
+                                {% if message.tags == "success" %}     
+
+                                    // true = auto close popup / 2000 = 2 seconds
+                                    showPopup("Success", "{{ message }}", true, 2000);
+
+                                {% else %}
+
+                                    // show info = show error message 
+                                    showPopup("Info", "{{ message }}");
+
+                                {% endif %}
+
+                            {% endfor %}
+                        });
+                    </script>
+                {% endif %}
+                
                 <!-- ================================================== -->
                 <!--                    Search Feature                  -->
                 <!-- ================================================== -->
