@@ -158,76 +158,87 @@
                             <input type="hidden" name="start_date" value="{{ start_date }}">
                             <input type="hidden" name="end_date" value="{{ end_date }}">
 
-                            <!-- Category -->
-                            <select id="categorySelect" onchange="addCategory(this)">
-                                <option value="">Category</option>
+                            <div class = "category-filter">
+                                <!-- Category -->
+                                <select id="categorySelect" onchange="addCategory(this)">
+                                    <option value="">Category</option>
 
-                                {% for value, label in item_categories %}
-                                    <option value="{{ value }}">
-                                        {{ label }}
-                                    </option>
-                                {% endfor %}
-                            </select>
+                                    {% for value, label in item_categories %}
+                                        <option value="{{ value }}">
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
 
-                            <div id="categoryChips">
-                                {% for value in selected_category %}
-                                    <span class="chip">
-                                        {{ value }}
+                                <div id="categoryChips">
+                                    {% for value in selected_category %}
+                                        <span class="chip">
+                                            {{ value }}
 
-                                        <span onclick="removeFilter('category', '{{ value }}')">✖</span>
-                                    </span>
-                                {% endfor %}
+                                            <span onclick="removeFilter('category', '{{ value }}')">✖</span>
+                                        </span>
+                                    {% endfor %}
+                                </div>
                             </div>
 
+                            <div class="location-filter">
                             <!-- Location -->
-                            <select name="location" onchange="this.form.submit()">
-                                <option value="">Location</option>
+                                <select name="location" onchange="this.form.submit()">
+                                    <option value="">Location</option>
 
-                                {% for location in locations %}
-                                    <option value="{{ location.id }}"
-                                        {% if location.id|stringformat:'s' in selected_location %}selected{% endif %}>
-                                        {{ location.location_name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
+                                    {% for location in locations %}
+                                        <option value="{{ location.id }}"
+                                            {% if location.id|stringformat:'s' in selected_location %}selected{% endif %}>
+                                            {{ location.location_name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
 
-                            {% if selected_location %}
-                                <span class="clear-btn" onclick="clearSingleFilter('location')">✖</span>
-                            {% endif %}
+                                {% if selected_location %}
+                                    <span class="clear-btn" onclick="clearSingleFilter('location')">✖</span>
+                                {% endif %}
+                            </div>
 
-                            <lable>Start Date:</lable>
-                            <input type="date"
-                                name="start_date"
-                                value="{{ start_date }}"
-                                onchange="this.form.submit()">
+                            <div class="start-date-filter">
+                                <lable>Start Date:</lable>
+                                <input type="date"
+                                    name="start_date"
+                                    value="{{ start_date }}"
+                                    onchange="this.form.submit()">
 
-                            {% if start_date %}
-                                <span class="clear-btn" onclick="clearSingleFilter('start_date')">✖</span>
-                            {% endif %}
+                                {% if start_date %}
+                                    <span class="clear-btn" onclick="clearSingleFilter('start_date')">✖</span>
+                                {% endif %}
+                            </div>
 
-                            <lable>End Date:</lable>
-                            <input type="date"
-                                name="end_date"
-                                value="{{ end_date }}"
-                                onchange="this.form.submit()">
+                            <div class="end-date-filter">
+                                <lable>End Date:</lable>
+                                <input type="date"
+                                    name="end_date"
+                                    value="{{ end_date }}"
+                                    onchange="this.form.submit()">
 
-                            {% if end_date %}
-                                <span class="clear-btn" onclick="clearSingleFilter('end_date')">✖</span>
-                            {% endif %}
+                                {% if end_date %}
+                                    <span class="clear-btn" onclick="clearSingleFilter('end_date')">✖</span>
+                                {% endif %}
+                            </div>
 
                         </form>
-
-                        <div class = "map-search">
-                            <a href="{% url 'mapSearch' %}">
-                                Map
-                            </a>
-                        </div>
                     </div>
-
+                    
+                    <div class = "map-search">
+                        <a href="{% url 'mapSearch' %}">
+                            <img
+                                src="{% static 'images/map-icon.png' %}"
+                                alt="Map Search"
+                                class="map-icon"
+                            >
+                        </a>
+                    </div>
                 </div>
 
                 {% if query %}
-                    <p>
+                    <p class="search-result">
                         Search result for "{{ query }}"
                     </p>
                 {% endif %}
