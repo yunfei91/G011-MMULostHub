@@ -68,8 +68,7 @@ function confirmEdit(event) {
     const coverIndex = 0;
     document.getElementById("cover_index").value = coverIndex;
 
-    document.getElementById("cropped_images").value =
-        JSON.stringify(imageData);
+    document.getElementById("cropped_images").value = JSON.stringify(imageData);
 
     showConfirmPopup("Confirm", "Are you sure you want to edit this post?", () => {
         form.requestSubmit();

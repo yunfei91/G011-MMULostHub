@@ -49,7 +49,6 @@ function confirmCreate(event) {
     /* ====================================== 
                     Check Image        
      ====================================== */
-
     if (window.croppedImages.length === 0) {
         showPopup("Error", "Please upload and crop at least one image.");
         return;

@@ -1,3 +1,7 @@
+
+/* ====================================== 
+            POPUP FUNCTIONS        
+====================================== */
 // Wait until HTML loaded then start function
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -88,9 +92,58 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+/* ====================================== 
+    CREATE / EDIT IMAGE PREVIEW POPUP       
+====================================== */
+// show imag preview popup when clcick any image
+function showImg() {
+    const img = document.getElementById("m_image");
 
-// yt added
-// Create a function "openPost"
+    // if multiple image will view with < and > 
+    if (images.length > 0) {
+        img.src = images[currentIndex];
+        img.style.display = "block";
+    }
+    
+    // if only one image then just view 
+    else {
+        img.style.display = "none";
+    }
+
+    // run update image function bellow
+    updateButtons();
+}
+
+// next > image button 
+function nextImg() {
+    if (currentIndex < images.length - 1) {
+        currentIndex++;
+        showImg();
+    }
+}
+
+// previous < image button
+function prevImg() {
+    if (currentIndex > 0) {
+        currentIndex--;
+        showImg();
+    }
+}
+
+// change image when click next or previuos image button
+function updateButtons() {
+    const prevBtn = document.querySelector(".prev-btn");
+    const nextBtn = document.querySelector(".next-btn");
+
+    if (!prevBtn || !nextBtn) return;
+
+    prevBtn.disabled = (currentIndex === 0);
+    nextBtn.disabled = (currentIndex === images.length - 1);
+}
+
+/* ====================================== 
+        yt - POST POPUP FUNCTION        
+====================================== */
 let images = [];
 currentIndex = 0;
 
@@ -108,7 +161,10 @@ function openPost(el) { // el=this connection
     if (profileLink && el.dataset.profile) {
         profileLink.href = el.dataset.profile;
     }
-/** zinc add this **/
+
+    /* ====================================== 
+            ty - CHAT FUNCTION        
+     ====================================== */
     const chatLink = document.getElementById("chat_link");
 
     if (chatLink && el.dataset.chatUrl) {
@@ -137,45 +193,6 @@ function openPost(el) { // el=this connection
     showImg();
 }
 
-function showImg() {
-    const img = document.getElementById("m_image");
-
-    if (images.length > 0) {
-        img.src = images[currentIndex];
-        img.style.display = "block";
-    } else {
-        img.style.display = "none";
-    }
-
-    updateButtons();
-}
-
-// NEXT (NO LOOP)
-function nextImg() {
-    if (currentIndex < images.length - 1) {
-        currentIndex++;
-        showImg();
-    }
-}
-
-// PREV (NO LOOP)
-function prevImg() {
-    if (currentIndex > 0) {
-        currentIndex--;
-        showImg();
-    }
-}
-
-function updateButtons() {
-    const prevBtn = document.querySelector(".prev-btn");
-    const nextBtn = document.querySelector(".next-btn");
-
-    if (!prevBtn || !nextBtn) return;
-
-    prevBtn.disabled = (currentIndex === 0);
-    nextBtn.disabled = (currentIndex === images.length - 1);
-}
-
 function closePost() {
     document.getElementById("postModal").style.display = "none";
 
@@ -195,3 +212,4 @@ window.addEventListener("click", function (event) {
         modal.style.display = "none";
     }
 });
+
