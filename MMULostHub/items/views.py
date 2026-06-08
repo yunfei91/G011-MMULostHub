@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
 
-from user.views import profile
 from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post, edit_post
 from django.contrib.auth.decorators import login_required
@@ -55,6 +54,9 @@ def mainPage(request):
         'end_date': end_date,
     })
 
+# ======================================================
+#             SEARCH FILTER FUNCTION
+# ======================================================
 def apply_filters(request, post_box):
 
     # search by keyword (q= query) if keyword not match = 'empty'
@@ -108,8 +110,6 @@ def apply_filters(request, post_box):
             post_datetime__date__lte=end_date
         )
 
-    print("RESULT COUNT:", post_box.count())
-
     return post_box
 
 # ======================================================
@@ -121,16 +121,13 @@ def apply_filters(request, post_box):
 def createPost(request):
 
     #zinc add to check if user is verified before create post
-
-    profile, _ = Profile.objects.get_or_create(
-    user=request.user
-    )
+    profile, _ = Profile.objects.get_or_create(user=request.user )
     
     if profile.need_reverify:
         messages.error(
             request,
             "Please verify your account again."
-            )
+        )
 
         return redirect('profile')
 
@@ -149,9 +146,14 @@ def createPost(request):
             # if user cropped image
             if cropped:
 
+                # change json format to python list and dictionary format
                 images_data = json.loads(cropped)
 
+                # loop imae one by one to check new or old and save
                 for img in images_data:
+
+                    # check image format got ;base64; or not 
+                    # if got then change to file format and save with new order
                     format, imgstr = img.split(';base64,')
                     ext = format.split('/')[-1]
 
@@ -206,9 +208,11 @@ def createPost(request):
 @login_required(login_url='beginning')
 @never_cache
 @reverify_required
+# request = user open website (send http request to server)
 def editPost(request,post_id):
 
-    # post not exist = 404 page 
+    # if post not exist = 404 page 
+    #if yes then post get detail from storage
     post = get_object_or_404(
 
          # only owner can edit post
@@ -226,31 +230,40 @@ def editPost(request,post_id):
             #     Get cropped image from JS
             # =====================================
 
+            # from form take cropped img 
             cropped = request.POST.get("cropped_images")
             
+            # create new empty list to save old and new images wuth neww arragement
             existing_ids = []
             images_order = []
 
+            # if got new cropped images
             if cropped:
+
+                # change json format to python list and dictionary format
                 images_data = json.loads(cropped)
 
+                # loop imae one by one to check new or old and save
                 for img in images_data:
 
                     # keep existing image
                     if img["type"] == "existing":
                         existing_ids.append(img["id"])
 
+                        # save old image with new order
                         images_order.append({
-                        "type": "existing",
-                        "id": img["id"],
-                        "order": img["order"]
-                    })
+                            "type": "existing",
+                            "id": img["id"],
+                            "order": img["order"]
+                        })
 
                     # new cropped image
                     elif img["type"] == "new":
 
                         image_data = img["image"]
 
+                        # check image format got ;base64; or not 
+                        # if got then change to file format and save with new order
                         if ';base64,' in image_data:
 
                             format, imgstr = image_data.split(';base64,')
@@ -259,7 +272,7 @@ def editPost(request,post_id):
 
                             image_file = ContentFile(
                                 base64.b64decode(imgstr),
-                                name=f"{uuid.uuid4()}.{ext}"
+                                name = f"{uuid.uuid4()}.{ext}"
                             )
 
                             images_order.append({
@@ -341,7 +354,9 @@ def deletePost(request, post_id):
     # click cancel button redirect to mainpage
     return redirect('mainPage')
 
-
+# ======================================================
+#                YT - FOUND POSTS PAGE
+# ======================================================
 # yt added for lost and found posts page
 @login_required(login_url='beginning')
 @never_cache
@@ -365,6 +380,9 @@ def found_posts(request):
         'end_date': request.GET.get('end_date', ''),
     })
 
+# ======================================================
+#                 YT - LOST POSTS PAGE
+# ======================================================
 @login_required(login_url='beginning')
 @never_cache
 def lost_posts(request):
@@ -387,12 +405,16 @@ def lost_posts(request):
         'end_date': request.GET.get('end_date', ''),
     })
 
+# ======================================================
+#                 MAP SEARCH PAGE
+# ======================================================
 @login_required(login_url='beginning')
 @never_cache
 def map_search(request):
 
     post_box = Post.objects.all().order_by('-id')
     location = request.GET.get("location")
+    
     if location:
         post_box = post_box.filter(post_location__location_code=location)
 

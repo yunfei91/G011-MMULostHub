@@ -17,10 +17,9 @@
 
         <script src="{% static 'items/js/header.js' %}" defer></script>
         <script src="{% static 'items/js/logout.js' %}" defer></script>
-        <script>
-            window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";
-            const CURRENT_USER_ID = "{{ request.user.id|default:'' }}";
-        </script>
+        <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
+
+        <script>const CURRENT_USER_ID = "{{ request.user.id|default:'' }}";</script>
 
         <title> 
             MMU Lost Hub 
@@ -39,19 +38,19 @@
     <body>
         <div class="whole-page">
             <header>
-                <div class="header-left"> <!-- yt adjusted for css uses-->              
+
+                <!-- yt adjusted for css uses-->
+                <div class="header-left">               
                     <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
                     <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
                 </div>
 
-                <div class="header-right"> <!-- yt adjusted for css uses-->
+                <!-- yt adjusted for css uses-->
+                <div class="header-right"> 
+
                     <!-- Home icon -->
                     <a href="{% url 'mainPage' %}" class="home-icon">
                         <img src="{% static 'images/homeicon.png' %}" alt="Home">
-                    </a>
-
-                    <a href="{% url 'chat_inbox' %}" class="chat-icon">
-                        <img src="{% static 'images/chaticon.png' %}" alt="Chat">
                     </a>
 
                     <!-- Menu button --> <!-- yt adjusted for css uses-->
@@ -60,17 +59,20 @@
                         <span></span>
                         <span></span>
                     </button>
+
                 </div>
             </header>
 
-            <div id="overlay" class="overlay"></div> <!-- yt adjusted for css uses-->
+            <!-- yt adjusted for css uses-->
+            <div id="overlay" class="overlay"></div> 
 
             <!-- ================================================== -->
-            <!--            Dropdown Menu Navigation                -->
+            <!--              DROPDWOWN NAV MENU                    -->
             <!-- ================================================== -->
             <div class = "dropdown-nav">
                 
-                <nav id="menu" class="menu"> <!-- yt adjusted for css uses-->
+                <!-- yt adjusted for css uses-->
+                <nav id="menu" class="menu"> 
                     <ul>
                         <li>
                         <a href="{% url 'lost_posts' %}"> Lost Post </a>  
@@ -89,11 +91,13 @@
                         </li>
                     </ul>
                 </nav>
+
             </div>
             
             <div class="content">
+
                 <!-- ================================================== -->
-                <!--    Backend to Check Which Popup Msg To Display     -->
+                <!--    Backend to Check Which POPUP MSG To Display     -->
                 <!-- ================================================== -->
                 {% if messages %}
                     <script>                                                    // js code
@@ -101,7 +105,6 @@
 
                             //loop messages inside createpost.js
                             {% for message in messages %} 
-
                                 {% if message.tags == "success" %}     
 
                                     // true = auto close popup / 2000 = 2 seconds
@@ -113,27 +116,23 @@
                                     showPopup("Info", "{{ message }}");
 
                                 {% endif %}
-
                             {% endfor %}
                         });
                     </script>
                 {% endif %}
                 
                 <!-- ================================================== -->
-                <!--                    Search Feature                  -->
+                <!--                    SEARCH FEATURE                  -->
                 <!-- ================================================== -->
                 <div class="search-container">
 
-                    <!-- Keyword Search -->
+                    <!-- ================================= -->
+                    <!--           Keyword Search          -->
+                    <!-- ================================= -->
                     <div class="keywordsearch">
                         <form method="GET" id="searchForm">
 
-                            <input
-                                type="text"
-                                name="q"
-                                placeholder="Search..."
-                                value="{{ query }}"
-                            >
+                            <input type="text" name="q" placeholder="Search..." value="{{ query }}">
 
                             <!-- ✖ clear button -->
                             {% if query %}
@@ -147,6 +146,9 @@
                         <!-- Filter Form -->
                         <form method="GET" id="filterForm">
 
+                            <!-- ================================= -->
+                            <!--           Hidden Input            -->
+                            <!-- ================================= -->
                             <!-- Keep Search Keyword -->
                             <input type="hidden" name="q" value="{{ query }}">
 
@@ -158,8 +160,10 @@
                             <input type="hidden" name="start_date" value="{{ start_date }}">
                             <input type="hidden" name="end_date" value="{{ end_date }}">
 
+                            <!-- ================================= -->
+                            <!--           Category Filter         -->
+                            <!-- ================================= -->
                             <div class = "category-filter">
-                                <!-- Category -->
                                 <select id="categorySelect" onchange="addCategory(this)">
                                     <option value="">Category</option>
 
@@ -181,8 +185,10 @@
                                 </div>
                             </div>
 
+                            <!-- ================================= -->
+                            <!--           Location Filter         -->
+                            <!-- ================================= -->
                             <div class="location-filter">
-                            <!-- Location -->
                                 <select name="location" onchange="this.form.submit()">
                                     <option value="">Location</option>
 
@@ -199,24 +205,26 @@
                                 {% endif %}
                             </div>
 
+                            <!-- ================================= -->
+                            <!--           Start Date Filter       -->
+                            <!-- ================================= -->
                             <div class="start-date-filter">
                                 <lable>Start Date:</lable>
-                                <input type="date"
-                                    name="start_date"
-                                    value="{{ start_date }}"
-                                    onchange="this.form.submit()">
+                                <input type="date" name="start_date" value="{{ start_date }}" onchange="this.form.submit()">
 
                                 {% if start_date %}
                                     <span class="clear-btn" onclick="clearSingleFilter('start_date')">✖</span>
                                 {% endif %}
                             </div>
 
+                            <!-- ================================= -->
+                            <!--            End Date Filter        -->
+                            <!-- ================================= -->
                             <div class="end-date-filter">
+
                                 <lable>End Date:</lable>
-                                <input type="date"
-                                    name="end_date"
-                                    value="{{ end_date }}"
-                                    onchange="this.form.submit()">
+
+                                <input type="date" name="end_date" value="{{ end_date }}" onchange="this.form.submit()">
 
                                 {% if end_date %}
                                     <span class="clear-btn" onclick="clearSingleFilter('end_date')">✖</span>
@@ -226,17 +234,19 @@
                         </form>
                     </div>
                     
+                    <!-- ================================= -->
+                    <!--         Map Search Button         -->
+                    <!-- ================================= -->
                     <div class = "map-search">
                         <a href="{% url 'mapSearch' %}">
-                            <img
-                                src="{% static 'images/map-icon.png' %}"
-                                alt="Map Search"
-                                class="map-icon"
-                            >
+                            <img src="{% static 'images/map-icon.png' %}" alt="Map Search" class="map-icon">
                         </a>
                     </div>
                 </div>
 
+                <!-- ================================= -->
+                <!--        Show Search Result         -->
+                <!-- ================================= -->
                 {% if query %}
                     <p class="search-result">
                         Search result for "{{ query }}"
@@ -244,7 +254,7 @@
                 {% endif %}
 
                 <!-- ===================================== -->
-                <!--        Post Small View Section        -->
+                <!--          POST VIEW SECTION            -->
                 <!-- ===================================== -->
                 <div class="post-list">
                     {% for post in posts %}
@@ -276,7 +286,10 @@
 
                                         <h4> {{ post.post_type|upper }} </h4>
                                         
-                                        <!-- Post Navigation (differ own post / other user post to show nav) -->
+                                        <!-- ================================= -->
+                                        <!--           Post Navigation         -->
+                                        <!-- ================================= -->
+                                        <!-- (differ own post / other user post to show nav) -->
                                         <div class = "post-nav">
                                             <div class = "post-nav-dropdown">
                                                 <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">⋮</button>
@@ -284,37 +297,32 @@
 
                                                     <!-- user themselves-->
                                                     {% if request.user == post.post_user %}
+                                                
+                                                        <!-- Edit Post Butonn -->
+                                                        <a href="{% url 'editPost' post.id %}">
+                                                            Edit Post
+                                                        </a>
 
-                                                        <div class = "btn">
-                                                            <a href="{% url 'editPost' post.id %}">
-                                                                Edit Post
-                                                            </a>
-                                                        </div>
-                                                        <div class = "btn">
-                                                            <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
-                                                            <form method = "POST" 
-                                                                action = "{% url 'deletePost' post.id %}" 
-                                                                onsubmit = "confirmDelete(event, this)" >
-                                                                {% csrf_token %}
+                                                        <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
+                                                        <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
+                                                            {% csrf_token %}
+                                                            <button type="submit">
+                                                                Delete Post
+                                                            </button>
+                                                        </form>
 
-                                                                <button type="submit" class="post-dlt-btn">
-                                                                    Delete Post
-                                                                </button>
-                                                            </form>
-                                                        </div>
-
+                                                    <!-- Other Users -->
                                                     {%else %}
 
-                                                        <div class = "btn">
-                                                            <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
-                                                                <button type="button">Report</button>
-                                                            </a>
-                                                        </div>
-                                                        <div class = "btn">
-                                                            <a href="{% url 'report_user' user.id %}">
-                                                                <button type="button">Report User</button>
-                                                            </a>
-                                                        </div>
+                                                        <!-- ty Report Post Button -->
+                                                        <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                                                            <button type="button">Report</button>
+                                                        </a>
+
+                                                        <!-- ty Report User Button -->
+                                                        <a href="{% url 'report_user' user.id %}">
+                                                            <button type="button">Report User</button>
+                                                        </a>
 
                                                     {% endif %}
                                                 </div>
@@ -322,8 +330,14 @@
                                         </div>
                                     </div>
 
+                                    <!-- ================================= -->
+                                    <!--             Post Details          -->
+                                    <!-- ================================= -->
                                     <div class = "post-info">
-                                        <!-- Show Post Owner -->
+
+                                        <!-- ================================= -->
+                                        <!--    User Name & Profile Photo      -->
+                                        <!-- ================================= -->
                                         <div class="user-info">
                                             {% with profile=post.post_user.profile %}
 
@@ -342,34 +356,34 @@
                                             {% endwith %}
                                         </div>
 
-                                        <!-- Image -->
+                                        <!-- ================================= -->
+                                        <!--      Post Image (Check Multi)     -->
+                                        <!-- ================================= -->
                                         <div class="image-wrapper">
 
                                             {% if post.cover_image %}
-                                                <img
-                                                    src="{{ post.cover_image.image.url }}"
-                                                    alt="Post Image"
-                                                    class="post-image"
-                                                >
+                                                <img src="{{ post.cover_image.image.url }}" alt="Post Image" class="post-image">
                                             {% endif %}
 
                                             {% if post.images.count > 1 %}
-                                                <img
-                                                    src="{% static 'images/multi-img-icon.png' %}"
-                                                    alt="Multiple Images"
-                                                    class="multi-img-icon"
-                                                >
+                                                <img src="{% static 'images/multi-img-icon.png' %}" alt="Multiple Images" class="multi-img-icon">
                                             {% endif %}
 
                                         </div>
 
-                                        <!-- Date Time -->
+                                        <!-- ================================= -->
+                                        <!--           Date Time               -->
+                                        <!-- ================================= -->
                                         <p> <b>Date Time:</b> {{ post.post_datetime }} </p>
 
-                                        <!-- Category -->
+                                        <!-- ================================= -->
+                                        <!--            Category               -->
+                                        <!-- ================================= -->
                                         <p> <b>Item Category:</b> {{ post.get_post_itemcategory_display }} </p>
 
-                                        <!-- Location (If Lost Pos can no location ) -->
+                                        <!-- ================================= -->
+                                        <!--     Location (Check Unknown)      -->
+                                        <!-- ================================= -->
                                         {% if post.post_location %}
                                             <p> <b>Location:</b> {{ post.post_location.location_name }}</p>
                                         {% elif post.post_type == "lost" %}
@@ -382,7 +396,9 @@
                         </div>
 
                 
-                    <!-- If no post inside Show -->
+                    <!-- ================================= -->
+                    <!--         No Post Available         -->
+                    <!-- ================================= -->
                     {% empty %}
                         <div class = "no-post">
                             <p> No posts available. </p>
@@ -391,7 +407,9 @@
 
                 </div>
 
-            <!-- YT - Post View Popup Modal -->
+            <!-- ================================================== -->
+            <!--                 yt - POPUP POST VIEW               -->
+            <!-- ================================================== -->
             <div id="postModal" class="modal">
 
                 <div class="modal-content">
@@ -440,7 +458,7 @@
             </div>
 
             <!-- ============================== -->
-            <!--     Create Post Button         -->
+            <!--     CREATE POST BUTTON         -->
             <!-- ============================== -->
             <div class="create_post">
                 <a href="{% url 'createPost' %}"> 
@@ -449,7 +467,7 @@
             </div>
 
             <!-- ================================================== -->
-            <!--           Delete Post Confirmation Modal           -->
+            <!--           DELETE POST POPUP CONFIRMATION           -->
             <!-- ================================================== -->
             <div id="deletePostPopup" class="dlt-popup-modal">
                 <div class="dlt-popup-box">
@@ -464,8 +482,9 @@
                 </div>
             </div>
 
-            <!-- yt added -->
-            <!-- Confirm Logout Popup -->
+            <!-- ================================================== -->
+            <!--            yt - LOGOUT POPUP CONFIMATION           -->
+            <!-- ================================================== -->
             <div id="confirmPopup" class="popup-modal">
                 <div class="popup-box">
                     <p>Are you sure you want to logout?</p>
@@ -476,8 +495,10 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </body>
+
     <footer>
         <p>© 2026 MMU Lost Hub<br>
     </footer>
