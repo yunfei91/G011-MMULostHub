@@ -12,11 +12,11 @@ function confirmEdit(event) {
                 Check Post Type      
      ====================================== */
     if (!postType) {
-        showPopup("Error", "Please choose Lost or Found.");
+        showPopup("Error", "Please choose Lost or Found.", true, 1000);
         return;
     }
     if (postType === "found" && !location) {
-        showPopup("Error", "Location is required for Found Posts.");
+        showPopup("Error", "Location is required for Found Posts.", true, 1000);
         return;
     }
 
@@ -24,7 +24,7 @@ function confirmEdit(event) {
                  Check Date Time      
      ====================================== */
     if (!datetime) {
-        showPopup("Error", "Please select date & time.");
+        showPopup("Error", "Please select date & time.", true, 1000);
         return;
     }
 
@@ -32,7 +32,7 @@ function confirmEdit(event) {
     const now = new Date();                                 // date time now (mlys,kl)
 
     if (selectedDate > now) {
-        showPopup("Error", "Datetime cannot be in the future.");
+        showPopup("Error", "Datetime cannot be in the future.", true, 1000);
         return;
     }
     
@@ -40,7 +40,7 @@ function confirmEdit(event) {
                 Check Category        
      ====================================== */
     if (!category) {
-        showPopup("Error", "Please choose a category.");
+        showPopup("Error", "Please choose a category.", true, 1000);
         return;
     }
     
@@ -50,7 +50,7 @@ function confirmEdit(event) {
     const hasImages = window.croppedImages && window.croppedImages.length > 0;
 
     if (!hasImages) {
-        showPopup("Error", "Please upload an image.");
+        showPopup("Error", "Please upload an image.", true, 1000);
         return;
     }
 

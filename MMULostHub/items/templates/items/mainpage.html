@@ -108,12 +108,12 @@
                                 {% if message.tags == "success" %}     
 
                                     // true = auto close popup / 2000 = 2 seconds
-                                    showPopup("Success", "{{ message }}", true, 2000);
+                                    showPopup("Success", "{{ message }}", true, 1000);
 
                                 {% else %}
 
                                     // show info = show error message 
-                                    showPopup("Info", "{{ message }}");
+                                    showPopup("Info", "{{ message }}", true, 1000);
 
                                 {% endif %}
                             {% endfor %}
