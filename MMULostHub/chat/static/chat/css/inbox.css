@@ -16,6 +16,7 @@ body{
     background-attachment: fixed;
 }
 
+
 /* ===================================== */
 /*             Main Container            */
 /* ===================================== */
@@ -694,7 +695,7 @@ footer{
     color: #72788A;
 }
 
-.chat-wrapper{
+.inbox-wrapper{
     width:65%;
     height:80vh;
     background:white;
@@ -707,21 +708,13 @@ footer{
 }
 
 .dropdown-nav {
-    padding: 10px;
-    background: white;
+    padding: 0;
+    background: transparent;
 }
 
 .dropdown-content a{
     text-decoration:none;
     margin-right:15px;
-}
-
-.inbox-header {
-    background: #72788A;
-    color: white;
-    padding: 20px;
-    font-size: 24px;
-    font-weight: bold;
 }
 
 .chat-info {

@@ -799,29 +799,39 @@ footer{
 
 .chat-footer{
     background:white;
-    padding:8px 12px;
+    padding:12px 18px;
     border-top:1px solid #ccc;
 }
 
 .chat-form{
     display:flex;
     align-items:center;
-    gap:10px;
+    align-content:center;
+    gap:12px;
 }
 
 .chat-form textarea{
     flex:1;
     resize:none;
+    width: auto;
+    max-width: none;
     border:1px solid #CED8D4;
-    border-radius:12px;
+    border-radius:22px;
     padding:12px 18px;
-    height:42px;
+    height: 45px;
+    box-sizing: border-box;
+    font-size:15px;
 }
 
 .file-label{
-    font-size:24px;
+    font-size:28px;
     cursor:pointer;
     color:#72788A;
+    width:35px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
 }
 
 .chat-form input[type=file]{
@@ -832,9 +842,11 @@ footer{
     background:#72788A;
     color:white;
     border:none;
-    padding:8px 18px;
-    border-radius:10px;
+    flex-shrink:0;
+    border-radius:14px;
     cursor:pointer;
+    height:45px;
+    width:80px;
 }
 
 .send-btn:hover{
@@ -882,6 +894,7 @@ footer{
     border-radius:12px;
     overflow:hidden;
     box-shadow:0 4px 20px rgba(0,0,0,0.12);
-    margin: 40px auto;
+    margin:40px auto;
+    margin-top: 80px;
 }
 
