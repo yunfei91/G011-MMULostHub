@@ -102,7 +102,12 @@ function openPost(el) { // el=this connection
         el.dataset.type.toUpperCase() + " POST"; // Read HTML, convert lower to upper
 
     document.getElementById("m_user").innerText = el.dataset.user;
-    
+    const avatar = document.getElementById("m_avatar");
+
+    if (avatar && el.dataset.avatar) {
+        avatar.src = el.dataset.avatar;
+    }
+
     const profileLink = document.getElementById("m_user_link");
 
     if (profileLink && el.dataset.profile) {

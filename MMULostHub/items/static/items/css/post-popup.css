@@ -62,3 +62,11 @@
     opacity: 0.3;
     cursor: not-allowed;
 }
+
+.popup-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 8px;
+}

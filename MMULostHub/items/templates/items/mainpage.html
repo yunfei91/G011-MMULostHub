@@ -242,6 +242,11 @@
                         onclick="openPost(this)" 
                         data-user="{{ post.post_user.username }}"
                         data-user-id="{{ post.post_user.id }}"
+                        data-avatar="{% if post.post_user.profile and post.post_user.profile.avatar %}
+                                    {{ post.post_user.profile.avatar.url }}
+                                    {% else %}
+                                    {% static 'images/default.png' %}
+                                    {% endif %}"
                         data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
                         data-profile="{% url 'userProfile' post.post_user.username %}" 
                         data-type="{{ post.post_type }}"
@@ -357,11 +362,14 @@
                         <div class="modal-body">
 
                             <div class="modal-left">
-                                <p>
+                                <div class="popup-user">
                                     <a id="m_user_link" href="">
+                                        
+                                        <img id="m_avatar" src="" alt="avatar" class="popup-avatar">
+
                                         <span id="m_user"></span>
                                     </a>
-                                </p> <!-- JS inserts username -->
+                                </div>
 
                                 <div class="img-container">
                                     <button class="prev-btn" onclick="prevImg()">⬅</button>
