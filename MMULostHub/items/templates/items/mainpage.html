@@ -369,35 +369,40 @@
                             <div class="modal-left">
                                 <div class="popup-user">
                                     <a id="m_user_link" href="">
-                                        
                                         <img id="m_avatar" src="" alt="avatar" class="popup-avatar">
-
                                         <span id="m_user"></span>
                                     </a>
                                 </div>
 
                                 <div class="img-container">
-                                    <button class="prev-btn" onclick="prevImg()">⬅</button>
+                                    <button class="prev-btn" onclick="prevImg()"><</button>
 
-                                    <img id="m_image" style="max-width:100%; display:none;">
+                                    <img id="m_image">
 
-                                    <button class="next-btn" onclick="nextImg()">➡</button>
+                                    <button class="next-btn" onclick="nextImg()">></button>
                                 </div>
                             </div>
 
                             <div class="modal-right">
                                 <h2 id="m_type"></h2> <!-- JS inserts post type -->
+                                <div class="post-details">
+                                    <p>
+                                        <b>Date:</b> <span id="m_date"></span>
+                                    </p>
+                                    <p>
+                                        <b>Category:</b> <span id="m_category"></span>
+                                    </p>
+                                    <p>
+                                        <b>Location:</b> <span id="m_location"></span>
+                                    </p>
+                                </div>
 
-                                <p><b>Date:</b> <span id="m_date"></span></p>
+                                <div class="post-description">
+                                    <h4>Description:</h4>
+                                    <p id="m_description"></p>
+                                </div>
 
-                                <p><b>Category:</b> <span id="m_category"></span></p>
-
-                                <p><b>Location:</b> <span id="m_location"></span></p>
-
-                                <p><b>Description:</b></p>
-                                <p id="m_description"></p>
-
-                                <div class="chatBtn" id="chat_btn_container" style="display:none;">
+                                <div class="chatBtn" id="chat_btn_container">
                                     <!-- zinc add chat url-->
                                     <a id="chat_link" href="#">
                                         <button type="button">Chat</button>
