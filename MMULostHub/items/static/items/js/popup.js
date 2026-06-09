@@ -101,7 +101,7 @@ function openPost(el) { // el=this connection
     document.getElementById("m_type").innerText = // Set popup title, innerText=change text inside element
         el.dataset.type.toUpperCase() + " POST"; // Read HTML, convert lower to upper
 
-    document.getElementById("m_user").innerText = el.dataset.user;
+    document.getElementById("m_user").innerText = el.dataset.name;
     const avatar = document.getElementById("m_avatar");
 
     if (avatar && el.dataset.avatar) {

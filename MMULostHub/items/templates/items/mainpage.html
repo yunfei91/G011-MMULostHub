@@ -240,12 +240,17 @@
                     <!-- Store username into HTML attribute, so JS can read it-->
                     <div class="post"
                         onclick="openPost(this)" 
+                        data-name="{% if post.post_user.profile.name %}
+                                    {{ post.post_user.profile.name }}
+                                  {% else %}
+                                    {{ post.post_user.username }}
+                                  {% endif %}"
                         data-user="{{ post.post_user.username }}"
                         data-user-id="{{ post.post_user.id }}"
                         data-avatar="{% if post.post_user.profile and post.post_user.profile.avatar %}
-                                    {{ post.post_user.profile.avatar.url }}
+                                      {{ post.post_user.profile.avatar.url }}
                                     {% else %}
-                                    {% static 'images/default.png' %}
+                                      {% static 'images/default.png' %}
                                     {% endif %}"
                         data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
                         data-profile="{% url 'userProfile' post.post_user.username %}" 
