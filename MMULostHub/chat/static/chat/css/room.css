@@ -17,6 +17,7 @@ body{
     display: flex;
     flex-direction: column;
     background:#E1E8E5;
+    overflow-y: auto;
 }
 
 body::before{
@@ -895,6 +896,6 @@ footer{
     overflow:hidden;
     box-shadow:0 4px 20px rgba(0,0,0,0.12);
     margin:40px auto;
-    margin-top: 80px;
+    margin-top: 65px;
 }
 
