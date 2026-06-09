@@ -3,7 +3,10 @@
 <html>
 
 <head>
-
+        <!-- CSS Links -->
+        <link rel="stylesheet" href="{% static 'items/css/popup.css' %}">
+        <link rel="stylesheet" href="{% static 'items/css/mainpage.css' %}">
+        
         <!-- JS Links -->
         <script src="{% static 'items/js/popup.js' %}" defer></script>
         <script src="{% static 'items/js/mainpage.js' %}" defer></script>                <!-- differ = load complete html then load java -->
@@ -115,7 +118,7 @@
                         });
                     </script>
                 {% endif %}
-
+                
                 <!-- ================================================== -->
                 <!--                    Search Feature                  -->
                 <!-- ================================================== -->
@@ -421,16 +424,18 @@
             </div>
 
             <!-- ================================================== -->
-            <!--             Popup Box Modal                        -->
+            <!--           Delete Post Confirmation Modal           -->
             <!-- ================================================== -->
-            <div id="popup" class="popup hidden">
-                <div class="popup-box">
-                    <h3 id="popup-title"></h3>
-                    <p id="popup-message"></p>
-                    <div class="popup-buttons">
-                        <button id="popup-confirm">OK</button>
-                        <button id="popup-cancel">Cancel</button>
+            <div id="deletePostPopup" class="dlt-popup-modal">
+                <div class="dlt-popup-box">
+
+                    <p>Are you sure you want to delete this post?</p>
+
+                    <div class="dlt-popup-btns">
+                        <button id="deleteConfirmBtn" onclick="confirmDeletePost()">Delete</button>
+                        <button onclick="closeDeletePopup()">Cancel</button>
                     </div>
+
                 </div>
             </div>
 
