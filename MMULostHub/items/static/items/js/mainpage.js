@@ -22,6 +22,22 @@ function closeDeletePopup() {
     document.getElementById("deletePostPopup").style.display = "none";
 }
 
+// ===================================
+//      POST NAVIGATION DROPDOWN
+// ===================================
+function toggleDropdown(event) {
+  event.stopPropagation();
+
+  const dropdown = event.target.closest(".post-nav-dropdown");
+  dropdown.classList.toggle("show");
+}
+
+document.addEventListener("click", () => {
+    document.querySelectorAll(".post-nav-dropdown").forEach(el => {
+        el.classList.remove("show");
+    });
+});
+
 /* ====================================== 
             FILTER FUNCTIONS      
    ======================================= */
@@ -87,12 +103,3 @@ function removeFilter(key, value) {
     window.location.href = url.toString();
 }
 
-// ===================================
-//      POST NAVIGATION DROPDOWN
-// ===================================
-function toggleDropdown(event) {
-  event.stopPropagation();
-
-  const dropdown = event.target.closest(".post-nav-dropdown");
-  dropdown.classList.toggle("show");
-}
