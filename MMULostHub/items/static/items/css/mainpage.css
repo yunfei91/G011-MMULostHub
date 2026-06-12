@@ -133,7 +133,7 @@
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 10000;
+    z-index: 9999;
 }
 
 .btn button{
@@ -204,11 +204,11 @@
     justify-content: center;
     align-items: center;
 
-    right: 25px;
+    right: 20px;
     bottom: 140px;
     z-index: 8888;
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
 
     border-radius: 50%;
     background: rgba(193, 202, 218, 0.7);
@@ -227,6 +227,12 @@
     text-decoration: none;
     transition: all 0.2s ease;
     
+}
+
+.top-icon{
+    width: 35px;
+    opacity: 0.7;
+
 }
 
 .scroll_top:hover {
@@ -358,7 +364,81 @@
 }
 
 /* ========================= */
-/*        Filter Row         */
+/*       PAGINATION          */
+/* ========================= */
+.pagination{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+
+    max-width: 500px;
+    width: fit-content;
+    margin: 20px auto;
+    padding: 5px 20px;
+    text-align: center;
+
+    border: transparent;
+    border-radius: 20px;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(2px);
+    box-shadow:
+        2px 6px 10px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+
+}
+
+.pagination:hover{
+    box-shadow:
+        5px 12px 20px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.current,
+.disabled,
+.pagination a{
+    text-decoration: none;
+    font-family: 'Slackey', cursive;
+}
+
+.current,
+.pagenum{
+    font-size: 17px;
+}
+
+.pagearrow,
+.disabled{
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.current{
+    color: rgba(105, 103, 103, 0.3);
+}
+
+.pagination a{
+    border: transparent;
+    width: fit-content;
+    color: black;
+}
+
+.pagination a:hover{
+    transform: scale(1.22);
+}
+
+.pagination a:active{
+    transform: scale(0.92);
+}
+
+.disabled {
+    color: rgba(105, 103, 103, 0.3);
+
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ========================= */
+/*        FILTER ROW         */
 /* ========================= */
 .filtersearch {
     display: inline-flex;

@@ -4,6 +4,8 @@ from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post, edit_post
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from django.core.paginator import Paginator
+
 # for crop image
 import json
 import base64
@@ -41,10 +43,14 @@ def mainPage(request):
 
     # display all post in main page and order by datetime (latest post will be on top)
     post_box = Post.objects.all().order_by('-id')
-    post_box = apply_filters(request, post_box)    
+    post_box = apply_filters(request, post_box)   
+
+    paginator = Paginator(post_box, 4)
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number) 
     
     return render(request, 'items/mainpage.html', {
-        'posts': post_box,
+        'posts': posts,
         'item_categories': CATEGORY_CHOICES,
         'locations': MMULocation.objects.all(),
         'query': query,

@@ -414,7 +414,129 @@
                     {% endfor %}
 
                 </div>
-            </div>
+
+                <div class="pagination">
+
+                    <!-- FIRST -->
+                    {% if posts.has_previous %}
+                        <a href="?page=1
+                        {% if query %}&q={{ query }}{% endif %}
+                        {% for c in selected_category %}&category={{ c }}{% endfor %}
+                        {% for l in selected_location %}&location={{ l }}{% endfor %}
+                        {% if start_date %}&start_date={{ start_date }}{% endif %}
+                        {% if end_date %}&end_date={{ end_date }}{% endif %}
+                        " class = "pagearrow">
+                            <<
+                        </a>
+
+                        <a href="?page={{ posts.previous_page_number }}
+                        {% if query %}&q={{ query }}{% endif %}
+                        {% for c in selected_category %}&category={{ c }}{% endfor %}
+                        {% for l in selected_location %}&location={{ l }}{% endfor %}
+                        {% if start_date %}&start_date={{ start_date }}{% endif %}
+                        {% if end_date %}&end_date={{ end_date }}{% endif %}
+                        " class = "pagearrow">
+                            <
+                        </a>
+
+                    {% else %}
+                        <span class="disabled"> << </span>
+                        <span class="disabled"> < </span>
+                    {% endif %}
+
+                    <!-- PAGE NUMBERS -->
+                    {% for num in posts.paginator.page_range %}
+
+                        {% if posts.number <= 2 %}
+
+                            {% if num <= 3 %}
+
+                                {% if num == posts.number %}
+                                    <span class="current">{{ num }}</span>
+                                {% else %}
+                                    <a href="?page={{ num }}
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}"
+                                    class="pagenum">
+                                        {{ num }}
+                                    </a>
+                                {% endif %}
+
+                            {% endif %}
+
+                        {% elif posts.number >= posts.paginator.num_pages|add:"-1" %}
+
+                            {% if num >= posts.paginator.num_pages|add:"-2" %}
+
+                                {% if num == posts.number %}
+                                    <span class="current">{{ num }}</span>
+                                {% else %}
+                                    <a href="?page={{ num }}
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}"
+                                    class="pagenum">
+                                        {{ num }}
+                                    </a>
+                                {% endif %}
+
+                            {% endif %}
+
+                        {% else %}
+
+                            {% if num >= posts.number|add:"-1" and num <= posts.number|add:"1" %}
+
+                                {% if num == posts.number %}
+                                    <span class="current">{{ num }}</span>
+                                {% else %}
+                                    <a href="?page={{ num }}
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}"
+                                    class="pagenum">
+                                        {{ num }}
+                                    </a>
+                                {% endif %}
+
+                            {% endif %}
+
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- NEXT + LAST -->
+                    {% if posts.has_next %}
+                        <a href="?page={{ posts.next_page_number }}
+                        {% if query %}&q={{ query }}{% endif %}
+                        {% for c in selected_category %}&category={{ c }}{% endfor %}
+                        {% for l in selected_location %}&location={{ l }}{% endfor %}
+                        {% if start_date %}&start_date={{ start_date }}{% endif %}
+                        {% if end_date %}&end_date={{ end_date }}{% endif %}
+                        " class = "pagearrow">
+                            >
+                        </a>
+
+                        <a href="?page={{ posts.paginator.num_pages }}
+                        {% if query %}&q={{ query }}{% endif %}
+                        {% for c in selected_category %}&category={{ c }}{% endfor %}
+                        {% for l in selected_location %}&location={{ l }}{% endfor %}
+                        {% if start_date %}&start_date={{ start_date }}{% endif %}
+                        {% if end_date %}&end_date={{ end_date }}{% endif %}
+                        " class = "pagearrow">
+                            >>
+                        </a>
+                    {% else %}
+                        <span class="disabled"> > </span>
+                        <span class="disabled"> >> </span>
+                    {% endif %}
+
+                </div>
 
             <!-- ================================================== -->
             <!--                 yt - POPUP POST VIEW               -->
@@ -470,7 +592,7 @@
             <!--     TO PAGE TOP BUTTON         -->
             <!-- ============================== -->
             <div class="scroll_top" id="scrollTopBtn" onclick="scrollToTop()">
-                ↑
+                <img src="{% static 'images/top-icon.png' %}" alt="Back To Top" class="top-icon">
             </div>
 
             <!-- ============================== -->
