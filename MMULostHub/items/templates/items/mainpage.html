@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 
-<head>
+    <head>
         <!-- CSS Links -->
         <link rel="stylesheet" href="{% static 'items/css/popup.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/mainpage.css' %}">
@@ -297,32 +297,40 @@
 
                                                     <!-- user themselves-->
                                                     {% if request.user == post.post_user %}
-                                                
-                                                        <!-- Edit Post Butonn -->
-                                                        <a href="{% url 'editPost' post.id %}">
-                                                            Edit Post
-                                                        </a>
 
-                                                        <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
-                                                        <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
-                                                            {% csrf_token %}
-                                                            <button type="submit">
-                                                                Delete Post
-                                                            </button>
-                                                        </form>
+                                                        <div class = "btn">
+                                                            <!-- Edit Post Butonn -->
+                                                            <a href="{% url 'editPost' post.id %}">
+                                                                Edit Post
+                                                            </a>
+                                                        </div>
+                                                        
+                                                        <div class = "btn">
+                                                            <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
+                                                            <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
+                                                                {% csrf_token %}
+                                                                <button type="submit">
+                                                                    Delete Post
+                                                                </button>
+                                                            </form>
+                                                        </div>
 
                                                     <!-- Other Users -->
                                                     {%else %}
 
-                                                        <!-- ty Report Post Button -->
-                                                        <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
-                                                            <button type="button">Report</button>
-                                                        </a>
+                                                        <div class = "btn">
+                                                            <!-- ty Report Post Button -->
+                                                            <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                                                                Report
+                                                            </a>
+                                                        </div>
 
-                                                        <!-- ty Report User Button -->
-                                                        <a href="{% url 'report_user' user.id %}">
-                                                            <button type="button">Report User</button>
-                                                        </a>
+                                                        <div class = "btn">
+                                                            <!-- ty Report User Button -->
+                                                            <a href="{% url 'report_user' user.id %}">
+                                                                Report User
+                                                            </a>
+                                                        </div>
 
                                                     {% endif %}
                                                 </div>
@@ -406,6 +414,7 @@
                     {% endfor %}
 
                 </div>
+            </div>
 
             <!-- ================================================== -->
             <!--                 yt - POPUP POST VIEW               -->
