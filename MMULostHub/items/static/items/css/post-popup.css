@@ -1,4 +1,7 @@
 /* yt added - Updated Post Popup Theme */
+/* ========================= */
+/*       Modal Overlay       */
+/* ========================= */
 .modal {
     display: none;
     position: fixed;
@@ -15,6 +18,9 @@
     z-index: 1000;
 }
 
+/* ========================= */
+/*    Modal Main Container   */
+/* ========================= */
 .modal-content {
     position: relative; 
     top: 85px; 
@@ -40,6 +46,9 @@
     overflow: hidden; 
 }
 
+/* ========================= */
+/*       Close Btn           */
+/* ========================= */
 .close {
     position: absolute;
     right: 20px;
@@ -56,12 +65,18 @@
     color: #333;
 }
 
+/* ========================= */
+/*       Modal layout        */
+/* ========================= */
 .modal-body {
     display: flex;
     gap: 0;
     padding: 0;
 }
 
+/* ========================= */
+/*       Modal Left          */
+/* ========================= */
 .modal-left {
     display: flex;
     flex-direction: column;
@@ -73,6 +88,9 @@
     border-right: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+/* ========================= */
+/*       User Info           */
+/* ========================= */
 .popup-user {
     width: 100%;
     padding-bottom: 20px; 
@@ -109,6 +127,9 @@
         0 4px 10px rgba(0,0,0,0.12);
 }
 
+/* ========================= */
+/*          Image            */
+/* ========================= */
 .img-container {
     position: relative;
     display: flex;
@@ -126,6 +147,9 @@
     aspect-ratio: 4/3;
 }
 
+/* ========================= */
+/*       Prev/Next Btns      */
+/* ========================= */
 .prev-btn, .next-btn {
     position: absolute;
     display: flex;
@@ -163,6 +187,9 @@
     pointer-events: none;
 }
 
+/* ========================= */
+/*       Modal Right         */
+/* ========================= */
 .modal-right {
     display: flex;
     flex-direction: column;
@@ -174,6 +201,9 @@
     overflow-y: auto;
 }
 
+/* ========================= */
+/*  Post Type(Lost/Found)    */
+/* ========================= */
 #m_type {
     margin: 0 0 20px 0;
     font-family: 'Slackey';
@@ -185,6 +215,9 @@
     font-weight: 700;
 }
 
+/* ========================= */
+/*       Post Details        */
+/* ========================= */
 .post-details {
     margin-top: 10px;
 }
@@ -204,6 +237,9 @@
     margin-right: 5px;
 }
 
+/* ========================= */
+/*        Description        */
+/* ========================= */
 .post-description {
     margin-top: 20px;
     border-radius: 8px;
@@ -263,6 +299,9 @@
     background: rgba(106,113,132,0.5);
 }
 
+/* ========================= */
+/*        Chat Btn           */
+/* ========================= */
 .chatBtn {
     position: absolute;
     right: 30px;
