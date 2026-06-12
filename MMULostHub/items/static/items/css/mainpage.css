@@ -6,7 +6,7 @@
 /* ========================= */
 .post-list{
     display: grid;
-    grid-template-columns: repeat(2, 1fr); 
+    grid-template-columns: repeat(3, 1fr); 
     gap: 50px 20px;
     align-items: start;
     justify-items: center;
@@ -14,7 +14,7 @@
 }
 
 .post-view{
-    width: 500px;
+    width: 400px;
     padding: 30px 50px;
     border-color: transparent;
     border-radius: 10px;
@@ -194,13 +194,60 @@
 }
 
 .post-image{
-    width: 500px;
+    width: 400px;
     height: auto;
+}
+
+.scroll_top {
+    position: fixed;
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+    right: 25px;
+    bottom: 140px;
+    z-index: 8888;
+    width: 50px;
+    height: 50px;
+
+    border-radius: 50%;
+    background: rgba(193, 202, 218, 0.7);
+    opacity: 0.6;
+
+    color: grey;
+    font-family: 'Slackey', cursive;
+    font-size: 30px;
+    font-weight: bold;
+
+    box-shadow:
+        0 2px 6px rgba(0,0,0,0.12),
+        inset 0 1px 1px rgba(255,255,255,0.35);
+
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    
+}
+
+.scroll_top:hover {
+    opacity: 1;
+    transform: translateY(-3px);
+    background: rgba(170, 177, 198, 0.55);
+    box-shadow:
+        0 4px 10px rgba(0,0,0,0.18),
+        inset 0 1px 1px rgba(255,255,255,0.4);
+}
+
+.scroll_top:active {
+    transform: translateY(2px);
+    box-shadow:
+        0 2px 4px rgba(0,0,0,0.15),
+        inset 0 2px 6px rgba(0,0,0,0.15);
 }
 
 .create_post {
     position: fixed;
-    right: 30px;
+    right: 20px;
     bottom: 60px;
     z-index: 8888;
     background-color: transparent;
@@ -219,7 +266,7 @@
 
     color: white;
     font-family: 'Slackey', cursive;
-    font-size: 40px;
+    font-size: 50px;
     font-weight: bold;
 
     box-shadow:

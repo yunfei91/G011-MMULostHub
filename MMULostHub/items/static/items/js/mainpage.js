@@ -25,21 +25,25 @@ function closeDeletePopup() {
 // ===================================
 //      POST NAVIGATION DROPDOWN
 // ===================================
+// OPEN CLOSE DROPDOWN NAV
 function toggleDropdown(event) {
     event.stopPropagation();
 
     const dropdown = event.target.closest(".post-nav-dropdown");
     const isOpen = dropdown.classList.contains("show");
 
+    // close already have nav from other post
     document.querySelectorAll('.post-nav-dropdown').forEach(el => {
         el.classList.remove('show');
     });
 
+    // open / close nav when click
     if (!isOpen) {
         dropdown.classList.add('show');
     }
 }
 
+// CLOSE WHEN CLICK ANY NAV
 document.querySelectorAll('.btn').forEach(el => {
     el.addEventListener('click', function () {
         document.querySelectorAll('.post-nav-dropdown').forEach(drop => {
@@ -48,10 +52,33 @@ document.querySelectorAll('.btn').forEach(el => {
     });
 });
 
+// CLOSE WHEN CLICK OTHER PLACE
 document.addEventListener("click", () => {
     document.querySelectorAll(".post-nav-dropdown").forEach(el => {
         el.classList.remove("show");
     });
+});
+
+/* ====================================== 
+            PAGE TOP BUTTON    
+   ======================================= */
+// WHEN CLICK BUTTON BACK TO TOP
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+// SHOW / HIDE WHEN SCROLL
+window.addEventListener("scroll", function () {
+    const btn = document.getElementById("scrollTopBtn");
+
+    if (window.scrollY > 300) {
+        btn.style.display = "flex";
+    } else {
+        btn.style.display = "none";
+    }
 });
 
 /* ====================================== 
