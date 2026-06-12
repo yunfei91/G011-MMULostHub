@@ -26,11 +26,27 @@ function closeDeletePopup() {
 //      POST NAVIGATION DROPDOWN
 // ===================================
 function toggleDropdown(event) {
-  event.stopPropagation();
+    event.stopPropagation();
 
-  const dropdown = event.target.closest(".post-nav-dropdown");
-  dropdown.classList.toggle("show");
+    const dropdown = event.target.closest(".post-nav-dropdown");
+    const isOpen = dropdown.classList.contains("show");
+
+    document.querySelectorAll('.post-nav-dropdown').forEach(el => {
+        el.classList.remove('show');
+    });
+
+    if (!isOpen) {
+        dropdown.classList.add('show');
+    }
 }
+
+document.querySelectorAll('.btn').forEach(el => {
+    el.addEventListener('click', function () {
+        document.querySelectorAll('.post-nav-dropdown').forEach(drop => {
+            drop.classList.remove('show');
+        });
+    });
+});
 
 document.addEventListener("click", () => {
     document.querySelectorAll(".post-nav-dropdown").forEach(el => {

@@ -20,7 +20,7 @@
     border-radius: 10px;
     background: linear-gradient(
         135deg,
-        rgba(206, 216, 212, 0.3),
+        rgba(197, 252, 232, 0.3),
         rgba(181, 209, 250, 0.3)
     );
     box-shadow:
@@ -38,11 +38,8 @@
 .post-view:hover{
     transform: translateY(-2px);
 
-    background: linear-gradient(
-        135deg,
-        rgba(206,216,212,.35),
-        rgba(181,209,250,.35)
-    );
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(2px);
 
     box-shadow:
         inset 0 1px 0 rgba(255,255,255,.4),
@@ -52,7 +49,7 @@
         0 16px 30px rgba(181,209,250,.55);
 }
 
-.post-view:active:not(:has(.post-nav-dropdown-btn:active)) {
+.post-view:active:not(:has(.post-nav-dropdown-btn:active, .btn:active)) {
     transform: translateY(2px) scale(0.98);
     box-shadow:
         inset 0 2px 4px rgba(0,0,0,.08),
@@ -89,7 +86,7 @@
     height: 40px;
     border-color: transparent;
     border-radius: 10px;
-    background: linear-gradient(225deg, #CED8D4, #c8d9f4);
+    background: linear-gradient(225deg, #c8e2d8, #e1eeff);
     box-shadow:
         inset 0 1px 0 rgba(255,255,255,.35),
         inset 0 -2px 4px rgba(0,0,0,.06),
@@ -104,7 +101,7 @@
 
 .post-nav-dropdown-btn:hover{
     transform: translateY(-2px);
-    background: linear-gradient(225deg, #d5dfdb, #d1e1f8);
+    background: linear-gradient(225deg,#d9f8eb, #cde0ff);
 
     box-shadow:
         inset 0 1px 0 rgba(255,255,255,.45),
@@ -163,7 +160,11 @@
 }
 
 .btn :hover{
-    color: grey;
+    transform: translateX(1px) scale(1.12);
+}
+
+.btn :active{
+    transform: translateX(1px) scale(0.92);
 }
 
 .post-nav-dropdown.show .post-nav-menu {
