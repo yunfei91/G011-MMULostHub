@@ -260,7 +260,13 @@
                         data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
                         data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
                         data-description="{{ post.post_description }}"
-                        data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
+                        data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}"
+
+                        data-post-id="{{ post.id }}"
+                        data-edit-url="{% url 'editPost' post.id %}"
+                        data-delete-url="{% url 'deletePost' post.id %}"
+                        data-report-post-url="{% url 'submit_report' %}?post_id={{ post.id }}"
+                        data-report-user-url="{% url 'report_user' post.post_user.id %}">
                         
                         <div class = "post-box">
 
@@ -400,6 +406,56 @@
                                 <div class="post-description">
                                     <div class="desc-header">Description</div>
                                     <div id="m_description"></div>
+                                </div>
+
+                                <!-- ============================== -->
+                                <!--        Post Navigation        -->
+                                <!-- ============================== -->
+                                <div class="post-nav" onclick="event.stopPropagation()">
+
+                                    <div class="post-nav-dropdown">
+
+                                        <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">
+                                            ⋮
+                                        </button>
+
+                                        <div class="post-nav-menu">
+
+                                            <!-- OWNER -->
+                                            {% if request.user.id == post.post_user.id %}
+
+                                                <div class="btn">
+                                                    <a id="edit_link" href="">
+                                                        Edit Post
+                                                    </a>
+                                                </div>
+
+                                                <div class="btn">
+                                                    <form id="delete_form" method="POST" onsubmit="confirmDelete(event, this)">
+                                                        {% csrf_token %}
+                                                        <button type="submit">Delete Post</button>
+                                                    </form>
+                                                </div>
+
+                                            <!-- OTHER USERS -->
+                                            {% else %}
+
+                                                <div class="btn">
+                                                    <a id="report_post_link" href="">
+                                                        Report
+                                                    </a>
+                                                </div>
+
+                                                <div class="btn">
+                                                    <a id="report_user_link" href="">
+                                                        Report User
+                                                    </a>
+                                                </div>
+
+                                            {% endif %}
+
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="chatBtn" id="chat_btn_container">

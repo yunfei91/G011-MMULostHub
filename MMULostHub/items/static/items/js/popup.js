@@ -96,7 +96,11 @@ currentIndex = 0;
 
 function openPost(el) { // el=this connection
 
-    document.getElementById("postModal").style.display = "flex"; // Show popup modal , block=show element
+    // =========================
+    // OPEN MODAL
+    // =========================
+    const modal = document.getElementById("postModal");
+    modal.style.display = "flex"; // Show popup modal , block=show element
 
     document.getElementById("m_type").innerText = // Set popup title, innerText=change text inside element
         el.dataset.type.toUpperCase() + " POST"; // Read HTML, convert lower to upper
@@ -120,8 +124,7 @@ function openPost(el) { // el=this connection
         chatLink.href = el.dataset.chatUrl;
     }
 
-    const chatContainer =
-    document.getElementById("chat_btn_container");
+    const chatContainer = document.getElementById("chat_btn_container");
 
     if (String(el.dataset.userId) === String(CURRENT_USER_ID)) {
         chatContainer.style.display = "none";
@@ -140,6 +143,60 @@ function openPost(el) { // el=this connection
 
     currentIndex = 0;
     showImg();
+
+    /** ============================= */
+    /**   Post Navigation Binding    */
+    /** ============================= */
+    const isOwner = String(el.dataset.userId) === String(CURRENT_USER_ID);
+
+    const postNav = document.querySelector("#postModal .post-nav");
+    if (!postNav) return;
+
+    if (isOwner) {
+        postNav.innerHTML = `
+            <div class="post-nav-dropdown">
+                <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">⋮</button>
+                <div class="post-nav-menu">
+
+                    <div class="btn">
+                        <a href="${el.dataset.editUrl}">
+                            Edit Post
+                        </a>
+                    </div>
+
+                    <div class="btn">
+                        <form method="POST"
+                            action="${el.dataset.deleteUrl}"
+                            onsubmit="confirmDelete(event, this)">
+                            <button type="submit">Delete Post</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        `;
+    } else {
+        postNav.innerHTML = `
+            <div class="post-nav-dropdown">
+                <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">⋮</button>
+                <div class="post-nav-menu">
+
+                    <div class="btn">
+                        <a href="${el.dataset.reportPostUrl}">
+                            Report
+                        </a>
+                    </div>
+
+                    <div class="btn">
+                        <a href="${el.dataset.reportUserUrl}">
+                            Report User
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        `;
+    }
 }
 
 function showImg() {
