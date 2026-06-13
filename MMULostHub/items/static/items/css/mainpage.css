@@ -71,7 +71,6 @@
     color: black;
     margin: 0 20px 10px 0;
     text-align:center;
-    justify-content: center;
 }
 
 .post-nav{
@@ -184,6 +183,9 @@
     align-items: center;
     gap: 10px;
     margin-bottom: 15px;
+    color: black;
+    font-size: 15px;
+    font-family: 'Sansation';
 }
 
 .avatar {

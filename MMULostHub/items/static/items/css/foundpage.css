@@ -662,3 +662,14 @@ footer{
         transform: scale(1);
     }
 }
+
+/* ===================================== */
+/*           YF - Page Name              */
+/* ===================================== */
+.content h2{
+    font-size: 30px;
+    font-family: 'Slackey', cursive;
+    color: black;
+    font-weight: bold;
+    text-align:center;
+}

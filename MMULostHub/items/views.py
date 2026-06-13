@@ -360,9 +360,9 @@ def deletePost(request, post_id):
     # click cancel button redirect to mainpage
     return redirect('mainPage')
 
-# ======================================================
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #                YT - FOUND POSTS PAGE
-# ======================================================
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # yt added for lost and found posts page
 @login_required(login_url='beginning')
 @never_cache
@@ -370,11 +370,16 @@ def found_posts(request):
 
     post_box = Post.objects.filter(post_type='found').order_by('-id')
 
-    # ydf add to search 
+    # yf add to search 
     post_box = apply_filters(request, post_box)
 
+    # yf add for paginator (change page)
+    paginator = Paginator(post_box, 9)
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
+
     return render(request, 'items/found-posts.html', {
-        'posts': post_box,
+        'posts': posts,
 
         #yf add to search
         'item_categories': CATEGORY_CHOICES,
@@ -386,9 +391,9 @@ def found_posts(request):
         'end_date': request.GET.get('end_date', ''),
     })
 
-# ======================================================
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #                 YT - LOST POSTS PAGE
-# ======================================================
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @login_required(login_url='beginning')
 @never_cache
 def lost_posts(request):
@@ -398,8 +403,13 @@ def lost_posts(request):
     #yf add to search
     post_box = apply_filters(request, post_box)
 
+    # yf add for paginator (change page)
+    paginator = Paginator(post_box, 9)
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
+
     return render(request, 'items/lost-posts.html', {
-        'posts': post_box,
+        'posts': posts,
 
         # yf add to sesrch
         'item_categories': CATEGORY_CHOICES,

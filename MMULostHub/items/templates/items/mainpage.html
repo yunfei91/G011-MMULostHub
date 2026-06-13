@@ -9,7 +9,8 @@
         
         <!-- JS Links -->
         <script src="{% static 'items/js/popup.js' %}" defer></script>
-        <script src="{% static 'items/js/mainpage.js' %}" defer></script>                <!-- differ = load complete html then load java -->
+        <script src="{% static 'items/js/mainpage.js' %}" defer></script> 
+        <script>const CURRENT_USER_ID = "{{ request.user.id|default:'' }}";</script>               <!-- differ = load complete html then load java -->
         
         <!-- yt added -->
         <link rel="stylesheet" href="{% static 'items/css/main-layout.css' %}">
@@ -18,8 +19,6 @@
         <script src="{% static 'items/js/header.js' %}" defer></script>
         <script src="{% static 'items/js/logout.js' %}" defer></script>
         <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
-
-        <script>const CURRENT_USER_ID = "{{ request.user.id|default:'' }}";</script>
 
         <title> 
             MMU Lost Hub 
@@ -66,28 +65,28 @@
             <!-- yt adjusted for css uses-->
             <div id="overlay" class="overlay"></div> 
 
-            <!-- ================================================== -->
-            <!--              DROPDWOWN NAV MENU                    -->
-            <!-- ================================================== -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <!--              YT - DROPDWOWN NAV MENU               -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
             <div class = "dropdown-nav">
                 
                 <!-- yt adjusted for css uses-->
                 <nav id="menu" class="menu"> 
                     <ul>
                         <li>
-                        <a href="{% url 'lost_posts' %}"> Lost Post </a>  
+                            <a href="{% url 'lost_posts' %}"> Lost Post </a>  
                         </li>
                         <li>
-                        <a href="{% url 'found_posts' %}"> Found Post </a>
+                            <a href="{% url 'found_posts' %}"> Found Post </a>
                         </li>
                         <li>
-                        <a href="{% url 'profile' %}"> Profile </a>
+                            <a href="{% url 'profile' %}"> Profile </a>
                         </li>
                         <li>
-                        <a href="{% url 'feedback_form' %}"> Feedback </a>
+                            <a href="{% url 'feedback_form' %}"> Feedback </a>
                         </li>
                         <li class="logout">
-                        <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
+                            <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
                         </li>
                     </ul>
                 </nav>
@@ -127,7 +126,7 @@
                 <div class="search-container">
 
                     <!-- ================================= -->
-                    <!--           Keyword Search          -->
+                    <!--           KEYWORD Search          -->
                     <!-- ================================= -->
                     <div class="keywordsearch">
                         <form method="GET" id="searchForm">
@@ -141,6 +140,9 @@
                         </form>
                     </div>
 
+                    <!-- ================================= -->
+                    <!--           FILTER Search           -->
+                    <!-- ================================= -->
                     <div class = "filtersearch">            
 
                         <!-- Filter Form -->
@@ -253,9 +255,9 @@
                     </p>
                 {% endif %}
 
-                <!-- ===================================== -->
-                <!--          POST VIEW SECTION            -->
-                <!-- ===================================== -->
+                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                <!--        YT - POST VIEW SECTION         -->
+                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
                 <div class="post-list">
                     {% for post in posts %}
 
@@ -279,7 +281,7 @@
                             <div class = "post-box">
 
                                 <!-- ============================== -->
-                                <!--     YF - Post Small View       -->
+                                <!--          Post Small View       -->
                                 <!-- ============================== -->
                                 <div class = "post-view">
                                     <div class = "post-header">
@@ -405,7 +407,7 @@
 
                 
                     <!-- ================================= -->
-                    <!--         No Post Available         -->
+                    <!--         NO POST MSG               -->
                     <!-- ================================= -->
                     {% empty %}
                         <div class = "no-post">
@@ -415,6 +417,9 @@
 
                 </div>
 
+                <!-- ================================ -->
+                <!--           PAGE CHANGE            -->
+                <!-- ================================ -->
                 <div class="pagination">
 
                     <!-- FIRST -->
@@ -538,9 +543,9 @@
 
                 </div>
 
-            <!-- ================================================== -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
             <!--                 yt - POPUP POST VIEW               -->
-            <!-- ================================================== -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
             <div id="postModal" class="modal">
 
                 <div class="modal-content">
@@ -620,9 +625,9 @@
                 </div>
             </div>
 
-            <!-- ================================================== -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
             <!--            yt - LOGOUT POPUP CONFIMATION           -->
-            <!-- ================================================== -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
             <div id="confirmPopup" class="popup-modal">
                 <div class="popup-box">
                     <p>Are you sure you want to logout?</p>
