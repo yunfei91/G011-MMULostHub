@@ -2,14 +2,15 @@
 <!DOCTYPE html>
 <html>
 
-<head>
+    <head>
         <!-- CSS Links -->
         <link rel="stylesheet" href="{% static 'items/css/popup.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/mainpage.css' %}">
         
         <!-- JS Links -->
         <script src="{% static 'items/js/popup.js' %}" defer></script>
-        <script src="{% static 'items/js/mainpage.js' %}" defer></script>                <!-- differ = load complete html then load java -->
+        <script src="{% static 'items/js/mainpage.js' %}" defer></script> 
+        <script>const CURRENT_USER_ID = "{{ request.user.id|default:'' }}";</script>               <!-- differ = load complete html then load java -->
         
         <!-- yt added -->
         <link rel="stylesheet" href="{% static 'items/css/main-layout.css' %}">
@@ -17,10 +18,7 @@
 
         <script src="{% static 'items/js/header.js' %}" defer></script>
         <script src="{% static 'items/js/logout.js' %}" defer></script>
-        <script>
-            window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";
-            const CURRENT_USER_ID = String("{{ request.user.id|default:'' }}");
-        </script>
+        <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
 
         <title> 
             MMU Lost Hub 
@@ -39,19 +37,19 @@
     <body>
         <div class="whole-page">
             <header>
-                <div class="header-left"> <!-- yt adjusted for css uses-->              
+
+                <!-- yt adjusted for css uses-->
+                <div class="header-left">               
                     <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
                     <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
                 </div>
 
-                <div class="header-right"> <!-- yt adjusted for css uses-->
+                <!-- yt adjusted for css uses-->
+                <div class="header-right"> 
+
                     <!-- Home icon -->
                     <a href="{% url 'mainPage' %}" class="home-icon">
                         <img src="{% static 'images/homeicon.png' %}" alt="Home">
-                    </a>
-
-                    <a href="{% url 'chat_inbox' %}" class="chat-icon">
-                        <img src="{% static 'images/chaticon.png' %}" alt="Chat">
                     </a>
 
                     <!-- Menu button --> <!-- yt adjusted for css uses-->
@@ -60,40 +58,45 @@
                         <span></span>
                         <span></span>
                     </button>
+
                 </div>
             </header>
 
-            <div id="overlay" class="overlay"></div> <!-- yt adjusted for css uses-->
+            <!-- yt adjusted for css uses-->
+            <div id="overlay" class="overlay"></div> 
 
-            <!-- ================================================== -->
-            <!--            Dropdown Menu Navigation                -->
-            <!-- ================================================== -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <!--              YT - DROPDWOWN NAV MENU               -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
             <div class = "dropdown-nav">
                 
-                <nav id="menu" class="menu"> <!-- yt adjusted for css uses-->
+                <!-- yt adjusted for css uses-->
+                <nav id="menu" class="menu"> 
                     <ul>
                         <li>
-                        <a href="{% url 'lost_posts' %}"> Lost Post </a>  
+                            <a href="{% url 'lost_posts' %}"> Lost Post </a>  
                         </li>
                         <li>
-                        <a href="{% url 'found_posts' %}"> Found Post </a>
+                            <a href="{% url 'found_posts' %}"> Found Post </a>
                         </li>
                         <li>
-                        <a href="{% url 'profile' %}"> Profile </a>
+                            <a href="{% url 'profile' %}"> Profile </a>
                         </li>
                         <li>
-                        <a href="{% url 'feedback_form' %}"> Feedback </a>
+                            <a href="{% url 'feedback_form' %}"> Feedback </a>
                         </li>
                         <li class="logout">
-                        <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
+                            <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
                         </li>
                     </ul>
                 </nav>
+
             </div>
             
             <div class="content">
+
                 <!-- ================================================== -->
-                <!--    Backend to Check Which Popup Msg To Display     -->
+                <!--    Backend to Check Which POPUP MSG To Display     -->
                 <!-- ================================================== -->
                 {% if messages %}
                     <script>                                                    // js code
@@ -101,39 +104,34 @@
 
                             //loop messages inside createpost.js
                             {% for message in messages %} 
-
                                 {% if message.tags == "success" %}     
 
                                     // true = auto close popup / 2000 = 2 seconds
-                                    showPopup("Success", "{{ message }}", true, 2000);
+                                    showPopup("Success", "{{ message }}", true, 1000);
 
                                 {% else %}
 
                                     // show info = show error message 
-                                    showPopup("Info", "{{ message }}");
+                                    showPopup("Info", "{{ message }}", true, 1000);
 
                                 {% endif %}
-
                             {% endfor %}
                         });
                     </script>
                 {% endif %}
                 
                 <!-- ================================================== -->
-                <!--                    Search Feature                  -->
+                <!--                    SEARCH FEATURE                  -->
                 <!-- ================================================== -->
                 <div class="search-container">
 
-                    <!-- Keyword Search -->
+                    <!-- ================================= -->
+                    <!--           KEYWORD Search          -->
+                    <!-- ================================= -->
                     <div class="keywordsearch">
                         <form method="GET" id="searchForm">
 
-                            <input
-                                type="text"
-                                name="q"
-                                placeholder="Search..."
-                                value="{{ query }}"
-                            >
+                            <input type="text" name="q" placeholder="Search..." value="{{ query }}">
 
                             <!-- ✖ clear button -->
                             {% if query %}
@@ -142,11 +140,17 @@
                         </form>
                     </div>
 
+                    <!-- ================================= -->
+                    <!--           FILTER Search           -->
+                    <!-- ================================= -->
                     <div class = "filtersearch">            
 
                         <!-- Filter Form -->
                         <form method="GET" id="filterForm">
 
+                            <!-- ================================= -->
+                            <!--           Hidden Input            -->
+                            <!-- ================================= -->
                             <!-- Keep Search Keyword -->
                             <input type="hidden" name="q" value="{{ query }}">
 
@@ -158,287 +162,472 @@
                             <input type="hidden" name="start_date" value="{{ start_date }}">
                             <input type="hidden" name="end_date" value="{{ end_date }}">
 
-                            <!-- Category -->
-                            <select id="categorySelect" onchange="addCategory(this)">
-                                <option value="">Category</option>
+                            <!-- ================================= -->
+                            <!--           Category Filter         -->
+                            <!-- ================================= -->
+                            <div class = "category-filter">
+                                <select id="categorySelect" onchange="addCategory(this)">
+                                    <option value="">Category</option>
 
-                                {% for value, label in item_categories %}
-                                    <option value="{{ value }}">
-                                        {{ label }}
-                                    </option>
-                                {% endfor %}
-                            </select>
+                                    {% for value, label in item_categories %}
+                                        <option value="{{ value }}">
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
 
-                            <div id="categoryChips">
-                                {% for value in selected_category %}
-                                    <span class="chip">
-                                        {{ value }}
+                                <div id="categoryChips">
+                                    {% for value in selected_category %}
+                                        <span class="chip">
+                                            {{ value }}
 
-                                        <span onclick="removeFilter('category', '{{ value }}')">✖</span>
-                                    </span>
-                                {% endfor %}
+                                            <span onclick="removeFilter('category', '{{ value }}')">✖</span>
+                                        </span>
+                                    {% endfor %}
+                                </div>
                             </div>
 
-                            <!-- Location -->
-                            <select name="location" onchange="this.form.submit()">
-                                <option value="">Location</option>
+                            <!-- ================================= -->
+                            <!--           Location Filter         -->
+                            <!-- ================================= -->
+                            <div class="location-filter">
+                                <select name="location" onchange="this.form.submit()">
+                                    <option value="">Location</option>
 
-                                {% for location in locations %}
-                                    <option value="{{ location.id }}"
-                                        {% if location.id|stringformat:'s' in selected_location %}selected{% endif %}>
-                                        {{ location.location_name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
+                                    {% for location in locations %}
+                                        <option value="{{ location.id }}"
+                                            {% if location.id|stringformat:'s' in selected_location %}selected{% endif %}>
+                                            {{ location.location_name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
 
-                            {% if selected_location %}
-                                <span class="clear-btn" onclick="clearSingleFilter('location')">✖</span>
-                            {% endif %}
+                                {% if selected_location %}
+                                    <span class="clear-btn" onclick="clearSingleFilter('location')">✖</span>
+                                {% endif %}
+                            </div>
 
-                            <lable>Start Date:</lable>
-                            <input type="date"
-                                name="start_date"
-                                value="{{ start_date }}"
-                                onchange="this.form.submit()">
+                            <!-- ================================= -->
+                            <!--           Start Date Filter       -->
+                            <!-- ================================= -->
+                            <div class="start-date-filter">
+                                <lable>Start Date:</lable>
+                                <input type="date" name="start_date" value="{{ start_date }}" onchange="this.form.submit()">
 
-                            {% if start_date %}
-                                <span class="clear-btn" onclick="clearSingleFilter('start_date')">✖</span>
-                            {% endif %}
+                                {% if start_date %}
+                                    <span class="clear-btn" onclick="clearSingleFilter('start_date')">✖</span>
+                                {% endif %}
+                            </div>
 
-                            <lable>End Date:</lable>
-                            <input type="date"
-                                name="end_date"
-                                value="{{ end_date }}"
-                                onchange="this.form.submit()">
+                            <!-- ================================= -->
+                            <!--            End Date Filter        -->
+                            <!-- ================================= -->
+                            <div class="end-date-filter">
 
-                            {% if end_date %}
-                                <span class="clear-btn" onclick="clearSingleFilter('end_date')">✖</span>
-                            {% endif %}
+                                <lable>End Date:</lable>
+
+                                <input type="date" name="end_date" value="{{ end_date }}" onchange="this.form.submit()">
+
+                                {% if end_date %}
+                                    <span class="clear-btn" onclick="clearSingleFilter('end_date')">✖</span>
+                                {% endif %}
+                            </div>
 
                         </form>
-
-                        <div class = "map-search">
-                            <a href="{% url 'mapSearch' %}">
-                                Map
-                            </a>
-                        </div>
                     </div>
-
+                    
+                    <!-- ================================= -->
+                    <!--         Map Search Button         -->
+                    <!-- ================================= -->
+                    <div class = "map-search">
+                        <a href="{% url 'mapSearch' %}">
+                            <img src="{% static 'images/map-icon.png' %}" alt="Map Search" class="map-icon">
+                        </a>
+                    </div>
                 </div>
 
+                <!-- ================================= -->
+                <!--        Show Search Result         -->
+                <!-- ================================= -->
                 {% if query %}
-                    <p>
+                    <p class="search-result">
                         Search result for "{{ query }}"
                     </p>
                 {% endif %}
 
-                <!-- ===================================== -->
-                <!--        Post Small View Section        -->
-                <!-- ===================================== -->
+                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                <!--        YT - POST VIEW SECTION         -->
+                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
                 <div class="post-list">
                     {% for post in posts %}
 
-                    <!-- yt added -->
-                    <!-- Open popup modal after clicked -->
-                    <!-- Store username into HTML attribute, so JS can read it-->
-                    <div class="post"
-                        onclick="openPost(this)"
-                        data-status="{{ post.post_status }}"
-                        data-post-id="{{ post.id }}"
-                        data-post-type="{{ post.post_type }}" 
-                        data-user="{{ post.post_user.username }}"
-                        data-user-id="{{ post.post_user.id }}"
-                        data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
-                        data-profile="{% url 'userProfile' post.post_user.username %}" 
-                        data-type="{{ post.post_type }}"
-                        data-date="{{ post.post_datetime }}" 
-                        data-category="{{ post.get_post_itemcategory_display }}"
-                        data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
-                        data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
-                        data-description="{{ post.post_description }}"
-                        data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
-                        
-                        <div class = "post-box">
+                        <!-- yt added -->
+                        <!-- Open popup modal after clicked -->
+                        <!-- Store username into HTML attribute, so JS can read it-->
+                        <div class="post"
+                            onclick="openPost(this)"
+                            data-post-id="{{ post.id }}" 
+                            data-status="{{ post.post_status }}"
+                            data-user="{{ post.post_user.username }}"
+                            data-user-id="{{ post.post_user.id }}"
+                            data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
+                            data-profile="{% url 'userProfile' post.post_user.username %}" 
+                            data-type="{{ post.post_type }}"
+                            data-date="{{ post.post_datetime }}" 
+                            data-category="{{ post.get_post_itemcategory_display }}"
+                            data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
+                            data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
+                            data-description="{{ post.post_description }}"
+                            data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
+                            
+                            <div class = "post-box">
 
-                            <!-- ============================== -->
-                            <!--     YF - Post Small View       -->
-                            <!-- ============================== -->
-                            <div class = "post-view">
+                                <!-- ============================== -->
+                                <!--          Post Small View       -->
+                                <!-- ============================== -->
+                                <div class = "post-view">
+                                    <div class = "post-header">
 
-                                <h4> {{ post.post_type|upper }} POST </h4>
-                                
-                                <!-- Post Navigation (differ own post / other user post to show nav) -->
-                                <div class = "post-nav" onclick="event.stopPropagation()">
-
-                                    <!-- user themselves-->
-                                    {% if request.user == post.post_user %}
+                                        <h4> {{ post.post_type|upper }} </h4>
                                         
-                                        <a href="{% url 'editPost' post.id %}">
-                                            Edit Post
-                                        </a>
+                                        <!-- ================================= -->
+                                        <!--           Post Navigation         -->
+                                        <!-- ================================= -->
+                                        <!-- (differ own post / other user post to show nav) -->
+                                        <div class = "post-nav" onclick="event.stopPropagation()">
+                                            <div class = "post-nav-dropdown">
+                                                <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">⋮</button>
+                                                <div class="post-nav-menu">
 
-                                        <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
-                                        <form method = "POST" 
-                                            action = "{% url 'deletePost' post.id %}" 
-                                            onsubmit = "confirmDelete(event, this)" >
-                                            {% csrf_token %}
+                                                    <!-- user themselves-->
+                                                    {% if request.user == post.post_user %}
 
-                                            <button type="submit">
-                                                Delete Post
-                                            </button>
-                                        </form>
+                                                        <div class = "btn">
+                                                            <!-- Edit Post Butonn -->
+                                                            <a href="{% url 'editPost' post.id %}">
+                                                                Edit Post
+                                                            </a>
+                                                        </div>
+                                                        
+                                                        <div class = "btn">
+                                                            <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
+                                                            <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
+                                                                {% csrf_token %}
+                                                                <button type="submit">
+                                                                    Delete Post
+                                                                </button>
+                                                            </form>
+                                                        </div>
 
-                                    {%else %}
+                                                    <!-- Other Users -->
+                                                    {%else %}
 
-                                        <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
-                                            <button type="button">Report</button>
-                                        </a>
+                                                        <div class = "btn">
+                                                            <!-- ty Report Post Button -->
+                                                            <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                                                                Report
+                                                            </a>
+                                                        </div>
 
-                                        <a href="{% url 'report_user' user.id %}">
-                                            <button type="button">Report User</button>
-                                        </a>
+                                                        <div class = "btn">
+                                                            <!-- ty Report User Button -->
+                                                            <a href="{% url 'report_user' user.id %}">
+                                                                Report User
+                                                            </a>
+                                                        </div>
 
-                                    {% endif %}
-                                </div>
-
-                                <!-- Show Post Owner -->
-                                <p>
-                                    <a href="{% url 'userProfile' post.post_user.username %}">
-                                        {{ post.post_user.username }}
-                                    </a>
-                                </p>
-
-                                <!-- Image -->
-                                <div class="image-wrapper">
-
-                                    {% if post.cover_image %}
-                                        <img
-                                            src="{{ post.cover_image.image.url }}"
-                                            alt="Post Image"
-                                            class="post-image"
-                                        >
-                                    {% endif %}
-
-                                    {% if post.images.count > 1 %}
-                                        <div class="multiple-icon">
-                                            📷 {{ post.images.count }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
                                         </div>
-                                    {% endif %}
+                                    </div>
 
+                                    <!-- ================================= -->
+                                    <!--             Post Details          -->
+                                    <!-- ================================= -->
+                                    <div class = "post-info">
+
+                                        <!-- ================================= -->
+                                        <!--    User Name & Profile Photo      -->
+                                        <!-- ================================= -->
+                                        <div class="user-info">
+                                            {% with profile=post.post_user.profile %}
+
+                                                <img class="avatar"
+                                                    src="{% if profile.avatar %}
+                                                            {{ profile.avatar.url }}
+                                                        {% else %}
+                                                            {% static 'images/default.png' %}
+                                                        {% endif %}"
+                                                    alt="avatar">
+
+                                                <span class="name">
+                                                    {{ profile.name|default:post.post_user.username }}
+                                                </span>
+
+                                            {% endwith %}
+                                        </div>
+
+                                        <!-- ================================= -->
+                                        <!--      Post Image (Check Multi)     -->
+                                        <!-- ================================= -->
+                                        <div class="image-wrapper">
+
+                                            {% if post.cover_image %}
+                                                <img src="{{ post.cover_image.image.url }}" alt="Post Image" class="post-image">
+                                            {% endif %}
+
+                                            {% if post.images.count > 1 %}
+                                                <img src="{% static 'images/multi-img-icon.png' %}" alt="Multiple Images" class="multi-img-icon">
+                                            {% endif %}
+
+                                        </div>
+
+                                        <!-- ================================= -->
+                                        <!--           Date Time               -->
+                                        <!-- ================================= -->
+                                        <p> <b>Date Time:</b> {{ post.post_datetime }} </p>
+
+                                        <!-- ================================= -->
+                                        <!--            Category               -->
+                                        <!-- ================================= -->
+                                        <p> <b>Item Category:</b> {{ post.get_post_itemcategory_display }} </p>
+
+                                        <!-- ================================= -->
+                                        <!--     Location (Check Unknown)      -->
+                                        <!-- ================================= -->
+                                        {% if post.post_location %}
+                                            <p> <b>Location:</b> {{ post.post_location.location_name }}</p>
+                                        {% elif post.post_type == "lost" %}
+                                            <p> <b>Location:</b> Unknown Lost Location</p>
+                                        {% endif %}
+
+                                        <!-- ================================= -->
+                                        <!--            Post Status            -->
+                                        <!-- ================================= -->
+                                        <p class="post-status status-{{ post.post_status }}"><b>{{ post.get_post_status_display }}</b></p>
+
+                                    </div>
                                 </div>
-
-                                <!-- Date Time -->
-                                <p> Date Time: {{ post.post_datetime }} </p>
-
-                                <!-- Category -->
-                                <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
-
-                                <!-- Location (If Lost Pos can no location ) -->
-                                {% if post.post_location %}
-                                    <p> Location: {{ post.post_location.location_name }}</p>
-                                {% elif post.post_type == "lost" %}
-                                    <p> Location: Unknown Lost Location</p>
-                                {% endif %}
-
-                                <span class="status-badge {{ post.post_status }}">
-                                    {{ post.post_status|upper }}
-                                </span>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- If no post inside Show -->
+
+                
+                    <!-- ================================= -->
+                    <!--         NO POST MSG               -->
+                    <!-- ================================= -->
                     {% empty %}
-                        <div class = "no_post">
+                        <div class = "no-post">
                             <p> No posts available. </p>
                         </div>
                     {% endfor %}
 
                 </div>
 
-                <!-- YT - Post View Popup Modal -->
-                <div id="postModal" class="modal">
+                <!-- ================================ -->
+                <!--           PAGE CHANGE            -->
+                <!-- ================================ -->
+                <div class="pagination">
 
-                    <div class="modal-content">
+                    <!-- FIRST -->
+                    {% if posts.has_previous %}
+                        <a href="?page=1
+                        {% if query %}&q={{ query }}{% endif %}
+                        {% for c in selected_category %}&category={{ c }}{% endfor %}
+                        {% for l in selected_location %}&location={{ l }}{% endfor %}
+                        {% if start_date %}&start_date={{ start_date }}{% endif %}
+                        {% if end_date %}&end_date={{ end_date }}{% endif %}
+                        " class = "pagearrow">
+                            <<
+                        </a>
 
-                        <span class="close" onclick="closePost()">&times;</span> <!-- Symbol display cross -->
+                        <a href="?page={{ posts.previous_page_number }}
+                        {% if query %}&q={{ query }}{% endif %}
+                        {% for c in selected_category %}&category={{ c }}{% endfor %}
+                        {% for l in selected_location %}&location={{ l }}{% endfor %}
+                        {% if start_date %}&start_date={{ start_date }}{% endif %}
+                        {% if end_date %}&end_date={{ end_date }}{% endif %}
+                        " class = "pagearrow">
+                            <
+                        </a>
 
-                        <div class="modal-body">
+                    {% else %}
+                        <span class="disabled"> << </span>
+                        <span class="disabled"> < </span>
+                    {% endif %}
 
-                            <div class="modal-left">
-                                <p>
-                                    <a id="m_user_link" href="">
-                                        <span id="m_user"></span>
+                    <!-- PAGE NUMBERS -->
+                    {% for num in posts.paginator.page_range %}
+
+                        {% if posts.number <= 2 %}
+
+                            {% if num <= 3 %}
+
+                                {% if num == posts.number %}
+                                    <span class="current">{{ num }}</span>
+                                {% else %}
+                                    <a href="?page={{ num }}
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}"
+                                    class="pagenum">
+                                        {{ num }}
                                     </a>
-                                </p> <!-- JS inserts username -->
+                                {% endif %}
 
-                                <div class="img-container">
-                                    <button class="prev-btn" onclick="prevImg()">⬅</button>
+                            {% endif %}
 
-                                    <img id="m_image" style="max-width:100%; display:none;">
+                        {% elif posts.number >= posts.paginator.num_pages|add:"-1" %}
 
-                                    <button class="next-btn" onclick="nextImg()">➡</button>
-                                </div>
+                            {% if num >= posts.paginator.num_pages|add:"-2" %}
+
+                                {% if num == posts.number %}
+                                    <span class="current">{{ num }}</span>
+                                {% else %}
+                                    <a href="?page={{ num }}
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}"
+                                    class="pagenum">
+                                        {{ num }}
+                                    </a>
+                                {% endif %}
+
+                            {% endif %}
+
+                        {% else %}
+
+                            {% if num >= posts.number|add:"-1" and num <= posts.number|add:"1" %}
+
+                                {% if num == posts.number %}
+                                    <span class="current">{{ num }}</span>
+                                {% else %}
+                                    <a href="?page={{ num }}
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}"
+                                    class="pagenum">
+                                        {{ num }}
+                                    </a>
+                                {% endif %}
+
+                            {% endif %}
+
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- NEXT + LAST -->
+                    {% if posts.has_next %}
+                        <a href="?page={{ posts.next_page_number }}
+                        {% if query %}&q={{ query }}{% endif %}
+                        {% for c in selected_category %}&category={{ c }}{% endfor %}
+                        {% for l in selected_location %}&location={{ l }}{% endfor %}
+                        {% if start_date %}&start_date={{ start_date }}{% endif %}
+                        {% if end_date %}&end_date={{ end_date }}{% endif %}
+                        " class = "pagearrow">
+                            >
+                        </a>
+
+                        <a href="?page={{ posts.paginator.num_pages }}
+                        {% if query %}&q={{ query }}{% endif %}
+                        {% for c in selected_category %}&category={{ c }}{% endfor %}
+                        {% for l in selected_location %}&location={{ l }}{% endfor %}
+                        {% if start_date %}&start_date={{ start_date }}{% endif %}
+                        {% if end_date %}&end_date={{ end_date }}{% endif %}
+                        " class = "pagearrow">
+                            >>
+                        </a>
+                    {% else %}
+                        <span class="disabled"> > </span>
+                        <span class="disabled"> >> </span>
+                    {% endif %}
+
+                </div>
+
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <!--                 yt - POPUP POST VIEW               -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <div id="postModal" class="modal">
+
+                <div class="modal-content">
+
+                    <span class="close" onclick="closePost()">&times;</span> <!-- Symbol display cross -->
+
+                    <div class="modal-body">
+
+                        <div class="modal-left">
+                            <p>
+                                <a id="m_user_link" href="">
+                                    <span id="m_user"></span>
+                                </a>
+                            </p> <!-- JS inserts username -->
+
+                            <div class="img-container">
+                                <button class="prev-btn" onclick="prevImg()">⬅</button>
+
+                                <img id="m_image" style="max-width:100%; display:none;">
+
+                                <button class="next-btn" onclick="nextImg()">➡</button>
+                            </div>
+                        </div>
+
+                        <div class="modal-right">
+                            <h2 id="m_type"></h2> <!-- JS inserts post type -->
+
+                            <p><b>Date:</b> <span id="m_date"></span></p>
+
+                            <p><b>Category:</b> <span id="m_category"></span></p>
+
+                            <p><b>Location:</b> <span id="m_location"></span></p>
+
+                            <p><b>Description:</b></p>
+                            <p id="m_description"></p>
+
+                            <div class="chatBtn" id="chat_btn_container" style="display:none;">
+                                <!-- zinc add chat url-->
+                                <a id="chat_link" href="#">
+                                    <button type="button">Chat</button>
+                                </a>
                             </div>
 
-                            <div class="modal-right">
-                                <h2 id="m_type"></h2> <!-- JS inserts post type -->
-
-                                <p><b>Date:</b> <span id="m_date"></span></p>
-
-                                <p><b>Category:</b> <span id="m_category"></span></p>
-
-                                <p><b>Location:</b> <span id="m_location"></span></p>
-
-                                <p><b>Description:</b></p>
-                                <p id="m_description"></p>
-                                <p>
-                                    <b>Status:</b>
-                                    <span id="m_status"></span>
-                                </p>
-
-                                <div id="status_btn_container" style="display:none;">
-                                    <button id="statusBtn" onclick="updateStatus()">Update Status</button>
-                                </div>
-
-                                <div class="chatBtn" id="chat_btn_container" style="display:none;">
-                                    <!-- zinc add chat url-->
-                                    <a id="chat_link" href="#">
-                                        <button type="button">Chat</button>
-                                    </a>
-                                </div>
+                            <!-- YF added for status -->
+                            <div id="status_btn_container" class = "status-btn">
+                                <button id="status_btn" type="button"></button>
                             </div>
+
+                            <form id="status_form" method="POST">
+                                {% csrf_token %}
+                            </form>
+
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- ============================== -->
-            <!--     Create Post Button         -->
+            <!--     TO PAGE TOP BUTTON         -->
+            <!-- ============================== -->
+            <div class="scroll_top" id="scrollTopBtn" onclick="scrollToTop()">
+                <img src="{% static 'images/top-icon.png' %}" alt="Back To Top" class="top-icon">
+            </div>
+
+            <!-- ============================== -->
+            <!--     CREATE POST BUTTON         -->
             <!-- ============================== -->
             <div class="create_post">
-
-                <!-- Check user got login anot -->
-                {% if user.is_authenticated %}
-
-                    <button type="button">
-                        <a href="{% url 'createPost' %}"> 
-                            Create Post 
-                        </a>
-                    </button>
-
-                {% else %}
-
-                    <!-- NO Login will show please Login Popup (mainpage.js)-->
-                    <button type="button" onclick="pleaseLoginPopup()">
-                        Create Post
-                    </button>
-
-                {% endif %}
+                <a href="{% url 'createPost' %}"> 
+                    + 
+                </a>
             </div>
 
             <!-- ================================================== -->
-            <!--           Delete Post Confirmation Modal           -->
+            <!--           DELETE POST POPUP CONFIRMATION           -->
             <!-- ================================================== -->
             <div id="deletePostPopup" class="dlt-popup-modal">
                 <div class="dlt-popup-box">
@@ -453,8 +642,27 @@
                 </div>
             </div>
 
-            <!-- yt added -->
-            <!-- Confirm Logout Popup -->
+            <div id="statusPopup" class="status-popup-modal">
+
+                <div class="status-popup-box">
+
+                    <p> Are you sure you want to update this post status? </p>
+
+                    <button id="statusConfirmBtn">
+                        Confirm
+                    </button>
+
+                    <button id="statusCancelBtn">
+                        Cancel
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <!--            yt - LOGOUT POPUP CONFIMATION           -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
             <div id="confirmPopup" class="popup-modal">
                 <div class="popup-box">
                     <p>Are you sure you want to logout?</p>
@@ -465,8 +673,10 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </body>
+
     <footer>
         <p>© 2026 MMU Lost Hub<br>
     </footer>

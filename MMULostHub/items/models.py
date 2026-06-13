@@ -70,17 +70,11 @@ class PostImage(models.Model):
 # Lost and Found Post Model  
 class Post (models.Model):
 
-    POST_STATUS = [
+    STATUS_CHOICES = [
         ('open', 'Open'),
-        ('claimed', 'Claimed'),
         ('returned', 'Returned'),
+        ('claimed', 'Claimed'),
     ]
-
-    post_status = models.CharField(
-        max_length=20,
-        default='open',
-        choices=POST_STATUS,
-    )
 
     post_user = models.ForeignKey(
         User,
@@ -117,6 +111,12 @@ class Post (models.Model):
     )
 
     post_description = models.TextField()
+
+    post_status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='open'
+    )
 
     cover_image = models.ForeignKey(
         'PostImage',

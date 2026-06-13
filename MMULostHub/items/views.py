@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 
-from user.views import profile
 from .models import MMULocation, Post, CATEGORY_CHOICES
 from .services import create_post, edit_post
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_protect
+from django.core.paginator import Paginator
+
+from django.views.decorators.http import require_POST
+
 # for crop image
 import json
 import base64
@@ -44,10 +45,14 @@ def mainPage(request):
 
     # display all post in main page and order by datetime (latest post will be on top)
     post_box = Post.objects.all().order_by('-id')
-    post_box = apply_filters(request, post_box)    
+    post_box = apply_filters(request, post_box)   
+
+    paginator = Paginator(post_box, 4)
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number) 
     
     return render(request, 'items/mainpage.html', {
-        'posts': post_box,
+        'posts': posts,
         'item_categories': CATEGORY_CHOICES,
         'locations': MMULocation.objects.all(),
         'query': query,
@@ -57,6 +62,9 @@ def mainPage(request):
         'end_date': end_date,
     })
 
+# ======================================================
+#             SEARCH FILTER FUNCTION
+# ======================================================
 def apply_filters(request, post_box):
 
     # search by keyword (q= query) if keyword not match = 'empty'
@@ -110,8 +118,6 @@ def apply_filters(request, post_box):
             post_datetime__date__lte=end_date
         )
 
-    print("RESULT COUNT:", post_box.count())
-
     return post_box
 
 # ======================================================
@@ -123,16 +129,13 @@ def apply_filters(request, post_box):
 def createPost(request):
 
     #zinc add to check if user is verified before create post
-
-    profile, _ = Profile.objects.get_or_create(
-    user=request.user
-    )
+    profile, _ = Profile.objects.get_or_create(user=request.user )
     
     if profile.need_reverify:
         messages.error(
             request,
             "Please verify your account again."
-            )
+        )
 
         return redirect('profile')
 
@@ -151,9 +154,14 @@ def createPost(request):
             # if user cropped image
             if cropped:
 
+                # change json format to python list and dictionary format
                 images_data = json.loads(cropped)
 
+                # loop imae one by one to check new or old and save
                 for img in images_data:
+
+                    # check image format got ;base64; or not 
+                    # if got then change to file format and save with new order
                     format, imgstr = img.split(';base64,')
                     ext = format.split('/')[-1]
 
@@ -208,9 +216,11 @@ def createPost(request):
 @login_required(login_url='beginning')
 @never_cache
 @reverify_required
+# request = user open website (send http request to server)
 def editPost(request,post_id):
 
-    # post not exist = 404 page 
+    # if post not exist = 404 page 
+    #if yes then post get detail from storage
     post = get_object_or_404(
 
          # only owner can edit post
@@ -228,31 +238,40 @@ def editPost(request,post_id):
             #     Get cropped image from JS
             # =====================================
 
+            # from form take cropped img 
             cropped = request.POST.get("cropped_images")
             
+            # create new empty list to save old and new images wuth neww arragement
             existing_ids = []
             images_order = []
 
+            # if got new cropped images
             if cropped:
+
+                # change json format to python list and dictionary format
                 images_data = json.loads(cropped)
 
+                # loop imae one by one to check new or old and save
                 for img in images_data:
 
                     # keep existing image
                     if img["type"] == "existing":
                         existing_ids.append(img["id"])
 
+                        # save old image with new order
                         images_order.append({
-                        "type": "existing",
-                        "id": img["id"],
-                        "order": img["order"]
-                    })
+                            "type": "existing",
+                            "id": img["id"],
+                            "order": img["order"]
+                        })
 
                     # new cropped image
                     elif img["type"] == "new":
 
                         image_data = img["image"]
 
+                        # check image format got ;base64; or not 
+                        # if got then change to file format and save with new order
                         if ';base64,' in image_data:
 
                             format, imgstr = image_data.split(';base64,')
@@ -261,7 +280,7 @@ def editPost(request,post_id):
 
                             image_file = ContentFile(
                                 base64.b64decode(imgstr),
-                                name=f"{uuid.uuid4()}.{ext}"
+                                name = f"{uuid.uuid4()}.{ext}"
                             )
 
                             images_order.append({
@@ -343,7 +362,9 @@ def deletePost(request, post_id):
     # click cancel button redirect to mainpage
     return redirect('mainPage')
 
-
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#                YT - FOUND POSTS PAGE
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # yt added for lost and found posts page
 @login_required(login_url='beginning')
 @never_cache
@@ -351,11 +372,16 @@ def found_posts(request):
 
     post_box = Post.objects.filter(post_type='found').order_by('-id')
 
-    # ydf add to search 
+    # yf add to search 
     post_box = apply_filters(request, post_box)
 
+    # yf add for paginator (change page)
+    paginator = Paginator(post_box, 9)
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
+
     return render(request, 'items/found-posts.html', {
-        'posts': post_box,
+        'posts': posts,
 
         #yf add to search
         'item_categories': CATEGORY_CHOICES,
@@ -367,6 +393,9 @@ def found_posts(request):
         'end_date': request.GET.get('end_date', ''),
     })
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#                 YT - LOST POSTS PAGE
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 @login_required(login_url='beginning')
 @never_cache
 def lost_posts(request):
@@ -376,8 +405,13 @@ def lost_posts(request):
     #yf add to search
     post_box = apply_filters(request, post_box)
 
+    # yf add for paginator (change page)
+    paginator = Paginator(post_box, 9)
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
+
     return render(request, 'items/lost-posts.html', {
-        'posts': post_box,
+        'posts': posts,
 
         # yf add to sesrch
         'item_categories': CATEGORY_CHOICES,
@@ -389,12 +423,16 @@ def lost_posts(request):
         'end_date': request.GET.get('end_date', ''),
     })
 
+# ======================================================
+#                 MAP SEARCH PAGE
+# ======================================================
 @login_required(login_url='beginning')
 @never_cache
 def map_search(request):
 
     post_box = Post.objects.all().order_by('-id')
     location = request.GET.get("location")
+    
     if location:
         post_box = post_box.filter(post_location__location_code=location)
 
@@ -404,47 +442,31 @@ def map_search(request):
     })
 
 
-@login_required
+@login_required(login_url='beginning')
+@never_cache
+@require_POST
 def update_post_status(request, post_id):
-    if request.method != "POST":
-        return JsonResponse({"success": False})
 
-    post = get_object_or_404(Post, id=post_id)
+    post = get_object_or_404(
+        Post,
+        id=post_id,
+        post_user=request.user
+    )
 
-    if request.user != post.post_user:
-        return JsonResponse({"success": False})
+    if post.post_status != "open":
+        return redirect("mainPage")
 
-    data = json.loads(request.body)
-    new_status = data.get("status")
+    if post.post_type == "lost":
+        post.post_status = "returned"
 
-    VALID_STATUS = ["open", "claimed", "returned"]
-    if new_status not in VALID_STATUS:
-        return JsonResponse({"success": False})
-
-    current = post.post_status
-    post_type = post.post_type
-
-    if current in ["claimed", "returned"]:
-        return JsonResponse({"success": False})
-
-    if post_type == "lost":
-        if current == "open" and new_status == "claimed":
-            post.post_status = "claimed"
-        else:
-            return JsonResponse({"success": False})
-
-    elif post_type == "found":
-        if current == "open" and new_status == "returned":
-            post.post_status = "returned"
-        else:
-            return JsonResponse({"success": False})
-
-    else:
-        return JsonResponse({"success": False})
+    elif post.post_type == "found":
+        post.post_status = "claimed"
 
     post.save()
 
-    return JsonResponse({
-        "success": True,
-        "new_status": post.post_status
-    })
+    messages.success(
+        request,
+        "Post status updated successfully!"
+    )
+
+    return redirect("mainPage")

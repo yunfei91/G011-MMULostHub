@@ -78,11 +78,11 @@
                             {% if message.tags == "success" %}     
 
                                 // true = auto close popup / 2000 = 2 seconds
-                                showPopup("Success", "{{ message }}", true, 2000);
+                                showPopup("Success", "{{ message }}", true, 1000);
 
                             {% else %}
                                 // show info = show error message 
-                                showPopup("Info", "{{ message }}");
+                                showPopup("Info", "{{ message }}", true, 1000);
 
                             {% endif %}
 
@@ -137,31 +137,19 @@
                 {{ existing_images|json_script:"existing-images-data" }}
 
                 <!-- hidden input submit cropped images -->
-                <input type="hidden"
-                    name="cropped_images"
-                    id="cropped_images">
+                <input type="hidden" name="cropped_images" id="cropped_images">
 
                 <!-- upload input -->
-                <input type="file"
-                    id="post_image"
-                    name="userposts_images"
-                    accept="image/*"
-                    hidden>
+                <input type="file" id="post_image" name="userposts_images" accept="image/*" hidden>
 
-                <input
-                    type="hidden"
-                    id="cover_index"
-                    name="cover_index"
-                >
+                <input type="hidden" id="cover_index" name="cover_index" >
 
                 <button type="button" id="uploadBtn">
                     Add Image
                 </button>
 
                 <!-- image preview container -->
-                <div id="imagePreview_container"
-                    class="imagePreview_container">
-                </div>
+                <div id="imagePreview_container" class="imagePreview_container"></div>
 
                 <br><br>
 

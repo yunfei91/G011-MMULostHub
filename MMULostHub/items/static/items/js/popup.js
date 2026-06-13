@@ -1,3 +1,7 @@
+
+/* ====================================== 
+            POPUP FUNCTIONS        
+====================================== */
 // Wait until HTML loaded then start function
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -88,15 +92,80 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-function getCSRFToken() {
-    return document.cookie
-        .split("; ")
-        .find(row => row.startsWith("csrftoken="))
-        ?.split("=")[1];
+/* ====================================== 
+    CREATE / EDIT IMAGE PREVIEW POPUP       
+====================================== */
+// show imag preview popup when clcick any image
+function showImg() {
+    const img = document.getElementById("m_image");
+
+    // if multiple image will view with < and > 
+    if (images.length > 0) {
+        img.src = images[currentIndex];
+        img.style.display = "block";
+    }
+    
+    // if only one image then just view 
+    else {
+        img.style.display = "none";
+    }
+
+    // run update image function bellow
+    updateButtons();
 }
 
-// yt added
-// Create a function "openPost"
+// next > image button 
+function nextImg() {
+    if (currentIndex < images.length - 1) {
+        currentIndex++;
+        showImg();
+    }
+}
+
+// previous < image button
+function prevImg() {
+    if (currentIndex > 0) {
+        currentIndex--;
+        showImg();
+    }
+}
+
+// change image when click next or previuos image button
+function updateButtons() {
+    const prevBtn = document.querySelector(".prev-btn");
+    const nextBtn = document.querySelector(".next-btn");
+
+    if (!prevBtn || !nextBtn) return;
+
+    prevBtn.disabled = (currentIndex === 0);
+    nextBtn.disabled = (currentIndex === images.length - 1);
+}
+
+/* ====================================== 
+            STATUS CHANGE POPUP       
+====================================== */
+function showStatusPopup(postId) {
+
+    const popup = document.getElementById("statusPopup");
+
+    popup.style.display = "flex";
+
+    document.getElementById("statusConfirmBtn").onclick = function () {
+
+        document.getElementById("status_form").action = `/items/update-status/${postId}/`;
+
+        document.getElementById("status_form").submit();
+    };
+
+    document.getElementById("statusCancelBtn").onclick = function () {
+
+        popup.style.display = "none";
+    };
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+        yt - POST POPUP FUNCTION        
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 let images = [];
 currentIndex = 0;
 
@@ -114,7 +183,17 @@ function openPost(el) { // el=this connection
     if (profileLink && el.dataset.profile) {
         profileLink.href = el.dataset.profile;
     }
-/** zinc add this **/
+
+    images = el.dataset.images
+        ? el.dataset.images.split("|").filter(i => i)
+        : [];
+
+    currentIndex = 0;
+    showImg();
+
+    /* ************************************* 
+            ty - CHAT FUNCTION        
+     *************************************** */
     const chatLink = document.getElementById("chat_link");
 
     if (chatLink && el.dataset.chatUrl) {
@@ -135,114 +214,39 @@ function openPost(el) { // el=this connection
     document.getElementById("m_location").innerText = el.dataset.locationName || "Unknown Location";
     document.getElementById("m_description").innerText = el.dataset.description;
 
-    images = el.dataset.images
-        ? el.dataset.images.split("|").filter(i => i)
-        : [];
+    /* ======================================= 
+                 POST STATUS        
+     ========================================= */
+    const status = el.dataset.status;
+    const ownerId = el.dataset.userId;
+    const postId = el.dataset.postId;
 
-    currentIndex = 0;
-    showImg();
+    const statusBtn = document.getElementById("status_btn");
+    const statusContainer = document.getElementById("status_btn_container");
 
-    document.getElementById("m_status").innerText = el.dataset.status;
-    document.getElementById("m_status").dataset.value = el.dataset.status;
-    document.getElementById("m_status").dataset.id = el.dataset.postId;
-    document.getElementById("m_status").dataset.type = el.dataset.postType;
+    statusBtn.style.display = "inline-block";
 
-    const statusBtn = document.getElementById("status_btn_container");
-    const btn = document.getElementById("statusBtn");
+    statusBtn.innerText = status.charAt(0).toUpperCase() + status.slice(1);
 
     if (
-        el.dataset.userId === CURRENT_USER_ID &&
-        el.dataset.status === "open"
+        String(ownerId) === String(CURRENT_USER_ID) &&
+        status === "open"
     ) {
-        statusBtn.style.display = "block";
+        statusBtn.style.cursor = "not-allowed";
+    }
 
-        if (el.dataset.postType === "lost") {
-            btn.innerText = "Mark as Claimed";
-        } else {
-            btn.innerText = "Mark as Returned";
+    statusBtn.onclick = function () {
+
+        if (
+            String(ownerId) !== String(CURRENT_USER_ID) ||
+            status !== "open"
+        ) {
+            return;
         }
-    } else {
-        statusBtn.style.display = "none";
-    }
-}
 
-function updateStatus() {
-    const statusEl = document.getElementById("m_status");
+        showStatusPopup(postId);
+    };
 
-    const currentStatus = statusEl.dataset.value;
-    const postType = statusEl.dataset.type;
-    const postId = statusEl.dataset.id;
-
-    let newStatus = currentStatus;
-
-    if (currentStatus === "open") {
-        if (postType === "lost") {
-            newStatus = "claimed";
-        } else if (postType === "found") {
-            newStatus = "returned";
-        }
-    }
-
-    fetch(`/update-post-status/${postId}/`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCSRFToken()
-        },
-        body: JSON.stringify({ status: newStatus })
-    })
-    .then(res => {
-        if (!res.ok) throw new Error("HTTP error " + res.status);
-        return res.json();
-    })
-    .then(data => {
-        if (data.success) {
-            statusEl.innerText = data.new_status.toUpperCase();
-            statusEl.dataset.value = data.new_status;
-        }
-    })
-    .catch(err => {
-        console.error("Status update failed:", err);
-    });
-}
-
-function showImg() {
-    const img = document.getElementById("m_image");
-
-    if (images.length > 0) {
-        img.src = images[currentIndex];
-        img.style.display = "block";
-    } else {
-        img.style.display = "none";
-    }
-
-    updateButtons();
-}
-
-// NEXT (NO LOOP)
-function nextImg() {
-    if (currentIndex < images.length - 1) {
-        currentIndex++;
-        showImg();
-    }
-}
-
-// PREV (NO LOOP)
-function prevImg() {
-    if (currentIndex > 0) {
-        currentIndex--;
-        showImg();
-    }
-}
-
-function updateButtons() {
-    const prevBtn = document.querySelector(".prev-btn");
-    const nextBtn = document.querySelector(".next-btn");
-
-    if (!prevBtn || !nextBtn) return;
-
-    prevBtn.disabled = (currentIndex === 0);
-    nextBtn.disabled = (currentIndex === images.length - 1);
 }
 
 function closePost() {
@@ -264,3 +268,4 @@ window.addEventListener("click", function (event) {
         modal.style.display = "none";
     }
 });
+

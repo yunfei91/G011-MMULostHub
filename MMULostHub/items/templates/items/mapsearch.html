@@ -40,12 +40,16 @@
     <body>
         <div class="whole-page">
             <header>
-                <div class="header-left"> <!-- yt adjusted for css uses-->              
+
+                <!-- yt adjusted for css uses-->
+                <div class="header-left">               
                     <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
                     <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
                 </div>
 
-                <div class="header-right"> <!-- yt adjusted for css uses-->
+                <!-- yt adjusted for css uses-->
+                <div class="header-right"> 
+
                     <!-- Home icon -->
                     <a href="{% url 'mainPage' %}" class="home-icon">
                         <img src="{% static 'images/homeicon.png' %}" alt="Home">
@@ -57,17 +61,20 @@
                         <span></span>
                         <span></span>
                     </button>
+
                 </div>
             </header>
 
-            <div id="overlay" class="overlay"></div> <!-- yt adjusted for css uses-->
+            <!-- yt adjusted for css uses-->
+            <div id="overlay" class="overlay"></div> 
 
             <!-- ================================================== -->
-            <!--            Dropdown Menu Navigation                -->
+            <!--              DROPDWOWN NAV MENU                    -->
             <!-- ================================================== -->
             <div class = "dropdown-nav">
                 
-                <nav id="menu" class="menu"> <!-- yt adjusted for css uses-->
+                <!-- yt adjusted for css uses-->
+                <nav id="menu" class="menu"> 
                     <ul>
                         <li>
                         <a href="{% url 'lost_posts' %}"> Lost Post </a>  
@@ -86,11 +93,13 @@
                         </li>
                     </ul>
                 </nav>
+
             </div>
             
             <div class="content">
+
                 <!-- ================================================== -->
-                <!--    Backend to Check Which Popup Msg To Display     -->
+                <!--    Backend to Check Which POPUP MSG To Display     -->
                 <!-- ================================================== -->
                 {% if messages %}
                     <script>                                                    // js code
@@ -98,7 +107,6 @@
 
                             //loop messages inside createpost.js
                             {% for message in messages %} 
-
                                 {% if message.tags == "success" %}     
 
                                     // true = auto close popup / 2000 = 2 seconds
@@ -107,54 +115,62 @@
                                 {% else %}
 
                                     // show info = show error message 
-                                    showPopup("Info", "{{ message }}");
+                                    showPopup("Info", "{{ message }}", true, 1000);
 
                                 {% endif %}
-
                             {% endfor %}
                         });
                     </script>
                 {% endif %}
 
+                <!-- ================================================== -->
+                <!--                    MAIN CONTENT                    -->
+                <!-- ================================================== -->
                 <div class="map-page">
+
+                    <!-- ================================= -->
+                    <!--     Back to Main Page Button      -->
+                    <!-- ================================= -->
                     <a href="{% url 'mainPage' %}"> back to home </a>
 
-                    <!-- LEFT: MAP -->
+                    <!-- ================================= -->
+                    <!--            Left - Map             -->
+                    <!-- ================================= -->
                     <div class="map-left">
                         <img id="map" src="{% static 'images/map-img.jpg' %}" class="map">
 
+                        <!-- a drwaing paper to add element form js file -->
+                        <!-- to add the colour when user mouse is on any selcted area on map -->
                         <canvas id="map-overlay"></canvas>
 
                         <div id="map-tooltip"></div>
                     </div>
 
-                    <!-- RIGHT: POSTS -->
+                    <!-- ================================= -->
+                    <!--           Right - Post            -->
+                    <!-- ================================= -->
                     <div class="map-right">
 
                         <div class="map-controls">
 
-                            <button
-                                id="back-btn"
-                                onclick="showAllPosts()"
-                                style="display:none;"
-                            >
+                            <!-- Back To Show ALL Posts -->
+                            <button id="back-btn" onclick="showAllPosts()" style="display:none;">
                                 Back
                             </button>
 
-                            <button
-                                id="unknown-btn"
-                                onclick="showUnknownPosts()"
-                            >
+                            <!-- Button To Check All UNKNOWN Loc Posts -->
+                            <button id="unknown-btn" onclick="showUnknownPosts()">
                                 Unknown Location
                             </button>
 
                         </div>
 
                         <!-- ===================================== -->
-                        <!--        Post Small View Section        -->
+                        <!--          POST VIEW SECTION            -->
                         <!-- ===================================== -->
                         <div class="post-list">
 
+                            <!-- Area To show If flter Location has NO Post Available -->
                             <div id="related-none-msg" style="display:none;"></div>
 
                             {% for post in posts %}
@@ -180,14 +196,19 @@
                                     <!--     YF - Post Small View       -->
                                     <!-- ============================== -->
                                     <div class = "post-view">
-                                        <h4> {{ post.post_type|upper }} POST </h4>
+
+                                        <h4> {{ post.post_type|upper }} </h4>
                                         
-                                        <!-- Post Navigation (differ own post / other user post to show nav) -->
+                                        <!-- ================================= -->
+                                        <!--           Post Navigation         -->
+                                        <!-- ================================= -->
+                                        <!-- (differ own post / other user post to show nav) -->
                                         <div class = "post-nav">
 
                                             <!-- user themselves-->
                                             {% if request.user == post.post_user %}
                                                 
+                                                <!-- Edit Post Butonn -->
                                                 <a href="{% url 'editPost' post.id %}">
                                                     Edit Post
                                                 </a>
@@ -195,18 +216,20 @@
                                                 <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
                                                 <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
                                                     {% csrf_token %}
-
                                                     <button type="submit">
                                                         Delete Post
                                                     </button>
                                                 </form>
 
+                                            <!-- Other Users -->
                                             {%else %}
 
+                                                <!-- ty Report Post Button -->
                                                 <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
                                                     <button type="button">Report</button>
                                                 </a>
 
+                                                <!-- ty Report User Button -->
                                                 <a href="{% url 'report_user' user.id %}">
                                                     <button type="button">Report User</button>
                                                 </a>

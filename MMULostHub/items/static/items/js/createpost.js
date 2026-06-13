@@ -15,11 +15,11 @@ function confirmCreate(event) {
                 Check Post Type      
      ====================================== */
     if (!postType) {
-        showPopup("Error", "Please choose Lost or Found.");
+        showPopup("Error", "Please choose Lost or Found.", true, 1000);
         return;
     }
     if (postType === "found" && !location) {
-        showPopup("Error", "Location is required for Found Posts.");
+        showPopup("Error", "Location is required for Found Posts.", true, 1000);
         return;
     }
 
@@ -27,14 +27,14 @@ function confirmCreate(event) {
                  Check Date Time      
      ====================================== */
     if (!datetime) {
-        showPopup("Error", "Please select date & time.");
+        showPopup("Error", "Please select date & time.", true, 1000);
         return;
     }
     const selectedDate = new Date(datetime);            // date time user input
     const now = new Date();                                 // date time now (mlys,kl)
 
     if (selectedDate > now) {
-        showPopup("Error", "Datetime cannot be in the future.");
+        showPopup("Error", "Datetime cannot be in the future.", true, 1000);
         return;
     }
     
@@ -42,16 +42,15 @@ function confirmCreate(event) {
                 Check Category        
      ====================================== */
     if (!category) {
-        showPopup("Error", "Please choose a category.");
+        showPopup("Error", "Please choose a category.", true, 1000);
         return;
     }
     
     /* ====================================== 
                     Check Image        
      ====================================== */
-
     if (window.croppedImages.length === 0) {
-        showPopup("Error", "Please upload and crop at least one image.");
+        showPopup("Error", "Please upload and crop at least one image.", true, 1000);
         return;
     }
 

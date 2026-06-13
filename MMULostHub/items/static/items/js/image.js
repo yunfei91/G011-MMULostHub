@@ -23,7 +23,6 @@ const prevBtn = document.getElementById("prev_image_btn");
 const nextBtn = document.getElementById("next_image_btn");
 const deletePreviewBtn = document.getElementById("delete_image");
 const setCoverBtn = document.getElementById("cover_btn");
-
 const imagePreviewContainer = document.getElementById("imagePreview_container");
 
 /* ====================================== 
@@ -35,32 +34,39 @@ uploadBtn.addEventListener("click", function(){
 
 /* ====================================== 
             CROP IMAGE FUNCTION        
-    ====================================== */
+====================================== */
 imageInput.addEventListener("change", function(e){
 
+    // user only can upload 5 img only
     if(window.croppedImages.length >= 5){
-        showPopup("Error", "Maximum 5 images only.");
+        showPopup("Error", "Maximum 5 images only.", true, 1000);
         imageInput.value = "";
         return;
     }
 
-   const files = e.target.files;
+    // get user input
+    const files = e.target.files;
 
+    // if no img upload then stop
     if(!files.length) return;
 
     for(let i = 0; i < files.length; i++){
 
         const file = files[i];
 
+        // read image upload
         const reader = new FileReader();
 
-       reader.onload = function(event){
+        // after read upload 
+        reader.onload = function(event){
 
+            // save original image
             window.currentOriginalImage = event.target.result;
 
+            // show crop modal
             cropModal.style.display = "block";
 
-            // destroy old cropper
+            // destroy old cropper 
             if(cropper){
                 cropper.destroy();
                 cropper = null;
@@ -73,6 +79,7 @@ imageInput.addEventListener("change", function(e){
                     cropper = null;
                 }
 
+                // crop photo 
                 cropper = new Cropper(cropPreview,{
                     aspectRatio:4/3,
                     viewMode:1,
@@ -80,36 +87,35 @@ imageInput.addEventListener("change", function(e){
                 });
 
             };
-
             cropPreview.src = event.target.result;
-
         };
-                reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
     }
 });
 
 /* ====================================== 
     CLOSE CROP MODAL BUTTON FUNCTION
-    ====================================== */
+====================================== */
 closeCrop.addEventListener("click",function(){
 
     cropModal.style.display = "none";
 
     if(cropper){
-            cropper.destroy();
-            cropper = null;
-        }
+        cropper.destroy();
+        cropper = null;
+    }
 
-    // reset input
+    // no input uploaded
     imageInput.value = "";
 
 });
 
 /* ====================================== 
         CROP MODAL BUTTON FUNCTION        
-    ====================================== */
+====================================== */
 cropButton.addEventListener("click", function(){
 
+    // if no cropper stop function
     if(!cropper) return;
 
     const canvas = cropper.getCroppedCanvas({
@@ -119,12 +125,10 @@ cropButton.addEventListener("click", function(){
 
     const croppedDataURL = canvas.toDataURL("image/jpeg");
 
-    // image ie being cropped again
+    // image is being cropped again
     if(cropAgainMode){
 
-        window.croppedImages[window.currentPreviewIndex].image =
-            croppedDataURL;
-
+        window.croppedImages[window.currentPreviewIndex].image =croppedDataURL;
         cropAgainMode = false;
 
     }
@@ -138,9 +142,9 @@ cropButton.addEventListener("click", function(){
             type: "new"
         });
     }
-
     cropModal.style.display = "none";
 
+    // save image 
     renderImages();
 
     // destroy cropper
@@ -151,10 +155,8 @@ cropButton.addEventListener("click", function(){
 
     imageInput.value = "";
 
-    showPopup(
-        "Success",
-        "Image cropped successfully!"
-    );
+    // show popup when crop successfully
+    showPopup("Success", "Image cropped successfully!", true, 500);
 });
 
 /* ======================================
@@ -194,10 +196,8 @@ function renderImages(){
             renderImages();
         });
 
-        // append
         previewBox.appendChild(img);
         previewBox.appendChild(removeBtn);
-
         imagePreviewContainer.appendChild(previewBox);
 
     });
@@ -206,22 +206,26 @@ function renderImages(){
     if(window.croppedImages.length === 0){
         imagePreviewContainer.style.display = "none";
     }
-
     else{
         imagePreviewContainer.style.display = "flex";
     }
 }
 
+/* ======================================
+        SET COVER IAMGE BUTTON STATE    
+====================================== */
 function updateCoverButtonState() {
 
     const coverBtn = document.getElementById("cover_btn");
 
+    // when iamge already cover hen cover button grey 
     if (window.currentPreviewIndex === 0) {
         coverBtn.classList.add("disabled");
 
-    } else {
+    } 
+    // if image not cover then cover button can click
+    else {
         coverBtn.classList.remove("disabled");
-
     }
 }
 
@@ -238,7 +242,6 @@ function openPreviewModal(){
     previewModalImage.src = currentImage.image;
 
     cropAgainMode = false;
-
 
     if(currentImage.isExisting){
         cropAgainBtn.style.display = "none";
@@ -320,15 +323,15 @@ deletePreviewBtn.addEventListener("click", function(){
 });
 
 /* ======================================
-    CROP IMAGE AGAIN BUTTON FUNCTION
+        CROP AGAIN BUTTON FUNCTION
 ====================================== */
 cropAgainBtn.addEventListener("click", function(){
 
     previewModal.style.display = "none";
     cropModal.style.display = "block";
 
-    const imageToCrop =
-        window.croppedImages[currentPreviewIndex].originalImage;
+    // crop with oriinal image
+    const imageToCrop = window.croppedImages[currentPreviewIndex].originalImage;
 
     if(cropper){
         cropper.destroy();
@@ -337,6 +340,7 @@ cropAgainBtn.addEventListener("click", function(){
 
     cropAgainMode = true;
 
+    // run crop modal
     cropPreview.onload = function() {
 
         cropper = new Cropper(cropPreview, {
@@ -367,20 +371,18 @@ setCoverBtn.addEventListener("click", function() {
     openPreviewModal();
     updateCoverButtonState();
 
-    showPopup("Success", "Set as cover image!");
+    // show popup when change to cover already
+    showPopup("Success", "Set as cover image!", true, 1000);
 });
 
 /* ======================================
         LOAD EXISTING IMAGES
 ====================================== */
-
 const existingImagesElement = document.getElementById("existing-images-data");
 
 if(existingImagesElement){
 
-    const existingImages = JSON.parse(
-        existingImagesElement.textContent
-    );
+    const existingImages = JSON.parse(existingImagesElement.textContent);
 
     existingImages.forEach(img => {
 
