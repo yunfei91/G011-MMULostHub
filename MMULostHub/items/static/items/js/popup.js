@@ -249,11 +249,28 @@ function closePost() {
 // click outside of the popup post to close it
 // Detect any click on webpage
 window.addEventListener("click", function (event) {
-    const modal = document.getElementById("postModal");
 
+    const modal = document.getElementById("postModal");
     if (!modal) return;
 
     if (event.target === modal) {
         modal.style.display = "none";
     }
+
+    if (event.target.closest(".post-nav")) return;
+
+    document.querySelectorAll(".post-nav-menu").forEach(menu => {
+        if (!menu.contains(event.target)) {
+            menu.classList.remove("show");
+        }
+    });
 });
+
+function toggleDropdown(event) {
+    event.stopPropagation();
+
+    const dropdown = event.currentTarget.closest(".post-nav-dropdown");
+    const menu = dropdown.querySelector(".post-nav-menu");
+
+    menu.classList.toggle("show");
+}

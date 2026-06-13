@@ -367,8 +367,59 @@
                 <div id="postModal" class="modal">
 
                     <div class="modal-content">
+                        <div class="top-actions">
+                            <span class="close" onclick="closePost()">&times;</span> <!-- Symbol display cross -->
 
-                        <span class="close" onclick="closePost()">&times;</span> <!-- Symbol display cross -->
+                            <!-- ============================== -->
+                            <!--        Post Navigation        -->
+                            <!-- ============================== -->
+                            <div class="post-nav" onclick="event.stopPropagation()">
+
+                                <div class="post-nav-dropdown">
+
+                                    <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">
+                                        ⋮
+                                    </button>
+
+                                    <div class="post-nav-menu">
+
+                                        <!-- OWNER -->
+                                        {% if request.user.id == post.post_user.id %}
+
+                                            <div class="btn">
+                                                <a id="edit_link" href="">
+                                                    Edit Post
+                                                </a>
+                                            </div>
+
+                                            <div class="btn">
+                                                <form id="delete_form" method="POST" onsubmit="confirmDelete(event, this)">
+                                                    {% csrf_token %}
+                                                    <button type="submit">Delete Post</button>
+                                                </form>
+                                            </div>
+
+                                        <!-- OTHER USERS -->
+                                        {% else %}
+
+                                            <div class="btn">
+                                                <a id="report_post_link" href="">
+                                                    Report
+                                                </a>
+                                            </div>
+
+                                            <div class="btn">
+                                                <a id="report_user_link" href="">
+                                                    Report User
+                                                </a>
+                                            </div>
+
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="modal-body">
 
@@ -406,56 +457,6 @@
                                 <div class="post-description">
                                     <div class="desc-header">Description</div>
                                     <div id="m_description"></div>
-                                </div>
-
-                                <!-- ============================== -->
-                                <!--        Post Navigation        -->
-                                <!-- ============================== -->
-                                <div class="post-nav" onclick="event.stopPropagation()">
-
-                                    <div class="post-nav-dropdown">
-
-                                        <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">
-                                            ⋮
-                                        </button>
-
-                                        <div class="post-nav-menu">
-
-                                            <!-- OWNER -->
-                                            {% if request.user.id == post.post_user.id %}
-
-                                                <div class="btn">
-                                                    <a id="edit_link" href="">
-                                                        Edit Post
-                                                    </a>
-                                                </div>
-
-                                                <div class="btn">
-                                                    <form id="delete_form" method="POST" onsubmit="confirmDelete(event, this)">
-                                                        {% csrf_token %}
-                                                        <button type="submit">Delete Post</button>
-                                                    </form>
-                                                </div>
-
-                                            <!-- OTHER USERS -->
-                                            {% else %}
-
-                                                <div class="btn">
-                                                    <a id="report_post_link" href="">
-                                                        Report
-                                                    </a>
-                                                </div>
-
-                                                <div class="btn">
-                                                    <a id="report_user_link" href="">
-                                                        Report User
-                                                    </a>
-                                                </div>
-
-                                            {% endif %}
-
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <div class="chatBtn" id="chat_btn_container">
