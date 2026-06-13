@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.core.paginator import Paginator
 
+from django.views.decorators.http import require_POST
+
 # for crop image
 import json
 import base64
@@ -438,3 +440,33 @@ def map_search(request):
         'posts': post_box,
         'locations': MMULocation.objects.all(),
     })
+
+
+@login_required(login_url='beginning')
+@never_cache
+@require_POST
+def update_post_status(request, post_id):
+
+    post = get_object_or_404(
+        Post,
+        id=post_id,
+        post_user=request.user
+    )
+
+    if post.post_status != "open":
+        return redirect("mainPage")
+
+    if post.post_type == "lost":
+        post.post_status = "returned"
+
+    elif post.post_type == "found":
+        post.post_status = "claimed"
+
+    post.save()
+
+    messages.success(
+        request,
+        "Post status updated successfully!"
+    )
+
+    return redirect("mainPage")

@@ -142,8 +142,30 @@ function updateButtons() {
 }
 
 /* ====================================== 
-        yt - POST POPUP FUNCTION        
+            STATUS CHANGE POPUP       
 ====================================== */
+function showStatusPopup(postId) {
+
+    const popup = document.getElementById("statusPopup");
+
+    popup.style.display = "flex";
+
+    document.getElementById("statusConfirmBtn").onclick = function () {
+
+        document.getElementById("status_form").action = `/items/update-status/${postId}/`;
+
+        document.getElementById("status_form").submit();
+    };
+
+    document.getElementById("statusCancelBtn").onclick = function () {
+
+        popup.style.display = "none";
+    };
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+        yt - POST POPUP FUNCTION        
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 let images = [];
 currentIndex = 0;
 
@@ -162,9 +184,16 @@ function openPost(el) { // el=this connection
         profileLink.href = el.dataset.profile;
     }
 
-    /* ====================================== 
+    images = el.dataset.images
+        ? el.dataset.images.split("|").filter(i => i)
+        : [];
+
+    currentIndex = 0;
+    showImg();
+
+    /* ************************************* 
             ty - CHAT FUNCTION        
-     ====================================== */
+     *************************************** */
     const chatLink = document.getElementById("chat_link");
 
     if (chatLink && el.dataset.chatUrl) {
@@ -185,12 +214,39 @@ function openPost(el) { // el=this connection
     document.getElementById("m_location").innerText = el.dataset.locationName || "Unknown Location";
     document.getElementById("m_description").innerText = el.dataset.description;
 
-    images = el.dataset.images
-        ? el.dataset.images.split("|").filter(i => i)
-        : [];
+    /* ======================================= 
+                 POST STATUS        
+     ========================================= */
+    const status = el.dataset.status;
+    const ownerId = el.dataset.userId;
+    const postId = el.dataset.postId;
 
-    currentIndex = 0;
-    showImg();
+    const statusBtn = document.getElementById("status_btn");
+    const statusContainer = document.getElementById("status_btn_container");
+
+    statusBtn.style.display = "inline-block";
+
+    statusBtn.innerText = status.charAt(0).toUpperCase() + status.slice(1);
+
+    if (
+        String(ownerId) === String(CURRENT_USER_ID) &&
+        status === "open"
+    ) {
+        statusBtn.style.cursor = "not-allowed";
+    }
+
+    statusBtn.onclick = function () {
+
+        if (
+            String(ownerId) !== String(CURRENT_USER_ID) ||
+            status !== "open"
+        ) {
+            return;
+        }
+
+        showStatusPopup(postId);
+    };
+
 }
 
 function closePost() {

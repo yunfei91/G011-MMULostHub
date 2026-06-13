@@ -18,7 +18,7 @@
     max-width:500px;
     min-width: 400px;
     box-sizing:border-box;
-    padding: 30px 50px;
+    padding: 30px 50px 10px 50px;
     border-color: transparent;
     border-radius: 10px;
     background: linear-gradient(
@@ -130,7 +130,7 @@
 .post-nav-menu{
     display: none;
     position: absolute;
-    right: 0;
+    right: -15px;
     top: 45px;
     width: 150px;  
 
@@ -213,6 +213,37 @@
     width:100%;
     max-width:500px;
     height:auto;
+}
+
+.post-status{
+    display: flex;
+    justify-self: flex-end;
+    justify-content: center;
+    padding-top: 10px;
+    font-family: 'Sansation';
+    color: black;
+    font-size: 15px;
+
+    width: 100px;
+    height: 30px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.3);
+
+    box-shadow:
+        0 4px 12px rgba(0,0,0,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.4);
+}
+
+.status-open{
+    background: rgba(31, 247, 110, 0.279);
+}
+
+.status-returned{
+    background: rgba(67, 172, 252, 0.242);
+}
+
+.status-claimed{
+    background: rgba(67, 172, 252, 0.242);
 }
 
 .scroll_top {
@@ -555,7 +586,6 @@
     width: 24px;
     height: 24px;
 }
-
 
 @media (max-width:1400px){
     .post-list{
