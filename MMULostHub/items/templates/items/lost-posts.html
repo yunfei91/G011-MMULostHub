@@ -266,7 +266,9 @@
                     <!-- Open popup modal after clicked -->
                     <!-- Store username into HTML attribute, so JS can read it-->
                     <div class="post"
-                        onclick="openPost(this)" 
+                        onclick="openPost(this)"
+                        data-post-id="{{ post.id }}" 
+                        data-status="{{ post.post_status }}"
                         data-user="{{ post.post_user.username }}"
                         data-user-id="{{ post.post_user.id }}"
                         data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
@@ -397,6 +399,11 @@
                                         {% elif post.post_type == "lost" %}
                                             <p> <b>Location:</b> Unknown Lost Location</p>
                                         {% endif %}
+
+                                        <!-- ================================= -->
+                                        <!--            Post Status            -->
+                                        <!-- ================================= -->
+                                        <p class="post-status status-{{ post.post_status }}"><b>{{ post.get_post_status_display }}</b></p>
 
                                     </div>
                                 </div>
@@ -585,6 +592,15 @@
                                         <button type="button">Chat</button>
                                     </a>
                                 </div>
+
+                                <!-- YF added for status -->
+                                <div id="status_btn_container" class = "status-btn">
+                                    <button id="status_btn" type="button"></button>
+                                </div>
+
+                                <form id="status_form" method="POST">
+                                    {% csrf_token %}
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -620,6 +636,24 @@
                         <button onclick="closeDeletePopup()">Cancel</button>
                     </div>
 
+                </div>
+            </div>
+
+            <!-- -------------------------------------------------- -->
+            <!--         YF - POST STATUS CHANGE POPUP              -->
+            <!-- -------------------------------------------------- -->
+            <div id="statusPopup" class="status-popup-modal">
+                <div class="status-popup-box">
+
+                    <p> Are you sure you want to update this post status? </p>
+
+                    <button id="statusConfirmBtn">
+                        Confirm
+                    </button>
+
+                    <button id="statusCancelBtn">
+                        Cancel
+                    </button>
                 </div>
             </div>
 
