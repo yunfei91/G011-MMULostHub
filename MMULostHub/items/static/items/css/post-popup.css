@@ -5,6 +5,8 @@
 .modal {
     display: none;
     position: fixed;
+    justify-content: center;
+    align-items: center;
 
     left: 0;
     top: 0;
@@ -14,7 +16,6 @@
     background: rgba(181,209,250,0.18);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    overflow-y: auto; 
     z-index: 1000;
 }
 
@@ -23,26 +24,25 @@
 /* ========================= */
 .modal-content {
     position: relative; 
-    top: 85px; 
     width: 80%; 
     max-width: 1000px; 
-    margin: 5vh auto; 
     padding: 0; 
     border-radius: 15px; 
     
     background:
     linear-gradient(
         225deg,
-        rgba(206,216,212,0.85),
-        rgba(217,231,253,0.85),
-        rgba(181,209,250,0.85)
+        rgba(218, 233, 255, 0.96),
+        rgba(240, 246, 255, 0.94),
+        rgba(220, 236, 253, 0.93)
     );
 
     backdrop-filter: blur(18px);
     border: 1px solid rgba(255,255,255,0.6);
     box-shadow:
-        0 15px 35px rgba(0,0,0,0.12),
-        inset 0 1px 0 rgba(255,255,255,0.7);
+        0 20px 45px rgba(0,0,0,0.18),
+    0 8px 20px rgba(114,120,138,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.9);
     overflow: hidden; 
 }
 

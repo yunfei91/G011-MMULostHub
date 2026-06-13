@@ -96,7 +96,7 @@ currentIndex = 0;
 
 function openPost(el) { // el=this connection
 
-    document.getElementById("postModal").style.display = "block"; // Show popup modal , block=show element
+    document.getElementById("postModal").style.display = "flex"; // Show popup modal , block=show element
 
     document.getElementById("m_type").innerText = // Set popup title, innerText=change text inside element
         el.dataset.type.toUpperCase() + " POST"; // Read HTML, convert lower to upper
