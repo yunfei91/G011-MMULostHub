@@ -5,19 +5,19 @@
     <head> 
 
         <!-- YF - Added -->
-        <link rel="stylesheet" href="{% static 'items/css/popup.css' %}">
-        <link rel="stylesheet" href="{% static 'items/css/mainpage.css' %}">
         <script src="{% static 'items/js/popup.js' %}" defer></script>
         <script src="{% static 'items/js/mainpage.js' %}" defer></script>
-        <script>const CURRENT_USER_ID = "{{ request.user.id }}";</script>
 
         <!-- yt added -->
-        <link rel="stylesheet" href="{% static 'items/css/foundpage.css' %}">
+        <link rel="stylesheet" href="{% static 'items/css/main-layout.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/post-popup.css' %}">
 
         <script src="{% static 'items/js/header.js' %}" defer></script>
         <script src="{% static 'items/js/logout.js' %}" defer></script>
-        <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
+        <script>
+            window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";
+            const CURRENT_USER_ID = "{{ request.user.id|default:'' }}";
+        </script>
 
         <title> 
             MMU Lost Hub 
@@ -289,7 +289,7 @@
                         data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
                         data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
                         data-description="{{ post.post_description }}"
-                        data-image="{% for img in post.sorted_images %}{{ img.image.url }}|{% endfor %}"
+                        data-images="{% for img in post.sorted_images %}{{ img.image.url }}|{% endfor %}"
 
                         data-post-id="{{ post.id }}"
                         data-edit-url="{% url 'editPost' post.id %}"
@@ -306,7 +306,7 @@
                             <!-- ============================== -->
                                 
                                 <!-- Post Navigation (differ own post / other user post to show nav) -->
-                                <div class = "post-nav">
+                                <div class = "post-nav" onclick="event.stopPropagation()">
 
                                     <!-- user themselves-->
                                     {% if request.user == post.post_user %}
@@ -316,7 +316,9 @@
                                         </a>
 
                                         <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
-                                        <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
+                                        <form method = "POST" 
+                                            action = "{% url 'deletePost' post.id %}" 
+                                            onsubmit = "confirmDelete(event, this)" >
                                             {% csrf_token %}
 
                                             <button type="submit">
@@ -486,13 +488,13 @@
                                     <div class="desc-header">Description</div>
                                     <div id="m_description"></div>
                                 </div>
-
-                                <div class="chatBtn" id="chat_btn_container">
-                                    <!-- zinc add chat url-->
-                                    <a id="chat_link" href="#">
-                                        <button type="button">Chat</button>
-                                    </a>
-                                </div>
+                            </div>
+                            
+                            <div class="chatBtn" id="chat_btn_container">
+                                <!-- zinc add chat url-->
+                                <a id="chat_link" href="#">
+                                    <button type="button">Chat</button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -526,12 +528,14 @@
             <!-- ================================================== -->
             <!--             Popup Box Modal                        -->
             <!-- ================================================== -->
-            <div id = "popup" class = "popup hidden">
-                <div class = "popup-box">
-                    <h3 id = "popup-title"></h3>
-                    <p id = "popup-message"></p>
-                    <button id = "popup-confirm"> OK </button>
-                    <button id = "popup-cancel"> Cancel </button>
+            <div id="popup" class="popup hidden">
+                <div class="popup-box">
+                    <h3 id="popup-title"></h3>
+                    <p id="popup-message"></p>
+                    <div class="popup-buttons">
+                        <button id="popup-confirm">OK</button>
+                        <button id="popup-cancel">Cancel</button>
+                    </div>
                 </div>
             </div>
 

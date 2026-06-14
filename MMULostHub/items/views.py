@@ -350,9 +350,15 @@ def deletePost(request, post_id):
 @never_cache
 def found_posts(request):
 
-    post_box = Post.objects.filter(post_type='found').order_by('-id')
+    post_box = Post.objects.filter(post_type='found') \
+    .select_related('cover_image') \
+    .prefetch_related('images') \
+    .order_by('-id')
 
-    # ydf add to search 
+    for post in post_box:
+        post.sorted_images = post.images.all().order_by('order')
+        
+    # yf add to search 
     post_box = apply_filters(request, post_box)
 
     return render(request, 'items/found-posts.html', {
@@ -372,10 +378,16 @@ def found_posts(request):
 @never_cache
 def lost_posts(request):
 
-    post_box = Post.objects.filter(post_type='lost').order_by('-id')
+    post_box = Post.objects.filter(post_type='lost') \
+    .select_related('cover_image') \
+    .prefetch_related('images') \
+    .order_by('-id')
 
     #yf add to search
     post_box = apply_filters(request, post_box)
+
+    for post in post_box:
+        post.sorted_images = post.images.all().order_by('order')
 
     return render(request, 'items/lost-posts.html', {
         'posts': post_box,

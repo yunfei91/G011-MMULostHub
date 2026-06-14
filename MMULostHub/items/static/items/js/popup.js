@@ -137,10 +137,14 @@ function openPost(el) { // el=this connection
     document.getElementById("m_location").innerText = el.dataset.locationName || "Unknown Location";
     document.getElementById("m_description").innerText = el.dataset.description;
 
+    console.log(el.dataset.images);
+
     images = el.dataset.images
         ? el.dataset.images.split("|").filter(i => i)
         : [];
 
+    console.log(images);
+    
     currentIndex = 0;
     showImg();
 
