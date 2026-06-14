@@ -305,7 +305,13 @@ def editPost(request,post_id):
 
             # no problem show success popup msg then redirect to mainpage
             messages.success(request, "Post updated successfully!")
-            return redirect('mainPage')
+            
+            next_url = request.POST.get("next")
+
+            if next_url:
+                return redirect(next_url)
+
+            return redirect("mainPage")
 
         # detect error show error msg popup
         except ValueError as e:
@@ -325,6 +331,7 @@ def editPost(request,post_id):
         'post_data': {},
         'item_categories': CATEGORY_CHOICES,
         'locations': MMULocation.objects.all(),
+        'next_url': request.GET.get('next', ''),
         'existing_images': [
             {
                 'id': img.id,
@@ -357,10 +364,14 @@ def deletePost(request, post_id):
     if request.method == "POST":
         post.delete()
         messages.success(request, "Post deleted successfully!")
-        return redirect('mainPage')
     
-    # click cancel button redirect to mainpage
-    return redirect('mainPage')
+        next_url = request.POST.get("next")
+
+        if next_url:
+            return redirect(next_url)
+        
+        # click cancel button redirect to mainpage
+        return redirect('mainPage')
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #                YT - FOUND POSTS PAGE

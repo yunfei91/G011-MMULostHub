@@ -212,7 +212,7 @@
 
                                                         <div class = "btn">
                                                             <!-- Edit Post Butonn -->
-                                                            <a href="{% url 'editPost' post.id %}">
+                                                            <a href="{% url 'editPost' post.id %}?next={{ request.get_full_path|urlencode }}">
                                                                 Edit Post
                                                             </a>
                                                         </div>
@@ -221,6 +221,9 @@
                                                             <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
                                                             <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
                                                                 {% csrf_token %}
+
+                                                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                                
                                                                 <button type="submit">
                                                                     Delete Post
                                                                 </button>
@@ -381,7 +384,7 @@
 
                                                         <div class = "btn">
                                                             <!-- Edit Post Butonn -->
-                                                            <a href="{% url 'editPost' post.id %}">
+                                                            <a href="{% url 'editPost' post.id %}?next={{ request.get_full_path|urlencode }}">
                                                                 Edit Post
                                                             </a>
                                                         </div>
@@ -390,6 +393,9 @@
                                                             <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
                                                             <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
                                                                 {% csrf_token %}
+
+                                                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                                
                                                                 <button type="submit">
                                                                     Delete Post
                                                                 </button>
@@ -527,7 +533,7 @@
 
                                                         <div class = "btn">
                                                             <!-- Edit Post Butonn -->
-                                                            <a href="{% url 'editPost' post.id %}">
+                                                            <a href="{% url 'editPost' post.id %}?next={{ request.get_full_path|urlencode }}">
                                                                 Edit Post
                                                             </a>
                                                         </div>
@@ -536,6 +542,9 @@
                                                             <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
                                                             <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
                                                                 {% csrf_token %}
+
+                                                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                                
                                                                 <button type="submit">
                                                                     Delete Post
                                                                 </button>

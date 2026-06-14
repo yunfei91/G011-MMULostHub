@@ -92,7 +92,9 @@
             {% endif %}
             
             <form method="POST" enctype="multipart/form-data">          <!-- enctype add to upload photo -->
-                {% csrf_token %}                                        <!-- Django security protection code -->
+                {% csrf_token %} <!-- Django security protection code -->
+                
+                <input type="hidden" name="next" value="{{ next_url }}">
 
                 <!-- ============================== -->
                 <!--        Edit Post Type          -->
