@@ -17,9 +17,7 @@
     width:100%;
     max-width:500px;
     min-width: 400px;
-    height: auto;
-    min-height: 600px;
-    max-height: 620px;
+    height: 650px;
     box-sizing:border-box;
     padding: 30px 50px 10px 50px;
     border-color: transparent;
@@ -38,6 +36,9 @@
     cursor: pointer;
     text-decoration: none;
     transition: all 0.2s ease;
+
+    display:flex;
+    flex-direction:column;
 
 }
 
@@ -188,7 +189,9 @@
 }
 
 .post-info{
-    align-items: center;
+    display:flex;
+    flex-direction:column;
+    flex:1;
     margin-top: 10px;
     color: black;
     font-size: 15px;
@@ -221,6 +224,8 @@
 .post-status{
     display: flex;
     justify-self: flex-end;
+    margin-top:auto;
+    align-self:flex-end;
     justify-content: center;
     padding-top: 10px;
     font-family: 'Sansation';
