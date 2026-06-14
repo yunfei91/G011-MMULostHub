@@ -232,6 +232,9 @@ function openPost(el) { // el=this connection
         String(ownerId) === String(CURRENT_USER_ID) &&
         status === "open"
     ) {
+        statusBtn.style.cursor = "pointer";
+    }
+    else{
         statusBtn.style.cursor = "not-allowed";
     }
 

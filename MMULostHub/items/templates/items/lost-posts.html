@@ -600,6 +600,7 @@
 
                                 <form id="status_form" method="POST">
                                     {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
                                 </form>
                             </div>
                         </div>
@@ -645,7 +646,7 @@
             <div id="statusPopup" class="status-popup-modal">
                 <div class="status-popup-box">
 
-                    <p> Are you sure you want to update this post status? </p>
+                    <p> Set post as COMPLETED? </p>
 
                     <button id="statusConfirmBtn">
                         Confirm

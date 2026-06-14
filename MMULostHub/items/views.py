@@ -469,4 +469,6 @@ def update_post_status(request, post_id):
         "Post status updated successfully!"
     )
 
-    return redirect("mainPage")
+    next_url = request.POST.get("next")
+
+    return redirect(next_url)
