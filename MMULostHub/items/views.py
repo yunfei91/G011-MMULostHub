@@ -44,6 +44,9 @@ def mainPage(request):
     post_box = Post.objects.all().order_by('-id')
     post_box = apply_filters(request, post_box)    
     
+    for post in post_box: #yt added
+        post.sorted_images = post.images.all().order_by('order')
+
     return render(request, 'items/mainpage.html', {
         'posts': post_box,
         'item_categories': CATEGORY_CHOICES,

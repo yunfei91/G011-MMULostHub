@@ -260,7 +260,7 @@
                         data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
                         data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
                         data-description="{{ post.post_description }}"
-                        data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}"
+                        data-images="{% for img in post.sorted_images %}{{ img.image.url }}|{% endfor %}"
 
                         data-post-id="{{ post.id }}"
                         data-edit-url="{% url 'editPost' post.id %}"
