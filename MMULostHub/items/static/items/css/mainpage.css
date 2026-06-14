@@ -9,6 +9,7 @@
     grid-template-columns: repeat(3, 1fr); 
     gap: 50px 20px;
     align-items: start;
+    justify-items: center;
     margin: 0 50px 50px 50px;
 }
 
@@ -16,6 +17,9 @@
     width:100%;
     max-width:500px;
     min-width: 400px;
+    height: auto;
+    min-height: 600px;
+    max-height: 620px;
     box-sizing:border-box;
     padding: 30px 50px 10px 50px;
     border-color: transparent;
