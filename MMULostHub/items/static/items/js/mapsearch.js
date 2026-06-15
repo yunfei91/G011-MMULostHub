@@ -1,30 +1,43 @@
+// run after all html has loaded
 document.addEventListener("DOMContentLoaded", function () {
 
     const map = document.getElementById("map");
+
+    // if map not exist then stop 
     if (!map) return;
 
     const regions = getRegions();
-
     const tooltip = document.getElementById("map-tooltip");
 
     const canvas = document.getElementById("map-overlay");
     const ctx = canvas.getContext("2d");
 
+
+    // ===============================
+    //     Canvas size = Map Size
+    // ===============================
     function resizeCanvas() {
 
+        // real w & l
         canvas.width = map.clientWidth;
         canvas.height = map.clientHeight;
 
+        // w & l in website
         canvas.style.width = map.clientWidth + "px";
         canvas.style.height = map.clientHeight + "px";
     }
 
     resizeCanvas();
 
+    // will change whenever size the website is in other device
     window.addEventListener("resize", resizeCanvas);
 
+    // ===============================
+    //      COLOUR MAP REGIONS
+    // ===============================
     function drawRegion(region) {
 
+        // change to canvas default = no drawing yet
         ctx.clearRect(
             0,
             0,
@@ -32,16 +45,21 @@ document.addEventListener("DOMContentLoaded", function () {
             canvas.height
         );
 
+        // fill up colour
         ctx.fillStyle = "blue";
 
-        const scaleX =
-            map.clientWidth / map.naturalWidth;
+        // ===============================
+        //       REGIONS SHAPE 
+        // ===============================
+        const scaleX = map.clientWidth / map.naturalWidth;
+        const scaleY = map.clientHeight / map.naturalHeight;
 
-        const scaleY =
-            map.clientHeight / map.naturalHeight;
-
+        // ===============================
+        //           Rectangle
+        // ===============================
         if (region.type === "rectangle") {
 
+            // fillRect = draw rectangle
             ctx.fillRect(
                 region.x1 * scaleX,
                 region.y1 * scaleY,
@@ -50,8 +68,12 @@ document.addEventListener("DOMContentLoaded", function () {
             );
         }
 
+        // ===============================
+        //           Polygon
+        // ===============================
         if (region.type === "polygon") {
 
+            // connect line one by one (coordinate)
             ctx.beginPath();
 
             ctx.moveTo(
@@ -68,10 +90,12 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             ctx.closePath();
-
             ctx.fill();
         }
 
+        // ===============================
+        //           Circle
+        // ===============================
         if (region.type === "circle") {
 
             ctx.beginPath();
@@ -88,10 +112,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // ===============================
+    //  FIND REGION WHEN MOUSE CLICK
+    // ===============================
     function findRegion(x, y) {
 
         for (let region of regions) {
 
+            // ===============================
+            //          Rectangle
+            // ===============================
             if (region.type === "rectangle") {
                 if (
                     x >= region.x1 &&
@@ -103,17 +133,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
 
+            // ===============================
+            //          Polygon
+            // ===============================
             if (region.type === "polygon") {
                 if (isPointInsidePolygon(x, y, region.points)) {
                     return region;
                 }
             }
 
+            // ===============================
+            //          Circle
+            // ===============================
             if (region.type === "circle") {
 
                 const dx = x - region.centerX;
                 const dy = y - region.centerY;
 
+                // distance = √(dx² + dy²)
                 const distance = Math.sqrt(dx * dx + dy * dy);
 
                 if (distance <= region.radius) {
@@ -122,28 +159,36 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
+        // when region not exist
         return null;
     }
 
-    // =========================
-    // LOAD FILTER FROM URL
-    // =========================
+    // ==========================================
+    //      FILTER POST USING LOC FORM URL      
+    // ==========================================
+    // take location inside web url
     const urlParams = new URLSearchParams(window.location.search);
     const locationCode = urlParams.get("location");
 
     if (locationCode) {
 
-        const region = regions.find(
-            r => r.code === locationCode
-        );
+        // find region in all regions according to the location code taken from url
+        const region = regions.find(r => r.code === locationCode);
 
+        // when region found 
         if (region) {
+
+            // filter oost and show
             filterPosts(region.code, region.name);
 
+            // show back buton to show all post 
             document.getElementById("back-btn").style.display = "block";
         }
     }
 
+    // ==================================
+    //      MAP HOVER (COLOUR REGION)
+    // ==================================
     map.addEventListener("mousemove", function (event) {
 
         const rect = map.getBoundingClientRect();
@@ -156,26 +201,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const found = findRegion(x, y);
 
+        // region exist
         if (found) {
 
+            // mouse change to hand
             map.style.cursor = "pointer";
 
+            // fill colour
             drawRegion(found);
 
+            // blw mouse appear region name
             tooltip.style.display = "block";
             tooltip.textContent = found.name;
+            tooltip.style.left = (event.clientX - rect.left + 15) + "px";
+            tooltip.style.top = (event.clientY - rect.top + 15) + "px";
 
-            tooltip.style.left =
-                (event.clientX - rect.left + 15) + "px";
+        }
 
-            tooltip.style.top =
-                (event.clientY - rect.top + 15) + "px";
+        // no region found 
+        else {
 
-        } else {
-
+            // default back mouse and no region name
             map.style.cursor = "default";
             tooltip.style.display = "none";
 
+            // clear colour fill
             ctx.clearRect(
                 0,
                 0,
@@ -192,14 +242,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
+    // ===============================
+    //          SHOW ALL POSTS
+    // ===============================
     function showAllPosts() {
 
         const posts = document.querySelectorAll(".post");
         const noneMsg = document.getElementById("related-none-msg");
 
-        posts.forEach(post => {
-            post.style.display = "block";
-        });
+        posts.forEach(post => {post.style.display = "block";});
 
         noneMsg.style.display = "none";
 
@@ -214,6 +265,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.showAllPosts = showAllPosts;
 
+    // ===================================
+    //      SHOW UNKNOWN LOCATION POSTS
+    // ===================================
     function showUnknownPosts() {
 
         const posts = document.querySelectorAll(".post");
@@ -223,40 +277,47 @@ document.addEventListener("DOMContentLoaded", function () {
 
         posts.forEach(post => {
 
-            const location =
-                post.dataset.locationCode || "";
+            // find post wth no location
+            const location = post.dataset.locationCode || "";
 
+            // confirn found post is really no location
             if (location.trim() === "") {
 
                 post.style.display = "block";
                 visibleCount++;
 
-            } else {
+            } 
+
+            // post will location wont show
+            else {
 
                 post.style.display = "none";
             }
         });
 
+        // no post with No location will show nonMsg
         if (visibleCount === 0) {
 
             noneMsg.style.display = "block";
             noneMsg.textContent =
                 "No posts with unknown location";
 
-        } else {
+        } 
+        // got post with No location noneMsg wont appear
+        else {
 
             noneMsg.style.display = "none";
         }
 
+        // show back button and unknown location buton
         document.getElementById("back-btn").style.display = "inline-block";
-
         document.getElementById("unknown-btn").style.display = "none";
     }
 
     window.showUnknownPosts = showUnknownPosts;
 
     // =========================
-    // MAP CLICK
+    //    CHECK CLICK REGION
     // =========================
     map.addEventListener("click", function (event) {
 
@@ -270,24 +331,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const found = findRegion(x, y);
 
+        // clicked coordinate not in region 
         if (!found) {
             showPopup("Invalid Area", "No region found", true, 1500);
-
             showAllPosts();
-            
             return;
         }
 
-        // =========================
-        // ACTION: FILTER + URL
-        // =========================
         filterPosts(found.code, found.name);
         document.getElementById("back-btn").style.display = "block";
         updateURL(found.code);
     });
 
     // =========================
-    // FILTER POSTS
+    //      FILTER POSTS
     // =========================
     function filterPosts(locationCode,locationName = locationCode) {
         
@@ -298,39 +355,43 @@ document.addEventListener("DOMContentLoaded", function () {
 
         posts.forEach(post => {
 
+            // get post location code ("location" / " "none)
             const postLocation = post.dataset.locationCode || "";
+            const match = postLocation.toLowerCase() === locationCode.toLowerCase();
 
-            const match =
-                postLocation.toLowerCase() ===
-                locationCode.toLowerCase();
-
-            post.style.display =
-                match ? "block" : "none";
-
+            // found match post
             if (match) {
+                post.style.display = "block";
                 visibleCount++;
+            }
+            else {
+                post.style.display = "none";
             }
         });
 
+        // if none post match to location selcted show noneMsg
         if (visibleCount === 0) {
             noneMsg.style.display = "block";
             noneMsg.textContent =
                 `No posts in ${locationName}`;
-        } else {
+        } 
+        // got post match noneMsg wont appear
+        else {
             noneMsg.style.display = "none";
         }
 
         document.getElementById("back-btn").style.display = "inline-block";
-
         document.getElementById("unknown-btn").style.display = "inline-block";
     }
 
     // =========================
-    // UPDATE URL (?location=xxx)
+    //      UPDATE WEB URL
     // =========================
     function updateURL(code) {
         const url = new URL(window.location.href);
         url.searchParams.set("location", code);
+
+        // pushState = wont refresh whenever url change or not
         window.history.pushState({}, "", url);
     }
 
@@ -356,9 +417,9 @@ document.addEventListener("DOMContentLoaded", function () {
         return inside;
     }
 
-    // =========================
-    // REGIONS DATA
-    // =========================
+    // ===============================
+    //      MAP REGIONS COORDINATE
+    // ===============================
     function getRegions() {
         return [
             {

@@ -96,14 +96,17 @@ def create_post (post_data, user):
         post_description = post_data.get('post_description'),
     )
 
+    # create empty list to save uploaded iamges
     saved_images = []
 
+    # enumareate = automatic assign number for each image  accrodeing to index+1
     for index, img in enumerate(images):
 
+        # create post image and save to database
         post_image = PostImage.objects.create(
             post = new_post,
             image = img,
-            order=index
+            order = index
         )
 
         saved_images.append(post_image)
@@ -123,7 +126,6 @@ def create_post (post_data, user):
 def edit_post(post, data):
     post_type = data.get('post_type')
     post_datetime_str = data.get('post_datetime')
-    images = data.get('images', [])
     post_category = data.get('post_itemcategory')
     location = data.get('post_location')
     post_description = data.get('post_description') or ""
@@ -180,17 +182,19 @@ def edit_post(post, data):
 
     post.save()
 
+    # get data from vies.py
     images_order = data.get('images_order', [])
     existing_ids = data.get('existing_ids', [])
 
     # delete removed old images
     post.images.exclude(id__in=existing_ids).delete()
 
+    # create new empty list for new edited and old images to save in database
     final_images = []
 
     for item in images_order:
 
-        # existing image
+        # old image
         if item["type"] == "existing":
 
             img = post.images.filter(id=item["id"]).first()
@@ -203,23 +207,24 @@ def edit_post(post, data):
         elif item["type"] == "new":
 
             post_image = PostImage.objects.create(
-                post=post,
-                image=item["file"],
-                order=item["order"]
+                post = post,
+                image = item["file"],
+                order = item["order"]
             )
 
+            # save all images inside new list
             final_images.append(post_image)
 
-    # sort by frontend order
+    # arrange all iages inside finalimages list by their order
     final_images.sort(key=lambda x: x.order)
 
     # set cover image
     if final_images:
 
-        post.cover_image = final_images[0]
+        post.cover_image = final_images[0] if final_images else None
+        post.save(update_fields=["cover_image"])
 
     else:
-
         post.cover_image = None
 
     if post.cover_image and not post.images.filter(id=post.cover_image.id).exists():

@@ -70,6 +70,12 @@ class PostImage(models.Model):
 # Lost and Found Post Model  
 class Post (models.Model):
 
+    STATUS_CHOICES = [
+        ('open', 'Open'),
+        ('returned', 'Returned'),
+        ('claimed', 'Claimed'),
+    ]
+
     post_user = models.ForeignKey(
         User,
         on_delete = models.CASCADE,                             # if user deleted , all related post or data also will be deleted
@@ -106,6 +112,12 @@ class Post (models.Model):
 
     post_description = models.TextField()
 
+    post_status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='open'
+    )
+
     cover_image = models.ForeignKey(
         'PostImage',
         on_delete=models.SET_NULL,
@@ -117,4 +129,7 @@ class Post (models.Model):
     def __str__(self):
         return f"{self.post_type}: {self.post_itemcategory}"
 
-
+# yt added
+@property
+def sorted_images(self):
+    return self.images.all().order_by("order")

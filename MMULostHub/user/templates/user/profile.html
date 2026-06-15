@@ -4,9 +4,10 @@
     <head>
         <title>MMU Lost Hub</title>
 
-        <!--Yf -->
-        <link rel="stylesheet" href="{% static 'items/css/popup.css' %}">
-        
+        <!-- Yf -->
+        <link rel="stylesheet" href="{% static 'items/css/popup.css' %}"> <!-- add for delete and change status popup css-->
+        <link rel="stylesheet" href="{% static 'items/css/mainpage.css' %}"> <!-- Add for post css -->
+
         <!-- Prevent browser cache, user cannot press back to access previous page -->
         <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
         <!-- Older browser cache prevention -->
@@ -166,250 +167,460 @@
                     <button onclick="showFound()">Found</button>
                 </div>
 
-                <div id="all-posts">
+                <div id="all-posts" class = "post-list">
                     {% for post in all_posts %}
 
-                    <!-- Open popup modal after clicked -->
-                    <!-- Store username into HTML attribute, so JS can read it-->
-                    <div class="post"
-                        onclick="openPost(this)" 
-                        data-user="{{ post.post_user.username }}"
-                        data-user-id="{{ post.post_user.id }}"
-                        data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
-                        data-profile="{% url 'userProfile' post.post_user.username %}" 
-                        data-type="{{ post.post_type }}"
-                        data-date="{{ post.post_datetime }}" 
-                        data-category="{{ post.get_post_itemcategory_display }}"
-                        data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
-                        data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
-                        data-description="{{ post.post_description }}"
-                        data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
-                        
-                        <div class="post-item" data-type="{{ post.post_type }}">
+                        <!-- Open popup modal after clicked -->
+                        <!-- Store username into HTML attribute, so JS can read it-->
+                        <div class="post"
+                            onclick="openPost(this)"
+                            data-post-id="{{ post.id }}" 
+                            data-status="{{ post.post_status }}"
+                            data-user="{{ post.post_user.username }}"
+                            data-user-id="{{ post.post_user.id }}"
+                            data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
+                            data-profile="{% url 'userProfile' post.post_user.username %}" 
+                            data-type="{{ post.post_type }}"
+                            data-date="{{ post.post_datetime }}" 
+                            data-category="{{ post.get_post_itemcategory_display }}"
+                            data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
+                            data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
+                            data-description="{{ post.post_description }}"
+                            data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
+                            
+                            <div class = "post-box">
 
-                            <!-- Post Navigation (differ own post / other user post to show nav) -->
-                            <div class = "post-nav" onclick="event.stopPropagation()">
+                                <!-- ============================== -->
+                                <!--          Post Small View       -->
+                                <!-- ============================== -->
+                                <div class = "post-view">
+                                    <div class = "post-header">
 
-                                <!-- user themselves-->
-                                {% if request.user == post.post_user %}
-                                    
-                                    <a href="{% url 'editPost' post.id %}">
-                                        Edit Post
-                                    </a>
+                                        <h4> {{ post.post_type|upper }} </h4>
+                                        
+                                        <!-- ================================= -->
+                                        <!--           Post Navigation         -->
+                                        <!-- ================================= -->
+                                        <!-- (differ own post / other user post to show nav) -->
+                                        <div class = "post-nav" onclick="event.stopPropagation()">
+                                            <div class = "post-nav-dropdown">
+                                                <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">⋮</button>
+                                                <div class="post-nav-menu">
 
-                                    <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
-                                    <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
-                                        {% csrf_token %}
+                                                    <!-- user themselves-->
+                                                    {% if request.user == post.post_user %}
 
-                                        <button type="submit">
-                                            Delete Post
-                                        </button>
-                                    </form>
+                                                        <div class = "btn">
+                                                            <!-- Edit Post Butonn -->
+                                                            <a href="{% url 'editPost' post.id %}?next={{ request.get_full_path|urlencode }}">
+                                                                Edit Post
+                                                            </a>
+                                                        </div>
+                                                        
+                                                        <div class = "btn">
+                                                            <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
+                                                            <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
+                                                                {% csrf_token %}
 
-                                {%else %}
+                                                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                                
+                                                                <button type="submit">
+                                                                    Delete Post
+                                                                </button>
+                                                            </form>
+                                                        </div>
 
-                                    <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
-                                        <button type="button">Report Post</button>
-                                    </a>
+                                                    <!-- Other Users -->
+                                                    {%else %}
 
-                                {% endif %}
-                            </div>
-                        
-                            <h4>{{ post.post_type|upper }} POST</h4>
+                                                        <div class = "btn">
+                                                            <!-- ty Report Post Button -->
+                                                            <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                                                                Report
+                                                            </a>
+                                                        </div>
 
-                            <div class="image-wrapper">
-
-                                {% if post.cover_image %}
-                                    <img
-                                        src="{{ post.cover_image.image.url }}"
-                                        alt="Post Image"
-                                        class="post-image"
-                                        style="width:500px; height:auto;"
-                                    >
-                                {% endif %}
-
-                                {% if post.images.count > 1 %}
-                                    <div class="multiple-icon">
-                                        📷 {{ post.images.count }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                {% endif %}
 
+                                    <!-- ================================= -->
+                                    <!--             Post Details          -->
+                                    <!-- ================================= -->
+                                    <div class = "post-info">
+
+                                        <!-- ================================= -->
+                                        <!--    User Name & Profile Photo      -->
+                                        <!-- ================================= -->
+                                        <div class="user-info">
+                                            {% with profile=post.post_user.profile %}
+
+                                                <img class="avatar"
+                                                    src="{% if profile.avatar %}
+                                                            {{ profile.avatar.url }}
+                                                        {% else %}
+                                                            {% static 'images/default.png' %}
+                                                        {% endif %}"
+                                                    alt="avatar">
+
+                                                <span class="name">
+                                                    {{ profile.name|default:post.post_user.username }}
+                                                </span>
+
+                                            {% endwith %}
+                                        </div>
+
+                                        <!-- ================================= -->
+                                        <!--      Post Image (Check Multi)     -->
+                                        <!-- ================================= -->
+                                        <div class="image-wrapper">
+
+                                            {% if post.cover_image %}
+                                                <img src="{{ post.cover_image.image.url }}" alt="Post Image" class="post-image">
+                                            {% endif %}
+
+                                            {% if post.images.count > 1 %}
+                                                <img src="{% static 'images/multi-img-icon.png' %}" alt="Multiple Images" class="multi-img-icon">
+                                            {% endif %}
+
+                                        </div>
+
+                                        <!-- ================================= -->
+                                        <!--           Date Time               -->
+                                        <!-- ================================= -->
+                                        <p> <b>Date Time:</b> {{ post.post_datetime }} </p>
+
+                                        <!-- ================================= -->
+                                        <!--            Category               -->
+                                        <!-- ================================= -->
+                                        <p> <b>Item Category:</b> {{ post.get_post_itemcategory_display }} </p>
+
+                                        <!-- ================================= -->
+                                        <!--     Location (Check Unknown)      -->
+                                        <!-- ================================= -->
+                                        {% if post.post_location %}
+                                            <p> <b>Location:</b> {{ post.post_location.location_name }}</p>
+                                        {% elif post.post_type == "lost" %}
+                                            <p> <b>Location:</b> Unknown Lost Location</p>
+                                        {% endif %}
+
+                                        <!-- --------------------------------- -->
+                                        <!--          YF - Post Status         -->
+                                        <!-- --------------------------------- -->
+                                        <p class="post-status status-{{ post.post_status }}"><b>{{ post.get_post_status_display }}</b></p>
+
+                                    </div>
+                                </div>
                             </div>
-                
-                            <p> Date Time: {{ post.post_datetime }} </p>
-                            <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
-                            <p> Location: {{ post.post_location.location_name }} </p>
-                            <p>————————————————————————————————————————————————————————</p>
                         </div>
-                    </div>
                     {% empty %}
                         <p>No posts</p>
                     {% endfor %}
                 </div>
 
-                <div id="lost-posts">
-                <h4>LOST POST</h4>
+                <div id="lost-posts" class = "post-list">
+                    <h4>LOST POST</h4>
                     {% for post in lost_posts %}
 
-                    <!-- Open popup modal after clicked -->
-                    <!-- Store username into HTML attribute, so JS can read it-->
-                    <div class="post"
-                        onclick="openPost(this)" 
-                        data-user="{{ post.post_user.username }}"
-                        data-user-id="{{ post.post_user.id }}"
-                        data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
-                        data-profile="{% url 'userProfile' post.post_user.username %}" 
-                        data-type="{{ post.post_type }}"
-                        data-date="{{ post.post_datetime }}" 
-                        data-category="{{ post.get_post_itemcategory_display }}"
-                        data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
-                        data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
-                        data-description="{{ post.post_description }}"
-                        data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
-                        
-                        <div class="post-item">
+                        <!-- Open popup modal after clicked -->
+                        <!-- Store username into HTML attribute, so JS can read it-->
+                        <div class="post"
+                            onclick="openPost(this)"
+                            data-post-id="{{ post.id }}" 
+                            data-status="{{ post.post_status }}"
+                            data-user="{{ post.post_user.username }}"
+                            data-user-id="{{ post.post_user.id }}"
+                            data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
+                            data-profile="{% url 'userProfile' post.post_user.username %}" 
+                            data-type="{{ post.post_type }}"
+                            data-date="{{ post.post_datetime }}" 
+                            data-category="{{ post.get_post_itemcategory_display }}"
+                            data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
+                            data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
+                            data-description="{{ post.post_description }}"
+                            data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
+                            <div class = "post-box">
 
-                            <!-- Post Navigation (differ own post / other user post to show nav) -->
-                            <div class = "post-nav">
+                                <!-- ------------------------------ -->
+                                <!--     YF - Post Small View       -->
+                                <!-- ------------------------------ -->
+                                <div class = "post-view">
+                                    <div class = "post-header">
 
-                                <!-- user themselves-->
-                                {% if request.user == post.post_user %}
-                                    
-                                    <a href="{% url 'editPost' post.id %}">
-                                        Edit Post
-                                    </a>
+                                        <!-- --------------------------------- -->
+                                        <!--    User Name & Profile Photo      -->
+                                        <!-- --------------------------------- -->
+                                        <div class="user-info">
+                                            {% with profile=post.post_user.profile %}
 
-                                    <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
-                                    <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
-                                        {% csrf_token %}
+                                                <img class="avatar"
+                                                    src="{% if profile.avatar %}
+                                                            {{ profile.avatar.url }}
+                                                        {% else %}
+                                                            {% static 'images/default.png' %}
+                                                        {% endif %}"
+                                                    alt="avatar">
 
-                                        <button type="submit">
-                                            Delete Post
-                                        </button>
-                                    </form>
+                                                <span class="name">
+                                                    {{ profile.name|default:post.post_user.username }}
+                                                </span>
 
-                                {%else %}
+                                            {% endwith %}
+                                        </div>
+                                        
+                                        <!-- --------------------------------- -->
+                                        <!--           Post Navigation         -->
+                                        <!-- --------------------------------- -->
+                                        <!-- (differ own post / other user post to show nav) -->
+                                        <div class = "post-nav" onclick="event.stopPropagation()">
+                                            <div class = "post-nav-dropdown">
+                                                <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">⋮</button>
+                                                <div class="post-nav-menu">
 
-                                    <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
-                                        <button type="button">Report Post</button>
-                                    </a>
+                                                    <!-- user themselves-->
+                                                    {% if request.user == post.post_user %}
 
-                                {% endif %}
-                            </div>
-                        
+                                                        <div class = "btn">
+                                                            <!-- Edit Post Butonn -->
+                                                            <a href="{% url 'editPost' post.id %}?next={{ request.get_full_path|urlencode }}">
+                                                                Edit Post
+                                                            </a>
+                                                        </div>
+                                                        
+                                                        <div class = "btn">
+                                                            <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
+                                                            <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
+                                                                {% csrf_token %}
 
-                            <div class="image-wrapper">
+                                                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                                
+                                                                <button type="submit">
+                                                                    Delete Post
+                                                                </button>
+                                                            </form>
+                                                        </div>
 
-                                {% if post.cover_image %}
-                                    <img
-                                        src="{{ post.cover_image.image.url }}"
-                                        alt="Post Image"
-                                        class="post-image"
-                                        style="width:500px; height:auto;"
-                                    >
-                                {% endif %}
-
-                                {% if post.images.count > 1 %}
-                                    <div class="multiple-icon">
-                                        📷 {{ post.images.count }}
+                                                    <!-- Other Users -->
+                                                    {%else %}
+                                                        <div class = "btn">
+                                                            <!-- ty Report Post Button -->
+                                                            <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                                                                Report
+                                                            </a>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                {% endif %}
 
+                                    <!-- ------------------------------ -->
+                                    <!--          Post Details          -->
+                                    <!-- ------------------------------ -->
+                                    <div class = "post-info">
+
+                                        <!-- --------------------------------- -->
+                                        <!--      Post Image (Check Multi)     -->
+                                        <!-- --------------------------------- -->
+                                        <div class="image-wrapper">
+
+                                            {% if post.cover_image %}
+                                                <img src="{{ post.cover_image.image.url }}" alt="Post Image" class="post-image">
+                                            {% endif %}
+
+                                            {% if post.images.count > 1 %}
+                                                <img src="{% static 'images/multi-img-icon.png' %}" alt="Multiple Images" class="multi-img-icon">
+                                            {% endif %}
+
+                                        </div>
+
+                                        <!-- --------------------------------- -->
+                                        <!--           Date Time               -->
+                                        <!-- --------------------------------- -->
+                                        <p> <b>Date Time:</b> {{ post.post_datetime }} </p>
+
+                                        <!-- --------------------------------- -->
+                                        <!--            Category               -->
+                                        <!-- --------------------------------- -->
+                                        <p> <b>Item Category:</b> {{ post.get_post_itemcategory_display }} </p>
+
+                                        <!-- --------------------------------- -->
+                                        <!--     Location (Check Unknown)      -->
+                                        <!-- --------------------------------- -->
+                                        {% if post.post_location %}
+                                            <p> <b>Location:</b> {{ post.post_location.location_name }}</p>
+                                        {% elif post.post_type == "lost" %}
+                                            <p> <b>Location:</b> Unknown Lost Location</p>
+                                        {% endif %}
+
+                                        <!-- --------------------------------- -->
+                                        <!--          YF - Post Status         -->
+                                        <!-- --------------------------------- -->
+                                        <p class="post-status status-{{ post.post_status }}"><b>{{ post.get_post_status_display }}</b></p>
+
+                                    </div>
+                                </div>
                             </div>
-
-                            <p> Date Time: {{ post.post_datetime }} </p>
-                            <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
-                            <p> Location: {{ post.post_location.location_name }} </p>
-                            <p>————————————————————————————————————————————————————————</p>
                         </div>
-                    </div>
                     {% empty %}
                         <p>No lost posts</p>
                     {% endfor %}
                 </div>
 
-                <div id="found-posts">
-                <h4>FOUND POST</h4>
+                <div id="found-posts" class = "post-list">
+                    <h4>FOUND POST</h4>
                     {% for post in found_posts %}
 
-                    <!-- Open popup modal after clicked -->
-                    <!-- Store username into HTML attribute, so JS can read it-->
-                    <div class="post"
-                        onclick="openPost(this)" 
-                        data-user="{{ post.post_user.username }}"
-                        data-user-id="{{ post.post_user.id }}"
-                        data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
-                        data-profile="{% url 'userProfile' post.post_user.username %}" 
-                        data-type="{{ post.post_type }}"
-                        data-date="{{ post.post_datetime }}" 
-                        data-category="{{ post.get_post_itemcategory_display }}"
-                        data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
-                        data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
-                        data-description="{{ post.post_description }}"
-                        data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
-                        
-                        <div class="post-item">
+                        <!-- Open popup modal after clicked -->
+                        <!-- Store username into HTML attribute, so JS can read it-->
+                        <div class="post"
+                            onclick="openPost(this)"
+                            data-post-id="{{ post.id }}" 
+                            data-status="{{ post.post_status }}"
+                            data-user="{{ post.post_user.username }}"
+                            data-user-id="{{ post.post_user.id }}"
+                            data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
+                            data-profile="{% url 'userProfile' post.post_user.username %}" 
+                            data-type="{{ post.post_type }}"
+                            data-date="{{ post.post_datetime }}" 
+                            data-category="{{ post.get_post_itemcategory_display }}"
+                            data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
+                            data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
+                            data-description="{{ post.post_description }}"
+                            data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
+                            <div class = "post-box">
 
-                            <!-- Post Navigation (differ own post / other user post to show nav) -->
-                            <div class = "post-nav">
+                                <!-- ------------------------------ -->
+                                <!--     YF - Post Small View       -->
+                                <!-- ------------------------------ -->
+                                <div class = "post-view">
+                                    <div class = "post-header">
 
-                                <!-- user themselves-->
-                                {% if request.user == post.post_user %}
-                                    
-                                    <a href="{% url 'editPost' post.id %}">
-                                        Edit Post
-                                    </a>
+                                        <!-- --------------------------------- -->
+                                        <!--    User Name & Profile Photo      -->
+                                        <!-- --------------------------------- -->
+                                        <div class="user-info">
+                                            {% with profile=post.post_user.profile %}
 
-                                    <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
-                                    <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
-                                        {% csrf_token %}
+                                                <img class="avatar"
+                                                    src="{% if profile.avatar %}
+                                                            {{ profile.avatar.url }}
+                                                        {% else %}
+                                                            {% static 'images/default.png' %}
+                                                        {% endif %}"
+                                                    alt="avatar">
 
-                                        <button type="submit">
-                                            Delete Post
-                                        </button>
-                                    </form>
+                                                <span class="name">
+                                                    {{ profile.name|default:post.post_user.username }}
+                                                </span>
 
-                                {%else %}
+                                            {% endwith %}
+                                        </div>
+                                        
+                                        <!-- --------------------------------- -->
+                                        <!--           Post Navigation         -->
+                                        <!-- --------------------------------- -->
+                                        <!-- (differ own post / other user post to show nav) -->
+                                        <div class = "post-nav" onclick="event.stopPropagation()">
+                                            <div class = "post-nav-dropdown">
+                                                <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">⋮</button>
+                                                <div class="post-nav-menu">
 
-                                    <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
-                                        <button type="button">Report Post</button>
-                                    </a>
+                                                    <!-- user themselves-->
+                                                    {% if request.user == post.post_user %}
 
-                                {% endif %}
-                            </div>
-                        
-                            
-                            <div class="image-wrapper">
+                                                        <div class = "btn">
+                                                            <!-- Edit Post Butonn -->
+                                                            <a href="{% url 'editPost' post.id %}?next={{ request.get_full_path|urlencode }}">
+                                                                Edit Post
+                                                            </a>
+                                                        </div>
+                                                        
+                                                        <div class = "btn">
+                                                            <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
+                                                            <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
+                                                                {% csrf_token %}
 
-                                {% if post.cover_image %}
-                                    <img
-                                        src="{{ post.cover_image.image.url }}"
-                                        alt="Post Image"
-                                        class="post-image"
-                                        style="width:500px; height:auto;"
-                                    >
-                                {% endif %}
+                                                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                                
+                                                                <button type="submit">
+                                                                    Delete Post
+                                                                </button>
+                                                            </form>
+                                                        </div>
 
-                                {% if post.images.count > 1 %}
-                                    <div class="multiple-icon">
-                                        📷 {{ post.images.count }}
+                                                    <!-- Other Users -->
+                                                    {%else %}
+                                                        <div class = "btn">
+                                                            <!-- ty Report Post Button -->
+                                                            <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                                                                Report
+                                                            </a>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                {% endif %}
 
+                                    <!-- ------------------------------ -->
+                                    <!--          Post Details          -->
+                                    <!-- ------------------------------ -->
+                                    <div class = "post-info">
+
+                                        <!-- --------------------------------- -->
+                                        <!--      Post Image (Check Multi)     -->
+                                        <!-- --------------------------------- -->
+                                        <div class="image-wrapper">
+
+                                            {% if post.cover_image %}
+                                                <img src="{{ post.cover_image.image.url }}" alt="Post Image" class="post-image">
+                                            {% endif %}
+
+                                            {% if post.images.count > 1 %}
+                                                <img src="{% static 'images/multi-img-icon.png' %}" alt="Multiple Images" class="multi-img-icon">
+                                            {% endif %}
+
+                                        </div>
+
+                                        <!-- --------------------------------- -->
+                                        <!--           Date Time               -->
+                                        <!-- --------------------------------- -->
+                                        <p> <b>Date Time:</b> {{ post.post_datetime }} </p>
+
+                                        <!-- --------------------------------- -->
+                                        <!--            Category               -->
+                                        <!-- --------------------------------- -->
+                                        <p> <b>Item Category:</b> {{ post.get_post_itemcategory_display }} </p>
+
+                                        <!-- --------------------------------- -->
+                                        <!--     Location (Check Unknown)      -->
+                                        <!-- --------------------------------- -->
+                                        {% if post.post_location %}
+                                            <p> <b>Location:</b> {{ post.post_location.location_name }}</p>
+                                        {% elif post.post_type == "lost" %}
+                                            <p> <b>Location:</b> Unknown Lost Location</p>
+                                        {% endif %}
+
+                                        <!-- --------------------------------- -->
+                                        <!--          YF - Post Status         -->
+                                        <!-- --------------------------------- -->
+                                        <p class="post-status status-{{ post.post_status }}"><b>{{ post.get_post_status_display }}</b></p>
+
+                                    </div>
+                                </div>
                             </div>
-
-                            <p> Date Time: {{ post.post_datetime }} </p>
-                            <p> Item Category: {{ post.get_post_itemcategory_display }} </p>
-                            <p> Location: {{ post.post_location.location_name }} </p>
-                            <p>————————————————————————————————————————————————————————</p>
                         </div>
-                    </div>
                     {% empty %}
-                        <p>No found posts</p>
+                        <div class = "no-post">
+                            <p> No posts available. </p>
+                        </div>
                     {% endfor %}
                 </div>
 
-                <!-- YT - Post View Popup Modal -->
+                <!-- Post View Popup Modal -->
                 <div id="postModal" class="modal">
 
                     <div class="modal-content">
@@ -448,6 +659,16 @@
                                         <button type="button">Chat</button>
                                     </a>
                                 </div>
+
+                                <!-- YF added for status -->
+                                <div id="status_btn_container" class = "status-btn">
+                                    <button id="status_btn" type="button"></button>
+                                </div>
+
+                                <form id="status_form" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -455,7 +676,7 @@
             </div>
 
             <!-- ================================================== -->
-            <!--           Delete Post Confirmation Modal           -->
+            <!--       YF - Delete Post Confirmation Modal          -->
             <!-- ================================================== -->
             <div id="deletePostPopup" class="dlt-popup-modal">
                 <div class="dlt-popup-box">
@@ -470,16 +691,36 @@
                 </div>
             </div>
 
-            <!-- yt added -->
-                <!-- Confirm Logout Popup -->
-                <div id="confirmPopup" class="popup-modal">
-                    <div class="popup-box">
-                        <p>Are you sure you want to logout?</p>
+            <!-- ================================================== -->
+            <!--          YF - POST STATUS CHANGE POPUP             -->
+            <!-- ================================================== -->
+            <div id="statusPopup" class="status-popup-modal">
 
-                        <div class="popup-btns">
-                            <button onclick="confirmLogout()">OK</button>
-                            <button onclick="cancelLogout()">Cancel</button>
-                        </div>
+                <div class="status-popup-box">
+
+                    <p> Set post as COMPLETED? </p>
+
+                    <button id="statusConfirmBtn">
+                        Confirm
+                    </button>
+
+                    <button id="statusCancelBtn">
+                        Cancel
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- yt added -->
+            <!-- Confirm Logout Popup -->
+            <div id="confirmPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Are you sure you want to logout?</p>
+
+                    <div class="popup-btns">
+                        <button onclick="confirmLogout()">OK</button>
+                        <button onclick="cancelLogout()">Cancel</button>
                     </div>
                 </div>
             </div>
@@ -625,21 +866,21 @@
 
             // Show all lost and found posts
             function showAll() {
-                document.getElementById("all-posts").style.display = "block";
+                document.getElementById("all-posts").style.display = "grid";
                 document.getElementById("lost-posts").style.display = "none";
                 document.getElementById("found-posts").style.display = "none";
             }
             
             function showLost() {
                 document.getElementById("all-posts").style.display = "none";
-                document.getElementById("lost-posts").style.display = "block";
+                document.getElementById("lost-posts").style.display = "grid";
                 document.getElementById("found-posts").style.display = "none";
             }
 
             function showFound() {
                 document.getElementById("all-posts").style.display = "none";
                 document.getElementById("lost-posts").style.display = "none";
-                document.getElementById("found-posts").style.display = "block";
+                document.getElementById("found-posts").style.display = "grid";
             }
 
             /* ====================================== 
@@ -665,6 +906,43 @@
             function closeDeletePopup() {
                 document.getElementById("deletePostPopup").style.display = "none";
             }
+
+            // ===================================
+            //    YF - POST NAVIGATION DROPDOWN
+            // ===================================
+            // OPEN CLOSE DROPDOWN NAV
+            function toggleDropdown(event) {
+                event.stopPropagation();
+
+                const dropdown = event.target.closest(".post-nav-dropdown");
+                const isOpen = dropdown.classList.contains("show");
+
+                // close already have nav from other post
+                document.querySelectorAll('.post-nav-dropdown').forEach(el => {
+                    el.classList.remove('show');
+                });
+
+                // open / close nav when click
+                if (!isOpen) {
+                    dropdown.classList.add('show');
+                }
+            }
+
+            // CLOSE WHEN CLICK ANY NAV
+            document.querySelectorAll('.btn').forEach(el => {
+                el.addEventListener('click', function () {
+                    document.querySelectorAll('.post-nav-dropdown').forEach(drop => {
+                        drop.classList.remove('show');
+                    });
+                });
+            });
+
+            // CLOSE WHEN CLICK OTHER PLACE
+            document.addEventListener("click", () => {
+                document.querySelectorAll(".post-nav-dropdown").forEach(el => {
+                    el.classList.remove("show");
+                });
+            });
         </script>
     </body>
 </html>
