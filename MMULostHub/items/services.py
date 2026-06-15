@@ -220,8 +220,10 @@ def edit_post(post, data):
 
     # set cover image
     if final_images:
-        post.cover_image = final_images[0]
-        
+
+        post.cover_image = final_images[0] if final_images else None
+        post.save(update_fields=["cover_image"])
+
     else:
         post.cover_image = None
 

@@ -1,6 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Slackey&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Sansation&display=swap');
 
+/* ===================================== */
+/*       LOST FOUND PAGE NAME            */
+/* ===================================== */
+.content h2{
+    font-size: 30px;
+    font-family: 'Slackey', cursive;
+    color: black;
+    font-weight: bold;
+    text-align:center;
+}
+
 /* ========================= */
 /*           POSTS           */
 /* ========================= */

@@ -129,4 +129,7 @@ class Post (models.Model):
     def __str__(self):
         return f"{self.post_type}: {self.post_itemcategory}"
 
-
+# yt added
+@property
+def sorted_images(self):
+    return self.images.all().order_by("order")

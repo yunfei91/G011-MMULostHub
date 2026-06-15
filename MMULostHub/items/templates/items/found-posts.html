@@ -5,20 +5,23 @@
     <head> 
 
         <!-- YF - Added -->
-        <link rel="stylesheet" href="{% static 'items/css/popup.css' %}">
-        <link rel="stylesheet" href="{% static 'items/css/mainpage.css' %}">
         <script src="{% static 'items/js/popup.js' %}" defer></script>
         <script src="{% static 'items/js/mainpage.js' %}" defer></script>
-        <script>const CURRENT_USER_ID = "{{ request.user.id }}";</script>
+
+        <link rel="stylesheet" href="{% static 'items/css/popup.css' %}">
+        <link rel="stylesheet" href="{% static 'items/css/mainpage.css' %}">
 
         <!-- CSS Links -->
-        <link rel="stylesheet" href="{% static 'items/css/foundpage.css' %}">
+        <link rel="stylesheet" href="{% static 'items/css/main-layout.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/post-popup.css' %}">
 
         <!-- JS Links -->
         <script src="{% static 'items/js/header.js' %}" defer></script>
         <script src="{% static 'items/js/logout.js' %}" defer></script>
-        <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
+        <script>
+            window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";
+            const CURRENT_USER_ID = "{{ request.user.id|default:'' }}";
+        </script>
 
         <title> 
             MMU Lost Hub 
@@ -264,11 +267,19 @@
                         <!-- Open popup modal after clicked -->
                         <!-- Store username into HTML attribute, so JS can read it-->
                         <div class="post"
-                            onclick="openPost(this)"
-                            data-post-id="{{ post.id }}" 
-                            data-status="{{ post.post_status }}"
+                            onclick="openPost(this)" 
+                            data-name="{% if post.post_user.profile.name %}
+                                        {{ post.post_user.profile.name }}
+                                    {% else %}
+                                        {{ post.post_user.username }}
+                                    {% endif %}"
                             data-user="{{ post.post_user.username }}"
                             data-user-id="{{ post.post_user.id }}"
+                            data-avatar="{% if post.post_user.profile and post.post_user.profile.avatar %}
+                                        {{ post.post_user.profile.avatar.url }}
+                                        {% else %}
+                                        {% static 'images/default.png' %}
+                                        {% endif %}"
                             data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
                             data-profile="{% url 'userProfile' post.post_user.username %}" 
                             data-type="{{ post.post_type }}"
@@ -277,7 +288,15 @@
                             data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
                             data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
                             data-description="{{ post.post_description }}"
-                            data-images="{% for img in post.images.all %}{{ img.image.url }}|{% endfor %}">
+                            data-images="{% for img in post.sorted_images %}{{ img.image.url }}|{% endfor %}"
+
+                            data-post-id="{{ post.id }}"
+                            data-status="{{ post.post_status }}"
+                            data-edit-url="{% url 'editPost' post.id %}"
+                            data-delete-url="{% url 'deletePost' post.id %}"
+                            data-report-post-url="{% url 'submit_report' %}?post_id={{ post.id }}"
+                            data-report-user-url="{% url 'report_user' post.post_user.id %}">
+                            
                             <div class = "post-box">
 
                                 <!-- ------------------------------ -->
@@ -554,55 +573,114 @@
                 <div id="postModal" class="modal">
 
                     <div class="modal-content">
+                        <div class="top-actions">
+                            <span class="close" onclick="closePost()">&times;</span> <!-- Symbol display cross -->
 
-                        <span class="close" onclick="closePost()">&times;</span> <!-- Symbol display cross -->
+                            <!-- ============================== -->
+                            <!--        Post Navigation        -->
+                            <!-- ============================== -->
+                            <div class="post-nav" onclick="event.stopPropagation()">
+
+                                <div class="post-nav-dropdown">
+
+                                    <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">
+                                        ⋮
+                                    </button>
+
+                                    <div class="post-nav-menu">
+
+                                        <!-- OWNER -->
+                                        {% if request.user.id == post.post_user.id %}
+
+                                            <div class="btn">
+                                                <a id="edit_link" href="">
+                                                    Edit Post
+                                                </a>
+                                            </div>
+
+                                            <div class="btn">
+                                                <form id="delete_form" method="POST" onsubmit="confirmDelete(event, this)">
+                                                    {% csrf_token %}
+                                                    <button type="submit">Delete Post</button>
+                                                </form>
+                                            </div>
+
+                                        <!-- OTHER USERS -->
+                                        {% else %}
+
+                                            <div class="btn">
+                                                <a id="report_post_link" href="">
+                                                    Report
+                                                </a>
+                                            </div>
+
+                                            <div class="btn">
+                                                <a id="report_user_link" href="">
+                                                    Report User
+                                                </a>
+                                            </div>
+
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="modal-body">
 
                             <div class="modal-left">
-                                <p>
+                                <div class="popup-user">
                                     <a id="m_user_link" href="">
+                                        <img id="m_avatar" src="" alt="avatar" class="popup-avatar">
                                         <span id="m_user"></span>
                                     </a>
-                                </p> <!-- JS inserts username -->
+                                </div>
 
                                 <div class="img-container">
-                                    <button class="prev-btn" onclick="prevImg()">⬅</button>
+                                    <button class="prev-btn" onclick="prevImg()"><</button>
 
-                                    <img id="m_image" style="max-width:100%; display:none;">
+                                    <img id="m_image">
 
-                                    <button class="next-btn" onclick="nextImg()">➡</button>
+                                    <button class="next-btn" onclick="nextImg()">></button>
                                 </div>
                             </div>
 
                             <div class="modal-right">
                                 <h2 id="m_type"></h2> <!-- JS inserts post type -->
-
-                                <p><b>Date:</b> <span id="m_date"></span></p>
-
-                                <p><b>Category:</b> <span id="m_category"></span></p>
-
-                                <p><b>Location:</b> <span id="m_location"></span></p>
-
-                                <p><b>Description:</b></p>
-                                <p id="m_description"></p>
-
-                                <div class="chatBtn" id="chat_btn_container" style="display:none;">
-                                    <!-- zinc add chat url-->
-                                    <a id="chat_link" href="#">
-                                        <button type="button">Chat</button>
-                                    </a>
+                                <div class="post-details">
+                                    <p>
+                                        <b>Date :</b> <span id="m_date"></span>
+                                    </p>
+                                    <p>
+                                        <b>Category :</b> <span id="m_category"></span>
+                                    </p>
+                                    <p>
+                                        <b>Location:</b> <span id="m_location"></span>
+                                    </p>
                                 </div>
 
-                                <!-- YF added for status -->
-                                <div id="status_btn_container" class = "status-btn">
-                                    <button id="status_btn" type="button"></button>
+                                <div class="post-description">
+                                    <div class="desc-header">Description</div>
+                                    <div id="m_description"></div>
                                 </div>
+                            </div>
 
-                                <form id="status_form" method="POST">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                </form>
+                            <!-- YF added for status -->
+                            <div id="status_btn_container" class = "status-btn">
+                                <button id="status_btn" type="button"></button>
+                            </div>
+
+                            <form id="status_form" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            </form>
+                            
+                            <div class="chatBtn" id="chat_btn_container">
+                                <!-- zinc add chat url-->
+                                <a id="chat_link" href="#">
+                                    <button type="button">Chat</button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -638,6 +716,17 @@
                         <button onclick="closeDeletePopup()">Cancel</button>
                     </div>
 
+            <!-- -------------------------------------------------- -->
+            <!--             YF - POPUP MSG MODAL                   -->
+            <!-- -------------------------------------------------- -->
+            <div id="popup" class="popup hidden">
+                <div class="popup-box">
+                    <h3 id="popup-title"></h3>
+                    <p id="popup-message"></p>
+                    <div class="popup-buttons">
+                        <button id="popup-confirm">OK</button>
+                        <button id="popup-cancel">Cancel</button>
+                    </div>
                 </div>
             </div>
 

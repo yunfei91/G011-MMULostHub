@@ -47,10 +47,13 @@ def mainPage(request):
     post_box = Post.objects.all().order_by('-id')
     post_box = apply_filters(request, post_box)   
 
-    paginator = Paginator(post_box, 4)
+    paginator = Paginator(post_box, 9)
     page_number = request.GET.get('page')
     posts = paginator.get_page(page_number) 
     
+    for post in posts:
+        post.sorted_images = post.images.all().order_by('order')
+
     return render(request, 'items/mainpage.html', {
         'posts': posts,
         'item_categories': CATEGORY_CHOICES,
@@ -381,8 +384,14 @@ def deletePost(request, post_id):
 @never_cache
 def found_posts(request):
 
-    post_box = Post.objects.filter(post_type='found').order_by('-id')
+    post_box = Post.objects.filter(post_type='found') \
+    .select_related('cover_image') \
+    .prefetch_related('images') \
+    .order_by('-id')
 
+    for post in post_box:
+        post.sorted_images = post.images.all().order_by('order')
+        
     # yf add to search 
     post_box = apply_filters(request, post_box)
 
@@ -411,7 +420,13 @@ def found_posts(request):
 @never_cache
 def lost_posts(request):
 
-    post_box = Post.objects.filter(post_type='lost').order_by('-id')
+    post_box = Post.objects.filter(post_type='lost') \
+    .select_related('cover_image') \
+    .prefetch_related('images') \
+    .order_by('-id')
+
+    for post in post_box:
+        post.sorted_images = post.images.all().order_by('order')
 
     #yf add to search
     post_box = apply_filters(request, post_box)
@@ -453,6 +468,9 @@ def map_search(request):
     })
 
 
+# ======================================================
+#                 POST STATUS
+# ======================================================
 @login_required(login_url='beginning')
 @never_cache
 @require_POST
