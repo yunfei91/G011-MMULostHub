@@ -241,6 +241,13 @@ function openPost(el) { // el=this connection
     const postNav = document.querySelector("#postModal .post-nav");
     if (!postNav) return;
 
+    const nextUrl =
+        window.location.pathname +
+        window.location.search +
+        (window.location.search ? "&" : "?") +
+        "post=" + el.dataset.postId;
+
+
     if (isOwner) {
         postNav.innerHTML = `
             <div class="post-nav-dropdown">
@@ -248,7 +255,7 @@ function openPost(el) { // el=this connection
                 <div class="post-nav-menu">
 
                     <div class="btn">
-                        <a href="${el.dataset.editUrl}">
+                        <a href="${el.dataset.editUrl}?next=${encodeURIComponent(nextUrl)}">
                             Edit Post
                         </a>
                     </div>
@@ -327,6 +334,16 @@ function openPost(el) { // el=this connection
 function closePost() {
     document.getElementById("postModal").style.display = "none";
 
+    const url = new URL(window.location);
+
+    url.searchParams.delete("post");
+
+    window.history.replaceState(
+        {},
+        "",
+        url.toString()
+    );
+
     // reset image state
     images = [];
     currentIndex = 0;
@@ -340,7 +357,7 @@ window.addEventListener("click", function (event) {
     if (!modal) return;
 
     if (event.target === modal) {
-        modal.style.display = "none";
+        closePost();
     }
 
     if (event.target.closest(".post-nav")) return;
