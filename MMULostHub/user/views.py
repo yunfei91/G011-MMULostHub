@@ -478,19 +478,22 @@ def profile(request, user_id=None): #zinc add if else
     profile, created = Profile.objects.get_or_create(user=user)
     need_reverify = profile.need_reverify #zinc add reverify acc
 
-    all_posts = Post.objects.filter(
-        post_user=user
-    ).order_by('-id')
+    posts = Post.objects.filter(post_user=user).order_by('-id')
+    for post in posts:
+        post.sorted_images = post.images.all().order_by('order')
 
-    lost_posts = Post.objects.filter(
-        post_user=user,
-        post_type='lost'
-    ).order_by('-id') # Newest first
+    all_posts = posts
+    
+    lost_posts = posts.filter(post_type='lost')\
+    .select_related('cover_image') \
+    .prefetch_related('images') \
+    .order_by('-id')
 
-    found_posts = Post.objects.filter(
-        post_user=user,
-        post_type='found'
-    ).order_by('-id')
+    found_posts = posts.filter(post_type='found')\
+    .select_related('cover_image') \
+    .prefetch_related('images') \
+    .order_by('-id')
+    
 
     #zinc add is_owner
     is_owner = (request.user == user)
