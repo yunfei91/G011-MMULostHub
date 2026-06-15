@@ -247,6 +247,7 @@ function openPost(el) { // el=this connection
         (window.location.search ? "&" : "?") +
         "post=" + el.dataset.postId;
 
+    const currentPath = window.location.pathname + window.location.search;
 
     if (isOwner) {
         postNav.innerHTML = `
@@ -264,6 +265,8 @@ function openPost(el) { // el=this connection
                         <form method="POST"
                             action="${el.dataset.deleteUrl}"
                             onsubmit="confirmDelete(event, this)">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="${document.querySelector('[name=csrfmiddlewaretoken]').value}">
+                            <input type="hidden" name="next" value="${currentPath}">
                             <button type="submit">Delete Post</button>
                         </form>
                     </div>
