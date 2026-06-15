@@ -502,6 +502,10 @@ def profile(request, user_id=None): #zinc add if else
         'lost_posts': lost_posts,
         'found_posts': found_posts,
 
+        'lost_count': lost_posts.count(),
+        'found_count': found_posts.count(),
+        'posts_count': all_posts.count(),
+
         'is_owner': is_owner, #zinc add
         'need_reverify': need_reverify #zinc add
         #'is_owner': True # Own profile
@@ -583,6 +587,12 @@ def userProfile(request, username):
         'all_posts': all_posts,
         'lost_posts': lost_posts,
         'found_posts': found_posts,
+
+        # yt added for post counting
+        'lost_count': lost_posts.count(),
+        'found_count': found_posts.count(),
+        'posts_count': all_posts.count(),
+
         'is_owner': request.user == user_obj,
         'need_reverify': need_reverify
     })
