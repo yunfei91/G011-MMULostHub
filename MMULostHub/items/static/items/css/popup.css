@@ -10,7 +10,7 @@
     align-items: center;
 
     background: rgba(0,0,0,0.5);
-    z-index: 99999;
+    z-index: 999999;
 }
 
 .popup-box {
@@ -55,7 +55,9 @@
     gap: 15px;
 }
 
-
+/* ========================= */
+/*      STATUS POPUP         */
+/* ========================= */
 .status-popup-modal{
     display: none;
     position: fixed;
@@ -71,7 +73,6 @@
     display: flex;
 }
 
-/* Popup box */
 .status-popup-box{
     background: white;
     padding: 20px;
