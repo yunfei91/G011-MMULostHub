@@ -311,6 +311,24 @@ function openPost(el) { // el=this connection
 
     statusBtn.innerText = status.charAt(0).toUpperCase() + status.slice(1);
 
+    statusBtn.className = "popup-status";
+
+    statusBtn.classList.remove(
+        "popup-status-open",
+        "popup-status-returned",
+        "popup-status-claimed"
+    );
+
+    if (status === "open") {
+        statusBtn.classList.add("popup-status-open");
+    }
+    else if (status === "returned") {
+        statusBtn.classList.add("popup-status-returned");
+    }
+    else if (status === "claimed") {
+        statusBtn.classList.add("popup-status-claimed");
+    }
+
     if (
         String(ownerId) === String(CURRENT_USER_ID) &&
         status === "open"
