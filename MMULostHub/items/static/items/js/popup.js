@@ -322,7 +322,6 @@ function openPost(el) { // el=this connection
 
         showStatusPopup(postId);
     };
-
 }
 
 function closePost() {

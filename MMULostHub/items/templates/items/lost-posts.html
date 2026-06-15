@@ -604,6 +604,7 @@
                                             <div class="btn">
                                                 <form id="delete_form" method="POST" onsubmit="confirmDelete(event, this)">
                                                     {% csrf_token %}
+                                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
                                                     <button type="submit">Delete Post</button>
                                                 </form>
                                             </div>
@@ -719,6 +720,9 @@
                         <button onclick="closeDeletePopup()">Cancel</button>
                     </div>
 
+                </div>
+            </div>
+
             <!-- -------------------------------------------------- -->
             <!--             YF - POPUP MSG MODAL                   -->
             <!-- -------------------------------------------------- -->
@@ -738,16 +742,12 @@
             <!-- -------------------------------------------------- -->
             <div id="statusPopup" class="status-popup-modal">
                 <div class="status-popup-box">
-
                     <p> Set post as COMPLETED? </p>
-
-                    <button id="statusConfirmBtn">
-                        Confirm
-                    </button>
-
-                    <button id="statusCancelBtn">
-                        Cancel
-                    </button>
+                    <form id="status_form" method="POST">
+                        {% csrf_token %}
+                        <button type="button" id="statusConfirmBtn">Confirm</button>
+                        <button type="button" id="statusCancelBtn">Cancel</button>
+                    </form>
                 </div>
             </div>
 
