@@ -146,3 +146,21 @@ function removeFilter(key, value) {
     window.location.href = url.toString();
 }
 
+window.addEventListener("load", function () {
+
+    const params = new URLSearchParams(window.location.search);
+
+    const postId = params.get("post");
+
+    if (!postId) {
+        return;
+    }
+
+    const post = document.querySelector(
+        `[data-post-id="${postId}"]`
+    );
+
+    if (post) {
+        openPost(post);
+    }
+});

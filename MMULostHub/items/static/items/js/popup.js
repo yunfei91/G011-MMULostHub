@@ -241,6 +241,14 @@ function openPost(el) { // el=this connection
     const postNav = document.querySelector("#postModal .post-nav");
     if (!postNav) return;
 
+    const nextUrl =
+        window.location.pathname +
+        window.location.search +
+        (window.location.search ? "&" : "?") +
+        "post=" + el.dataset.postId;
+
+    const currentPath = window.location.pathname + window.location.search;
+
     if (isOwner) {
         postNav.innerHTML = `
             <div class="post-nav-dropdown">
@@ -248,7 +256,7 @@ function openPost(el) { // el=this connection
                 <div class="post-nav-menu">
 
                     <div class="btn">
-                        <a href="${el.dataset.editUrl}">
+                        <a href="${el.dataset.editUrl}?next=${encodeURIComponent(nextUrl)}">
                             Edit Post
                         </a>
                     </div>
@@ -257,6 +265,8 @@ function openPost(el) { // el=this connection
                         <form method="POST"
                             action="${el.dataset.deleteUrl}"
                             onsubmit="confirmDelete(event, this)">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="${document.querySelector('[name=csrfmiddlewaretoken]').value}">
+                            <input type="hidden" name="next" value="${currentPath}">
                             <button type="submit">Delete Post</button>
                         </form>
                     </div>
@@ -301,6 +311,24 @@ function openPost(el) { // el=this connection
 
     statusBtn.innerText = status.charAt(0).toUpperCase() + status.slice(1);
 
+    statusBtn.className = "popup-status";
+
+    statusBtn.classList.remove(
+        "popup-status-open",
+        "popup-status-returned",
+        "popup-status-claimed"
+    );
+
+    if (status === "open") {
+        statusBtn.classList.add("popup-status-open");
+    }
+    else if (status === "returned") {
+        statusBtn.classList.add("popup-status-returned");
+    }
+    else if (status === "claimed") {
+        statusBtn.classList.add("popup-status-claimed");
+    }
+
     if (
         String(ownerId) === String(CURRENT_USER_ID) &&
         status === "open"
@@ -322,11 +350,20 @@ function openPost(el) { // el=this connection
 
         showStatusPopup(postId);
     };
-
 }
 
 function closePost() {
     document.getElementById("postModal").style.display = "none";
+
+    const url = new URL(window.location);
+
+    url.searchParams.delete("post");
+
+    window.history.replaceState(
+        {},
+        "",
+        url.toString()
+    );
 
     // reset image state
     images = [];
@@ -341,7 +378,7 @@ window.addEventListener("click", function (event) {
     if (!modal) return;
 
     if (event.target === modal) {
-        modal.style.display = "none";
+        closePost();
     }
 
     if (event.target.closest(".post-nav")) return;
@@ -353,11 +390,14 @@ window.addEventListener("click", function (event) {
     });
 });
 
-function toggleDropdown(event) {
+window.toggleDropdown = function(event) {
     event.stopPropagation();
 
     const dropdown = event.currentTarget.closest(".post-nav-dropdown");
-    const menu = dropdown.querySelector(".post-nav-menu");
+    
+    document.querySelectorAll('.post-nav-dropdown').forEach(el => {
+        if (el !== dropdown) el.classList.remove('show');
+    });
 
-    menu.classList.toggle("show");
+    dropdown.classList.toggle("show");
 }

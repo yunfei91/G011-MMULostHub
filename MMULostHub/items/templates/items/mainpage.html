@@ -45,20 +45,22 @@
                 </div>
 
                 <!-- yt adjusted for css uses-->
-                <div class="header-right"> 
-
+                <div class="header-right">
                     <!-- Home icon -->
                     <a href="{% url 'mainPage' %}" class="home-icon">
                         <img src="{% static 'images/homeicon.png' %}" alt="Home">
                     </a>
 
-                    <!-- Menu button --> <!-- yt adjusted for css uses-->
+                    <a href="{% url 'chat_inbox' %}" class="chat-icon">
+                        <img src="{% static 'images/chaticon.png' %}" alt="Chat">
+                    </a>
+
+                    <!-- Menu button -->
                     <button type="button" class="menu-icon" onclick="toggleMenu()">
                         <span></span>
                         <span></span>
                         <span></span>
                     </button>
-
                 </div>
             </header>
 
@@ -403,20 +405,20 @@
                                         <!-- ================================= -->
                                         <!--           Date Time               -->
                                         <!-- ================================= -->
-                                        <p> <b>Date Time:</b> {{ post.post_datetime }} </p>
+                                        <p> <b>Date Time :</b> {{ post.post_datetime }} </p>
 
                                         <!-- ================================= -->
                                         <!--            Category               -->
                                         <!-- ================================= -->
-                                        <p> <b>Item Category:</b> {{ post.get_post_itemcategory_display }} </p>
+                                        <p> <b>Item Category :</b> {{ post.get_post_itemcategory_display }} </p>
 
                                         <!-- ================================= -->
                                         <!--     Location (Check Unknown)      -->
                                         <!-- ================================= -->
                                         {% if post.post_location %}
-                                            <p> <b>Location:</b> {{ post.post_location.location_name }}</p>
+                                            <p> <b>Location :</b> {{ post.post_location.location_name }}</p>
                                         {% elif post.post_type == "lost" %}
-                                            <p> <b>Location:</b> Unknown Lost Location</p>
+                                            <p> <b>Location :</b> Unknown Lost Location</p>
                                         {% endif %}
 
                                         <!-- ================================= -->
@@ -650,13 +652,13 @@
                                     <h2 id="m_type"></h2> <!-- JS inserts post type -->
                                     <div class="post-details">
                                         <p>
-                                            <b>Date :</b> <span id="m_date"></span>
+                                            <b>Date Time :</b> <span id="m_date"></span>
                                         </p>
                                         <p>
-                                            <b>Category :</b> <span id="m_category"></span>
+                                            <b>Item Category :</b> <span id="m_category"></span>
                                         </p>
                                         <p>
-                                            <b>Location:</b> <span id="m_location"></span>
+                                            <b>Location :</b> <span id="m_location"></span>
                                         </p>
                                     </div>
 
@@ -664,17 +666,17 @@
                                         <div class="desc-header">Description</div>
                                         <div id="m_description"></div>
                                     </div>
-                                </div>
 
-                                <!-- YF added for status -->
-                                <div id="status_btn_container" class = "status-btn">
-                                    <button id="status_btn" type="button"></button>
-                                </div>
+                                    <!-- YF added for status -->
+                                    <div id="status_btn_container" class = "popup-status">
+                                        <button id="status_btn" type="button"></button>
+                                    </div>
 
-                                <form id="status_form" method="POST">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                </form>
+                                    <form id="status_form" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                    </form>
+                                </div>
                                 
                                 <div class="chatBtn" id="chat_btn_container">
                                     <!-- zinc add chat url-->

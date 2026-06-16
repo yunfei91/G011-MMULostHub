@@ -7,6 +7,7 @@
         <!-- YF - Added -->
         <script src="{% static 'items/js/popup.js' %}" defer></script>
         <script src="{% static 'items/js/mainpage.js' %}" defer></script>
+        <script>const CURRENT_USER_ID = "{{ request.user.id|default:'' }}";</script>
 
         <link rel="stylesheet" href="{% static 'items/css/popup.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/mainpage.css' %}">
@@ -19,7 +20,6 @@
         <script src="{% static 'items/js/header.js' %}" defer></script>
         <script src="{% static 'items/js/logout.js' %}" defer></script>
         <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
-        <script>const CURRENT_USER_ID = "{{ request.user.id|default:'' }}";</script>
 
         <title> 
             MMU Lost Hub 
@@ -45,11 +45,15 @@
                     <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
                 </div>
 
+                <!-- yt adjusted for css uses-->
                 <div class="header-right"> 
-
                     <!-- Home icon -->
                     <a href="{% url 'mainPage' %}" class="home-icon">
                         <img src="{% static 'images/homeicon.png' %}" alt="Home">
+                    </a>
+
+                    <a href="{% url 'chat_inbox' %}" class="chat-icon">
+                        <img src="{% static 'images/chaticon.png' %}" alt="Chat">
                     </a>
 
                     <!-- Menu button -->
@@ -58,7 +62,6 @@
                         <span></span>
                         <span></span>
                     </button>
-
                 </div>
             </header>
 
@@ -404,20 +407,20 @@
                                         <!-- --------------------------------- -->
                                         <!--           Date Time               -->
                                         <!-- --------------------------------- -->
-                                        <p> <b>Date Time:</b> {{ post.post_datetime }} </p>
+                                        <p> <b>Date Time :</b> {{ post.post_datetime }} </p>
 
                                         <!-- --------------------------------- -->
                                         <!--            Category               -->
                                         <!-- --------------------------------- -->
-                                        <p> <b>Item Category:</b> {{ post.get_post_itemcategory_display }} </p>
+                                        <p> <b>Item Category :</b> {{ post.get_post_itemcategory_display }} </p>
 
                                         <!-- --------------------------------- -->
                                         <!--     Location (Check Unknown)      -->
                                         <!-- --------------------------------- -->
                                         {% if post.post_location %}
-                                            <p> <b>Location:</b> {{ post.post_location.location_name }}</p>
+                                            <p> <b>Location :</b> {{ post.post_location.location_name }}</p>
                                         {% elif post.post_type == "lost" %}
-                                            <p> <b>Location:</b> Unknown Lost Location</p>
+                                            <p> <b>Location :</b> Unknown Lost Location</p>
                                         {% endif %}
 
                                         <!-- ================================= -->
@@ -650,13 +653,13 @@
                                 <h2 id="m_type"></h2> <!-- JS inserts post type -->
                                 <div class="post-details">
                                     <p>
-                                        <b>Date :</b> <span id="m_date"></span>
+                                        <b>Date Time :</b> <span id="m_date"></span>
                                     </p>
                                     <p>
-                                        <b>Category :</b> <span id="m_category"></span>
+                                        <b>Item Category :</b> <span id="m_category"></span>
                                     </p>
                                     <p>
-                                        <b>Location:</b> <span id="m_location"></span>
+                                        <b>Location :</b> <span id="m_location"></span>
                                     </p>
                                 </div>
 
@@ -664,17 +667,17 @@
                                     <div class="desc-header">Description</div>
                                     <div id="m_description"></div>
                                 </div>
-                            </div>
 
-                            <!-- YF added for status -->
-                            <div id="status_btn_container" class = "status-btn">
-                                <button id="status_btn" type="button"></button>
-                            </div>
+                                <!-- YF added for status -->
+                                <div id="status_btn_container" class = "popup-status">
+                                    <button id="status_btn" type="button"></button>
+                                </div>
 
-                            <form id="status_form" method="POST">
-                                {% csrf_token %}
-                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                            </form>
+                                <form id="status_form" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                </form>
+                            </div>
                             
                             <div class="chatBtn" id="chat_btn_container">
                                 <!-- zinc add chat url-->
@@ -716,6 +719,9 @@
                         <button onclick="closeDeletePopup()">Cancel</button>
                     </div>
 
+                </div>
+            </div>
+
             <!-- -------------------------------------------------- -->
             <!--             YF - POPUP MSG MODAL                   -->
             <!-- -------------------------------------------------- -->
@@ -735,16 +741,12 @@
             <!-- -------------------------------------------------- -->
             <div id="statusPopup" class="status-popup-modal">
                 <div class="status-popup-box">
-
                     <p> Set post as COMPLETED? </p>
-
-                    <button id="statusConfirmBtn">
-                        Confirm
-                    </button>
-
-                    <button id="statusCancelBtn">
-                        Cancel
-                    </button>
+                    <form id="status_form" method="POST">
+                        {% csrf_token %}
+                        <button type="button" id="statusConfirmBtn">Confirm</button>
+                        <button type="button" id="statusCancelBtn">Cancel</button>
+                    </form>
                 </div>
             </div>
 
