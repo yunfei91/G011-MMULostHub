@@ -13,7 +13,7 @@
         <script>const CURRENT_USER_ID = "{{ request.user.id|default:'' }}";</script>               <!-- differ = load complete html then load java -->
         
         <!-- yt added -->
-        <link rel="stylesheet" href="{% static 'items/css/main-layout.css' %}">
+        <link rel="stylesheet" href="{% static 'items/css/main-layout.css' %}"><link rel="stylesheet" href="{% static 'items/css/main-layout.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/post-popup.css' %}">
 
         <script src="{% static 'items/js/header.js' %}" defer></script>
@@ -722,7 +722,7 @@
             </div>
 
             <!-- ================================================== -->
-            <!--             YF - POPUP MSG MODAL                   -->
+            <!--                  POPUP MSG MODAL                   -->
             <!-- ================================================== -->
             <div id="popup" class="popup hidden">
                 <div class="popup-box">
