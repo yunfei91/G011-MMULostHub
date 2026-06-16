@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required # Only users who are l
 from django.views.decorators.cache import never_cache # Prevent browser cache, user cannot press back to access previous page
 
 from django.contrib import messages # Show messages system (success/error alerts)
+from django.core.paginator import Paginator
 
 # yunfee add to check other user's profile
 # check if the user exists if not then 404
@@ -479,21 +480,30 @@ def profile(request, user_id=None): #zinc add if else
     need_reverify = profile.need_reverify #zinc add reverify acc
 
     posts = Post.objects.filter(post_user=user).order_by('-id')
-    for post in posts:
+
+    all_posts_list = posts
+    lost_posts_list = posts.filter(post_type='lost').select_related('cover_image').prefetch_related('images')
+    found_posts_list = posts.filter(post_type='found').select_related('cover_image').prefetch_related('images')
+
+    page_number = request.GET.get('page', 1)
+    PER_PAGE = 6
+
+    all_paginator = Paginator(all_posts_list, PER_PAGE)
+    lost_paginator = Paginator(lost_posts_list, PER_PAGE)
+    found_paginator = Paginator(found_posts_list, PER_PAGE)
+
+    all_posts = all_paginator.get_page(page_number)
+    lost_posts = lost_paginator.get_page(page_number)
+    found_posts = found_paginator.get_page(page_number)
+
+    for post in all_posts:
+        post.sorted_images = post.images.all().order_by('order')
+    for post in lost_posts:
+        post.sorted_images = post.images.all().order_by('order')
+    for post in found_posts:
         post.sorted_images = post.images.all().order_by('order')
 
-    all_posts = posts
-    
-    lost_posts = posts.filter(post_type='lost')\
-    .select_related('cover_image') \
-    .prefetch_related('images') \
-    .order_by('-id')
-
-    found_posts = posts.filter(post_type='found')\
-    .select_related('cover_image') \
-    .prefetch_related('images') \
-    .order_by('-id')
-    
+    active_tab = request.GET.get('tab', 'all')
 
     #zinc add is_owner
     is_owner = (request.user == user)
@@ -505,13 +515,14 @@ def profile(request, user_id=None): #zinc add if else
         'lost_posts': lost_posts,
         'found_posts': found_posts,
 
-        'lost_count': lost_posts.count(),
-        'found_count': found_posts.count(),
-        'posts_count': all_posts.count(),
+        'lost_count': lost_posts_list.count(),
+        'found_count': found_posts_list.count(),
+        'posts_count': all_posts_list.count(),
 
         'is_owner': is_owner, #zinc add
-        'need_reverify': need_reverify #zinc add
+        'need_reverify': need_reverify, #zinc add
         #'is_owner': True # Own profile
+        'active_tab': active_tab,
     })
 
 @login_required(login_url='beginning')
@@ -565,24 +576,34 @@ def userProfile(request, username):
     if (
         profile_self.need_reverify and request.user != user_obj
     ):
-
         return redirect('profile')
     
     need_reverify = profile.need_reverify #zinc add reverify acc
 
-    all_posts = Post.objects.filter(
-        post_user=user_obj
-    ).order_by('-id')
+    # yt added for page number
+    all_posts_list = Post.objects.filter(post_user=user_obj).order_by('-id')
+    lost_posts_list = Post.objects.filter(post_user=user_obj, post_type='lost').order_by('-id')
+    found_posts_list = Post.objects.filter(post_user=user_obj, post_type='found').order_by('-id')
 
-    lost_posts = Post.objects.filter(
-        post_user = user_obj,
-        post_type = 'lost'
-    ).order_by('-id')
+    page_number = request.GET.get('page', 1)
+    PER_PAGE = 6
 
-    found_posts = Post.objects.filter(
-        post_user = user_obj,
-        post_type ='found'
-    ).order_by('-id')
+    all_paginator = Paginator(all_posts_list, PER_PAGE)
+    lost_paginator = Paginator(lost_posts_list, PER_PAGE)
+    found_paginator = Paginator(found_posts_list, PER_PAGE)
+
+    all_posts = all_paginator.get_page(page_number)
+    lost_posts = lost_paginator.get_page(page_number)
+    found_posts = found_paginator.get_page(page_number)
+
+    for post in all_posts:
+        post.sorted_images = post.images.all().order_by('order')
+    for post in lost_posts:
+        post.sorted_images = post.images.all().order_by('order')
+    for post in found_posts:
+        post.sorted_images = post.images.all().order_by('order')
+
+    active_tab = request.GET.get('tab', 'all')
 
     return render(request, 'user/profile.html', {
         'user': user_obj,
@@ -592,12 +613,13 @@ def userProfile(request, username):
         'found_posts': found_posts,
 
         # yt added for post counting
-        'lost_count': lost_posts.count(),
-        'found_count': found_posts.count(),
-        'posts_count': all_posts.count(),
+        'lost_count': lost_posts_list.count(),
+        'found_count': found_posts_list.count(),
+        'posts_count': all_posts_list.count(),
 
         'is_owner': request.user == user_obj,
-        'need_reverify': need_reverify
+        'need_reverify': need_reverify,
+        'active_tab': active_tab,
     })
 
 #zinc add def start_reverify 

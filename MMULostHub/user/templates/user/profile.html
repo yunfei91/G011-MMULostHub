@@ -15,7 +15,6 @@
         <!-- Expire page immediately -->
         <meta http-equiv="Expires" content="0">
 
-        <link rel="stylesheet" href="{% static 'items/css/post-popup.css' %}">
         <link rel="stylesheet" href="{% static 'user/css/profile.css' %}">
 
         <script src="{% static 'items/js/header.js' %}" defer></script>
@@ -121,48 +120,57 @@
                         {% csrf_token %} <!-- Security token to prevent CSRF attack -->
 
                         <div class="profile-info"> 
-                            <!-- Show name (User and Admin not the same) -->
-                            <p id="nameText">{{ profile.name|default:user.first_name|default:user.username }}</p>
+                            <div class="name-row">
+                                <!-- Show name (User and Admin not the same) -->
+                                <p id="nameText">{{ profile.name|default:user.first_name|default:user.username }}</p>
 
-                            {% if request.user == user %}
-                                <button onclick="showNameEdit()">Edit Name</button>
+                                {% if request.user == user %}
+                                    <button class="edit-icon" onclick="showNameEdit()">✏️</button>
 
-                                <form id="nameForm" method="POST" action="{% url 'update_name' %}" style="display:none;">
-                                    {% csrf_token %}
-                                    <input type="text" name="name" value="{{ profile.name }}">
-                                    <button type="submit">Save</button>
-                                    <button type="button" onclick="hideNameEdit()">Cancel</button>
-                                </form>
-                            {% endif %}
+                                    <form id="nameForm" method="POST" action="{% url 'update_name' %}" style="display:none;">
+                                        {% csrf_token %}
+                                        <input type="text" name="name" value="{{ profile.name }}">
+                                        <button type="submit">Save</button>
+                                        <button type="button" onclick="hideNameEdit()">Cancel</button>
+                                    </form>
+                                {% endif %}
 
-                            {% if messages %}
-                                {% for message in messages %}
-                                    <p style="color:red;">{{ message }}</p>
-                                {% endfor %}
-                            {% endif %}
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        <p style="color:red;">{{ message }}</p>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>    
 
                             <p><b>MMU Email:</b> {{ user.email }}</p>
                         </div>
 
-                        <h2>Bio</h2>
+                        <div class="bio-section">
+                            <h2>Bio</h2>
 
-                        <p id="bioText">{{ profile.bio }}</p>
+                            {% if request.user == user %}
+                                <button class="edit-icon" onclick="showBioEdit()">✏️</button>
+                            {% endif %}
+                        </div>
+                            <p id="bioText">{{ profile.bio }}</p>
 
-                        {% if request.user == user %}
-                            <button onclick="showBioEdit()">Edit Bio</button>
-
-                            <form id="bioForm" method="POST" action="{% url 'update_bio' %}" style="display:none;">
-                                {% csrf_token %} <!-- Security token to prevent CSRF attack -->
-                                <!-- Bio box to input -->
-                                <textarea name="bio" rows="4" cols="50">{{ profile.bio }}</textarea>
-                                <br>
-                                <button type="submit">Save</button>
-                                <button type="button" onclick="hideBioEdit()">Cancel</button>
-                            </form>
-                        {% endif %}
+                            {% if request.user == user %}
+                                <form id="bioForm" method="POST" action="{% url 'update_bio' %}" style="display:none;">
+                                    {% csrf_token %} <!-- Security token to prevent CSRF attack -->
+                                    <!-- Bio box to input -->
+                                    <textarea name="bio" rows="4" cols="50">{{ profile.bio }}</textarea>
+                                    <br>
+                                    <button type="submit">Save</button>
+                                    <button type="button" onclick="hideBioEdit()">Cancel</button>
+                                </form>
+                            {% endif %}
                     </div>
 
                     <div class="stats-card">
+                        <div class="stat-item">
+                            <span class="stat-number">{{ posts_count }}</span>
+                            <span class="stat-label">Total</span>
+                        </div>
 
                         <div class="stat-item">
                             <span class="stat-number">{{ lost_count }}</span>
@@ -173,12 +181,6 @@
                             <span class="stat-number">{{ found_count }}</span>
                             <span class="stat-label">Found</span>
                         </div>
-
-                        <div class="stat-item">
-                            <span class="stat-number">{{ posts_count }}</span>
-                            <span class="stat-label">Posts</span>
-                        </div>
-
                     </div>
                 </div>
 
@@ -194,37 +196,7 @@
 
                             <!-- Open popup modal after clicked -->
                             <!-- Store username into HTML attribute, so JS can read it-->
-                            <div class="post"
-                                onclick="openPost(this)" 
-                                data-name="{% if post.post_user.profile.name %}
-                                            {{ post.post_user.profile.name }}
-                                        {% else %}
-                                            {{ post.post_user.username }}
-                                        {% endif %}"
-                                data-user="{{ post.post_user.username }}"
-                                data-user-id="{{ post.post_user.id }}"
-                                data-avatar="{% if post.post_user.profile and post.post_user.profile.avatar %}
-                                            {{ post.post_user.profile.avatar.url }}
-                                            {% else %}
-                                            {% static 'images/default.png' %}
-                                            {% endif %}"
-                                data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
-                                data-profile="{% url 'userProfile' post.post_user.username %}" 
-                                data-type="{{ post.post_type }}"
-                                data-date="{{ post.post_datetime }}" 
-                                data-category="{{ post.get_post_itemcategory_display }}"
-                                data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
-                                data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
-                                data-description="{{ post.post_description }}"
-                                data-images="{% for img in post.sorted_images %}{{ img.image.url }}|{% endfor %}"
-
-                                data-post-id="{{ post.id }}"
-                                data-status="{{ post.post_status }}"
-                                data-edit-url="{% url 'editPost' post.id %}"
-                                data-delete-url="{% url 'deletePost' post.id %}"
-                                data-report-post-url="{% url 'submit_report' %}?post_id={{ post.id }}"
-                                data-report-user-url="{% url 'report_user' post.post_user.id %}">
-                                
+                            <div class="post">
                                 <div class = "post-box">
 
                                     <!-- ============================== -->
@@ -313,15 +285,28 @@
                                             <!--      Post Image (Check Multi)     -->
                                             <!-- ================================= -->
                                             <div class="image-wrapper">
+                                                <div class="img-container">
+                                                    {% if post.images.count > 1 %}
+                                                        <button class="prev-btn" id="prev_btn_{{ post.id }}" disabled type="button" 
+                                                                onclick="changeCardImage(event, '{{ post.id }}', -1)">
+                                                                <
+                                                        </button>
+                                                    {% endif %}
 
-                                                {% if post.cover_image %}
-                                                    <img src="{{ post.cover_image.image.url }}" alt="Post Image" class="post-image">
-                                                {% endif %}
+                                                    <img id="post_img_{{ post.id }}" 
+                                                        src="{% if post.cover_image %}{{ post.cover_image.image.url }}{% endif %}" 
+                                                        alt="Post Image" 
+                                                        class="post-image"
+                                                        data-current-index="0"
+                                                        data-images="{% for img in post.images.all %}{{ img.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
 
-                                                {% if post.images.count > 1 %}
-                                                    <img src="{% static 'images/multi-img-icon.png' %}" alt="Multiple Images" class="multi-img-icon">
-                                                {% endif %}
-
+                                                    {% if post.images.count > 1 %}
+                                                        <button class="next-btn" id="next_btn_{{ post.id }}" type="button" 
+                                                                onclick="changeCardImage(event, '{{ post.id }}', 1)">
+                                                                >
+                                                        </button>
+                                                    {% endif %}
+                                                </div>
                                             </div>
 
                                             <!-- ================================= -->
@@ -343,11 +328,31 @@
                                                 <p> <b>Location:</b> Unknown Lost Location</p>
                                             {% endif %}
 
+                                            <div class="post-description-display">
+                                                <p><b>Description:</b> {{ post.post_description }}</p>
+                                            </div>
                                             <!-- --------------------------------- -->
                                             <!--          YF - Post Status         -->
                                             <!-- --------------------------------- -->
-                                            <p class="post-status status-{{ post.post_status }}"><b>{{ post.get_post_status_display }}</b></p>
+                                            <div class="post-status status-{{ post.post_status }}">
+                                                <div id="status_btn_container" class="popup-status">
+                                                    {% if request.user == post.post_user %}                                                        
+                                                        <button class="status_btn popup-status-{{ post.post_status }}" type="button" 
+                                                                onclick="triggerStatusChange(event, '{{ post.id }}', '{{ post.post_status }}')">
+                                                            <b>{{ post.get_post_status_display }}</b>
+                                                        </button>
+                                                    {% else %}
+                                                        <span class="status_text"><b>{{ post.get_post_status_display }}</b></span>
+                                                    {% endif %}
+                                                </div>
 
+                                                {% if request.user == post.post_user %}                                                    
+                                                    <form id="status_form_{{ post.id }}" method="POST" action="{% url 'update_post_status' post.id %}">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                    </form>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -355,6 +360,52 @@
                         {% empty %}
                             <p>No posts</p>
                         {% endfor %}
+
+                        <div class="pagination">
+                            {% if all_posts.has_previous %}
+                                <a href="?page=1&tab=all" class="pagearrow"> << </a>
+                                <a href="?page={{ all_posts.previous_page_number }}&tab=all" class="pagearrow"> < </a>
+                            {% else %}
+                                <span class="disabled"> << </span>
+                                <span class="disabled"> < </span>
+                            {% endif %}
+
+                            {% for num in all_posts.paginator.page_range %}
+                                {% if all_posts.number <= 2 %}
+                                    {% if num <= 3 %}
+                                        {% if num == all_posts.number %}
+                                            <span class="current">{{ num }}</span>
+                                        {% else %}
+                                            <a href="?page={{ num }}&tab=all" class="pagenum">{{ num }}</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% elif all_posts.number >= all_posts.paginator.num_pages|add:"-1" %}
+                                    {% if num >= all_posts.paginator.num_pages|add:"-2" %}
+                                        {% if num == all_posts.number %}
+                                            <span class="current">{{ num }}</span>
+                                        {% else %}
+                                            <a href="?page={{ num }}&tab=all" class="pagenum">{{ num }}</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% else %}
+                                    {% if num >= all_posts.number|add:"-1" and num <= all_posts.number|add:"1" %}
+                                        {% if num == all_posts.number %}
+                                            <span class="current">{{ num }}</span>
+                                        {% else %}
+                                            <a href="?page={{ num }}&tab=all" class="pagenum">{{ num }}</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if all_posts.has_next %}
+                                <a href="?page={{ all_posts.next_page_number }}&tab=all" class="pagearrow"> > </a>
+                                <a href="?page={{ all_posts.paginator.num_pages }}&tab=all" class="pagearrow"> >> </a>
+                            {% else %}
+                                <span class="disabled"> > </span>
+                                <span class="disabled"> >> </span>
+                            {% endif %}
+                        </div>
                     </div>
 
                     <div id="lost-posts" class = "post-list">
@@ -363,37 +414,7 @@
 
                             <!-- Open popup modal after clicked -->
                             <!-- Store username into HTML attribute, so JS can read it-->
-                            <div class="post"
-                                onclick="openPost(this)" 
-                                data-name="{% if post.post_user.profile.name %}
-                                            {{ post.post_user.profile.name }}
-                                        {% else %}
-                                            {{ post.post_user.username }}
-                                        {% endif %}"
-                                data-user="{{ post.post_user.username }}"
-                                data-user-id="{{ post.post_user.id }}"
-                                data-avatar="{% if post.post_user.profile and post.post_user.profile.avatar %}
-                                            {{ post.post_user.profile.avatar.url }}
-                                            {% else %}
-                                            {% static 'images/default.png' %}
-                                            {% endif %}"
-                                data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
-                                data-profile="{% url 'userProfile' post.post_user.username %}" 
-                                data-type="{{ post.post_type }}"
-                                data-date="{{ post.post_datetime }}" 
-                                data-category="{{ post.get_post_itemcategory_display }}"
-                                data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
-                                data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
-                                data-description="{{ post.post_description }}"
-                                data-images="{% for img in post.sorted_images %}{{ img.image.url }}|{% endfor %}"
-
-                                data-post-id="{{ post.id }}"
-                                data-status="{{ post.post_status }}"
-                                data-edit-url="{% url 'editPost' post.id %}"
-                                data-delete-url="{% url 'deletePost' post.id %}"
-                                data-report-post-url="{% url 'submit_report' %}?post_id={{ post.id }}"
-                                data-report-user-url="{% url 'report_user' post.post_user.id %}">
-                                
+                            <div class="post">
                                 <div class = "post-box">
 
                                     <!-- ------------------------------ -->
@@ -478,15 +499,28 @@
                                             <!--      Post Image (Check Multi)     -->
                                             <!-- --------------------------------- -->
                                             <div class="image-wrapper">
+                                                <div class="img-container">
+                                                    {% if post.images.count > 1 %}
+                                                        <button class="prev-btn" id="prev_btn_{{ post.id }}" disabled type="button" 
+                                                                onclick="changeCardImage(event, '{{ post.id }}', -1)">
+                                                                <
+                                                        </button>
+                                                    {% endif %}
 
-                                                {% if post.cover_image %}
-                                                    <img src="{{ post.cover_image.image.url }}" alt="Post Image" class="post-image">
-                                                {% endif %}
+                                                    <img id="post_img_{{ post.id }}" 
+                                                        src="{% if post.cover_image %}{{ post.cover_image.image.url }}{% endif %}" 
+                                                        alt="Post Image" 
+                                                        class="post-image"
+                                                        data-current-index="0"
+                                                        data-images="{% for img in post.images.all %}{{ img.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
 
-                                                {% if post.images.count > 1 %}
-                                                    <img src="{% static 'images/multi-img-icon.png' %}" alt="Multiple Images" class="multi-img-icon">
-                                                {% endif %}
-
+                                                    {% if post.images.count > 1 %}
+                                                        <button class="next-btn" id="next_btn_{{ post.id }}" type="button" 
+                                                                onclick="changeCardImage(event, '{{ post.id }}', 1)">
+                                                                >
+                                                        </button>
+                                                    {% endif %}
+                                                </div>
                                             </div>
 
                                             <!-- --------------------------------- -->
@@ -508,11 +542,32 @@
                                                 <p> <b>Location:</b> Unknown Lost Location</p>
                                             {% endif %}
 
-                                            <!-- --------------------------------- -->
-                                            <!--          YF - Post Status         -->
-                                            <!-- --------------------------------- -->
-                                            <p class="post-status status-{{ post.post_status }}"><b>{{ post.get_post_status_display }}</b></p>
+                                            <div class="post-description-display">
+                                                <p><b>Description:</b> {{ post.post_description }}</p>
+                                            </div>
 
+                                            <!-- --------------------------------- -->
+                                            <!--   YF - Post Status yt changed     -->
+                                            <!-- --------------------------------- -->
+                                            <div class="post-status status-{{ post.post_status }}">
+                                                <div id="status_btn_container" class="popup-status">
+                                                    {% if request.user == post.post_user %}                                                        
+                                                        <button class="status_btn popup-status-{{ post.post_status }}" type="button" 
+                                                                onclick="triggerStatusChange(event, '{{ post.id }}', '{{ post.post_status }}')">
+                                                            <b>{{ post.get_post_status_display }}</b>
+                                                        </button>
+                                                    {% else %}
+                                                        <span class="status_text"><b>{{ post.get_post_status_display }}</b></span>
+                                                    {% endif %}
+                                                </div>
+
+                                                {% if request.user == post.post_user %}                                                    
+                                                    <form id="status_form_{{ post.id }}" method="POST" action="{% url 'update_post_status' post.id %}">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                    </form>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -520,6 +575,52 @@
                         {% empty %}
                             <p>No lost posts</p>
                         {% endfor %}
+
+                        <div class="pagination">
+                            {% if lost_posts.has_previous %}
+                                <a href="?page=1&tab=lost" class="pagearrow"> << </a>
+                                <a href="?page={{ lost_posts.previous_page_number }}&tab=lost" class="pagearrow"> < </a>
+                            {% else %}
+                                <span class="disabled"> << </span>
+                                <span class="disabled"> < </span>
+                            {% endif %}
+
+                            {% for num in lost_posts.paginator.page_range %}
+                                {% if lost_posts.number <= 2 %}
+                                    {% if num <= 3 %}
+                                        {% if num == lost_posts.number %}
+                                            <span class="current">{{ num }}</span>
+                                        {% else %}
+                                            <a href="?page={{ num }}&tab=lost" class="pagenum">{{ num }}</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% elif lost_posts.number >= lost_posts.paginator.num_pages|add:"-1" %}
+                                    {% if num >= lost_posts.paginator.num_pages|add:"-2" %}
+                                        {% if num == lost_posts.number %}
+                                            <span class="current">{{ num }}</span>
+                                        {% else %}
+                                            <a href="?page={{ num }}&tab=lost" class="pagenum">{{ num }}</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% else %}
+                                    {% if num >= lost_posts.number|add:"-1" and num <= lost_posts.number|add:"1" %}
+                                        {% if num == lost_posts.number %}
+                                            <span class="current">{{ num }}</span>
+                                        {% else %}
+                                            <a href="?page={{ num }}&tab=lost" class="pagenum">{{ num }}</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if lost_posts.has_next %}
+                                <a href="?page={{ lost_posts.next_page_number }}&tab=lost" class="pagearrow"> > </a>
+                                <a href="?page={{ lost_posts.paginator.num_pages }}&tab=lost" class="pagearrow"> >> </a>
+                            {% else %}
+                                <span class="disabled"> > </span>
+                                <span class="disabled"> >> </span>
+                            {% endif %}
+                        </div>
                     </div>
 
                     <div id="found-posts" class = "post-list">
@@ -528,37 +629,7 @@
 
                             <!-- Open popup modal after clicked -->
                             <!-- Store username into HTML attribute, so JS can read it-->
-                            <div class="post"
-                                onclick="openPost(this)" 
-                                data-name="{% if post.post_user.profile.name %}
-                                            {{ post.post_user.profile.name }}
-                                        {% else %}
-                                            {{ post.post_user.username }}
-                                        {% endif %}"
-                                data-user="{{ post.post_user.username }}"
-                                data-user-id="{{ post.post_user.id }}"
-                                data-avatar="{% if post.post_user.profile and post.post_user.profile.avatar %}
-                                            {{ post.post_user.profile.avatar.url }}
-                                            {% else %}
-                                            {% static 'images/default.png' %}
-                                            {% endif %}"
-                                data-chat-url="{% url 'start_chat' post.post_user.username %}?next={{ request.get_full_path|urlencode }}"
-                                data-profile="{% url 'userProfile' post.post_user.username %}" 
-                                data-type="{{ post.post_type }}"
-                                data-date="{{ post.post_datetime }}" 
-                                data-category="{{ post.get_post_itemcategory_display }}"
-                                data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
-                                data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
-                                data-description="{{ post.post_description }}"
-                                data-images="{% for img in post.sorted_images %}{{ img.image.url }}|{% endfor %}"
-
-                                data-post-id="{{ post.id }}"
-                                data-status="{{ post.post_status }}"
-                                data-edit-url="{% url 'editPost' post.id %}"
-                                data-delete-url="{% url 'deletePost' post.id %}"
-                                data-report-post-url="{% url 'submit_report' %}?post_id={{ post.id }}"
-                                data-report-user-url="{% url 'report_user' post.post_user.id %}">
-                                
+                            <div class="post">
                                 <div class = "post-box">
 
                                     <!-- ------------------------------ -->
@@ -643,15 +714,28 @@
                                             <!--      Post Image (Check Multi)     -->
                                             <!-- --------------------------------- -->
                                             <div class="image-wrapper">
+                                                <div class="img-container">
+                                                    {% if post.images.count > 1 %}
+                                                        <button class="prev-btn" id="prev_btn_{{ post.id }}" disabled type="button" 
+                                                                onclick="changeCardImage(event, '{{ post.id }}', -1)">
+                                                                <
+                                                        </button>
+                                                    {% endif %}
 
-                                                {% if post.cover_image %}
-                                                    <img src="{{ post.cover_image.image.url }}" alt="Post Image" class="post-image">
-                                                {% endif %}
+                                                    <img id="post_img_{{ post.id }}" 
+                                                        src="{% if post.cover_image %}{{ post.cover_image.image.url }}{% endif %}" 
+                                                        alt="Post Image" 
+                                                        class="post-image"
+                                                        data-current-index="0"
+                                                        data-images="{% for img in post.images.all %}{{ img.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
 
-                                                {% if post.images.count > 1 %}
-                                                    <img src="{% static 'images/multi-img-icon.png' %}" alt="Multiple Images" class="multi-img-icon">
-                                                {% endif %}
-
+                                                    {% if post.images.count > 1 %}
+                                                        <button class="next-btn" id="next_btn_{{ post.id }}" type="button" 
+                                                                onclick="changeCardImage(event, '{{ post.id }}', 1)">
+                                                                >
+                                                        </button>
+                                                    {% endif %}
+                                                </div>
                                             </div>
 
                                             <!-- --------------------------------- -->
@@ -676,8 +760,25 @@
                                             <!-- --------------------------------- -->
                                             <!--          YF - Post Status         -->
                                             <!-- --------------------------------- -->
-                                            <p class="post-status status-{{ post.post_status }}"><b>{{ post.get_post_status_display }}</b></p>
+                                            <div class="post-status status-{{ post.post_status }}">
+                                                <div id="status_btn_container" class="popup-status">
+                                                    {% if request.user == post.post_user %}                                                        
+                                                        <button class="status_btn popup-status-{{ post.post_status }}" type="button" 
+                                                                onclick="triggerStatusChange(event, '{{ post.id }}', '{{ post.post_status }}')">
+                                                            <b>{{ post.get_post_status_display }}</b>
+                                                        </button>
+                                                    {% else %}
+                                                        <span class="status_text"><b>{{ post.get_post_status_display }}</b></span>
+                                                    {% endif %}
+                                                </div>
 
+                                                {% if request.user == post.post_user %}                                                    
+                                                    <form id="status_form_{{ post.id }}" method="POST" action="{% url 'update_post_status' post.id %}">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                    </form>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -687,127 +788,54 @@
                                 <p> No posts available. </p>
                             </div>
                         {% endfor %}
+
+                        <div class="pagination">
+                            {% if found_posts.has_previous %}
+                                <a href="?page=1&tab=found" class="pagearrow"> << </a>
+                                <a href="?page={{ found_posts.previous_page_number }}&tab=found" class="pagearrow"> < </a>
+                            {% else %}
+                                <span class="disabled"> << </span>
+                                <span class="disabled"> < </span>
+                            {% endif %}
+
+                            {% for num in found_posts.paginator.page_range %}
+                                {% if found_posts.number <= 2 %}
+                                    {% if num <= 3 %}
+                                        {% if num == found_posts.number %}
+                                            <span class="current">{{ num }}</span>
+                                        {% else %}
+                                            <a href="?page={{ num }}&tab=found" class="pagenum">{{ num }}</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% elif found_posts.number >= found_posts.paginator.num_pages|add:"-1" %}
+                                    {% if num >= found_posts.paginator.num_pages|add:"-2" %}
+                                        {% if num == found_posts.number %}
+                                            <span class="current">{{ num }}</span>
+                                        {% else %}
+                                            <a href="?page={{ num }}&tab=found" class="pagenum">{{ num }}</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% else %}
+                                    {% if num >= found_posts.number|add:"-1" and num <= found_posts.number|add:"1" %}
+                                        {% if num == found_posts.number %}
+                                            <span class="current">{{ num }}</span>
+                                        {% else %}
+                                            <a href="?page={{ num }}&tab=found" class="pagenum">{{ num }}</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if found_posts.has_next %}
+                                <a href="?page={{ found_posts.next_page_number }}&tab=found" class="pagearrow"> > </a>
+                                <a href="?page={{ found_posts.paginator.num_pages }}&tab=found" class="pagearrow"> >> </a>
+                            {% else %}
+                                <span class="disabled"> > </span>
+                                <span class="disabled"> >> </span>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>    
-
-                <!-- ================================================== -->
-                <!--                   POPUP POST VIEW                  -->
-                <!-- ================================================== -->
-                <div id="postModal" class="modal">
-
-                    <div class="modal-content">
-                        <div class="top-actions">
-                            <span class="close" onclick="closePost()">&times;</span> <!-- Symbol display cross -->
-
-                            <!-- ============================== -->
-                            <!--        Post Navigation        -->
-                            <!-- ============================== -->
-                            <div class="post-nav" onclick="event.stopPropagation()">
-
-                                <div class="post-nav-dropdown">
-
-                                    <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">
-                                        ⋮
-                                    </button>
-
-                                    <div class="post-nav-menu">
-
-                                        <!-- OWNER -->
-                                        {% if request.user.id == post.post_user.id %}
-
-                                            <div class="btn">
-                                                <a id="edit_link" href="">
-                                                    Edit Post
-                                                </a>
-                                            </div>
-
-                                            <div class="btn">
-                                                <form id="delete_form" method="POST" onsubmit="confirmDelete(event, this)">
-                                                    {% csrf_token %}
-                                                    <button type="submit">Delete Post</button>
-                                                </form>
-                                            </div>
-
-                                        <!-- OTHER USERS -->
-                                        {% else %}
-
-                                            <div class="btn">
-                                                <a id="report_post_link" href="">
-                                                    Report
-                                                </a>
-                                            </div>
-
-                                            <div class="btn">
-                                                <a id="report_user_link" href="">
-                                                    Report User
-                                                </a>
-                                            </div>
-
-                                        {% endif %}
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="modal-body">
-
-                            <div class="modal-left">
-                                <div class="popup-user">
-                                    <a id="m_user_link" href="">
-                                        <img id="m_avatar" src="" alt="avatar" class="popup-avatar">
-                                        <span id="m_user"></span>
-                                    </a>
-                                </div>
-
-                                <div class="img-container">
-                                    <button class="prev-btn" onclick="prevImg()"><</button>
-
-                                    <img id="m_image">
-
-                                    <button class="next-btn" onclick="nextImg()">></button>
-                                </div>
-                            </div>
-
-                            <div class="modal-right">
-                                <h2 id="m_type"></h2> <!-- JS inserts post type -->
-                                <div class="post-details">
-                                    <p>
-                                        <b>Date Time :</b> <span id="m_date"></span>
-                                    </p>
-                                    <p>
-                                        <b>Item Category :</b> <span id="m_category"></span>
-                                    </p>
-                                    <p>
-                                        <b>Location :</b> <span id="m_location"></span>
-                                    </p>
-                                </div>
-
-                                <div class="post-description">
-                                    <div class="desc-header">Description</div>
-                                    <div id="m_description"></div>
-                                </div>
-
-                                <!-- YF added for status -->
-                                <div id="status_btn_container" class = "popup-status">
-                                    <button id="status_btn" type="button"></button>
-                                </div>
-
-                                <form id="status_form" method="POST">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                </form>
-                            </div>
-                            
-                            <div class="chatBtn" id="chat_btn_container">
-                                <!-- zinc add chat url-->
-                                <a id="chat_link" href="#">
-                                    <button type="button">Chat</button>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- ================================================== -->
@@ -846,6 +874,11 @@
                 </div>
 
             </div>
+
+            <form id="status_form" method="POST" action="">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            </form>
 
             <!-- yt added -->
             <!-- Confirm Logout Popup -->
@@ -994,9 +1027,16 @@
                 document.getElementById("bioText").style.display = "block";
             }
 
-            // Run when page is ready
             document.addEventListener("DOMContentLoaded", function () {
-                showAll();
+                const activeTab = "{{ active_tab }}";
+
+                if (activeTab === "lost") {
+                    showLost();
+                } else if (activeTab === "found") {
+                    showFound();
+                } else {
+                    showAll();
+                }
             });
 
             // Show all lost and found posts
@@ -1016,6 +1056,43 @@
                 document.getElementById("all-posts").style.display = "none";
                 document.getElementById("lost-posts").style.display = "none";
                 document.getElementById("found-posts").style.display = "grid";
+            }
+
+            /* ====================================== 
+                YT - POST MULTI-IMAGE CAROUSEL       
+            ======================================= */
+            function changeCardImage(event, postId, direction) {
+                if (event) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+
+                const imgElement = document.getElementById("post_img_" + postId);
+                if (!imgElement) return;
+
+                const imagesAttr = imgElement.getAttribute("data-images");
+                if (!imagesAttr) return;
+                const images = imagesAttr.split(",");
+
+                let currentIndex = parseInt(imgElement.getAttribute("data-current-index")) || 0;
+
+                currentIndex += direction;
+                if (currentIndex < 0) currentIndex = 0;
+                if (currentIndex >= images.length) currentIndex = images.length - 1;
+
+                imgElement.src = images[currentIndex];
+                imgElement.setAttribute("data-current-index", currentIndex);
+
+                const prevBtn = document.getElementById("prev_btn_" + postId);
+                const nextBtn = document.getElementById("next_btn_" + postId);
+
+                if (prevBtn) {
+                    prevBtn.disabled = (currentIndex === 0);
+                }
+
+                if (nextBtn) {
+                    nextBtn.disabled = (currentIndex === images.length - 1);
+                }
             }
 
             /* ====================================== 
@@ -1078,6 +1155,45 @@
                     el.classList.remove("show");
                 });
             });
+
+            /* ====================================== 
+                    YT - STATUS CHANGE        
+            ====================================== */
+            function triggerStatusChange(event, postId, currentStatus) {
+                event.stopPropagation();
+
+                if (currentStatus !== "open") {
+                    return; 
+                }
+
+                showStatusPopup(postId);
+            }
+
+            function showStatusPopup(postId) {
+                const popup = document.getElementById("statusPopup");
+                if (!popup) return;
+
+                popup.style.display = "flex";
+
+                // Confirm
+                document.getElementById("statusConfirmBtn").onclick = function () {
+
+                    const form = document.getElementById(`status_form_${postId}`);
+
+                    if (form) {
+                        form.action = `/items/update-status/${postId}/`;
+                        form.submit();
+                    } else {
+                        console.error("Cannot find form: status_form_" + postId);
+                    }
+                };
+
+                // Cancel
+                document.getElementById("statusCancelBtn").onclick = function () {
+                    popup.style.display = "none";
+                };
+            }
+
         </script>
     </body>
 </html>

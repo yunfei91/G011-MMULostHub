@@ -493,11 +493,6 @@ def update_post_status(request, post_id):
 
     post.save()
 
-    messages.success(
-        request,
-        "Post status updated successfully!"
-    )
-
     next_url = request.POST.get("next")
 
     return redirect(next_url)

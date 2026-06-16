@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ====================================== 
-    CREATE / EDIT IMAGE PREVIEW POPUP       
+    YT-CREATE / EDIT IMAGE PREVIEW POPUP       
 ====================================== */
 // show imag preview popup when clcick any image
 function showImg() {
@@ -390,11 +390,14 @@ window.addEventListener("click", function (event) {
     });
 });
 
-function toggleDropdown(event) {
-    event.stopPropagation();
+window.toggleDropdown = function(event) {
+    event.stopPropagtion();
 
     const dropdown = event.currentTarget.closest(".post-nav-dropdown");
-    const menu = dropdown.querySelector(".post-nav-menu");
 
-    menu.classList.toggle("show");
+    document.querySelectorAll('.post-nav-dropdown').forEach(el => {
+        if (el !== dropdown) el.classList.remove('show');
+    });
+
+    dropdown.classList.toggle('show');
 }
