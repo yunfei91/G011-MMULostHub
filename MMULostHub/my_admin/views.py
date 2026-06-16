@@ -17,6 +17,7 @@ from .email_utils import (
 
 from user.models import Profile
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 
 
 # Admin Check
@@ -52,6 +53,11 @@ def admin_feedback_view(request):
             Q(user__username__icontains=query)
         )
 
+    # Pagination
+    paginator = Paginator(feedbacks, 6)
+    page_number = request.GET.get('page')
+    feedbacks = paginator.get_page(page_number)
+
     return render(
         request,
         'admin/adminfeedback.html',
@@ -78,6 +84,10 @@ def admin_report_view(request):
             Q(user__username__icontains=query) |
             Q(post__post_description__icontains=query)
         )
+
+    paginator = Paginator(reports, 6)
+    page_number = request.GET.get('page')
+    reports = paginator.get_page(page_number)
 
     return render(
         request,
@@ -223,6 +233,14 @@ def admin_view_user(request):
         '-created_at'
     )
 
+    user_paginator = Paginator(users, 10)
+    user_page_number = request.GET.get('user_page')
+    users = user_paginator.get_page(user_page_number)
+
+    report_paginator = Paginator(reports, 3)
+    report_page_number = request.GET.get('report_page')
+    reports = report_paginator.get_page(report_page_number)
+
     return render(
         request,
         'admin/adminviewuser.html',
@@ -230,6 +248,7 @@ def admin_view_user(request):
             'users': users,
             'reports': reports,
             'view_type': view_type,
+            'query': query,
         }
     )
 

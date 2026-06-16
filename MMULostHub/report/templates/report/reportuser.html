@@ -64,19 +64,19 @@
                 <nav id="menu" class="menu"> <!-- yt adjusted for css uses-->
                     <ul>
                         <li>
-                        <a href="{% url 'lost_posts' %}"> Lost Post </a>  
+                            <a href="{% url 'lost_posts' %}"> Lost Post </a>  
                         </li>
                         <li>
-                        <a href="{% url 'found_posts' %}"> Found Post </a>
+                            <a href="{% url 'found_posts' %}"> Found Post </a>
                         </li>
                         <li>
-                        <a href="{% url 'profile' %}"> Profile </a>
+                            <a href="{% url 'profile' %}"> Profile </a>
                         </li>
                         <li>
-                        <a href="{% url 'feedback_form' %}"> Feedback </a>
+                            <a href="{% url 'feedback_form' %}?next={{ next_url|urlencode }}"> Feedback </a>
                         </li>
                         <li class="logout">
-                        <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
+                            <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
                         </li>
                     </ul>
                 </nav>
@@ -84,27 +84,52 @@
             
             <div class="content">
                 <h2>Report User</h2>
-                <p> Reporting User: {{ reported_user.username }}</p>
 
-                <form method="POST" enctype="multipart/form-data" action="{% url 'report_user' reported_user.id %}">
+                <p>
+                    Reporting User:
+                    {{ reported_user.username }}
+                </p>
+
+                <form method="POST"
+                      enctype="multipart/form-data"
+                      action="{% url 'report_user' reported_user.id %}">
                     {% csrf_token %}
+
+                    <input type="hidden" name="next" value="{{ next_url }}">
                     <input type="hidden" name="user_id" value="{{ reported_user.id }}">
 
                     <!-- Reason -->
                     <label>Reason:</label>
                     <br>
-                    <textarea name="comments" rows="5" cols="40" required></textarea>
+
+                    <textarea name="comments"
+                              rows="5"
+                              cols="40"
+                              required></textarea>
+
                     <br><br>
 
                     <!-- Proof Image -->
                     <label>Upload Proof:</label>
                     <br>
-                    <input type="file" name="image" required accept="image/*">
+
+                    <input type="file"
+                           name="image"
+                           required
+                           accept="image/*">
+
                     <br><br>
 
                     <button type="submit" onclick="return checkProofImage()">
-                    Submit Report
+                        Submit Report
                     </button>
+
+                    {% if next_url %}
+                        <a href="{{ next_url }}">Cancel</a>
+                    {% else %}
+                        <a href="{% url 'mainPage' %}">Cancel</a>
+                    {% endif %}
+
                 </form>
             </div>
 

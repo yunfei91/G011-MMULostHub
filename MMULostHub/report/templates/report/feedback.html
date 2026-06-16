@@ -63,19 +63,19 @@
                 <nav id="menu" class="menu"> <!-- yt adjusted for css uses-->
                     <ul>
                         <li>
-                        <a href="{% url 'lost_posts' %}"> Lost Post </a>  
+                            <a href="{% url 'lost_posts' %}"> Lost Post </a>  
                         </li>
                         <li>
-                        <a href="{% url 'found_posts' %}"> Found Post </a>
+                            <a href="{% url 'found_posts' %}"> Found Post </a>
                         </li>
                         <li>
-                        <a href="{% url 'profile' %}"> Profile </a>
+                            <a href="{% url 'profile' %}"> Profile </a>
                         </li>
                         <li>
-                        <a href="{% url 'feedback_form' %}"> Feedback </a>
+                            <a href="{% url 'feedback_form' %}?next={{ request.get_full_path|urlencode }}"> Feedback </a>
                         </li>
                         <li class="logout">
-                        <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
+                            <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
                         </li>
                     </ul>
                 </nav>
@@ -86,11 +86,16 @@
                 <h2>Feedback / Report</h2>
                 <p>Leave your comments / suggestions here!</p>
 
-                <form actions="{% url 'feedback_form' %}" method="POST" enctype="multipart/form-data">
-                    {% csrf_token %} 
+                <form action="{% url 'feedback_form' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <input type="hidden" name="next" value="{{ next_url }}">
 
                     <label for="comments">Your feedback:</label>
-                    <textarea id="comments"  name="comments" placeholder="Please enter your feedback here..." rows="10"></textarea>
+                    <textarea id="comments"
+                              name="comments"
+                              placeholder="Please enter your feedback here..."
+                              rows="10"></textarea>
 
                     <div class="upload-group" style="margin-top: 15px;">
                         <label for="image-upload">Upload Image (optional):</label>
@@ -98,12 +103,12 @@
                     </div> 
 
                     <div class="button-group">
-                    <button 
-                        type="submit"
-                        class="btn"
-                        onclick="return confirm('Are you sure you want to submit?')">
-                        SUBMIT
-                    </button>
+                        <button 
+                            type="submit"
+                            class="btn"
+                            onclick="return confirm('Are you sure you want to submit?')">
+                            SUBMIT
+                        </button>
                     </div>
                 </form>
             </div>

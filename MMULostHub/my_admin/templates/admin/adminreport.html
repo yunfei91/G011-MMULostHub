@@ -4,8 +4,7 @@
 <head>
     <title>MMU Lost Hub</title>
 
-    <link rel="stylesheet"
-          href="{% static 'my_admin/css/admin.css' %}">
+    <link rel="stylesheet" href="{% static 'my_admin/css/admin.css' %}">
 
     <script src="{% static 'items/js/logout.js' %}" defer></script>
 
@@ -19,97 +18,51 @@
 <div class="whole-page">
 
     <header>
-
         <div class="header-left">
-            <img src="{% static 'images/MMULogo.png' %}"
-                 alt="MMU Logo"
-                 class="mmu-logo">
-
-            <img src="{% static 'images/WebLogo-header.png' %}"
-                 alt="Lost Hub Logo"
-                 class="losthub-logo">
+            <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
+            <img src="{% static 'images/WebLogo-header.png' %}" alt="Lost Hub Logo" class="losthub-logo">
         </div>
 
         <div class="header-right">
-
-            <a href="{% url 'admin_mainpage' %}"
-               class="home-icon">
-
-                <img src="{% static 'images/HomeIcon.png' %}"
-                     alt="Home">
-
+            <a href="{% url 'admin_mainpage' %}" class="home-icon">
+                <img src="{% static 'images/HomeIcon.png' %}" alt="Home">
             </a>
 
-            <button type="button"
-                    class="menu-icon"
-                    onclick="toggleAdminMenu()">
-
+            <button type="button" class="menu-icon" onclick="toggleAdminMenu()">
                 <span></span>
                 <span></span>
                 <span></span>
-
             </button>
-
         </div>
-
     </header>
 
     <div id="overlay" class="overlay"></div>
 
     <div class="dropdown-nav">
-
         <nav id="menu" class="menu">
-
             <ul>
-
-                <li>
-                    <a href="{% url 'admin_user' %}">
-                        View User
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'admin_feedback' %}">
-                        View Feedback
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'admin_report' %}">
-                        View Report
-                    </a>
-                </li>
+                <li><a href="{% url 'admin_user' %}">View User</a></li>
+                <li><a href="{% url 'admin_feedback' %}">View Feedback</a></li>
+                <li><a href="{% url 'admin_report' %}">View Report</a></li>
 
                 <li class="logout">
-                    <a href="javascript:void(0);"
-                       onclick="showLogoutConfirm()">
-                        Logout
-                    </a>
+                    <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
                 </li>
-
             </ul>
-
         </nav>
-
     </div>
 
     <main class="admin-page-content">
 
         <div class="search-bar">
-
-            <form method="GET"
-                  class="search-bar">
-
+            <form method="GET" class="search-bar">
                 <input type="text"
                        name="q"
-                       placeholder="Search for Reports...">
+                       placeholder="Search for Reports..."
+                       value="{{ query|default:'' }}">
 
-                <button type="submit">
-                    Search
-                </button>
-
+                <button type="submit">Search</button>
             </form>
-
         </div>
 
         <h2>Reports</h2>
@@ -120,34 +73,21 @@
 
             <div class="report-card">
 
-                <p>
-                    <strong>Reported By:</strong>
-                    {{ report.user.username }}
-                </p>
+                <p><strong>Reported By:</strong> {{ report.user.username }}</p>
 
-                <p>
-                    <strong>Reported Reason:</strong>
-                    {{ report.comments }}
-                </p>
+                <p><strong>Reported Reason:</strong> {{ report.comments }}</p>
 
-                <p>
-                    <strong>Reported Date:</strong>
-                    {{ report.created_at }}
-                </p>
+                <p><strong>Reported Date:</strong> {{ report.created_at }}</p>
 
                 <p>
                     <strong>Image:</strong><br>
 
                     {% if report.image %}
-
                         <img src="{{ report.image.url }}"
                              alt="Report Photo"
                              style="max-width:300px;">
-
                     {% else %}
-
                         No Image Provided
-
                     {% endif %}
                 </p>
 
@@ -155,50 +95,27 @@
 
                 {% if report.post %}
 
-                <p>
-                    <strong>Post ID:</strong>
-                    {{ report.post.id }}
-                </p>
+                    <p><strong>Post ID:</strong> {{ report.post.id }}</p>
 
-                <p>
-                    <strong>Post Author:</strong>
-                    {{ report.post.post_user.username }}
-                </p>
+                    <p><strong>Post Author:</strong> {{ report.post.post_user.username }}</p>
 
-                <p>
-                    <strong>Type:</strong>
-                    {{ report.post.post_type }}
-                </p>
+                    <p><strong>Type:</strong> {{ report.post.post_type }}</p>
 
-                <p>
-                    <strong>Category:</strong>
-                    {{ report.post.post_itemcategory }}
-                </p>
+                    <p><strong>Category:</strong> {{ report.post.post_itemcategory }}</p>
 
-                <p>
-                    <strong>Location:</strong>
-                    {{ report.post.post_location }}
-                </p>
+                    <p><strong>Location:</strong> {{ report.post.post_location }}</p>
 
-                <p>
-                    <strong>Description:</strong>
-                    {{ report.post.post_description }}
-                </p>
+                    <p><strong>Description:</strong> {{ report.post.post_description }}</p>
 
                 {% else %}
 
-                <p>
-                    <em>
-                        Notice: This post has been deleted.
-                    </em>
-                </p>
+                    <p>
+                        <em>Notice: This post has been deleted.</em>
+                    </p>
 
                 {% endif %}
 
-                <p>
-                    <strong>Status:</strong>
-                    {{ report.status }}
-                </p>
+                <p><strong>Status:</strong> {{ report.status }}</p>
 
                 <div class="report-actions">
 
@@ -207,17 +124,13 @@
                     <form id="report-check-form-{{ report.id }}"
                           action="{% url 'update_report_status' report.id %}"
                           method="POST">
-
                         {% csrf_token %}
 
                         <button type="button"
                                 class="btn"
                                 onclick="confirmReportCheck('{{ report.id }}')">
-
                             Mark as Checked
-
                         </button>
-
                     </form>
 
                     {% endif %}
@@ -227,17 +140,13 @@
                     <form id="delete-post-form-{{ report.post.id }}"
                           action="{% url 'delete_post' report.post.id %}"
                           method="POST">
-
                         {% csrf_token %}
 
                         <button type="button"
                                 class="btn"
                                 onclick="confirmDeletePost('{{ report.post.id }}')">
-
                             Delete Post
-
                         </button>
-
                     </form>
 
                     {% endif %}
@@ -254,65 +163,122 @@
 
         </div>
 
+        <!-- ================================ -->
+        <!--           PAGE CHANGE            -->
+        <!-- ================================ -->
+        <div class="pagination">
+
+            {% if reports.has_previous %}
+                <a href="?page=1{% if query %}&q={{ query }}{% endif %}"
+                   class="pagearrow">
+                    &lt;&lt;
+                </a>
+
+                <a href="?page={{ reports.previous_page_number }}{% if query %}&q={{ query }}{% endif %}"
+                   class="pagearrow">
+                    &lt;
+                </a>
+            {% else %}
+                <span class="disabled"> &lt;&lt; </span>
+                <span class="disabled"> &lt; </span>
+            {% endif %}
+
+            {% for num in reports.paginator.page_range %}
+
+                {% if reports.number <= 2 %}
+
+                    {% if num <= 3 %}
+                        {% if num == reports.number %}
+                            <span class="current">{{ num }}</span>
+                        {% else %}
+                            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}"
+                               class="pagenum">
+                                {{ num }}
+                            </a>
+                        {% endif %}
+                    {% endif %}
+
+                {% elif reports.number >= reports.paginator.num_pages|add:"-1" %}
+
+                    {% if num >= reports.paginator.num_pages|add:"-2" %}
+                        {% if num == reports.number %}
+                            <span class="current">{{ num }}</span>
+                        {% else %}
+                            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}"
+                               class="pagenum">
+                                {{ num }}
+                            </a>
+                        {% endif %}
+                    {% endif %}
+
+                {% else %}
+
+                    {% if num >= reports.number|add:"-1" and num <= reports.number|add:"1" %}
+                        {% if num == reports.number %}
+                            <span class="current">{{ num }}</span>
+                        {% else %}
+                            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}"
+                               class="pagenum">
+                                {{ num }}
+                            </a>
+                        {% endif %}
+                    {% endif %}
+
+                {% endif %}
+
+            {% endfor %}
+
+            {% if reports.has_next %}
+                <a href="?page={{ reports.next_page_number }}{% if query %}&q={{ query }}{% endif %}"
+                   class="pagearrow">
+                    &gt;
+                </a>
+
+                <a href="?page={{ reports.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}"
+                   class="pagearrow">
+                    &gt;&gt;
+                </a>
+            {% else %}
+                <span class="disabled"> &gt; </span>
+                <span class="disabled"> &gt;&gt; </span>
+            {% endif %}
+
+        </div>
+
     </main>
 
-    <!-- Confirm Logout Popup -->
     <div id="confirmPopup" class="popup-modal">
         <div class="popup-box">
-
             <p>Are you sure you want to logout?</p>
 
             <div class="popup-btns">
-                <button onclick="confirmLogout()">
-                    OK
-                </button>
-
-                <button onclick="cancelLogout()">
-                    Cancel
-                </button>
+                <button onclick="confirmLogout()">OK</button>
+                <button onclick="cancelLogout()">Cancel</button>
             </div>
-
         </div>
     </div>
 
-    <!-- Success Popup -->
     <div id="successPopup" class="popup"></div>
 
-    <!-- Mark Report as Checked Popup -->
     <div id="reportCheckPopup" class="popup-modal">
         <div class="popup-box">
-
             <p>Are you sure you want to mark this reported post as checked?</p>
 
             <div class="popup-btns">
-                <button onclick="submitReportCheck()">
-                    OK
-                </button>
-
-                <button onclick="cancelReportCheck()">
-                    Cancel
-                </button>
+                <button onclick="submitReportCheck()">OK</button>
+                <button onclick="cancelReportCheck()">Cancel</button>
             </div>
-
         </div>
     </div>
 
-    <!-- Delete Post Popup -->
     <div id="deletePostPopup" class="popup-modal">
         <div class="popup-box">
-
             <p>Are you sure you want to delete this reported post?</p>
 
             <div class="popup-btns">
-                <button onclick="submitDeletePost()">
-                    OK
-                </button>
-
-                <button onclick="cancelDeletePost()">
-                    Cancel
-                </button>
+                <button onclick="submitDeletePost()">OK</button>
+                <button onclick="cancelDeletePost()">Cancel</button>
             </div>
-
         </div>
     </div>
 
@@ -323,84 +289,51 @@
 </div>
 
 <script>
-
     function toggleAdminMenu(){
-
-        document.getElementById("menu")
-                .classList.toggle("show-menu");
-
-        document.getElementById("overlay")
-                .classList.toggle("show");
-
-        document.querySelector(".menu-icon")
-                .classList.toggle("active");
+        document.getElementById("menu").classList.toggle("show-menu");
+        document.getElementById("overlay").classList.toggle("show");
+        document.querySelector(".menu-icon").classList.toggle("active");
     }
 
-    document.getElementById("overlay")
-            .onclick = function(){
-
+    document.getElementById("overlay").onclick = function(){
         toggleAdminMenu();
-
     };
 
     let reportIdToCheck = null;
 
     function confirmReportCheck(id){
-
         reportIdToCheck = id;
-
-        document.getElementById("reportCheckPopup")
-                .classList.add("show");
+        document.getElementById("reportCheckPopup").classList.add("show");
     }
 
     function cancelReportCheck(){
-
         reportIdToCheck = null;
-
-        document.getElementById("reportCheckPopup")
-                .classList.remove("show");
+        document.getElementById("reportCheckPopup").classList.remove("show");
     }
 
     function submitReportCheck(){
-
         if(reportIdToCheck){
-
-            document.getElementById(
-                "report-check-form-" + reportIdToCheck
-            ).submit();
-
+            document.getElementById("report-check-form-" + reportIdToCheck).submit();
         }
     }
 
     let postIdToDelete = null;
 
     function confirmDeletePost(id){
-
         postIdToDelete = id;
-
-        document.getElementById("deletePostPopup")
-                .classList.add("show");
+        document.getElementById("deletePostPopup").classList.add("show");
     }
 
     function cancelDeletePost(){
-
         postIdToDelete = null;
-
-        document.getElementById("deletePostPopup")
-                .classList.remove("show");
+        document.getElementById("deletePostPopup").classList.remove("show");
     }
 
     function submitDeletePost(){
-
         if(postIdToDelete){
-
-            document.getElementById(
-                "delete-post-form-" + postIdToDelete
-            ).submit();
-
+            document.getElementById("delete-post-form-" + postIdToDelete).submit();
         }
     }
-
 </script>
 
 </body>
