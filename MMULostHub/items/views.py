@@ -457,13 +457,21 @@ def lost_posts(request):
 def map_search(request):
 
     post_box = Post.objects.all().order_by('-id')
+
+    for post in post_box:
+        post.sorted_images = post.images.all().order_by('order')
+        
     location = request.GET.get("location")
+
+    paginator = Paginator(post_box, 9)
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
     
     if location:
         post_box = post_box.filter(post_location__location_code=location)
 
     return render(request, 'items/mapsearch.html', {
-        'posts': post_box,
+        'posts': posts,
         'locations': MMULocation.objects.all(),
     })
 

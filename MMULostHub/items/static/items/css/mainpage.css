@@ -24,6 +24,7 @@
     margin: 0 50px 50px 50px;
 }
 
+/* ----- Post View ----- */
 .post-view{
     width:100%;
     max-width:500px;
@@ -80,6 +81,7 @@
     z-index: 9988;
 }
 
+/* ----- Post Header ----- */
 .post-header{
     display: flex;
     justify-content: space-between;
@@ -95,10 +97,14 @@
     text-align:center;
 }
 
+/* ========================= */
+/*         POST NAV          */
+/* ========================= */
 .post-nav{
     position: relative;
 }
 
+/* 3 Dot Button */
 .post-nav-dropdown-btn{
     font-size: 24px;
     font-family: 'Slackey', cursive;
@@ -142,6 +148,7 @@
         0 2px 4px rgba(188,201,216,.18);
 }
 
+/* All Menu Button */
 .post-nav-menu{
     display: none;
     position: absolute;
@@ -199,6 +206,9 @@
   display: block;
 }
 
+/* ========================= */
+/*       POST INFO           */
+/* ========================= */
 .post-info{
     display:flex;
     flex-direction:column;
@@ -226,12 +236,27 @@
     object-fit: cover;
 }
 
+/* ----- Post Image ----- */
 .post-image{
     width:100%;
     max-width:500px;
     height:auto;
 }
 
+.image-wrapper{
+    position:relative;
+    width:fit-content;
+}
+
+.multi-img-icon{
+    position:absolute;
+    top:10px;
+    right:10px;
+    height: 24px;
+    width: 24px;
+}
+
+/* ----- Post Status ----- */
 .post-status{
     display: flex;
     justify-self: flex-end;
@@ -265,6 +290,9 @@
     background: rgba(67, 172, 252, 0.242);
 }
 
+/* ========================= */
+/*     PAGE TOP BUTTON       */
+/* ========================= */
 .scroll_top {
     position: fixed;
     display: none;
@@ -301,7 +329,6 @@
 .top-icon{
     width: 35px;
     opacity: 0.7;
-
 }
 
 .scroll_top:hover {
@@ -320,6 +347,9 @@
         inset 0 2px 6px rgba(0,0,0,0.15);
 }
 
+/* ========================= */
+/*    CREATE POST BUTTON     */
+/* ========================= */
 .create_post {
     position: fixed;
     right: 20px;
@@ -376,20 +406,6 @@
         0 3px 0 #565c6e,
         0 5px 10px rgba(0,0,0,0.25);
 }
-
-.image-wrapper{
-    position:relative;
-    width:fit-content;
-}
-
-.multi-img-icon{
-    position:absolute;
-    top:10px;
-    right:10px;
-    height: 24px;
-    width: 24px;
-}
-
 
 /* ========================= */
 /*           SEARCH          */
@@ -467,6 +483,7 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
+/* All */
 .current,
 .disabled,
 .pagination a{
@@ -474,11 +491,13 @@
     font-family: 'Slackey', cursive;
 }
 
+/* Numbers */
 .current,
 .pagenum{
     font-size: 17px;
 }
 
+/* Arrows */
 .pagearrow,
 .disabled{
     font-size: 23px;
@@ -489,6 +508,7 @@
     color: #6392d9;
 }
 
+/* Active Arrow and Page Num */
 .pagination a{
     border: transparent;
     width: fit-content;
@@ -503,6 +523,7 @@
     transform: scale(0.92);
 }
 
+/* Disabled Arrows */
 .disabled {
     color: rgba(105, 103, 103, 0.3);
     cursor: not-allowed;
@@ -563,6 +584,9 @@
     color: black;
 }
 
+/* ========================= */
+/*     MAP SEARCH BUTTON     */
+/* ========================= */
 .map-search {
     display: flex;
     align-items: center;
@@ -606,6 +630,9 @@
     height: 24px;
 }
 
+/* ================================================ */
+/*       AUTO WIDTH CHANGE WITH SCREEN WIDTH        */
+/* ================================================ */
 @media (max-width:1400px){
     .post-list{
         grid-template-columns:repeat(2,1fr);
