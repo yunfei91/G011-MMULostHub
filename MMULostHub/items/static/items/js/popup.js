@@ -390,11 +390,14 @@ window.addEventListener("click", function (event) {
     });
 });
 
-function toggleDropdown(event) {
+window.toggleDropdown = function(event) {
     event.stopPropagation();
 
     const dropdown = event.currentTarget.closest(".post-nav-dropdown");
-    const menu = dropdown.querySelector(".post-nav-menu");
+    
+    document.querySelectorAll('.post-nav-dropdown').forEach(el => {
+        if (el !== dropdown) el.classList.remove('show');
+    });
 
-    menu.classList.toggle("show");
+    dropdown.classList.toggle("show");
 }
