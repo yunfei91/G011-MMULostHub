@@ -1,0 +1,38 @@
+.checklist p {
+    position: relative;
+    padding-left: 20px;
+    transition: 0.2s;
+}
+
+.checklist p.invalid::before {
+    content: "✖ ";
+    position: absolute;
+    left: 0;
+}
+
+.checklist p[style*="green"]::before {
+    content: "✔ ";
+    position: absolute;
+    left: 0;
+}
+
+.checklist p[style*="red"]::before {
+    content: "✖ ";
+    position: absolute;
+    left: 0;
+}
+
+.show-password {
+    cursor: pointer;
+    user-select: none;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-textfield-decoration-container {
+    display: none !important;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
