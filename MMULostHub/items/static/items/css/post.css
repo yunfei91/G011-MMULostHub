@@ -1,0 +1,128 @@
+/* ========================= */
+/*       IMAGE UPLOAD        */
+/* ========================= */
+.crop-modal {
+    display:none;
+    position:fixed;
+    z-index:9999;
+    inset:0;
+    background:rgba(0,0,0,0.7);
+}
+
+/* Close button X */ 
+.imgclose_button { 
+    position: absolute; 
+    top: 15px; 
+    right: 25px; 
+    font-size: 35px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    background-color: white;
+}
+
+.crop-container{
+    background:white;
+    width:90%;
+    max-width:700px;
+    position:relative;
+}
+
+.crop-preview{
+    max-width: 500px;
+    display: block;
+}
+
+.imagePreview-container{
+    display: none;
+}
+
+.image-preview{
+    width:auto;
+    height:auto;
+    object-fit:cover;
+}
+
+/* ===== IMAGE PREVIEW CONTAINER ===== */
+.imagePreview-container{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+/* ===== PREVIEW BOX ===== */
+.preview-box{
+    position:relative;
+}
+
+/* ===== IMAGE ===== */
+.image-preview{
+    width:auto;
+    height:150px;
+    object-fit:cover;
+}
+
+/* ===== DELETE BUTTON ===== */
+.remove-image-btn{
+    position:absolute;
+    top:0;
+    right:0;
+}
+
+/* ===== MODAL ===== */
+.preview-modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.8);
+    justify-content:center;
+    align-items:center;
+}
+
+/* ===== MODAL IMAGE ===== */
+.preview-modal-image{
+    max-width:80%;
+    max-height:80%;
+}
+
+/* ===== CLOSE BUTTON ===== */
+.preview-close{
+    position:absolute;
+    top:10px;
+    right:15px;
+    cursor:pointer;
+    background-color: white;
+}
+
+/* ===== NAV BUTTONS ===== */
+.preview-arrow{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+}
+
+/* left / right */
+.left-arrow{ left:10px; }
+.right-arrow{ right:10px; }
+
+/* ===== ACTION BUTTONS (KEEP ONLY POSITION) ===== */
+.delete-preview-btn{
+    position:absolute;
+    bottom:50px;
+    right:10px;
+}
+
+.crop-again-btn{
+    position:absolute;
+    bottom:50px;
+    right:80px;
+}
+
+.cover-button{
+    position:absolute;
+    bottom:50px;
+    right:180px;
+}
+
