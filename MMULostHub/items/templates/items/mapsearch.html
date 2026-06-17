@@ -130,14 +130,15 @@
                     <!--            Left - Map             -->
                     <!-- ================================= -->
                     <div class="map-left">
-                        <!-- ================================= -->
-                        <!--     Back to Main Page Button      -->
-                        <!-- ================================= -->
-                        <div class = "back-btn">
-                            <a href="{% url 'mainPage' %}" > < </a>
-                        </div>
 
-                        <h2> Campus Map </h2>
+                        <div class = "left-header">
+                            <!-- Back to Main Page Button -->
+                            <div class = "back-btn">
+                                <a href="{% url 'mainPage' %}" > < </a>
+                            </div>
+
+                            <h2> Campus Map </h2>
+                        </div>
 
                         <img id="map" src="{% static 'images/map-img.jpg' %}" class="map">
 
