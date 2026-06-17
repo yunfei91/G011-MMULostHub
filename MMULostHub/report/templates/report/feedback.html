@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MMU Lost Hub - Feedback</title>
+        <link rel="stylesheet" href="style.css">
+
+        <!-- yt added -->
+        <!-- Prevent browser cache, user cannot press back to access previous page -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
+        <!-- Older browser cache prevention -->
+        <meta http-equiv="Pragma" content="no-cache">
+        <!-- Expire page immediately -->
+        <meta http-equiv="Expires" content="0">
+         
+    </head>
+    <body>
+            <header>
+                <div class="menu-icon"></div>
+                <h1>MMU Lost Hub</h1>
+            </header>
+            <div class="dropdown-nav">
+            <nav>
+                Menu Button
+            </nav>
+            
+            <div class="dropdown-content">
+                <a href="{% url 'mainPage' %}"> Home </a>
+                <a href="{% url 'lost_posts' %}"> Lost Post </a>                 
+                <a href="{% url 'found_posts' %}"> Found Post </a>                
+                <a href="{% url 'profile' %}"> Profile </a> 
+                <a href="{% url 'chat_inbox' %}">Inbox</a>                       
+                <a href="{% url 'feedback_form' %}">Feedback/Report </a> 
+                <a href="{% url 'logout' %}"> Logout </a>
+            </div>
+        </div>
+        
+                    <h2>Feedback / Report</h2>
+                    <p>Leave your comments / suggestions here!</p>
+
+                    <form actions="{% url 'feedback_form' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %} 
+
+                        <label for="comments">Your feedback:</label>
+                        <textarea id="comments"  name="comments" placeholder="Please enter your feedback here..." rows="10"></textarea>
+
+                        <div class="upload-group" style="margin-top: 15px;">
+                            <label for="image-upload">Upload Image (optional):</label>
+                            <input type="file" id="image-upload" name="image-upload" accept="image/*">
+                        </div> 
+
+                        <div class="button-group">
+                        <button 
+                            type="submit"
+                            class="btn"
+                            onclick="return confirm('Are you sure you want to submit?')">
+                            SUBMIT
+                        </button>
+                        </div>
+                    </form>
+                </section>
+            </main>
+        </div>
+    </body>
+</html>

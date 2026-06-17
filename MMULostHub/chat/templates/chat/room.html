@@ -1,0 +1,493 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Room</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial,sans-serif;
+        }
+
+        body{
+            background:#E1E8E5;
+            height:100vh;
+            display:flex;
+            flex-direction:column;
+        }
+
+        /* =========================
+                NAVBAR
+        ========================= */
+
+        .dropdown-nav{
+            background:#72788A;
+            color:white;
+            padding:10px 20px;
+        }
+
+        .dropdown-nav nav{
+            font-weight:bold;
+        }
+
+        .dropdown-content a{
+            color:white;
+            text-decoration:none;
+            margin-right:15px;
+        }
+
+        /* =========================
+                HEADER
+        ========================= */
+
+        .chat-header{
+            background:#72788A;
+            color:white;
+            display:flex;
+            align-items:center;
+            padding:18px 25px;
+        }
+
+        .back{
+            color:white;
+            text-decoration:none;
+            font-size:28px;
+            margin-right:15px;
+        }
+
+        .header-avatar{
+            width:55px;
+            height:55px;
+            border-radius:50%;
+            object-fit:cover;
+            background:#E1E8E5;
+            margin-right:15px;
+        }
+
+        .chat-name{
+            font-size:20px;
+            font-weight:bold;
+        }
+
+        .chat-menu{
+            margin-left:auto;
+            position:relative;
+        }
+
+        .menu-btn{
+            background:none;
+            border:none;
+            color:white;
+            font-size:28px;
+            cursor:pointer;
+        }
+
+        .chat-menu-dropdown{
+            display:none;
+            position:absolute;
+            right:0;
+            top:40px;
+            background:white;
+            min-width:150px;
+            border-radius:10px;
+            overflow:hidden;
+            box-shadow:0 4px 10px rgba(0,0,0,0.2);
+            z-index:999;
+        }
+
+        .chat-menu-dropdown a{
+            display:block;
+            padding:12px;
+            text-decoration:none;
+            color:#72788A;
+        }
+
+        .chat-menu-dropdown a:hover{
+            background:#E1E8E5;
+        }
+
+        /* =========================
+                CHAT BODY
+        ========================= */
+
+        .chat-body{
+            flex:1;
+            overflow-y:auto;
+            padding:20px;
+            background:#E1E8E5;
+        }
+
+        .message-row{
+            display:flex;
+            margin-bottom:15px;
+            width:100%;
+        }
+
+        .message-row.mine{
+            justify-content:flex-end;
+        }
+
+        .message-row.other{
+            justify-content:flex-start;
+        }
+
+        .message-avatar{
+            width:45px;
+            height:45px;
+            border-radius:50%;
+            object-fit:cover;
+            background:#CED8D4;
+            margin-right:10px;
+        }
+
+        .message-bubble{
+            display:inline-block;
+            max-width:60%;
+
+            padding:12px;
+            border-radius:18px;
+
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        .message-row.mine .message-bubble{
+            margin-left:auto;
+        }
+
+        .message-row.other .message-bubble{
+            margin-right:auto;
+        }
+
+        .message-content{
+            white-space: normal;
+        }
+
+        .other .message-bubble{
+            background:white;
+        }
+
+        .mine .message-bubble{
+            background:#B5D1FA;
+        }
+
+        .message-time{
+            font-size:12px;
+            color:#72788A;
+            margin-top:5px;
+        }
+
+        .chat-image{
+            max-width:250px;
+            border-radius:10px;
+        }
+
+        /* =========================
+                INPUT BAR
+        ========================= */
+
+        .chat-footer{
+            background:white;
+            padding:15px;
+            border-top:1px solid #ccc;
+        }
+
+        .chat-form{
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+
+        .chat-form textarea{
+            flex:1;
+            resize:none;
+            border:1px solid #CED8D4;
+            border-radius:25px;
+            padding:12px 18px;
+            height:50px;
+        }
+
+        .file-label{
+            font-size:24px;
+            cursor:pointer;
+            color:#72788A;
+        }
+
+        .chat-form input[type=file]{
+            display:none;
+        }
+
+        .send-btn{
+            background:#72788A;
+            color:white;
+            border:none;
+            padding:12px 25px;
+            border-radius:25px;
+            cursor:pointer;
+        }
+
+        .send-btn:hover{
+            opacity:0.9;
+        }
+
+        .preview-box{
+            display:none;
+            padding:10px;
+            background:white;
+            border-top:1px solid #CED8D4;
+        }
+
+        .preview-box img{
+            max-width:180px;
+            max-height:180px;
+            border-radius:10px;
+           display:block;
+        }
+
+         .remove-preview{
+            margin-top:5px;
+            color:#72788A;
+            cursor:pointer;
+            font-size:14px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="chat-header">
+
+        {% if next_url %}
+            <a href="{{ next_url }}" class="back">←</a>
+        {% else %}
+            <a href="{% url 'chat_inbox' %}" class="back">←</a>
+        {% endif %}
+
+        {% if other_user.profile.avatar %}
+            <img src="{{ other_user.profile.avatar.url }}" class="header-avatar">
+        {% else %}
+            <img src="{% static 'images/default.png' %}" class="header-avatar">
+        {% endif %}
+
+        <div class="chat-name">
+            {{ other_user.profile.name }}
+        </div>
+
+        <div class="chat-menu">
+
+            <button
+                type="button"
+                class="menu-btn"
+                onclick="toggleChatMenu()">
+                ⋮
+            </button>
+
+            <div
+                id="chatMenuDropdown"
+                class="chat-menu-dropdown">
+
+                <a href="{% url 'report_user' other_user.id %}">
+                    Report User
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="chat-body">
+
+        {% for message in messages %}
+
+            <div class="message-row {% if message.sender == request.user %}mine{% else %}other{% endif %}">
+
+                {% if message.sender != request.user %}
+
+                    {% if other_user.profile.avatar %}
+                        <img src="{{ other_user.profile.avatar.url }}" class="message-avatar">
+                    {% else %}
+                        <img src="{% static 'images/default.png' %}" class="message-avatar">
+                    {% endif %}
+                {% endif %}
+
+                <div class="message-bubble">
+                    {% if message.file %}
+
+                        {% if message.message_type == 'image' %}
+
+                            <img
+                                src="{{ message.file.url }}"
+                                class="chat-image">
+
+                        {% elif message.message_type == 'audio' %}
+
+                            <audio controls>
+                                <source src="{{ message.file.url }}">
+                            </audio>
+
+                        {% else %}
+
+                            <a href="{{ message.file.url }}" target="_blank">
+                                Download File
+                            </a>
+
+                        {% endif %}
+                    {% endif %}
+                    
+                    {% if message.content %}
+                        <div class="message-content">
+                            {{ message.content|linebreaksbr }}
+                        </div>
+                    {% endif %}
+
+                    <div class="message-time">
+                        {{ message.created_at|date:"h:i A" }}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>No messages yet. Start the conversation!</p>
+        {% endfor %}
+        <div id="bottom"></div>
+    </div>
+
+    <div class="chat-footer">
+        <div id="previewBox" class="preview-box">
+            <img id="imagePreview">
+        <div class="remove-preview" onclick="removePreview()">
+            Remove Image
+        </div>
+    </div>
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            class="chat-form">
+
+            {% csrf_token %}
+
+            <label class="file-label">
+                +
+                <input type="file" name="file" id="fileInput" onchange="previewImage(this)">
+            </label>
+
+            <textarea name="content" placeholder="Type a message..."></textarea>
+
+            <button type="submit" class="send-btn">
+                Send
+            </button>
+
+        </form>
+
+    </div>
+
+    <script>
+
+        function toggleChatMenu() {
+
+            const menu =
+                document.getElementById(
+                    "chatMenuDropdown"
+                );
+
+            if (menu.style.display === "block") {
+
+                menu.style.display = "none";
+
+            } else {
+
+                menu.style.display = "block";
+
+            }
+        }
+
+        window.onclick = function(event) {
+
+            if (
+                !event.target.matches('.menu-btn')
+            ) {
+
+                const menu =
+                    document.getElementById(
+                        "chatMenuDropdown"
+                    );
+
+                if (menu) {
+
+                    menu.style.display = "none";
+
+                }
+            }
+        }
+
+        function previewImage(input){
+
+            const file = input.files[0];
+
+            const previewBox =
+                document.getElementById(
+                    "previewBox"
+                );
+
+            const imagePreview =
+                document.getElementById(
+                    "imagePreview"
+                );
+
+            if(
+                file &&
+                file.type.startsWith(
+                    "image/"
+                )
+            ){
+
+                imagePreview.src =
+                    URL.createObjectURL(file);
+
+                previewBox.style.display =
+                    "block";
+
+            }
+
+            else{
+
+                previewBox.style.display =
+                    "none";
+
+                imagePreview.src = "";
+
+            }
+        }
+
+        function removePreview(){
+
+            document.getElementById(
+                "fileInput"
+            ).value = "";
+
+            document.getElementById(
+                "imagePreview"
+            ).src = "";
+
+            document.getElementById(
+                "previewBox"
+             ).style.display = "none";
+        }
+
+        // Scroll to bottom on page load
+        window.onload = function() {
+            const bottom = document.getElementById("bottom");
+            if (bottom) {
+                bottom.scrollIntoView({ behavior: "auto" });
+            }
+        }
+
+    </script>
+
+</body>
+</html>
