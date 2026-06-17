@@ -454,6 +454,10 @@ def update_name(request):
 
         name = (request.POST.get("name") or "").strip()
 
+        if not name:
+            messages.error(request, "Name cannot be empty.")
+            return redirect('profile')
+        
         if Profile.objects.filter(name=name).exclude(user=request.user).exists(): # Check duplicate name except self
             messages.error(request, "Name already taken.")
             return redirect('profile')

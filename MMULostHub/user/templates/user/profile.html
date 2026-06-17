@@ -129,18 +129,7 @@
                                         class="edit-icon"
                                         src="{% static 'images/editicon.png' %}"
                                         alt="Edit"
-                                        onclick="showNameEdit()"
-                                    >
-
-                                    <form id="nameForm" method="POST" action="{% url 'update_name' %}">
-                                        {% csrf_token %}
-                                        <input type="text" name="name" value="{{ profile.name }}">
-
-                                        <div class="form-btn">
-                                            <button type="submit">Save</button>
-                                            <button type="button" onclick="hideNameEdit()">Cancel</button>
-                                        </div>
-                                    </form>
+                                        onclick="showNameEdit()">
                                 {% endif %}
 
                                 {% if messages %}
@@ -153,49 +142,44 @@
                             <p>{{ user.email }}</p>
                         </div>
 
+                        <div class="stats-card">
+                            <div class="stat-item">
+                                <span class="stat-number">{{ posts_count }}</span>
+                                <span class="stat-label">Total</span>
+                            </div>
+
+                            <div class="stat-item">
+                                <span class="stat-number">{{ lost_count }}</span>
+                                <span class="stat-label">Lost</span>
+                            </div>
+
+                            <div class="stat-item">
+                                <span class="stat-number">{{ found_count }}</span>
+                                <span class="stat-label">Found</span>
+                            </div>
+                        </div>
+
                         <div class="bio-section">
-                            <h2>Bio</h2>
+                            <div class="bio-row">
+                                <h2>Bio</h2>
+
+                                {% if request.user == user %}
+                                    <img
+                                        class="edit-icon"
+                                        src="{% static 'images/editicon.png' %}"
+                                        alt="Edit"
+                                        onclick="showBioEdit()">
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="bio-card">
+                            <div class="bio-scroll">
+                                <p id="bioText">{{ profile.bio }}</p>
+                            </div>
+                        </div>
 
                             {% if request.user == user %}
-                                <img
-                                    class="edit-icon"
-                                    src="{% static 'images/editicon.png' %}"
-                                    alt="Edit"
-                                    onclick="showBioEdit()"
-                                >
                             {% endif %}
-                        </div>
-                            <p id="bioText">{{ profile.bio }}</p>
-
-                            {% if request.user == user %}
-                                <form id="bioForm" method="POST" action="{% url 'update_bio' %}">
-                                    {% csrf_token %} <!-- Security token to prevent CSRF attack -->
-                                    <!-- Bio box to input -->
-                                    <textarea name="bio" rows="4" cols="50">{{ profile.bio }}</textarea>
-                                    
-                                    <div class="form-btn">
-                                        <button type="submit">Save</button>
-                                        <button type="button" onclick="hideBioEdit()">Cancel</button>
-                                    </div>
-                                </form>
-                            {% endif %}
-                    </div>
-
-                    <div class="stats-card">
-                        <div class="stat-item">
-                            <span class="stat-number">{{ posts_count }}</span>
-                            <span class="stat-label">Total</span>
-                        </div>
-
-                        <div class="stat-item">
-                            <span class="stat-number">{{ lost_count }}</span>
-                            <span class="stat-label">Lost</span>
-                        </div>
-
-                        <div class="stat-item">
-                            <span class="stat-number">{{ found_count }}</span>
-                            <span class="stat-label">Found</span>
-                        </div>
                     </div>
                 </div>
 
@@ -790,6 +774,60 @@
                 </div>    
             </div>
 
+            <!-- Edit Name Modal -->
+            <div id="nameModal" class="profile-modal">
+                <div class="profile-modal-content">
+
+                    <h3>Edit Name</h3>
+
+                    <form method="POST" action="{% url 'update_name' %}">
+                        {% csrf_token %}
+
+                        <input
+                            type="text"
+                            name="name"
+                            value="{{ profile.name }}"
+                            placeholder="Enter your name"
+                        >
+
+                        <div class="modal-btns">
+                            <button type="submit">Save</button>
+                            <button type="button" onclick="hideNameEdit()">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+
+            <!-- Edit Bio Modal -->
+            <div id="bioModal" class="profile-modal">
+                <div class="profile-modal-content">
+
+                    <h3>Edit Bio</h3>
+
+                    <form method="POST" action="{% url 'update_bio' %}">
+                        {% csrf_token %}
+
+                        <textarea
+                            name="bio"
+                            rows="6"
+                            placeholder="Write something about yourself..."
+                        >{{ profile.bio }}</textarea>
+
+                        <div class="modal-btns">
+                            <button type="submit">Save</button>
+                            <button type="button" onclick="hideBioEdit()">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
             <!-- ================================================== -->
             <!--       YF - Delete Post Confirmation Modal          -->
             <!-- ================================================== -->
@@ -982,6 +1020,22 @@
             function hideBioEdit() {
                 document.getElementById("bioForm").style.display = "none";
                 document.getElementById("bioText").style.display = "block";
+            }
+
+            function showNameEdit() {
+                document.getElementById("nameModal").style.display = "flex";
+            }
+
+            function hideNameEdit() {
+                document.getElementById("nameModal").style.display = "none";
+            }
+
+            function showBioEdit() {
+                document.getElementById("bioModal").style.display = "flex";
+            }
+
+            function hideBioEdit() {
+                document.getElementById("bioModal").style.display = "none";
             }
 
             document.addEventListener("DOMContentLoaded", function () {
