@@ -122,24 +122,38 @@
                         <div class="profile-info"> 
                             <div class="name-row">
                                 <!-- Show name (User and Admin not the same) -->
-                                <p id="nameText">{{ profile.name|default:user.first_name|default:user.username }}</p>
+                                <div class="name-section">
+                                    <p id="nameText">{{ profile.name|default:user.first_name|default:user.username }}</p>
 
-                                {% if request.user == user %}
-                                    <img
-                                        class="edit-icon"
-                                        src="{% static 'images/editicon.png' %}"
-                                        alt="Edit"
-                                        onclick="showNameEdit()">
-                                {% endif %}
+                                    <div class="name-tooltip">
+                                        {{ profile.name|default:user.first_name|default:user.username }}
+                                    </div>
 
-                                {% if messages %}
-                                    {% for message in messages %}
-                                        <p style="color:red;">{{ message }}</p>
-                                    {% endfor %}
-                                {% endif %}
+                                    {% if request.user == user %}
+                                        <img
+                                            class="edit-icon"
+                                            src="{% static 'images/editicon.png' %}"
+                                            alt="Edit"
+                                            onclick="showNameEdit()">
+                                    {% endif %}
+
+                                    {% if messages %}
+                                        {% for message in messages %}
+                                            <p style="color:red;">{{ message }}</p>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
                             </div>    
 
-                            <p>{{ user.email }}</p>
+                            <div class="email-section">
+                                <p class="profile-email">
+                                    {{ user.email }}
+                                </p>
+
+                                <div class="email-tooltip">
+                                    {{ user.email }}
+                                </div>
+                            </div>
                         </div>
 
                         <div class="stats-card">
@@ -190,585 +204,825 @@
                         <button onclick="showFound()">Found</button>
                     </div>
 
-                    <div id="all-posts" class = "post-list">
-                        {% for post in all_posts %}
+                    <div class="posts-wrapper">
+                        <div id="all-posts" class = "post-list">
+                            {% for post in all_posts %}
 
-                            <!-- Open popup modal after clicked -->
-                            <!-- Store username into HTML attribute, so JS can read it-->
-                            <div class="post">
-                                <div class = "post-box">
+                                <!-- Open popup modal after clicked -->
+                                <!-- Store username into HTML attribute, so JS can read it-->
+                                <div class="post">
+                                    <div class = "post-box">
 
-                                    <!-- ============================== -->
-                                    <!--          Post Small View       -->
-                                    <!-- ============================== -->
-                                    <div class = "post-view">
-                                        <div class = "post-header">
+                                        <!-- ============================== -->
+                                        <!--          Post Small View       -->
+                                        <!-- ============================== -->
+                                        <div class = "post-view">
+                                            <div class = "post-header">
 
-                                            <h4> {{ post.post_type|upper }} </h4>
-                                            
-                                            <!-- ================================= -->
-                                            <!--           Post Navigation         -->
-                                            <!-- ================================= -->
-                                            <!-- (differ own post / other user post to show nav) -->
-                                            <div class = "post-nav" onclick="event.stopPropagation()">
-                                                <div class = "post-nav-dropdown">
-                                                    <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">⋮</button>
-                                                    <div class="post-nav-menu">
+                                                <h4> {{ post.post_type|upper }} </h4>
+                                                
+                                                <!-- ================================= -->
+                                                <!--           Post Navigation         -->
+                                                <!-- ================================= -->
+                                                <!-- (differ own post / other user post to show nav) -->
+                                                <div class = "post-nav" onclick="event.stopPropagation()">
+                                                    <div class = "post-nav-dropdown">
+                                                        <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">⋮</button>
+                                                        <div class="post-nav-menu">
 
-                                                        <!-- user themselves-->
-                                                        {% if request.user == post.post_user %}
+                                                            <!-- user themselves-->
+                                                            {% if request.user == post.post_user %}
 
-                                                            <div class = "btn">
-                                                                <!-- Edit Post Butonn -->
-                                                                <a href="{% url 'editPost' post.id %}?next={{ request.get_full_path|urlencode }}">
-                                                                    Edit Post
-                                                                </a>
-                                                            </div>
-                                                            
-                                                            <div class = "btn">
-                                                                <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
-                                                                <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
-                                                                    {% csrf_token %}
+                                                                <div class = "btn">
+                                                                    <!-- Edit Post Butonn -->
+                                                                    <a href="{% url 'editPost' post.id %}?next={{ request.get_full_path|urlencode }}">
+                                                                        Edit Post
+                                                                    </a>
+                                                                </div>
+                                                                
+                                                                <div class = "btn">
+                                                                    <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
+                                                                    <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
+                                                                        {% csrf_token %}
 
-                                                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                                                    
-                                                                    <button type="submit">
-                                                                        Delete Post
-                                                                    </button>
-                                                                </form>
-                                                            </div>
+                                                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                                        
+                                                                        <button type="submit">
+                                                                            Delete Post
+                                                                        </button>
+                                                                    </form>
+                                                                </div>
 
-                                                        <!-- Other Users -->
-                                                        {%else %}
+                                                            <!-- Other Users -->
+                                                            {%else %}
 
-                                                            <div class = "btn">
-                                                                <!-- ty Report Post Button -->
-                                                                <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
-                                                                    Report
-                                                                </a>
-                                                            </div>
+                                                                <div class = "btn">
+                                                                    <!-- ty Report Post Button -->
+                                                                    <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                                                                        Report
+                                                                    </a>
+                                                                </div>
 
-                                                        {% endif %}
+                                                            {% endif %}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <!-- ================================= -->
-                                        <!--             Post Details          -->
-                                        <!-- ================================= -->
-                                        <div class = "post-info">
 
                                             <!-- ================================= -->
-                                            <!--      Post Image (Check Multi)     -->
+                                            <!--             Post Details          -->
                                             <!-- ================================= -->
-                                            <div class="image-wrapper">
-                                                <div class="img-container">
-                                                    {% if post.images.count > 1 %}
-                                                        <button class="prev-btn" id="prev_btn_{{ post.id }}" disabled type="button" 
-                                                                onclick="changeCardImage(event, '{{ post.id }}', -1)">
-                                                                <
-                                                        </button>
-                                                    {% endif %}
+                                            <div class = "post-info">
 
-                                                    <img id="post_img_{{ post.id }}" 
-                                                        src="{% if post.cover_image %}{{ post.cover_image.image.url }}{% endif %}" 
-                                                        alt="Post Image" 
-                                                        class="post-image"
-                                                        data-current-index="0"
-                                                        data-images="{% for img in post.images.all %}{{ img.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
+                                                <!-- ================================= -->
+                                                <!--      Post Image (Check Multi)     -->
+                                                <!-- ================================= -->
+                                                <div class="image-wrapper">
+                                                    <div class="img-container">
+                                                        {% if post.images.count > 1 %}
+                                                            <button class="prev-btn" id="prev_btn_{{ post.id }}" disabled type="button" 
+                                                                    onclick="changeCardImage(event, '{{ post.id }}', -1)">
+                                                                    <
+                                                            </button>
+                                                        {% endif %}
 
-                                                    {% if post.images.count > 1 %}
-                                                        <button class="next-btn" id="next_btn_{{ post.id }}" type="button" 
-                                                                onclick="changeCardImage(event, '{{ post.id }}', 1)">
-                                                                >
-                                                        </button>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
+                                                        <img id="post_img_{{ post.id }}" 
+                                                            src="{% if post.cover_image %}{{ post.cover_image.image.url }}{% endif %}" 
+                                                            alt="Post Image" 
+                                                            class="post-image"
+                                                            data-current-index="0"
+                                                            data-images="{% for img in post.images.all %}{{ img.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
 
-                                            <!-- ================================= -->
-                                            <!--           Date Time               -->
-                                            <!-- ================================= -->
-                                            <p> <b>Date Time:</b> {{ post.post_datetime }} </p>
-
-                                            <!-- ================================= -->
-                                            <!--            Category               -->
-                                            <!-- ================================= -->
-                                            <p> <b>Item Category:</b> {{ post.get_post_itemcategory_display }} </p>
-
-                                            <!-- ================================= -->
-                                            <!--     Location (Check Unknown)      -->
-                                            <!-- ================================= -->
-                                            {% if post.post_location %}
-                                                <p> <b>Location:</b> {{ post.post_location.location_name }}</p>
-                                            {% elif post.post_type == "lost" %}
-                                                <p> <b>Location:</b> Unknown Lost Location</p>
-                                            {% endif %}
-
-                                            <div class="post-description-display">
-                                                <p><b>Description:</b> {{ post.post_description }}</p>
-                                            </div>
-                                            <!-- --------------------------------- -->
-                                            <!--          YF - Post Status         -->
-                                            <!-- --------------------------------- -->
-                                            <div class="post-status status-{{ post.post_status }}">
-                                                <div id="status_btn_container" class="popup-status">
-                                                    {% if request.user == post.post_user %}                                                        
-                                                        <button class="status_btn popup-status-{{ post.post_status }}" type="button" 
-                                                                onclick="triggerStatusChange(event, '{{ post.id }}', '{{ post.post_status }}')">
-                                                            <b>{{ post.get_post_status_display }}</b>
-                                                        </button>
-                                                    {% else %}
-                                                        <span class="status_text"><b>{{ post.get_post_status_display }}</b></span>
-                                                    {% endif %}
+                                                        {% if post.images.count > 1 %}
+                                                            <button class="next-btn" id="next_btn_{{ post.id }}" type="button" 
+                                                                    onclick="changeCardImage(event, '{{ post.id }}', 1)">
+                                                                    >
+                                                            </button>
+                                                        {% endif %}
+                                                    </div>
                                                 </div>
 
-                                                {% if request.user == post.post_user %}                                                    
-                                                    <form id="status_form_{{ post.id }}" method="POST" action="{% url 'update_post_status' post.id %}">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                                    </form>
+                                                <!-- ================================= -->
+                                                <!--           Date Time               -->
+                                                <!-- ================================= -->
+                                                <p> <b>Date Time:</b> {{ post.post_datetime }} </p>
+
+                                                <!-- ================================= -->
+                                                <!--            Category               -->
+                                                <!-- ================================= -->
+                                                <p> <b>Item Category:</b> {{ post.get_post_itemcategory_display }} </p>
+
+                                                <!-- ================================= -->
+                                                <!--     Location (Check Unknown)      -->
+                                                <!-- ================================= -->
+                                                {% if post.post_location %}
+                                                    <p> <b>Location:</b> {{ post.post_location.location_name }}</p>
+                                                {% elif post.post_type == "lost" %}
+                                                    <p> <b>Location:</b> Unknown Lost Location</p>
                                                 {% endif %}
+
+                                                <div class="post-description-display">
+                                                    <p><b>Description:</b> <br>{{ post.post_description }}</p>
+                                                </div>
+                                                <!-- --------------------------------- -->
+                                                <!--          YF - Post Status         -->
+                                                <!-- --------------------------------- -->
+                                                <div class="post-status status-{{ post.post_status }}">
+                                                    <div id="status_btn_container" class="popup-status">
+                                                        {% if request.user == post.post_user %}                                                        
+                                                            <button class="status_btn popup-status-{{ post.post_status }}" type="button" 
+                                                                    onclick="triggerStatusChange(event, '{{ post.id }}', '{{ post.post_status }}')">
+                                                                <b>{{ post.get_post_status_display }}</b>
+                                                            </button>
+                                                        {% else %}
+                                                            <span class="status_text"><b>{{ post.get_post_status_display }}</b></span>
+                                                        {% endif %}
+                                                    </div>
+
+                                                    {% if request.user == post.post_user %}                                                    
+                                                        <form id="status_form_{{ post.id }}" method="POST" action="{% url 'update_post_status' post.id %}">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                        </form>
+                                                    {% endif %}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        {% empty %}
-                            <p>No posts</p>
-                        {% endfor %}
-
-                        <div class="pagination">
-                            {% if all_posts.has_previous %}
-                                <a href="?page=1&tab=all" class="pagearrow"> << </a>
-                                <a href="?page={{ all_posts.previous_page_number }}&tab=all" class="pagearrow"> < </a>
-                            {% else %}
-                                <span class="disabled"> << </span>
-                                <span class="disabled"> < </span>
-                            {% endif %}
-
-                            {% for num in all_posts.paginator.page_range %}
-                                {% if all_posts.number <= 2 %}
-                                    {% if num <= 3 %}
-                                        {% if num == all_posts.number %}
-                                            <span class="current">{{ num }}</span>
-                                        {% else %}
-                                            <a href="?page={{ num }}&tab=all" class="pagenum">{{ num }}</a>
-                                        {% endif %}
-                                    {% endif %}
-                                {% elif all_posts.number >= all_posts.paginator.num_pages|add:"-1" %}
-                                    {% if num >= all_posts.paginator.num_pages|add:"-2" %}
-                                        {% if num == all_posts.number %}
-                                            <span class="current">{{ num }}</span>
-                                        {% else %}
-                                            <a href="?page={{ num }}&tab=all" class="pagenum">{{ num }}</a>
-                                        {% endif %}
-                                    {% endif %}
-                                {% else %}
-                                    {% if num >= all_posts.number|add:"-1" and num <= all_posts.number|add:"1" %}
-                                        {% if num == all_posts.number %}
-                                            <span class="current">{{ num }}</span>
-                                        {% else %}
-                                            <a href="?page={{ num }}&tab=all" class="pagenum">{{ num }}</a>
-                                        {% endif %}
-                                    {% endif %}
-                                {% endif %}
+                            {% empty %}
+                                <p>No posts</p>
                             {% endfor %}
 
-                            {% if all_posts.has_next %}
-                                <a href="?page={{ all_posts.next_page_number }}&tab=all" class="pagearrow"> > </a>
-                                <a href="?page={{ all_posts.paginator.num_pages }}&tab=all" class="pagearrow"> >> </a>
-                            {% else %}
-                                <span class="disabled"> > </span>
-                                <span class="disabled"> >> </span>
-                            {% endif %}
+                            <div class="pagination">
+
+                                <!-- FIRST / PREV -->
+                                {% if all_posts.has_previous %}
+                                    <a class="pagearrow"
+                                    href="?all_page=1&tab=all
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                        <<
+                                    </a>
+
+                                    <a class="pagearrow"
+                                    href="?all_page={{ all_posts.previous_page_number }}&tab=all
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                        <
+                                    </a>
+                                {% else %}
+                                    <span class="disabled"><<</span>
+                                    <span class="disabled"><</span>
+                                {% endif %}
+
+
+                                <!-- PAGE NUMBERS -->
+                                {% for num in all_posts.paginator.page_range %}
+
+                                    {% if all_posts.number <= 2 %}
+                                        {% if num <= 3 %}
+
+                                            {% if num == all_posts.number %}
+                                                <span class="current">{{ num }}</span>
+                                            {% else %}
+                                                <a class="pagenum"
+                                                href="?all_page={{ num }}&tab=all
+                                                {% if query %}&q={{ query }}{% endif %}
+                                                {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                                {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                                {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                                {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                                    {{ num }}
+                                                </a>
+                                            {% endif %}
+
+                                        {% endif %}
+
+                                    {% elif all_posts.number >= all_posts.paginator.num_pages|add:"-1" %}
+
+                                        {% if num >= all_posts.paginator.num_pages|add:"-2" %}
+
+                                            {% if num == all_posts.number %}
+                                                <span class="current">{{ num }}</span>
+                                            {% else %}
+                                                <a class="pagenum"
+                                                href="?all_page={{ num }}&tab=all
+                                                {% if query %}&q={{ query }}{% endif %}
+                                                {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                                {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                                {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                                {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                                    {{ num }}
+                                                </a>
+                                            {% endif %}
+
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        {% if num >= all_posts.number|add:"-1" and num <= all_posts.number|add:"1" %}
+
+                                            {% if num == all_posts.number %}
+                                                <span class="current">{{ num }}</span>
+                                            {% else %}
+                                                <a class="pagenum"
+                                                href="?all_page={{ num }}&tab=all
+                                                {% if query %}&q={{ query }}{% endif %}
+                                                {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                                {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                                {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                                {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                                    {{ num }}
+                                                </a>
+                                            {% endif %}
+
+                                        {% endif %}
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+
+                                <!-- NEXT / LAST -->
+                                {% if all_posts.has_next %}
+                                    <a class="pagearrow"
+                                    href="?all_page={{ all_posts.next_page_number }}&tab=all
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                        >
+                                    </a>
+
+                                    <a class="pagearrow"
+                                    href="?all_page={{ all_posts.paginator.num_pages }}&tab=all
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                        >>
+                                    </a>
+                                {% else %}
+                                    <span class="disabled">></span>
+                                    <span class="disabled">>></span>
+                                {% endif %}
+
+                            </div>
                         </div>
-                    </div>
 
-                    <div id="lost-posts" class = "post-list">
-                        <h4>LOST POST</h4>
-                        {% for post in lost_posts %}
+                        <div id="lost-posts" class = "post-list">
+                            <h4>LOST POST</h4>
+                            {% for post in lost_posts %}
 
-                            <!-- Open popup modal after clicked -->
-                            <!-- Store username into HTML attribute, so JS can read it-->
-                            <div class="post">
-                                <div class = "post-box">
+                                <!-- Open popup modal after clicked -->
+                                <!-- Store username into HTML attribute, so JS can read it-->
+                                <div class="post">
+                                    <div class = "post-box">
 
-                                    <!-- ------------------------------ -->
-                                    <!--     YF - Post Small View       -->
-                                    <!-- ------------------------------ -->
-                                    <div class = "post-view">
-                                        <div class = "post-header">
-                                            
-                                            <!-- --------------------------------- -->
-                                            <!--           Post Navigation         -->
-                                            <!-- --------------------------------- -->
-                                            <!-- (differ own post / other user post to show nav) -->
-                                            <div class = "post-nav" onclick="event.stopPropagation()">
-                                                <div class = "post-nav-dropdown">
-                                                    <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">⋮</button>
-                                                    <div class="post-nav-menu">
+                                        <!-- ------------------------------ -->
+                                        <!--     YF - Post Small View       -->
+                                        <!-- ------------------------------ -->
+                                        <div class = "post-view">
+                                            <div class = "post-header">
+                                                
+                                                <!-- --------------------------------- -->
+                                                <!--           Post Navigation         -->
+                                                <!-- --------------------------------- -->
+                                                <!-- (differ own post / other user post to show nav) -->
+                                                <div class = "post-nav" onclick="event.stopPropagation()">
+                                                    <div class = "post-nav-dropdown">
+                                                        <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">⋮</button>
+                                                        <div class="post-nav-menu">
 
-                                                        <!-- user themselves-->
-                                                        {% if request.user == post.post_user %}
+                                                            <!-- user themselves-->
+                                                            {% if request.user == post.post_user %}
 
-                                                            <div class = "btn">
-                                                                <!-- Edit Post Butonn -->
-                                                                <a href="{% url 'editPost' post.id %}?next={{ request.get_full_path|urlencode }}">
-                                                                    Edit Post
-                                                                </a>
-                                                            </div>
-                                                            
-                                                            <div class = "btn">
-                                                                <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
-                                                                <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
-                                                                    {% csrf_token %}
+                                                                <div class = "btn">
+                                                                    <!-- Edit Post Butonn -->
+                                                                    <a href="{% url 'editPost' post.id %}?next={{ request.get_full_path|urlencode }}">
+                                                                        Edit Post
+                                                                    </a>
+                                                                </div>
+                                                                
+                                                                <div class = "btn">
+                                                                    <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
+                                                                    <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
+                                                                        {% csrf_token %}
 
-                                                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                                                    
-                                                                    <button type="submit">
-                                                                        Delete Post
-                                                                    </button>
-                                                                </form>
-                                                            </div>
+                                                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                                        
+                                                                        <button type="submit">
+                                                                            Delete Post
+                                                                        </button>
+                                                                    </form>
+                                                                </div>
 
-                                                        <!-- Other Users -->
-                                                        {%else %}
-                                                            <div class = "btn">
-                                                                <!-- ty Report Post Button -->
-                                                                <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
-                                                                    Report
-                                                                </a>
-                                                            </div>
-                                                        {% endif %}
+                                                            <!-- Other Users -->
+                                                            {%else %}
+                                                                <div class = "btn">
+                                                                    <!-- ty Report Post Button -->
+                                                                    <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                                                                        Report
+                                                                    </a>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <!-- ------------------------------ -->
-                                        <!--          Post Details          -->
-                                        <!-- ------------------------------ -->
-                                        <div class = "post-info">
+                                            <!-- ------------------------------ -->
+                                            <!--          Post Details          -->
+                                            <!-- ------------------------------ -->
+                                            <div class = "post-info">
 
-                                            <!-- --------------------------------- -->
-                                            <!--      Post Image (Check Multi)     -->
-                                            <!-- --------------------------------- -->
-                                            <div class="image-wrapper">
-                                                <div class="img-container">
-                                                    {% if post.images.count > 1 %}
-                                                        <button class="prev-btn" id="prev_btn_{{ post.id }}" disabled type="button" 
-                                                                onclick="changeCardImage(event, '{{ post.id }}', -1)">
-                                                                <
-                                                        </button>
-                                                    {% endif %}
+                                                <!-- --------------------------------- -->
+                                                <!--      Post Image (Check Multi)     -->
+                                                <!-- --------------------------------- -->
+                                                <div class="image-wrapper">
+                                                    <div class="img-container">
+                                                        {% if post.images.count > 1 %}
+                                                            <button class="prev-btn" id="prev_btn_{{ post.id }}" disabled type="button" 
+                                                                    onclick="changeCardImage(event, '{{ post.id }}', -1)">
+                                                                    <
+                                                            </button>
+                                                        {% endif %}
 
-                                                    <img id="post_img_{{ post.id }}" 
-                                                        src="{% if post.cover_image %}{{ post.cover_image.image.url }}{% endif %}" 
-                                                        alt="Post Image" 
-                                                        class="post-image"
-                                                        data-current-index="0"
-                                                        data-images="{% for img in post.images.all %}{{ img.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
+                                                        <img id="post_img_{{ post.id }}" 
+                                                            src="{% if post.cover_image %}{{ post.cover_image.image.url }}{% endif %}" 
+                                                            alt="Post Image" 
+                                                            class="post-image"
+                                                            data-current-index="0"
+                                                            data-images="{% for img in post.images.all %}{{ img.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
 
-                                                    {% if post.images.count > 1 %}
-                                                        <button class="next-btn" id="next_btn_{{ post.id }}" type="button" 
-                                                                onclick="changeCardImage(event, '{{ post.id }}', 1)">
-                                                                >
-                                                        </button>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-
-                                            <!-- --------------------------------- -->
-                                            <!--           Date Time               -->
-                                            <!-- --------------------------------- -->
-                                            <p> <b>Date Time:</b> {{ post.post_datetime }} </p>
-
-                                            <!-- --------------------------------- -->
-                                            <!--            Category               -->
-                                            <!-- --------------------------------- -->
-                                            <p> <b>Item Category:</b> {{ post.get_post_itemcategory_display }} </p>
-
-                                            <!-- --------------------------------- -->
-                                            <!--     Location (Check Unknown)      -->
-                                            <!-- --------------------------------- -->
-                                            {% if post.post_location %}
-                                                <p> <b>Location:</b> {{ post.post_location.location_name }}</p>
-                                            {% elif post.post_type == "lost" %}
-                                                <p> <b>Location:</b> Unknown Lost Location</p>
-                                            {% endif %}
-
-                                            <div class="post-description-display">
-                                                <p><b>Description:</b> {{ post.post_description }}</p>
-                                            </div>
-
-                                            <!-- --------------------------------- -->
-                                            <!--   YF - Post Status yt changed     -->
-                                            <!-- --------------------------------- -->
-                                            <div class="post-status status-{{ post.post_status }}">
-                                                <div id="status_btn_container" class="popup-status">
-                                                    {% if request.user == post.post_user %}                                                        
-                                                        <button class="status_btn popup-status-{{ post.post_status }}" type="button" 
-                                                                onclick="triggerStatusChange(event, '{{ post.id }}', '{{ post.post_status }}')">
-                                                            <b>{{ post.get_post_status_display }}</b>
-                                                        </button>
-                                                    {% else %}
-                                                        <span class="status_text"><b>{{ post.get_post_status_display }}</b></span>
-                                                    {% endif %}
+                                                        {% if post.images.count > 1 %}
+                                                            <button class="next-btn" id="next_btn_{{ post.id }}" type="button" 
+                                                                    onclick="changeCardImage(event, '{{ post.id }}', 1)">
+                                                                    >
+                                                            </button>
+                                                        {% endif %}
+                                                    </div>
                                                 </div>
 
-                                                {% if request.user == post.post_user %}                                                    
-                                                    <form id="status_form_{{ post.id }}" method="POST" action="{% url 'update_post_status' post.id %}">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                                    </form>
+                                                <!-- --------------------------------- -->
+                                                <!--           Date Time               -->
+                                                <!-- --------------------------------- -->
+                                                <p> <b>Date Time:</b> {{ post.post_datetime }} </p>
+
+                                                <!-- --------------------------------- -->
+                                                <!--            Category               -->
+                                                <!-- --------------------------------- -->
+                                                <p> <b>Item Category:</b> {{ post.get_post_itemcategory_display }} </p>
+
+                                                <!-- --------------------------------- -->
+                                                <!--     Location (Check Unknown)      -->
+                                                <!-- --------------------------------- -->
+                                                {% if post.post_location %}
+                                                    <p> <b>Location:</b> {{ post.post_location.location_name }}</p>
+                                                {% elif post.post_type == "lost" %}
+                                                    <p> <b>Location:</b> Unknown Lost Location</p>
                                                 {% endif %}
+
+                                                <div class="post-description-display">
+                                                    <p><b>Description:</b> <br>{{ post.post_description }}</p>
+                                                </div>
+
+                                                <!-- --------------------------------- -->
+                                                <!--   YF - Post Status yt changed     -->
+                                                <!-- --------------------------------- -->
+                                                <div class="post-status status-{{ post.post_status }}">
+                                                    <div id="status_btn_container" class="popup-status">
+                                                        {% if request.user == post.post_user %}                                                        
+                                                            <button class="status_btn popup-status-{{ post.post_status }}" type="button" 
+                                                                    onclick="triggerStatusChange(event, '{{ post.id }}', '{{ post.post_status }}')">
+                                                                <b>{{ post.get_post_status_display }}</b>
+                                                            </button>
+                                                        {% else %}
+                                                            <span class="status_text"><b>{{ post.get_post_status_display }}</b></span>
+                                                        {% endif %}
+                                                    </div>
+
+                                                    {% if request.user == post.post_user %}                                                    
+                                                        <form id="status_form_{{ post.id }}" method="POST" action="{% url 'update_post_status' post.id %}">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                        </form>
+                                                    {% endif %}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        {% empty %}
-                            <p>No lost posts</p>
-                        {% endfor %}
-
-                        <div class="pagination">
-                            {% if lost_posts.has_previous %}
-                                <a href="?page=1&tab=lost" class="pagearrow"> << </a>
-                                <a href="?page={{ lost_posts.previous_page_number }}&tab=lost" class="pagearrow"> < </a>
-                            {% else %}
-                                <span class="disabled"> << </span>
-                                <span class="disabled"> < </span>
-                            {% endif %}
-
-                            {% for num in lost_posts.paginator.page_range %}
-                                {% if lost_posts.number <= 2 %}
-                                    {% if num <= 3 %}
-                                        {% if num == lost_posts.number %}
-                                            <span class="current">{{ num }}</span>
-                                        {% else %}
-                                            <a href="?page={{ num }}&tab=lost" class="pagenum">{{ num }}</a>
-                                        {% endif %}
-                                    {% endif %}
-                                {% elif lost_posts.number >= lost_posts.paginator.num_pages|add:"-1" %}
-                                    {% if num >= lost_posts.paginator.num_pages|add:"-2" %}
-                                        {% if num == lost_posts.number %}
-                                            <span class="current">{{ num }}</span>
-                                        {% else %}
-                                            <a href="?page={{ num }}&tab=lost" class="pagenum">{{ num }}</a>
-                                        {% endif %}
-                                    {% endif %}
-                                {% else %}
-                                    {% if num >= lost_posts.number|add:"-1" and num <= lost_posts.number|add:"1" %}
-                                        {% if num == lost_posts.number %}
-                                            <span class="current">{{ num }}</span>
-                                        {% else %}
-                                            <a href="?page={{ num }}&tab=lost" class="pagenum">{{ num }}</a>
-                                        {% endif %}
-                                    {% endif %}
-                                {% endif %}
+                            {% empty %}
+                                <p>No lost posts</p>
                             {% endfor %}
 
-                            {% if lost_posts.has_next %}
-                                <a href="?page={{ lost_posts.next_page_number }}&tab=lost" class="pagearrow"> > </a>
-                                <a href="?page={{ lost_posts.paginator.num_pages }}&tab=lost" class="pagearrow"> >> </a>
-                            {% else %}
-                                <span class="disabled"> > </span>
-                                <span class="disabled"> >> </span>
-                            {% endif %}
+                            <div class="pagination">
+
+                                <!-- FIRST / PREV -->
+                                {% if lost_posts.has_previous %}
+                                    <a class="pagearrow"
+                                    href="?lost_page=1&tab=lost
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                        <<
+                                    </a>
+
+                                    <a class="pagearrow"
+                                    href="?lost_page={{ lost_posts.previous_page_number }}&tab=lost
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                        <
+                                    </a>
+                                {% else %}
+                                    <span class="disabled"><<</span>
+                                    <span class="disabled"><</span>
+                                {% endif %}
+
+
+                                <!-- PAGE NUMBERS -->
+                                {% for num in lost_posts.paginator.page_range %}
+
+                                    {% if lost_posts.number <= 2 %}
+                                        {% if num <= 3 %}
+
+                                            {% if num == lost_posts.number %}
+                                                <span class="current">{{ num }}</span>
+                                            {% else %}
+                                                <a class="pagenum"
+                                                href="?lost_page={{ num }}&tab=lost
+                                                {% if query %}&q={{ query }}{% endif %}
+                                                {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                                {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                                {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                                {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                                    {{ num }}
+                                                </a>
+                                            {% endif %}
+
+                                        {% endif %}
+
+                                    {% elif lost_posts.number >= lost_posts.paginator.num_pages|add:"-1" %}
+
+                                        {% if num >= lost_posts.paginator.num_pages|add:"-2" %}
+
+                                            {% if num == lost_posts.number %}
+                                                <span class="current">{{ num }}</span>
+                                            {% else %}
+                                                <a class="pagenum"
+                                                href="?lost_page={{ num }}&tab=lost
+                                                {% if query %}&q={{ query }}{% endif %}
+                                                {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                                {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                                {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                                {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                                    {{ num }}
+                                                </a>
+                                            {% endif %}
+
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        {% if num >= lost_posts.number|add:"-1" and num <= lost_posts.number|add:"1" %}
+
+                                            {% if num == lost_posts.number %}
+                                                <span class="current">{{ num }}</span>
+                                            {% else %}
+                                                <a class="pagenum"
+                                                href="?lost_page={{ num }}&tab=lost
+                                                {% if query %}&q={{ query }}{% endif %}
+                                                {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                                {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                                {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                                {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                                    {{ num }}
+                                                </a>
+                                            {% endif %}
+
+                                        {% endif %}
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+
+                                <!-- NEXT / LAST -->
+                                {% if lost_posts.has_next %}
+                                    <a class="pagearrow"
+                                    href="?lost_page={{ lost_posts.next_page_number }}&tab=lost
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                        >
+                                    </a>
+
+                                    <a class="pagearrow"
+                                    href="?lost_page={{ lost_posts.paginator.num_pages }}&tab=lost
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                        >>
+                                    </a>
+                                {% else %}
+                                    <span class="disabled">></span>
+                                    <span class="disabled">>></span>
+                                {% endif %}
+
+                            </div>
                         </div>
-                    </div>
 
-                    <div id="found-posts" class = "post-list">
-                        <h4>FOUND POST</h4>
-                        {% for post in found_posts %}
+                        <div id="found-posts" class = "post-list">
+                            <h4>FOUND POST</h4>
+                            {% for post in found_posts %}
 
-                            <!-- Open popup modal after clicked -->
-                            <!-- Store username into HTML attribute, so JS can read it-->
-                            <div class="post">
-                                <div class = "post-box">
+                                <!-- Open popup modal after clicked -->
+                                <!-- Store username into HTML attribute, so JS can read it-->
+                                <div class="post">
+                                    <div class = "post-box">
 
-                                    <!-- ------------------------------ -->
-                                    <!--     YF - Post Small View       -->
-                                    <!-- ------------------------------ -->
-                                    <div class = "post-view">
-                                        <div class = "post-header">
-                                            
-                                            <!-- --------------------------------- -->
-                                            <!--           Post Navigation         -->
-                                            <!-- --------------------------------- -->
-                                            <!-- (differ own post / other user post to show nav) -->
-                                            <div class = "post-nav" onclick="event.stopPropagation()">
-                                                <div class = "post-nav-dropdown">
-                                                    <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">⋮</button>
-                                                    <div class="post-nav-menu">
+                                        <!-- ------------------------------ -->
+                                        <!--     YF - Post Small View       -->
+                                        <!-- ------------------------------ -->
+                                        <div class = "post-view">
+                                            <div class = "post-header">
+                                                
+                                                <!-- --------------------------------- -->
+                                                <!--           Post Navigation         -->
+                                                <!-- --------------------------------- -->
+                                                <!-- (differ own post / other user post to show nav) -->
+                                                <div class = "post-nav" onclick="event.stopPropagation()">
+                                                    <div class = "post-nav-dropdown">
+                                                        <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">⋮</button>
+                                                        <div class="post-nav-menu">
 
-                                                        <!-- user themselves-->
-                                                        {% if request.user == post.post_user %}
+                                                            <!-- user themselves-->
+                                                            {% if request.user == post.post_user %}
 
-                                                            <div class = "btn">
-                                                                <!-- Edit Post Butonn -->
-                                                                <a href="{% url 'editPost' post.id %}?next={{ request.get_full_path|urlencode }}">
-                                                                    Edit Post
-                                                                </a>
-                                                            </div>
-                                                            
-                                                            <div class = "btn">
-                                                                <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
-                                                                <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
-                                                                    {% csrf_token %}
+                                                                <div class = "btn">
+                                                                    <!-- Edit Post Butonn -->
+                                                                    <a href="{% url 'editPost' post.id %}?next={{ request.get_full_path|urlencode }}">
+                                                                        Edit Post
+                                                                    </a>
+                                                                </div>
+                                                                
+                                                                <div class = "btn">
+                                                                    <!-- Delete Post / onsubmit = run confirmation popup from mainpage.js -->
+                                                                    <form method = "POST" action = "{% url 'deletePost' post.id %}" onsubmit = "confirmDelete(event, this)">
+                                                                        {% csrf_token %}
 
-                                                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                                                    
-                                                                    <button type="submit">
-                                                                        Delete Post
-                                                                    </button>
-                                                                </form>
-                                                            </div>
+                                                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                                        
+                                                                        <button type="submit">
+                                                                            Delete Post
+                                                                        </button>
+                                                                    </form>
+                                                                </div>
 
-                                                        <!-- Other Users -->
-                                                        {%else %}
-                                                            <div class = "btn">
-                                                                <!-- ty Report Post Button -->
-                                                                <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
-                                                                    Report
-                                                                </a>
-                                                            </div>
-                                                        {% endif %}
+                                                            <!-- Other Users -->
+                                                            {%else %}
+                                                                <div class = "btn">
+                                                                    <!-- ty Report Post Button -->
+                                                                    <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                                                                        Report
+                                                                    </a>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <!-- ------------------------------ -->
-                                        <!--          Post Details          -->
-                                        <!-- ------------------------------ -->
-                                        <div class = "post-info">
+                                            <!-- ------------------------------ -->
+                                            <!--          Post Details          -->
+                                            <!-- ------------------------------ -->
+                                            <div class = "post-info">
 
-                                            <!-- --------------------------------- -->
-                                            <!--      Post Image (Check Multi)     -->
-                                            <!-- --------------------------------- -->
-                                            <div class="image-wrapper">
-                                                <div class="img-container">
-                                                    {% if post.images.count > 1 %}
-                                                        <button class="prev-btn" id="prev_btn_{{ post.id }}" disabled type="button" 
-                                                                onclick="changeCardImage(event, '{{ post.id }}', -1)">
-                                                                <
-                                                        </button>
-                                                    {% endif %}
+                                                <!-- --------------------------------- -->
+                                                <!--      Post Image (Check Multi)     -->
+                                                <!-- --------------------------------- -->
+                                                <div class="image-wrapper">
+                                                    <div class="img-container">
+                                                        {% if post.images.count > 1 %}
+                                                            <button class="prev-btn" id="prev_btn_{{ post.id }}" disabled type="button" 
+                                                                    onclick="changeCardImage(event, '{{ post.id }}', -1)">
+                                                                    <
+                                                            </button>
+                                                        {% endif %}
 
-                                                    <img id="post_img_{{ post.id }}" 
-                                                        src="{% if post.cover_image %}{{ post.cover_image.image.url }}{% endif %}" 
-                                                        alt="Post Image" 
-                                                        class="post-image"
-                                                        data-current-index="0"
-                                                        data-images="{% for img in post.images.all %}{{ img.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
+                                                        <img id="post_img_{{ post.id }}" 
+                                                            src="{% if post.cover_image %}{{ post.cover_image.image.url }}{% endif %}" 
+                                                            alt="Post Image" 
+                                                            class="post-image"
+                                                            data-current-index="0"
+                                                            data-images="{% for img in post.images.all %}{{ img.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
 
-                                                    {% if post.images.count > 1 %}
-                                                        <button class="next-btn" id="next_btn_{{ post.id }}" type="button" 
-                                                                onclick="changeCardImage(event, '{{ post.id }}', 1)">
-                                                                >
-                                                        </button>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-
-                                            <!-- --------------------------------- -->
-                                            <!--           Date Time               -->
-                                            <!-- --------------------------------- -->
-                                            <p> <b>Date Time:</b> {{ post.post_datetime }} </p>
-
-                                            <!-- --------------------------------- -->
-                                            <!--            Category               -->
-                                            <!-- --------------------------------- -->
-                                            <p> <b>Item Category:</b> {{ post.get_post_itemcategory_display }} </p>
-
-                                            <!-- --------------------------------- -->
-                                            <!--     Location (Check Unknown)      -->
-                                            <!-- --------------------------------- -->
-                                            {% if post.post_location %}
-                                                <p> <b>Location:</b> {{ post.post_location.location_name }}</p>
-                                            {% elif post.post_type == "lost" %}
-                                                <p> <b>Location:</b> Unknown Lost Location</p>
-                                            {% endif %}
-
-                                            <!-- --------------------------------- -->
-                                            <!--          YF - Post Status         -->
-                                            <!-- --------------------------------- -->
-                                            <div class="post-status status-{{ post.post_status }}">
-                                                <div id="status_btn_container" class="popup-status">
-                                                    {% if request.user == post.post_user %}                                                        
-                                                        <button class="status_btn popup-status-{{ post.post_status }}" type="button" 
-                                                                onclick="triggerStatusChange(event, '{{ post.id }}', '{{ post.post_status }}')">
-                                                            <b>{{ post.get_post_status_display }}</b>
-                                                        </button>
-                                                    {% else %}
-                                                        <span class="status_text"><b>{{ post.get_post_status_display }}</b></span>
-                                                    {% endif %}
+                                                        {% if post.images.count > 1 %}
+                                                            <button class="next-btn" id="next_btn_{{ post.id }}" type="button" 
+                                                                    onclick="changeCardImage(event, '{{ post.id }}', 1)">
+                                                                    >
+                                                            </button>
+                                                        {% endif %}
+                                                    </div>
                                                 </div>
 
-                                                {% if request.user == post.post_user %}                                                    
-                                                    <form id="status_form_{{ post.id }}" method="POST" action="{% url 'update_post_status' post.id %}">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                                    </form>
+                                                <!-- --------------------------------- -->
+                                                <!--           Date Time               -->
+                                                <!-- --------------------------------- -->
+                                                <p> <b>Date Time:</b> {{ post.post_datetime }} </p>
+
+                                                <!-- --------------------------------- -->
+                                                <!--            Category               -->
+                                                <!-- --------------------------------- -->
+                                                <p> <b>Item Category:</b> {{ post.get_post_itemcategory_display }} </p>
+
+                                                <!-- --------------------------------- -->
+                                                <!--     Location (Check Unknown)      -->
+                                                <!-- --------------------------------- -->
+                                                {% if post.post_location %}
+                                                    <p> <b>Location:</b> {{ post.post_location.location_name }}</p>
+                                                {% elif post.post_type == "lost" %}
+                                                    <p> <b>Location:</b> Unknown Lost Location</p>
                                                 {% endif %}
+
+                                                <div class="post-description-display">
+                                                    <p><b>Description:</b> <br>{{ post.post_description }}</p>
+                                                </div>
+
+                                                <!-- --------------------------------- -->
+                                                <!--          YF - Post Status         -->
+                                                <!-- --------------------------------- -->
+                                                <div class="post-status status-{{ post.post_status }}">
+                                                    <div id="status_btn_container" class="popup-status">
+                                                        {% if request.user == post.post_user %}                                                        
+                                                            <button class="status_btn popup-status-{{ post.post_status }}"
+                                                                    onclick="triggerStatusChange(event, '{{ post.id }}', '{{ post.post_status }}')">
+                                                                <b>{{ post.get_post_status_display }}</b>
+                                                            </button>
+                                                        {% else %}
+                                                            <span class="status_text"><b>{{ post.get_post_status_display }}</b></span>
+                                                        {% endif %}
+                                                    </div>
+
+                                                    {% if request.user == post.post_user %}                                                    
+                                                        <form id="status_form_{{ post.id }}" method="POST" action="{% url 'update_post_status' post.id %}">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                                        </form>
+                                                    {% endif %}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        {% empty %}
-                            <div class = "no-post">
-                                <p> No posts available. </p>
-                            </div>
-                        {% endfor %}
-
-                        <div class="pagination">
-                            {% if found_posts.has_previous %}
-                                <a href="?page=1&tab=found" class="pagearrow"> << </a>
-                                <a href="?page={{ found_posts.previous_page_number }}&tab=found" class="pagearrow"> < </a>
-                            {% else %}
-                                <span class="disabled"> << </span>
-                                <span class="disabled"> < </span>
-                            {% endif %}
-
-                            {% for num in found_posts.paginator.page_range %}
-                                {% if found_posts.number <= 2 %}
-                                    {% if num <= 3 %}
-                                        {% if num == found_posts.number %}
-                                            <span class="current">{{ num }}</span>
-                                        {% else %}
-                                            <a href="?page={{ num }}&tab=found" class="pagenum">{{ num }}</a>
-                                        {% endif %}
-                                    {% endif %}
-                                {% elif found_posts.number >= found_posts.paginator.num_pages|add:"-1" %}
-                                    {% if num >= found_posts.paginator.num_pages|add:"-2" %}
-                                        {% if num == found_posts.number %}
-                                            <span class="current">{{ num }}</span>
-                                        {% else %}
-                                            <a href="?page={{ num }}&tab=found" class="pagenum">{{ num }}</a>
-                                        {% endif %}
-                                    {% endif %}
-                                {% else %}
-                                    {% if num >= found_posts.number|add:"-1" and num <= found_posts.number|add:"1" %}
-                                        {% if num == found_posts.number %}
-                                            <span class="current">{{ num }}</span>
-                                        {% else %}
-                                            <a href="?page={{ num }}&tab=found" class="pagenum">{{ num }}</a>
-                                        {% endif %}
-                                    {% endif %}
-                                {% endif %}
+                            {% empty %}
+                                <div class = "no-post">
+                                    <p> No posts available. </p>
+                                </div>
                             {% endfor %}
 
-                            {% if found_posts.has_next %}
-                                <a href="?page={{ found_posts.next_page_number }}&tab=found" class="pagearrow"> > </a>
-                                <a href="?page={{ found_posts.paginator.num_pages }}&tab=found" class="pagearrow"> >> </a>
-                            {% else %}
-                                <span class="disabled"> > </span>
-                                <span class="disabled"> >> </span>
-                            {% endif %}
+                            <div class="pagination">
+                            
+                                <!-- FIRST / PREV -->
+                                {% if found_posts.has_previous %}
+                                    <a class="pagearrow"
+                                    href="?found_page=1&tab=found
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                        <<
+                                    </a>
+
+                                    <a class="pagearrow"
+                                    href="?found_page={{ found_posts.previous_page_number }}&tab=found
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                        <
+                                    </a>
+                                {% else %}
+                                    <span class="disabled"><<</span>
+                                    <span class="disabled"><</span>
+                                {% endif %}
+
+
+                                <!-- PAGE NUMBERS -->
+                                {% for num in found_posts.paginator.page_range %}
+
+                                    {% if found_posts.number <= 2 %}
+                                        {% if num <= 3 %}
+
+                                            {% if num == found_posts.number %}
+                                                <span class="current">{{ num }}</span>
+                                            {% else %}
+                                                <a class="pagenum"
+                                                href="?found_page={{ num }}&tab=found
+                                                {% if query %}&q={{ query }}{% endif %}
+                                                {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                                {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                                {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                                {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                                    {{ num }}
+                                                </a>
+                                            {% endif %}
+
+                                        {% endif %}
+
+                                    {% elif found_posts.number >= found_posts.paginator.num_pages|add:"-1" %}
+
+                                        {% if num >= found_posts.paginator.num_pages|add:"-2" %}
+
+                                            {% if num == found_posts.number %}
+                                                <span class="current">{{ num }}</span>
+                                            {% else %}
+                                                <a class="pagenum"
+                                                href="?found_page={{ num }}&tab=found
+                                                {% if query %}&q={{ query }}{% endif %}
+                                                {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                                {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                                {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                                {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                                    {{ num }}
+                                                </a>
+                                            {% endif %}
+
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        {% if num >= found_posts.number|add:"-1" and num <= found_posts.number|add:"1" %}
+
+                                            {% if num == found_posts.number %}
+                                                <span class="current">{{ num }}</span>
+                                            {% else %}
+                                                <a class="pagenum"
+                                                href="?found_page={{ num }}&tab=found
+                                                {% if query %}&q={{ query }}{% endif %}
+                                                {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                                {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                                {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                                {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                                    {{ num }}
+                                                </a>
+                                            {% endif %}
+
+                                        {% endif %}
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+
+                                <!-- NEXT / LAST -->
+                                {% if found_posts.has_next %}
+                                    <a class="pagearrow"
+                                    href="?found_page={{ found_posts.next_page_number }}&tab=found
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                        >
+                                    </a>
+
+                                    <a class="pagearrow"
+                                    href="?found_page={{ found_posts.paginator.num_pages }}&tab=found
+                                    {% if query %}&q={{ query }}{% endif %}
+                                    {% for c in selected_category %}&category={{ c }}{% endfor %}
+                                    {% for l in selected_location %}&location={{ l }}{% endfor %}
+                                    {% if start_date %}&start_date={{ start_date }}{% endif %}
+                                    {% if end_date %}&end_date={{ end_date }}{% endif %}">
+                                        >>
+                                    </a>
+                                {% else %}
+                                    <span class="disabled">></span>
+                                    <span class="disabled">>></span>
+                                {% endif %}
+
+                            </div>
                         </div>
                     </div>
                 </div>    

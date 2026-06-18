@@ -5,7 +5,7 @@
 
 html,body{
     width: 100%;
-    overflow-x: hidden;
+    overflow: auto;
 }
 
 body{
@@ -37,19 +37,22 @@ body::before{
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .content{
     position: relative;
     max-width: 1600px;
-    margin: 40px auto;
-    padding: 0 50px;
+    min-height: 100vh;
+    height: auto;
+    padding: 0 30px;
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     justify-content: space-between;
     gap: 50px;
+    overflow: visible;
 }
 
 /* ===================================== */
@@ -670,36 +673,44 @@ footer{
     }
 }
 
-div.content .profile-left {
+.profile-left {
     width: clamp(260px, 22vw, 320px);
     flex-shrink: 0;
 
-    position: sticky;
+    position: fixed;
     top: 120px;
+    left: 20px;
+    width: 300px;
 
     display: flex;
     flex-direction: column;
+    align-self: flex-start;
     gap: 20px;
 
     overflow: visible;
-    max-height: none;
+    max-height: calc(100vh - 170px);
+    height: fit-content;
 }
 
-div.content .profile-right {
-    flex-grow: 1;
-    min-width: 0;
-    max-height: calc(100vh - 120px);
+.profile-right {
     flex: 1;
-    overflow-y: auto;
+    min-width: 0;
+    margin-top: 20px;
+    min-height: 100vh;
+
+    margin-left: 300px;
+    overflow: visible;
+
     display: flex;
     flex-direction: column;
 }
 
 .name-row {
     display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: space-between;
     gap: 8px;
+    margin: -10px 0;
 }
 
 .edit-icon{
@@ -708,6 +719,7 @@ div.content .profile-right {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 
     width: 25px;
     height: 25px;
@@ -742,8 +754,8 @@ div.content .profile-right {
     background:
         linear-gradient(
             180deg,
-            rgba(192, 229, 255, 0.65),
-            rgba(57, 71, 85, 0.55)
+            rgba(178, 215, 241, 0.385),
+            rgba(153, 176, 199, 0.55)
         );
 
     backdrop-filter:blur(15px);
@@ -753,9 +765,10 @@ div.content .profile-right {
 }
 
 #avatarImage{
-    width:140px;
-    height:140px;
-
+    width:120px;
+    height:120px;
+    display: flex;
+    justify-content: center;
     object-fit:cover;
 
     border-radius:50%;
@@ -765,34 +778,134 @@ div.content .profile-right {
     box-shadow:
         0 10px 25px rgba(0,0,0,.12);
 
-    margin-bottom:20px;
+    margin-bottom:15px;
 }
 
 #avatarImage:hover {
     transform: scale(1.05);
 }
 
-.profile-info p#nameText{
+.name-section{
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: fit-content;
+    flex: 1;
+    min-width: 0;
+    gap: 8px;
+}
+
+.email-section{
+    position: relative;
+    width: fit-content;
+}
+
+#nameText{
+    max-width: 250px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
     font-family: 'Slackey';
     font-size: 20px;
-    color: #565c6e;
+    color: #5c5c5c;
+    display: block;
+    flex: 1;
+    min-width: 0;
+}
 
-    margin: 0;
+.name-tooltip{
+    position: absolute;
+    top: 55%;
+    left: 0;
 
-    line-height: 1.2;
+    margin-top: 6px;
+
+    background: rgba(250, 252, 255, 0.638);
+    border: 1px solid rgba(200, 210, 225, 0.6);
+    color: #4a4f5a;
+
+    padding: 6px 10px;
+    border-radius: 8px;
+
+    font-family: 'Sansation';
+    font-size: 13px;
+
+    white-space: normal;
+    max-width: 240px;
+    line-height: 1.4;
+    word-break: break-word;
+
+    z-index: 9999;
+
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+
+    transition:
+        opacity 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+        transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    pointer-events: none;
+}
+
+.email-tooltip{
+    position: absolute;
+    top: 75%;
+    left: 0;
+
+    margin-top: 6px;
+
+    background: rgba(250, 252, 255, 0.638);
+    border: 1px solid rgba(200, 210, 225, 0.6);
+    color: #4a4f5a;
+
+    padding: 6px 10px;
+    border-radius: 8px;
+
+    font-family: 'Sansation';
+    font-size: 13px;
+
+    white-space: normal;
+    max-width: 500px;
+    line-height: 1.4;
+    word-break: break-word;
+
+    z-index: 9999;
+
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+
+    transition:
+        opacity 0.22s cubic-bezier(0.2, 0.8, 0.2, 1),
+        transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    pointer-events: none;
+}
+
+.name-section:hover .name-tooltip,
+.email-section:hover .email-tooltip{
+    opacity: 1;
+    transform: translateY(0) scale(1);
 }
 
 .profile-info p {
     font-family: 'Sansation';
-    font-size: 15px;
+    font-size: 14px;
     color: #6a7184;
 }
 
-.profile-info p:last-child{
-    font-size: 13px;
-    color: #8b93a8;
+.profile-email{
+    position: relative;
 
-    margin-top: 6px;
+    display: block;
+    max-width: 250px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    cursor: default;
 }
 
 .profile-card h2 {
@@ -886,24 +999,21 @@ div.content .profile-right {
 #bioText{
     margin:0;
     font-family:'Sansation';
-    font-size:clamp(12px,1vw,14px);
+    font-size:clamp(12px,1vw,13.5px);
     color:#7e8599;
     text-align:left;
     line-height:1.6;
 
-    padding:16px;
-    border-radius:16px;
-
-    background:rgba(255,255,255,.35);
-    border:1px solid rgba(255,255,255,.4);
+    padding:15px;
     word-break: break-word;
     overflow-wrap: break-word;
 }
 
 .bio-section h2{
     margin: 0;
-    font-size: 16px;
+    font-size: 18px;
     color: #565c6e;
+    border-bottom: none;
 }
 
 .bio-section {
@@ -917,10 +1027,11 @@ div.content .profile-right {
     align-items: center;
     justify-content: space-between;
 }
+
 .bio-card {
     border-radius: 16px;
 
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.56);
     border: 1px solid rgba(255, 255, 255, 0.35);
 
     box-shadow:
@@ -935,15 +1046,13 @@ div.content .profile-right {
 
 /* scroll area */
 .bio-scroll {
-    max-height: 140px;
-    overflow-y: auto;
+    max-height: 110px;
+    overflow-y: scroll;
     overflow-x: hidden;
-
-    padding: 14px 16px;
 }
 
 .bio-scroll::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
 }
 
 .bio-scroll::-webkit-scrollbar-track {
@@ -951,12 +1060,19 @@ div.content .profile-right {
 }
 
 .bio-scroll::-webkit-scrollbar-thumb {
-    background: rgba(99, 146, 217, 0.35);
-    border-radius: 10px;
+    background: transparent;
+    border-radius: 999px;
+
+    transition: background .2s ease;
 }
 
-.bio-scroll::-webkit-scrollbar-thumb:hover {
-    background: rgba(99, 146, 217, 0.55);
+.bio-scroll:hover::-webkit-scrollbar-track {
+    background: rgba(126,133,153,.08);
+    border-radius: 999px;
+}
+
+.bio-scroll:hover::-webkit-scrollbar-thumb {
+    background: rgba(126,133,153,.4);
 }
 
 .edit-profile-btn,
@@ -1032,7 +1148,7 @@ div.content .profile-right {
 
 .stat-number {
     font-family: 'Slackey';
-    font-size: clamp(18px, 2vw, 26px);
+    font-size: clamp(16px, 2vw, 24px);
     color: #6392d9;
     text-shadow: 1px 1px 0px white;
 }
@@ -1044,17 +1160,17 @@ div.content .profile-right {
     color: #7e8599;
 }
 
-div.content .profile-right > div:first-child {
+.profile-right > div:first-child {
     display: flex;
     gap: 12px;
-    margin-bottom: 35px;
+    margin-bottom: 20px;
     background: rgba(255, 255, 255, 0.35);
     padding: 8px;
     border-radius: 18px;
     width: fit-content;
 }
 
-div.content .profile-right > div:first-child button {
+.profile-right > div:first-child button {
     background: transparent;
     color: #6a7184;
     font-family: 'Slackey';
@@ -1066,29 +1182,38 @@ div.content .profile-right > div:first-child button {
     transition: all 0.2s ease;
 }
 
-div.content .profile-right > div:first-child button:hover {
+.profile-right > div:first-child button:hover {
     background: rgba(255, 255, 255, 0.6);
     color: #565c6e;
 }
 
-div.content .profile-right > div:first-child button:focus,
-div.content .profile-right > div:first-child button:active {
+.profile-right > div:first-child button:focus,
+.profile-right > div:first-child button:active {
     background: #7e8599;
     color: white;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
 }
 
-div.content .post-list {
+#all-posts, #lost-posts, #found-posts {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    position: relative;
+}
+
+.post-list {
     display: grid;
+    flex: 1;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 50px 20px;
     align-items: start;
     justify-items: center;
     margin: 0;
     width: 100%;
+    margin-bottom: 30px;
 }
 
-div.content .post-list h4 {
+.post-list h4 {
     grid-column: 1 / -1;
     font-family: 'Slackey';
     font-size: 20px;
@@ -1117,7 +1242,7 @@ div.content .post-list h4 {
 
     max-width: 500px;
     width: fit-content;
-    margin: 20px auto;
+    margin-top: auto;
     padding: 5px 20px;
     text-align: center;
 
@@ -1128,7 +1253,6 @@ div.content .post-list h4 {
     box-shadow:
         2px 6px 10px rgba(0, 0, 0, 0.12),
         inset 0 1px 0 rgba(255, 255, 255, 0.4);
-
 }
 
 .pagination:hover{
@@ -1182,13 +1306,19 @@ div.content .post-list h4 {
 .post-description-display {
     margin-top: 10px;
     padding-top: 8px;
-    border-top: 1px dashed #e0e0e0;
+    border-top: 1px dashed #bebbbb;
     text-align: left;
 }
 
+.post-description-display b{
+    color: black;
+    font-size: 15px;
+    font-family: 'Sansation';
+}
+
 .post-description-display p {
-    font-size: 13px;
-    color: #555;
+    font-size: 15px;
+    color: #000000;
     line-height: 1.4;
     margin: 0;
     
@@ -1203,42 +1333,47 @@ div.content .post-list h4 {
     display: flex;
     justify-self: flex-start;
     align-self: flex-start;
-    margin-top: 20px;
-    
+
+    margin-top: -9px;
+
     width: 100px;
-    height: 43px;
+    height: 40px;
+
+    background: transparent;
+    box-shadow: none;
+    border: none;
 }
 
-.popup-status button, 
-.popup-status #status_btn {
-    display: inline-flex;
+/* 只保留 button 作为唯一视觉层 */
+.popup-status button,
+.popup-status .status_text {
+    display: flex;
     justify-content: center;
     align-items: center;
-    
+
     width: 100%;
     height: 100%;
+
     padding: 0;
     margin: 0;
-    
-    border: none; 
+
+    border: none;
     border-radius: 10px;
-    outline: none;
-    background-clip: padding-box;
+
     box-sizing: border-box;
 
     font-family: 'Sansation', sans-serif;
     font-weight: bold;
-    color: black;
     font-size: 15px;
+    color: black;
 
     box-shadow:
         0 4px 12px rgba(0,0,0,0.08),
         inset 0 1px 0 rgba(255,255,255,0.4);
-    
-    transition:
-        transform 0.18s ease,
-        box-shadow 0.18s ease,
-        background-color 0.18s ease;
+
+    background: transparent;
+
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
     cursor: default;
 }
 
@@ -1268,9 +1403,9 @@ div.content .post-list h4 {
     box-shadow: 0 4px 12px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.4) !important;
 }
 
-.popup-status-open { background: rgba(31, 247, 110, 0.279); }
-.popup-status-returned { background: rgba(67, 172, 252, 0.242); }
-.popup-status-claimed { background: rgba(67, 172, 252, 0.242); }
+.popup-status-open { background: rgba(31, 247, 110, 0.375); }
+.popup-status-returned { background: rgba(67, 172, 252, 0.341); }
+.popup-status-claimed { background: rgba(67, 172, 252, 0.341); }
 
 /* ========================= */
 /*       Prev/Next Btns      */

@@ -489,16 +489,14 @@ def profile(request, user_id=None): #zinc add if else
     lost_posts_list = posts.filter(post_type='lost').select_related('cover_image').prefetch_related('images')
     found_posts_list = posts.filter(post_type='found').select_related('cover_image').prefetch_related('images')
 
-    page_number = request.GET.get('page', 1)
+    all_page = request.GET.get('all_page', 1)
+    lost_page = request.GET.get('lost_page', 1)
+    found_page = request.GET.get('found_page', 1)
     PER_PAGE = 6
 
-    all_paginator = Paginator(all_posts_list, PER_PAGE)
-    lost_paginator = Paginator(lost_posts_list, PER_PAGE)
-    found_paginator = Paginator(found_posts_list, PER_PAGE)
-
-    all_posts = all_paginator.get_page(page_number)
-    lost_posts = lost_paginator.get_page(page_number)
-    found_posts = found_paginator.get_page(page_number)
+    all_posts = Paginator(all_posts_list, PER_PAGE).get_page(all_page)
+    lost_posts = Paginator(lost_posts_list, PER_PAGE).get_page(lost_page)
+    found_posts = Paginator(found_posts_list, PER_PAGE).get_page(found_page)
 
     for post in all_posts:
         post.sorted_images = post.images.all().order_by('order')
@@ -589,16 +587,14 @@ def userProfile(request, username):
     lost_posts_list = Post.objects.filter(post_user=user_obj, post_type='lost').order_by('-id')
     found_posts_list = Post.objects.filter(post_user=user_obj, post_type='found').order_by('-id')
 
-    page_number = request.GET.get('page', 1)
+    all_page = request.GET.get('all_page', 1)
+    lost_page = request.GET.get('lost_page', 1)
+    found_page = request.GET.get('found_page', 1)
     PER_PAGE = 6
 
-    all_paginator = Paginator(all_posts_list, PER_PAGE)
-    lost_paginator = Paginator(lost_posts_list, PER_PAGE)
-    found_paginator = Paginator(found_posts_list, PER_PAGE)
-
-    all_posts = all_paginator.get_page(page_number)
-    lost_posts = lost_paginator.get_page(page_number)
-    found_posts = found_paginator.get_page(page_number)
+    all_posts = Paginator(all_posts_list, PER_PAGE).get_page(all_page)
+    lost_posts = Paginator(lost_posts_list, PER_PAGE).get_page(lost_page)
+    found_posts = Paginator(found_posts_list, PER_PAGE).get_page(found_page)
 
     for post in all_posts:
         post.sorted_images = post.images.all().order_by('order')
