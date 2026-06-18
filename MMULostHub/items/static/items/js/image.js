@@ -64,7 +64,7 @@ imageInput.addEventListener("change", function(e){
             window.currentOriginalImage = event.target.result;
 
             // show crop modal
-            cropModal.style.display = "block";
+            cropModal.style.display = "flex";
 
             // destroy old cropper 
             if(cropper){
@@ -328,7 +328,7 @@ deletePreviewBtn.addEventListener("click", function(){
 cropAgainBtn.addEventListener("click", function(){
 
     previewModal.style.display = "none";
-    cropModal.style.display = "block";
+    cropModal.style.display = "flex";
 
     // crop with oriinal image
     const imageToCrop = window.croppedImages[currentPreviewIndex].originalImage;
@@ -347,6 +347,7 @@ cropAgainBtn.addEventListener("click", function(){
             aspectRatio: 4/3,
             viewMode: 1,
             autoCropArea: 1,
+            
         });
     };
 

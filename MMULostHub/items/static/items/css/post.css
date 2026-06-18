@@ -1,36 +1,185 @@
+/* ===================================== */
+/*              PAGE NAME                */
+/* ===================================== */
+.content h2{
+    font-size: 40px;
+    font-family: 'Slackey', cursive;
+    color: black;
+    font-weight: bold;
+    text-align:center;
+    padding-top: 20px;
+}
+
+.form{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-self: center;
+    gap: 100px;
+
+    width: 100%;
+    min-width: 1000px;
+    max-width: 1500px;
+
+    margin: 30px;
+    padding: 30px;
+    
+    font-family: 'Sansation';
+
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    box-shadow:
+        0 8px 32px rgba(0,0,0,0.15);
+}
+
+.form-left{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    font-size: 18px;
+    margin: 30px 0 0 30px ;
+}
+
+.form-right{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
+
+.create button{
+    border: none;
+    background: none;
+}
+
+.create{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    margin-top: 50px;
+
+    width: 100px;
+    height: 40px;
+
+    box-sizing: border-box;
+    border: none;
+    border-radius: 10px;
+    background: #7e8599;
+
+    color: white;
+    font-family: 'Slackey', cursive;
+    font-size: 20px;
+    font-weight: bold;
+
+    cursor: pointer;
+    transform: translateZ(0);
+    transition: all 0.2s ease;
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.35) inset,
+        0 -2px 4px rgba(0,0,0,0.10) inset,
+        0 4px 0 #6a7184,
+        0 6px 12px rgba(0,0,0,0.20);
+}
+
+.create:hover{
+    transform: translateY(-3px);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.32) inset,
+        0 -2px 5px rgba(0,0,0,0.12) inset,
+        0 7px 0 #565c6e,
+        0 12px 20px rgba(0,0,0,0.28);
+}
+
+.create:active{
+    transform: translateY(2px);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.25) inset,
+        0 -2px 4px rgba(0,0,0,0.18) inset,
+        0 3px 0 #565c6e,
+        0 5px 10px rgba(0,0,0,0.25);
+}
+
+#uploadBtn{
+    width: 200px;
+    height: 150px;
+
+}
+
+.img{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 5px 5px;
+    align-items: start;
+    justify-items: center;
+}
+
 /* ========================= */
 /*       IMAGE UPLOAD        */
 /* ========================= */
 .crop-modal {
-    display:none;
+    left: 0;
+    top: 0;
+    display: none;
     position:fixed;
-    z-index:9999;
+    z-index:20000;
     inset:0;
     background:rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+
+}
+
+.crop-box{
+    width: 1000px;
+    justify-self: center;
+
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    box-shadow:
+        0 8px 32px rgba(0,0,0,0.15);
 }
 
 /* Close button X */ 
 .imgclose_button { 
-    position: absolute; 
-    top: 15px; 
-    right: 25px; 
+    display: flex;
+    justify-self: end;
+    margin: 10px;
     font-size: 35px; 
     font-weight: bold; 
     cursor: pointer; 
-    background-color: white;
+
+    height: 30px;
+    width: 30px;
+
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    box-shadow:
+        0 8px 32px rgba(0,0,0,0.15);
 }
 
 .crop-container{
-    background:white;
-    width:90%;
-    max-width:700px;
     position:relative;
 }
 
 .crop-preview{
-    max-width: 500px;
+    margin: 20px;
+    max-width: 700px;
+    max-height: 700px;
     display: block;
 }
+
+
+
 
 .imagePreview-container{
     display: none;
@@ -134,3 +283,81 @@
     right:180px;
 }
 
+/* ========================= */
+/*      BIG & SMALL MAP      */
+/* ========================= */
+.smallMap,
+.bigMap {
+    position: relative;
+}
+
+.smallMap-marker,
+.bigMap-marker {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    pointer-events: none;                               /* marker won't block mouse click */
+    z-index: 10;                                        /* marker will be on the upper pic */
+    display: none;                                      /* cannot see without clicking first */
+}
+
+.map_modal {
+    display: none; 
+    position: fixed;                                    /* fixed position wont move with the */
+    z-index: 999; 
+    inset: 0;                                           /* full screen */
+}
+
+.smallMap { 
+    width: 500px; 
+} 
+
+/* Big popup map */ 
+.bigMap { 
+    width: 950px;
+    height: auto;
+}
+
+/* White popup box */ 
+.mapmodal_content { 
+    width: 100%; 
+    max-width: 950px;                                       /* = bigmap img width */
+    margin: 10px auto; 
+    padding: 30px; 
+    position: relative;                                     /* relative to close button position */
+}
+
+/* Close button X */ 
+.mapclose_button { 
+    position: absolute; 
+    top: 15px; 
+    right: 25px; 
+    font-size: 35px; 
+    font-weight: bold; 
+    cursor: pointer; 
+}
+
+/* ========================= */
+/* MAP SCROLL AREA */
+/* ========================= */
+
+.map-scroll-container {
+    max-height: 800px;
+    overflow: auto;                                             /* scroll line  */
+    margin-top: 20px;
+}
+
+.big-map-box{
+    position: relative;                                         /* relative to marker(absolute) */
+}
+
+.map_box{
+    position: relative;
+}
+
+.location_label{
+    display:none;
+}
+
+.popup{
+    z-index: 20000;
+}

@@ -9,9 +9,8 @@
 
         <!-- CSS Links -->
         <link rel="stylesheet" href="{% static 'items/css/post.css' %}">
-        <link rel="stylesheet" href="{% static 'items/css/map.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/popup.css' %}">
-        <link rel="stylesheet" href="{% static 'items/css/main-layout.css' %}">
+        <link rel="stylesheet" href="{% static 'items/css/createpost.css' %}">
 
         <!-- JS Links -->
         <script src="{% static 'items/js/popup.js' %}" defer></script>
@@ -99,42 +98,42 @@
             <div class="content">
 
                 <!-- ================================================== -->
+                <!--    Backend to Check Which Popup Msg To Display     -->
+                <!-- ================================================== -->
+                {% if messages %}
+                    <script>                                                    // js code
+                        window.addEventListener("load", function () {
+
+                            //loop messages inside createpost.js
+                            {% for message in messages %} 
+
+                                {% if message.tags == "success" %}     
+
+                                    // true = auto close popup / 2000 = 2 seconds
+                                    showPopup("Success", "{{ message }}", true, 1000);
+
+                                {% else %}
+                                    // show info = show error message 
+                                    showPopup("Info", "{{ message }}", true, 1000);
+
+                                {% endif %}
+
+                            {% endfor %}
+                        });
+                    </script>
+                {% endif %}
+
+                <!-- ================================================== -->
                 <!--            Create Post Section                     -->
                 <!-- ================================================== -->
-                <div class = "create-post-box">
-                    <h2>
-                        CREATE POST
-                    </h2>
+                <h2>
+                    CREATE POST
+                </h2>
 
-                    <!-- ================================================== -->
-                    <!--    Backend to Check Which Popup Msg To Display     -->
-                    <!-- ================================================== -->
-                    {% if messages %}
-                        <script>                                                    // js code
-                            window.addEventListener("load", function () {
-
-                                //loop messages inside createpost.js
-                                {% for message in messages %} 
-
-                                    {% if message.tags == "success" %}     
-
-                                        // true = auto close popup / 2000 = 2 seconds
-                                        showPopup("Success", "{{ message }}", true, 1000);
-
-                                    {% else %}
-                                        // show info = show error message 
-                                        showPopup("Info", "{{ message }}", true, 1000);
-
-                                    {% endif %}
-
-                                {% endfor %}
-                            });
-                        </script>
-                    {% endif %}
-
-                    <form method = "POST" enctype = 'multipart/form-data'>      <!-- enctype add to upload photo -->
-                        {% csrf_token %}                                        <!-- Django security protection code -->
-                        
+                <form method = "POST" enctype = 'multipart/form-data' class = "form" >      <!-- enctype add to upload photo -->
+                    {% csrf_token %}                                        <!-- Django security protection code -->
+                    
+                    <div class = 'form-left'>
                         <!-- ============================== -->
                         <!--        SELECT POST TYPE        -->
                         <!-- ============================== -->
@@ -172,15 +171,13 @@
                         <label> Upload Item Image: </label>
                         
                         <input type = "file" id = "post_image" name = "userposts_images" accept = "image/*" hidden>                 <!-- Input image field / accept = "image/* (limit oni can choose photo) / id is for java-->
-                        
-                        <button type="button" id="uploadBtn">
-                            Add Image
-                        </button>
-                        
-                        <!-- ====================================== -->
-                        <!--       PREVIEW UPLOADED IMAGES          -->
-                        <!-- ====================================== -->
-                        <div id = "imagePreview_container" class = "imagePreview-container">
+
+                        <div class = "img">
+                            <div id = "imagePreview_container" class = "imagePreview-container"></div>
+
+                            <button type="button" id="uploadBtn">
+                                +
+                            </button>
                         </div>
 
                         <input type="hidden" name="cropped_images" id="cropped_images">
@@ -227,6 +224,16 @@
                         <br><br>
 
                         <!-- ================================================== -->
+                        <!--                    DESCRIPTION                     -->
+                        <!-- ================================================== -->
+                        <label> Item Description: </label>
+
+                        <!-- placeholder = display text at text area -->
+                        <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ ">{{ post_data.post_description }}</textarea>
+                    </div>
+
+                    <div class = 'form-right'>
+                        <!-- ================================================== -->
                         <!--            MAP SELECT LOCATION                     -->
                         <!-- ================================================== -->
                         <p>Click Map to choose location: </p>
@@ -235,27 +242,13 @@
                             <div id = "smallMap_marker" class = "smallMap-marker"> 📍 </div>
                         </div>
 
-                        <br><br>
-
-                        <!-- ================================================== -->
-                        <!--                    DESCRIPTION                     -->
-                        <!-- ================================================== -->
-                        <label> Item Description: </label>
-
-                        <!-- placeholder = display text at text area -->
-                        <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ ">
-                            {{ post_data.post_description }}
-                        </textarea>
-
-                        <br><br>
-
                         <!-- onclick = will run a confirm popup first from createpost.js -->
-                        <button type = "button" onclick = "confirmCreate(event)">
-                                Create Post 
+                        <button type = "button" onclick = "confirmCreate(event)" class = 'create'>
+                                CREATE
                         </button>
+                    </div>
 
-                    </form>
-                </div>
+                </form>
             </div>
 
             <!-- ====================================== -->
@@ -263,20 +256,22 @@
             <!-- ====================================== -->
             <div id ="crop_modal" class = "crop-modal">
 
-                <!-- close crop modal button -->
-                <span id="close_crop" class="imgclose_button">
-                    &times;
-                </span>
+                <div class = 'crop-box'>
+                    <!-- close crop modal button -->
+                    <span id="close_crop" class="imgclose_button">
+                        &times;
+                    </span>
 
-                <div id ="crop_container" class = "crop-container">
+                    <div id ="crop_container" class = "crop-container">
 
-                    <!-- Display photo uploaded to crop -->
-                    <img id = 'crop_preview' class = "crop-preview">
+                        <!-- Display photo uploaded to crop -->
+                        <img id = 'crop_preview' class = "crop-preview">
+                    
+                    </div>
 
                     <button type="button" id="confirmCropBtn">
                         Crop
                     </button>
-                
                 </div>
             </div>
 
@@ -351,7 +346,7 @@
             <!-- ================================================== -->
             <!--             POP UP BOX MODAL                       -->
             <!-- ================================================== -->
-            <div id = "popup" class = "popup hidden">
+            <div id = "popup" class = "popup">
                 <div class = "popup-box">
                     <h3 id = "popup-title"></h3>
                     <p id = "popup-message"></p>
