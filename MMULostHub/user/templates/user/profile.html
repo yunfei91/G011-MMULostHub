@@ -85,12 +85,13 @@
             </div>
 
             <div class="content">
+            <div id="errorPopup" class="popup-profile"></div>
                 <div class="profile-left">
                     <div class="profile-card">
                         <!-- zinc add to report user button, only show when view other user profile-->
                         {% if request.user != user %}
-                            <a href="{% url 'report_user' user.id %}">
-                                <button type="button">Report User</button>
+                            <a href="{% url 'report_user' user.id %}" class="report-user-btn">
+                                ⚠
                             </a>
                         {% endif %}
 
@@ -101,7 +102,7 @@
                             <img id="avatarImage" src="{{ profile.avatar.url }}?v={{ now|date:'U' }}" 
                             width="150" height="150" style="border-radius:50%; object-fit:cover; {% if is_owner %}cursor:pointer;{% else %}cursor:default;{% endif %}">
                         {% else %}
-                            <img id="avatarImage"  src="{% static 'images/default.png' %}?v={{ now|date:'U' }}" 
+                            <img id="avatarImage" src="{% static 'images/default.png' %}?v={{ now|date:'U' }}" 
                             width="150" height="150" style="border-radius:50%; object-fit:cover; {% if is_owner %}cursor:pointer;{% else %}cursor:default;{% endif %}">
                         {% endif %}
 
@@ -123,12 +124,6 @@
                                             src="{% static 'images/editicon.png' %}"
                                             alt="Edit"
                                             onclick="showNameEdit()">
-                                    {% endif %}
-
-                                    {% if messages %}
-                                        {% for message in messages %}
-                                            <p style="color:red;">{{ message }}</p>
-                                        {% endfor %}
                                     {% endif %}
                                 </div>
                             </div>    
@@ -346,7 +341,7 @@
                                         </div>
                                     </div>
                                 {% empty %}
-                                    <p>No posts</p>
+                                    <p class="no-posts">No posts</p>
                                 {% endfor %}
                             </div>
 
@@ -625,7 +620,7 @@
                                         </div>
                                     </div>
                                 {% empty %}
-                                    <p>No lost posts</p>
+                                    <p class="no-posts">No lost posts</p>
                                 {% endfor %}
                             </div>
 
@@ -904,9 +899,7 @@
                                         </div>
                                     </div>
                                 {% empty %}
-                                    <div class = "no-post">
-                                        <p> No posts available. </p>
-                                    </div>
+                                        <p class="no-posts"> No found posts </p>
                                 {% endfor %}
                             </div>
 
@@ -1401,6 +1394,40 @@
                 document.getElementById("found-section").style.display = "block";
 
                 setActiveButton("found-btn");
+            }
+
+            window.addEventListener("load", () => {
+
+            {% if messages %}
+                {% for message in messages %}
+
+                    {% if message.tags == 'success' %}
+                        showPopup("{{ message|escapejs }}", "success");
+                    {% else %}
+                        showPopup("{{ message|escapejs }}", "error");
+                    {% endif %}
+
+                {% endfor %}
+            {% endif %}
+
+            });
+
+            function showPopup(msg, type="success") {
+
+                const popup = document.getElementById("errorPopup");
+
+                popup.innerHTML = msg;
+                popup.className = "popup-profile";
+
+                void popup.offsetWidth;
+                requestAnimationFrame(() => {
+                    popup.classList.add(type);
+                    popup.classList.add("show");
+                });
+
+                setTimeout(() => {
+                    popup.classList.remove("show");
+                },3000);
             }
 
             /* ====================================== 

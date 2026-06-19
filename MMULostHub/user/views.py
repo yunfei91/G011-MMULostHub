@@ -469,6 +469,8 @@ def update_name(request):
         profile.name = name # Update profile
         profile.save()
         
+    messages.success(request, "Name updated successfully!")
+
     return redirect('profile')
 
 @login_required(login_url='beginning')
@@ -537,6 +539,7 @@ def update_bio(request):
         profile.bio = bio # Update bio
         profile.save()
 
+        messages.success(request, "Bio updated successfully!")
         return redirect('profile')
 
     return redirect('profile')
@@ -547,18 +550,21 @@ def update_avatar(request):
     print("FILES:", request.FILES)
 
     if request.method == 'POST':
-        avatar = request.FILES.get('avatar') # Get uploaded image
+        avatar = request.FILES.get('avatar')
 
         if avatar:
             profile, created = Profile.objects.get_or_create(user=request.user)
 
-            # Delete old avatar
             if profile.avatar:
                 profile.avatar.delete(save=False)
 
-            # Save new avatar
             profile.avatar = avatar
             profile.save()
+
+            messages.success(request, "Profile picture updated successfully!")
+
+        else:
+            messages.error(request, "No picture updated")
 
     return redirect('profile')
 
