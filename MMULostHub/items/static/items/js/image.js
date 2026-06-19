@@ -39,7 +39,7 @@ imageInput.addEventListener("change", function(e){
 
     // user only can upload 5 img only
     if(window.croppedImages.length >= 5){
-        showPopup("Error", "Maximum 5 images only.", true, 1000);
+        showError("Maximum 5 images only.");
         imageInput.value = "";
         return;
     }
@@ -156,7 +156,7 @@ cropButton.addEventListener("click", function(){
     imageInput.value = "";
 
     // show popup when crop successfully
-    showPopup("Success", "Image cropped successfully!", true, 500);
+    showSuccess("Image cropped successfully!");
 });
 
 /* ======================================
@@ -373,7 +373,7 @@ setCoverBtn.addEventListener("click", function() {
     updateCoverButtonState();
 
     // show popup when change to cover already
-    showPopup("Success", "Set as cover image!", true, 1000);
+    showSuccess("Set as cover image succesfully~");
 });
 
 /* ======================================

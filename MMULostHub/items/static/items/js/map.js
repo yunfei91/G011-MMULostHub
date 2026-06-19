@@ -853,13 +853,7 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
         // User chosen point is not inside any location region
         if(!foundLocation){
             // show pop up
-            showPopup(
-                "Invalid Area",
-                "This area is not assigned to any MMU places. Please choose another area or choose a location inside the dropdown list.",
-                true,   // auto close
-                1500
-            );
-
+            showError("This area is not assigned to any MMU places. Choose another.");
            
             // auto change te dropdown list to default
             selectLocation("");

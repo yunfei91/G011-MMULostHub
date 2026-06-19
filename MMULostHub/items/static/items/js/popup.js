@@ -2,95 +2,106 @@
 /* ====================================== 
             POPUP FUNCTIONS        
 ====================================== */
-// Wait until HTML loaded then start function
-document.addEventListener("DOMContentLoaded", () => {
+let popupCallback = null;
+let popupTimer = null;
 
-    // Get popup elements mainpage.js, createpost.js, editpost.js 
-    const popup = document.getElementById("popup");
-    const popupTitle = document.getElementById("popup-title");
-    const popupText = document.getElementById("popup-message");
-    const popupConfirm = document.getElementById("popup-confirm");
-    const popupCancel = document.getElementById("popup-cancel");
+const popup = document.getElementById("messagePopup");
 
-    /* ====================================== 
-            CONFIRM BUTTON       
-     ====================================== */
-    // wait until user press confirm then start function
-    let confirmCallback = null;
+const popupIcon = document.getElementById("messageIcon");
 
-    // user click confirm button start function
-    popupConfirm.addEventListener("click", () => {
+const popupTitle = document.getElementById("messageTitle");
 
-        // hide popup after confirm
-        popup.classList.add("hidden");  
+const popupText = document.getElementById("messageText");
 
-        if (confirmCallback) {
+const popupBtn = document.getElementById("messageBtn");
 
-            // run function inside jf respectively
-            confirmCallback();
+const popupCancel = document.getElementById("messageCancelBtn");
 
-            // reset after run function to avoid run repeatly
-            confirmCallback = null;
-        }
-    });
+popupBtn.onclick = function () {
 
-    /* ====================================== 
-            CANCEL BUTTON         
-     ====================================== */
-    popupCancel.addEventListener("click", () => {
+    popup.style.display = "none";
 
-        // close pupup after click cancel button
-        popup.classList.add("hidden");
+    if (popupCallback) {
+        popupCallback();
+        popupCallback = null;
+    }
 
-        // don't run function bcz no confirm
-        confirmCallback = null;
+};
 
-    });
+popupCancel.onclick = function () {
 
-    /* ====================================== 
-            POPUP MESSAGE (ERROR)        
-     ====================================== */
-    window.showPopup = function (           // parameters
-        title, 
-        message, 
-        autoClose = false, 
-        duration = 2000
-    ) {
-        popupTitle.innerText = title;
-        popupText.innerText = message;
-        popupConfirm.innerText = "OK";
-        popupCancel.style.display = "none";     // hide cancel button while error popup
-        confirmCallback = null;                 // default no run function while error popup
-        popup.classList.remove("hidden");       // show popup | classlist = css setting to hide popup
+    popup.style.display = "none";
 
-        // error popup will auto close
-        if (autoClose) {
-            setTimeout(() => {
+    popupCallback = null;
 
-                // hide popup after 2s / duration set inside js
-                popup.classList.add("hidden");
+};
 
-            }, duration);
-        }
-    };
+function showError(message){
 
-    /* ====================================== 
-            POPUP CONFIRMATION         
-     ====================================== */
-    window.showConfirmPopup = function (title, message, callback) {
-        popupTitle.innerText = title;
-        popupText.innerText = message;
-        popupConfirm.innerText = "Confirm";
-        popupCancel.style.display = "inline-block";
-        confirmCallback = callback;
-        popup.classList.remove("hidden");
-    };
+    clearTimeout(popupTimer);
 
-    window.closePopup = function () {
-        popup.classList.add("hidden");
-    };
+    popupTitle.innerText = "Error";
+    popupText.innerText = message;
 
-});
+    popupBtn.innerText = "OK";
+
+    popupCancel.style.display = "none";
+
+    popup.style.display = "flex";
+
+    popupTimer = setTimeout(() => {
+        popup.style.display = "none";
+    }, 1500);
+}
+
+function showSuccess(message){
+
+    clearTimeout(popupTimer);
+
+    popupTitle.innerText = "Success";
+    popupText.innerText = message;
+
+    popupBtn.innerText = "OK";
+
+    popupCancel.style.display = "none";
+
+    popup.style.display = "flex";
+
+    popupTimer = setTimeout(() => {
+        popup.style.display = "none";
+    }, 1000);
+}
+
+function showConfirm(title, message, callback){
+
+    clearTimeout(popupTimer);
+
+    popupTitle.innerText = title;
+    popupText.innerText = message;
+
+    popupBtn.innerText = "Confirm";
+
+    popupCancel.style.display = "inline-block";
+
+    popupCallback = callback;
+
+    popup.style.display = "flex";
+}
+
+popupConfirmBtn.onclick=function(){
+
+    popup.style.display="none";
+
+    if(popupCallback){
+
+        popupCallback();
+
+        popupCallback=null;
+
+    }
+
+}
+
 
 /* ====================================== 
     CREATE / EDIT IMAGE PREVIEW POPUP       

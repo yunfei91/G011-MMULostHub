@@ -106,32 +106,7 @@
                 <div class="editpost-box">
 
                     <h2>EDIT POST</h2>
-
-                    <!-- ================================================== -->
-                    <!--    Backend to Check Which POPUP MSG To Display     -->
-                    <!-- ================================================== -->
-                    {% if messages %}
-                        <script>                                                    // js code
-                            window.addEventListener("load", function () {
-
-                                //loop messages inside createpost.js
-                                {% for message in messages %} 
-                                    {% if message.tags == "success" %}     
-
-                                        // true = auto close popup / 2000 = 2 seconds
-                                        showPopup("Success", "{{ message }}", true, 1000);
-
-                                    {% else %}
-
-                                        // show info = show error message 
-                                        showPopup("Info", "{{ message }}", true, 1000);
-
-                                    {% endif %}
-                                {% endfor %}
-                            });
-                        </script>
-                    {% endif %}
-                
+           
                     <form method="POST" enctype="multipart/form-data">          <!-- enctype add to upload photo -->
                         {% csrf_token %} <!-- Django security protection code -->
                         
@@ -363,12 +338,21 @@
             <!-- ================================================== -->
             <!--             POP UP BOX MODAL                       -->
             <!-- ================================================== -->
-            <div id = "popup" class = "popup hidden">
-                <div class = "popup-box">
-                    <h3 id = "popup-title"></h3>
-                    <p id = "popup-message"></p>
-                    <button id = "popup-confirm"> OK </button>
-                    <button id = "popup-cancel"> Cancel </button>
+            <div id="messagePopup" class="message-popup">
+
+                <div class="message-box">
+
+                    <h3 id="messageTitle"></h3>
+
+                    <p id="messageText"></p>
+
+                    <div class="popup-buttons">
+
+                        <button id="messageBtn">OK</button>
+
+                        <button id="messageCancelBtn">Cancel</button>
+
+                    </div>
                 </div>
             </div>
 

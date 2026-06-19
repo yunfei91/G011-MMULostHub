@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // clicked coordinate not in region 
         if (!found) {
-            showPopup("Invalid Area", "No region found", true, 1500);
+            showError("No region found");
             showAllPosts();
             return;
         }

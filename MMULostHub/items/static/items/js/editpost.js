@@ -8,39 +8,40 @@ function confirmEdit(event) {
     const datetime = form.querySelector("[name='post_datetime']").value;
     const location = form.querySelector("[name='post_location']").value;
     
-    /* ====================================== 
-                Check Post Type      
-     ====================================== */
+    /* =========================
+            POST TYPE
+    ========================= */
     if (!postType) {
-        showPopup("Error", "Please choose Lost or Found.", true, 1000);
+        showError("Please select a post type.");
         return;
     }
+
     if (postType === "found" && !location) {
-        showPopup("Error", "Location is required for Found Posts.", true, 1000);
+        showError("Location is required for Found Posts.");
         return;
     }
 
-    /* ====================================== 
-                 Check Date Time      
-     ====================================== */
+    /* =========================
+            DATETIME
+    ========================= */
     if (!datetime) {
-        showPopup("Error", "Please select date & time.", true, 1000);
+        showError("Please select date & time.");
         return;
     }
 
-    const selectedDate = new Date(datetime);                // date time user input
-    const now = new Date();                                 // date time now (mlys,kl)
+    const selectedDate = new Date(datetime);            // date time user input
+    const now = new Date();                             // date time now (mlys,kl)
 
     if (selectedDate > now) {
-        showPopup("Error", "Datetime cannot be in the future.", true, 1000);
+        showError("Datetime cannot be in the future.");
         return;
     }
     
-    /* ====================================== 
-                Check Category        
-     ====================================== */
+    /* =========================
+            CATEGORY
+    ========================= */
     if (!category) {
-        showPopup("Error", "Please choose a category.", true, 1000);
+        showError("Please choose a category.");
         return;
     }
     
@@ -50,7 +51,7 @@ function confirmEdit(event) {
     const hasImages = window.croppedImages && window.croppedImages.length > 0;
 
     if (!hasImages) {
-        showPopup("Error", "Please upload an image.", true, 1000);
+        showError("Please upload an image.");
         return;
     }
 
@@ -70,7 +71,10 @@ function confirmEdit(event) {
 
     document.getElementById("cropped_images").value = JSON.stringify(imageData);
 
-    showConfirmPopup("Confirm", "Are you sure you want to edit this post?", () => {
-        form.requestSubmit();
+    showConfirm(
+        "Edit Post", 
+        "Are you sure you want to edit this post?",
+        function (){
+            form.requestSubmit();
     });
 }

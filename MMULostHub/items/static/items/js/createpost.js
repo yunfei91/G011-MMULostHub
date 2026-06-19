@@ -11,63 +11,68 @@ function confirmCreate(event) {
     const datetime = form.querySelector("[name='post_datetime']").value;
     const location = form.querySelector("[name='post_location']").value;
 
-    /* ====================================== 
-                Check Post Type      
-     ====================================== */
+    /* =========================
+            POST TYPE
+    ========================= */
     if (!postType) {
-        showPopup("Error", "Please choose Lost or Found.", true, 1000);
-        return;
-    }
-    if (postType === "found" && !location) {
-        showPopup("Error", "Location is required for Found Posts.", true, 1000);
+        showError("Please select a post type.");
         return;
     }
 
-    /* ====================================== 
-                 Check Date Time      
-     ====================================== */
-    if (!datetime) {
-        showPopup("Error", "Please select date & time.", true, 1000);
+    if (postType === "found" && !location) {
+        showError("Location is required for Found Posts.");
         return;
     }
+
+    /* =========================
+            DATETIME
+    ========================= */
+    if (!datetime) {
+        showError("Please select date & time.");
+        return;
+    }
+
     const selectedDate = new Date(datetime);            // date time user input
-    const now = new Date();                                 // date time now (mlys,kl)
+    const now = new Date();                             // date time now (mlys,kl)
 
     if (selectedDate > now) {
-        showPopup("Error", "Datetime cannot be in the future.", true, 1000);
+        showError("Datetime cannot be in the future.");
         return;
     }
-    
-    /* ====================================== 
-                Check Category        
-     ====================================== */
+
+    /* =========================
+            CATEGORY
+    ========================= */
     if (!category) {
-        showPopup("Error", "Please choose a category.", true, 1000);
-        return;
-    }
-    
-    /* ====================================== 
-                    Check Image        
-     ====================================== */
-    if (window.croppedImages.length === 0) {
-        showPopup("Error", "Please upload and crop at least one image.", true, 1000);
+        showError("Please choose a category.");
         return;
     }
 
-    /* ====================================== 
-            Confirmation to create post        
-     ====================================== */
-    showConfirmPopup("Confirm", "Do you want to create this post?", () => {
+    /* =========================
+            IMAGE
+    ========================= */
+    if (!window.croppedImages || window.croppedImages.length === 0) {
+        showError("Please upload and crop at least one image.");
+        return;
+    }
 
-        const imageData = window.croppedImages
-            .filter(img => img.type === "new")
-            .map(img => img.image);
+    /* =========================
+            CONFIRM
+    ========================= */
+    showConfirm(
+        "Create Post",
+        "Do you want to create this post?",
+        function () {
 
-        document.getElementById("cropped_images").value = JSON.stringify(imageData);
+            const imageData = window.croppedImages
+                .filter(img => img.type === "new")
+                .map(img => img.image);
 
-        // submit form
-        form.requestSubmit();
-    });
+            document.getElementById("cropped_images").value = JSON.stringify(imageData);
+
+            form.requestSubmit();
+
+        }
+    );
 
 }
-
