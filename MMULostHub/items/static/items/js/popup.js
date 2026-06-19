@@ -391,7 +391,7 @@ window.addEventListener("click", function (event) {
 });
 
 window.toggleDropdown = function(event) {
-    event.stopPropagtion();
+    event.stopPropagation()
 
     const dropdown = event.currentTarget.closest(".post-nav-dropdown");
 
