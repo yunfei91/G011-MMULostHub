@@ -1031,30 +1031,35 @@
                 </div>    
             </div>
 
-            <div id="cropModal" class="profile-modal" style="display:none;">
-                <div class="profile-modal-content crop-modal-content">
+            <form action="{% url 'update_avatar' %}" method="POST" enctype="multipart/form-data" id="avatarForm">
+                {% csrf_token %}
+                
+                <input type="file" name="avatar" id="avatarInput" style="display: none;">
+                    <div id="cropModal" class="profile-modal" style="display:none;">
+                        <div class="profile-modal-content crop-modal-content">
 
-                    <h3>Avatar</h3>
+                            <h3>Avatar</h3>
 
-                    <div class="file-upload">
-                        <input type="file" id="imageInput">
+                            <div class="file-upload">
+                                <input type="file" id="imageInput" name="avatar">
 
-                        <label for="imageInput" class="file-btn">
-                            Choose Image
-                        </label>
+                                <label for="imageInput" class="file-btn">
+                                    Choose Image
+                                </label>
+                            </div>
+
+                            <div class="crop-container">
+                                <img id="preview">
+                            </div>
+
+                            <div class="modal-btns">
+                                <button type="button" onclick="cropImage()">Upload</button>
+                                <button type="button" onclick="cancelCrop()">Cancel</button>
+                            </div>
+
+                        </div>
                     </div>
-
-                    <div class="crop-container">
-                        <img id="preview">
-                    </div>
-
-                    <div class="modal-btns">
-                        <button type="button" onclick="cropImage()">Upload</button>
-                        <button type="button" onclick="cancelCrop()">Cancel</button>
-                    </div>
-
-                </div>
-            </div>
+            </form>
 
             <!-- Edit Name Modal -->
             <div id="nameModal" class="profile-modal">
@@ -1069,8 +1074,7 @@
                             type="text"
                             name="name"
                             value="{{ profile.name }}"
-                            placeholder="Enter your name"
-                        >
+                            placeholder="Enter your name">
 
                         <div class="modal-btns">
                             <button type="submit">Save</button>
@@ -1244,10 +1248,7 @@
             // =========================
             function cropImage() {
 
-                if (!cropper) {
-                    alert("Select an image first");
-                    return;
-                }
+                if (!cropper) return;
 
                 const canvas = cropper.getCroppedCanvas({
                     width: 300,
@@ -1256,22 +1257,16 @@
 
                 canvas.toBlob(function (blob) {
 
-                    const formData = new FormData();
-                    formData.append("avatar", blob, "avatar.jpg");
+                    const fileInput = document.getElementById("avatarInput");
 
-                    fetch("{% url 'update_avatar' %}", {
-                        method: "POST",
-                        headers: {
-                            "X-CSRFToken": getCSRFToken()
-                        },
-                        body: formData
-                    })
-                    .then(res => res.text())
-                    .then(data => {
-                        console.log("UPLOAD SUCCESS:", data);
-                        location.reload();
-                    })
-                    .catch(err => console.error(err));
+                    const file = new File([blob], "avatar.jpg", { type: "image/jpeg" });
+
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+
+                    fileInput.files = dataTransfer.files;
+
+                    document.getElementById("avatarForm").submit();
                 });
             }
 
@@ -1396,30 +1391,34 @@
                 setActiveButton("found-btn");
             }
 
-            window.addEventListener("load", () => {
+            document.addEventListener("DOMContentLoaded", () => {
 
-            {% if messages %}
-                {% for message in messages %}
-
-                    {% if message.tags == 'success' %}
-                        showPopup("{{ message|escapejs }}", "success");
-                    {% else %}
-                        showPopup("{{ message|escapejs }}", "error");
+                try {
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if forloop.first %}
+                                showPopup(
+                                    "{{ message|escapejs }}",
+                                    "{{ message.tags }}"
+                                );
+                            {% endif %}
+                        {% endfor %}
                     {% endif %}
-
-                {% endfor %}
-            {% endif %}
+                } catch (e) {
+                    console.error("popup error:", e);
+                }
 
             });
 
             function showPopup(msg, type="success") {
 
                 const popup = document.getElementById("errorPopup");
+                if (!popup) return;
 
-                popup.innerHTML = msg;
+                popup.textContent = msg;
+
                 popup.className = "popup-profile";
 
-                void popup.offsetWidth;
                 requestAnimationFrame(() => {
                     popup.classList.add(type);
                     popup.classList.add("show");
@@ -1427,7 +1426,7 @@
 
                 setTimeout(() => {
                     popup.classList.remove("show");
-                },3000);
+                }, 3000);
             }
 
             /* ====================================== 

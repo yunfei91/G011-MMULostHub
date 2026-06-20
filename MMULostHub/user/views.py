@@ -547,14 +547,13 @@ def update_bio(request):
 @login_required(login_url='beginning')
 @never_cache
 def update_avatar(request):
-    print("FILES:", request.FILES)
 
     if request.method == 'POST':
         avatar = request.FILES.get('avatar')
 
-        if avatar:
-            profile, created = Profile.objects.get_or_create(user=request.user)
+        profile, _ = Profile.objects.get_or_create(user=request.user)
 
+        if avatar:
             if profile.avatar:
                 profile.avatar.delete(save=False)
 
@@ -562,12 +561,10 @@ def update_avatar(request):
             profile.save()
 
             messages.success(request, "Profile picture updated successfully!")
-
         else:
-            messages.error(request, "No picture updated")
+            messages.error(request, "No picture selected")
 
     return redirect('profile')
-
 
 @login_required(login_url='beginning')
 @never_cache
