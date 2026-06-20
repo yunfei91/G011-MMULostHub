@@ -106,140 +106,138 @@
 
                     <h2>EDIT POST</h2>
            
-                    <form method="POST" enctype="multipart/form-data">          <!-- enctype add to upload photo -->
+                    <form method="POST" enctype="multipart/form-data" class = "form">          <!-- enctype add to upload photo -->
                         {% csrf_token %} <!-- Django security protection code -->
                         
-                        <input type="hidden" name="next" value="{{ next_url }}">
+                        <div class = 'form-left'>
+                            <input type="hidden" name="next" value="{{ next_url }}">
 
-                        <!-- ============================== -->
-                        <!--        Edit Post Type          -->
-                        <!-- ============================== -->
-                        <label>Type:</label>
-                        <select name="post_type">
+                            <!-- ============================== -->
+                            <!--        Edit Post Type          -->
+                            <!-- ============================== -->
+                            <label>Type:</label>
+                            <select name="post_type">
 
-                            <!-- Default -->
-                            <option value="">Select Post Type</option>
+                                <!-- Default -->
+                                <option value="">Select Post Type</option>
 
-                            <option value="lost"
-                                {% if post_data.post_type|default:post.post_type == "lost" %} selected {% endif %}>
-                                Lost Post
-                            </option>
-
-                            <option value="found"
-                                {% if post_data.post_type|default:post.post_type == "found" %} selected {% endif %}>
-                                Found Post
-                            </option>
-                        </select>
-
-                        <br><br>
-
-                        <!-- ================================================== -->
-                        <!--            Date Time Edit                          -->
-                        <!-- ================================================== -->
-                        <label>Date Time:</label>
-                        <input
-                            type="datetime-local"
-                            name="post_datetime"
-                            value="{% if post_data.post_datetime %}{{ post_data.post_datetime }}{% else %}{{ post.post_datetime|date:'Y-m-d\\TH:i' }}{% endif %}"
-                        >
-
-                        <br><br>
-
-                        <!-- ================================================== -->
-                        <!--            Change Image Upload Section             -->
-                        <!-- ================================================== -->
-                        <label> Upload Item Image: </label>
-                        
-                        <!-- existing image data -->
-                        {{ existing_images|json_script:"existing-images-data" }}
-
-                        <!-- hidden input submit cropped images -->
-                        <input type="hidden" name="cropped_images" id="cropped_images">
-
-                        <!-- upload input -->
-                        <input type="file" id="post_image" name="userposts_images" accept="image/*" hidden>
-
-                        <input type="hidden" id="cover_index" name="cover_index" >
-
-                        <button type="button" id="uploadBtn">
-                            Add Image
-                        </button>
-
-                        <!-- image preview container -->
-                        <div id="imagePreview_container" class="imagePreview_container"></div>
-
-                        <br><br>
-
-                        <!-- ================================================== -->
-                        <!--            Change Item Category Selection          -->
-                        <!-- ================================================== -->
-                        <label>Item Category:</label>
-                        <select name="post_itemcategory">
-
-                            <option value="">Select Category</option>
-
-                            {% for value, label in item_categories %}
-                                <option value="{{ value }}"
-                                    {% if post_data.post_itemcategory|default:post.post_itemcategory == value %} selected {% endif %}>
-                                    {{ label }}
+                                <option value="lost"
+                                    {% if post_data.post_type|default:post.post_type == "lost" %} selected {% endif %}>
+                                    Lost Post
                                 </option>
-                            {% endfor %}
 
-                        </select>
-
-                        <br><br>
-
-                        <!-- ================================================== -->
-                        <!--           Change Location Selection                -->
-                        <!-- ================================================== -->
-                        <label>Location:</label>
-                        <select name="post_location" id="post_location">
-
-                            <option value="">Select Location</option>
-
-                            {% for loc in locations %}
-                                <option value="{{ loc.location_code }}"
-                                    {% if post_data.post_location|default:post.post_location.location_code == loc.location_code %}
-                                        selected
-                                    {% endif %}>
-                                    {{ loc.location_name }}
+                                <option value="found"
+                                    {% if post_data.post_type|default:post.post_type == "found" %} selected {% endif %}>
+                                    Found Post
                                 </option>
-                            {% endfor %}
+                            </select>
 
-                        </select>
+                            <br><br>
 
-                        <br><br>
+                            <!-- ================================================== -->
+                            <!--            Date Time Edit                          -->
+                            <!-- ================================================== -->
+                            <label>Date Time:</label>
+                            <input
+                                type="datetime-local"
+                                name="post_datetime"
+                                value="{% if post_data.post_datetime %}{{ post_data.post_datetime }}{% else %}{{ post.post_datetime|date:'Y-m-d\\TH:i' }}{% endif %}"
+                            >
 
-                        <!-- ================================================== -->
-                        <!--            Map Select Location                     -->
-                        <!-- ================================================== -->
-                        <p>Click Map to choose location:</p>
+                            <br><br>
 
-                        <div class="map_box">
-                            <img src="{% static 'images/map-img.jpg' %}" id="smallMap" class="smallMap">
-                            <div id="smallMap_marker" class="smallMap-marker">📍</div>
+                            <!-- ================================================== -->
+                            <!--            Change Image Upload Section             -->
+                            <!-- ================================================== -->
+                            <label> Upload Item Image: </label>
+                            
+                            <!-- existing image data -->
+                            {{ existing_images|json_script:"existing-images-data" }}
+
+                            <!-- hidden input submit cropped images -->
+                            <input type="hidden" name="cropped_images" id="cropped_images">
+
+                            <!-- upload input -->
+                            <input type="file" id="post_image" name="userposts_images" accept="image/*" hidden>
+
+                            <input type="hidden" id="cover_index" name="cover_index" >
+
+                            <div class = "img" id = "imageGrid">
+                                <button type="button" id="uploadBtn">
+                                    +
+                                </button>
+                            </div>
+
+                            <!-- image preview container -->
+                            <div id="imagePreview_container" class="imagePreview_container"></div>
+
+                            <br><br>
+
+                            <!-- ================================================== -->
+                            <!--            Change Item Category Selection          -->
+                            <!-- ================================================== -->
+                            <label>Item Category:</label>
+                            <select name="post_itemcategory">
+
+                                <option value="">Select Category</option>
+
+                                {% for value, label in item_categories %}
+                                    <option value="{{ value }}"
+                                        {% if post_data.post_itemcategory|default:post.post_itemcategory == value %} selected {% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+
+                            </select>
+
+                            <br><br>
+
+                            <!-- ================================================== -->
+                            <!--           Change Location Selection                -->
+                            <!-- ================================================== -->
+                            <label>Location:</label>
+                            <select name="post_location" id="post_location">
+
+                                <option value="">Select Location</option>
+
+                                {% for loc in locations %}
+                                    <option value="{{ loc.location_code }}"
+                                        {% if post_data.post_location|default:post.post_location.location_code == loc.location_code %}
+                                            selected
+                                        {% endif %}>
+                                        {{ loc.location_name }}
+                                    </option>
+                                {% endfor %}
+
+                            </select>
+
+                            <br><br>
+
+                            <!-- ================================================== -->
+                            <!--                    Description                     -->
+                            <!-- ================================================== -->
+                            <label> Item Description: </label>
+
+                            <!-- placeholder = display text at text area -->
+                            <textarea name="post_description" placeholder="Describe the item or give it a name ^-^">{{ post_data.post_description|default:post.post_description }}</textarea>
                         </div>
 
-                        <br><br>
+                        <div class = 'form-right'>
+                            <!-- ================================================== -->
+                            <!--            Map Select Location                     -->
+                            <!-- ================================================== -->
+                            <p>Click Map to choose location:</p>
 
-                        <!-- ================================================== -->
-                        <!--                    Description                     -->
-                        <!-- ================================================== -->
-                        <label> Item Description: </label>
+                            <div class="map_box">
+                                <img src="{% static 'images/map-img.jpg' %}" id="smallMap" class="smallMap">
+                                <div id="smallMap_marker" class="smallMap-marker">📍</div>
+                            </div>
 
-                        <!-- placeholder = display text at text area -->
-                        <textarea name="post_description"
-                            placeholder="Describe the item or give it a name ^-^">{{ post_data.post_description|default:post.post_description }}
-                        </textarea>
-
-                        <br><br>
-                        <br><br>
-
-                        <!-- onclick = will run a confirm popup first from editpost.js -->
-                        <button type = "button" onclick = "confirmEdit(event)">
-                            Update Post
-                        </button>
-
+                            <!-- onclick = will run a confirm popup first from editpost.js -->
+                            <button type = "button" onclick = "confirmEdit(event)" class = 'create'>
+                                UPDATE
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -249,20 +247,22 @@
             <!-- ====================================== -->
             <div id ="crop_modal" class = "crop-modal">
 
-                <!-- close crop modal button -->
-                <span id="close_crop" class="imgclose_button">
-                    &times;
-                </span>
+                <div class = 'crop-box'>
+                    <!-- close crop modal button -->
+                    <span id="close_crop" class="imgclose_button">
+                        &times;
+                    </span>
 
-                <div id ="crop_container" class = "crop-container">
+                    <div id ="crop_container" class = "crop-container">
 
-                    <!-- Display photo uploaded to crop -->
-                    <img id = 'crop_preview' class = "crop-preview">
+                        <!-- Display photo uploaded to crop -->
+                        <img id = 'crop_preview' class = "crop-preview">
+                    
+                    </div>
 
                     <button type="button" id="confirmCropBtn">
                         Crop
                     </button>
-                
                 </div>
             </div>
 
@@ -271,37 +271,39 @@
             <!-- ====================================== -->
             <div id="preview_modal" class="preview-modal">
 
-                <span id="close_preview" class="preview-close">
-                    &times;
-                </span>
+                <div class="preview">
 
-                <!-- left arrow -->
-                <button type="button" id="prev_image_btn" class="preview-arrow left-arrow">
-                    ❮
-                </button>
+                    <span id="close_preview" class="preview-close">
+                        &times;
+                    </span>
 
-                <!-- show image -->
-                <img id="preview_modal_image" class="preview-modal-image">
+                    <!-- left arrow -->
+                    <button type="button" id="prev_image_btn" class="preview-arrow left-arrow">
+                        ❮
+                    </button>
 
-                <!-- right arrow -->
-                <button type="button" id="next_image_btn" class="preview-arrow right-arrow">
-                    ❯
-                </button>
+                    <!-- show image -->
+                    <img id="preview_modal_image" class="preview-modal-image">
 
-                <button type="button" id="crop_again_btn" class="crop-again-btn">
-                    Crop Again
-                </button>
+                    <!-- right arrow -->
+                    <button type="button" id="next_image_btn" class="preview-arrow right-arrow">
+                        ❯
+                    </button>
 
-                <!-- delete -->
-                <button type="button" id="delete_image" class="delete-preview-btn">
-                    Delete
-                </button>
+                    <button type="button" id="crop_again_btn" class="crop-again-btn">
+                        Crop Again
+                    </button>
 
-                <!-- set iamge as cover button-->
-                <button type="button" id="cover_btn" class="cover-button">
-                    Cover Image
-                </button>
+                    <!-- delete -->
+                    <button type="button" id="delete_image" class="delete-preview-btn">
+                        Delete
+                    </button>
 
+                    <!-- set iamge as cover button-->
+                    <button type="button" id="cover_btn" class="cover-button">
+                        Cover Image
+                    </button>
+                </div>
             </div>
 
             <!-- ================================================== -->
