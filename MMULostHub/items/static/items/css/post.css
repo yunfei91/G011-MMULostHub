@@ -13,16 +13,16 @@
 .form{
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
+    align-items: stretch;
     justify-self: center;
-    gap: 100px;
+    gap: 50px;
 
-    width: 100%;
-    min-width: 1000px;
+    width: 95vw;
     max-width: 1500px;
-    height: 930px;
+    height: auto;
+    min-height: 850px;
 
-    margin: 30px;
+    margin: 30px auto;
     padding: 30px;
     
     font-family: 'Sansation';
@@ -32,8 +32,8 @@
     -webkit-backdrop-filter: blur(1px);
     border: 1px solid rgba(255,255,255,0.3);
     border-radius: 20px;
-    box-shadow:
-        0 8px 32px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    box-sizing: border-box;
 }
 
 /* ===================================== */
@@ -43,45 +43,92 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    height: 100%;
-    margin: 30px 0 30px 30px ;
+    height: auto;
+    margin: 30px 0 0 30px ;
+    align-self: stretch;
+    box-sizing: border-box;
 }
 
 label {
     font-family: 'Slackey', cursive;
-    font-weight: 3px;
+    font-size: 18px;
+    padding-bottom: 7px;
 }
 
-select option {
+select option{
     font-family: 'Sansation';
     font-size: 15px;
     padding: 10px;
     color: #333;
     background: white;
-    max-height: 200px;
+    max-height: 10px;
+}
+
+input[type="datetime-local"] {
+    position: relative;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    color: transparent;
+    cursor: pointer;
+    align-items: center;
 }
 
 select,
 input[type="datetime-local"]{
+    display: inline-flex;
+    align-items: center;
+
     width: fit-content;
-    margin-top: 5px;
-    padding: 12px 15px;
-    justify-items: center;
+    max-width: 600px;
+    height: 42px;
 
     border: none;
-    border-radius: 15px;
-
+    border-radius: 12px; 
     background: rgba(202, 235, 248, 0.26);
 
-    box-shadow:
-        inset 0 2px 5px rgba(0,0,0,0.08),
-        0 1px 0 rgba(255,255,255,0.6);
-
-    outline: none;
-
+    padding: 12px 15px;
     font-family: 'Sansation';
     font-size: 15px;
     color: #333;
+    cursor: pointer;
+    box-sizing: border-box;
+
+    transform: translateZ(0);
+    transition: all 0.2s ease;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),      
+        inset 0 2px 5px rgba(0,0,0,0.08),      
+        0 2.5px 0 rgba(145, 195, 215, 0.85),  
+        0 4px 8px rgba(0, 0, 0, 0.08); 
+    
+    outline: none;
+}
+
+select:hover,
+input[type="datetime-local"]:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.05),
+        0 4px 0 rgba(130, 185, 205, 0.95),
+        0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+select:active,
+input[type="datetime-local"]:active{
+    transform: translateY(1.5px);    
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.1),
+        0 1px 0 rgba(130, 185, 205, 1),
+        0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .img {
@@ -92,8 +139,48 @@ input[type="datetime-local"]{
 }
 
 #uploadBtn{
-    width: 150px;
-    height: 112px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 150px;   
+    height: 112px;  
+    
+    border: transparent;
+    border-radius: 15px; 
+    
+    background: rgba(202, 235, 248, 0.26);
+    color: rgba(128, 128, 128, 0.758);
+    font-family: 'Slackey', cursive;
+    font-size: 50px;
+    text-align: center;
+    cursor: pointer;
+    
+    transform: translateZ(0);
+    transition: all 0.2s ease;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),      
+        inset 0 2px 5px rgba(0,0,0,0.08),      
+        0 2.5px 0 rgba(145, 195, 215, 0.85),  
+        0 4px 8px rgba(0, 0, 0, 0.08);     
+}
+
+#uploadBtn:hover {
+    transform: translateY(-2px); 
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.05),
+        0 4px 0 rgba(130, 185, 205, 0.95),  
+        0 6px 12px rgba(0, 0, 0, 0.12);
+}
+
+#uploadBtn:active {
+    transform: translateY(1.5px);              
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.1),
+        0 1px 0 rgba(130, 185, 205, 1),       
+        0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .preview-box {
@@ -104,9 +191,14 @@ input[type="datetime-local"]{
     overflow: hidden; 
 }
 
+.preview-box:hover{
+    transform: translateY(-0.5px); 
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
+}
+
 .image-preview {
-    width: 100% !important;
-    height: 100% !important;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     display: block;
     cursor: pointer;
@@ -115,31 +207,66 @@ input[type="datetime-local"]{
 /* ===== DELETE BUTTON ===== */
 .remove-image-btn{
     position:absolute;
-    top:0;
-    right:0;
+    top: 5px;
+    right: 5px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 16px; 
+    font-weight: bold;
+    color: #ffffff; 
+    cursor: pointer;
+
+    height: 24px;
+    width: 24px;
+
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    
+    box-shadow: 0 3px 6px rgba(255, 255, 255, 0.3);
+    z-index: 10;
+    transition: all 0.2s ease;
 }
 
+.remove-image-btn:hover {
+    background: #000000;           
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: scale(1.1);          
+    color: #ffffff;            
+}
+
+.remove-image-btn:active {
+    transform: scale(0.9);
+    background: rgba(0, 0, 0, 0.6);
+}
 
 textarea {
     display: flex;
     flex: 1;
-    width: 600px;
-    height: auto ;
+    width: 100%;
+    max-width: 600px;
+    height: auto;
     min-height: 130px;
-    max-height: 250px;
     resize: none;
     margin-top: 5px;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     padding: 12px 15px;
 
     border: none;
     border-radius: 15px;
-
+    box-sizing: border-box;
     background: rgba(202, 235, 248, 0.26);
 
+    transform: translateZ(0);
+    transition: all 0.2s ease;
     box-shadow:
-        inset 0 2px 5px rgba(0,0,0,0.08),
-        0 1px 0 rgba(255,255,255,0.6);
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),      
+        inset 0 2px 5px rgba(0,0,0,0.08),      
+        0 2.5px 0 rgba(145, 195, 215, 0.85),  
+        0 4px 8px rgba(0, 0, 0, 0.08); 
 
     outline: none;
 
@@ -155,8 +282,18 @@ textarea {
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: end;
+    align-items: center;    
+    text-align: center;
+    height: auto;
     margin-bottom: 10px;
+
+    position: relative;     
+    padding-bottom: 70px;
+}
+
+.form-right p{
+    display: flex;
+    justify-self: center;
 }
 
 /* ========================= */
@@ -167,8 +304,19 @@ textarea {
 }
 
 .smallMap { 
-    width: 565px; 
-} 
+    width: 100%;
+    max-width: 565px; 
+    height: auto;
+    display: block;
+    border: transparent;
+    border-radius: 15px;
+    margin-bottom: 10px;
+}
+
+.smallMap:hover{
+    transform: translateY(-0.3px); 
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
+}
 
 .smallMap,
 .bigMap {
@@ -217,11 +365,37 @@ textarea {
 /* Close button X */ 
 .mapclose_button { 
     position: absolute; 
-    top: 15px; 
-    right: 25px; 
-    font-size: 35px; 
+    top: 10px; 
+    right: 13px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 24px; 
     font-weight: bold; 
+    color: #ffffff;    
     cursor: pointer; 
+
+    height: 36px;
+    width: 36px;
+
+    background: rgba(0, 0, 0, 0.8);     
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;         
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    transition: all 0.2s ease;
+}
+
+.mapclose_button:hover {
+    background: #000000;         
+    transform: scale(1.05);  
+    color: #ff4d4d;
+}
+
+.mapclose_button:active {
+    transform: scale(0.95);
+    background: rgba(0, 0, 0, 0.6);
 }
 
 .map-scroll-container{
@@ -264,19 +438,57 @@ textarea {
     position: relative;                                        /* relative to marker(absolute) */
 }
 
+.map-scroll-container::-webkit-scrollbar,
+textarea::-webkit-scrollbar{
+    width: 8px;              
+    height: 4px; 
+}
+
+/* background */
+.map-scroll-container::-webkit-scrollbar-track,
+textarea::-webkit-scrollbar-track{
+    background: rgba(0, 0, 0, 0.05); 
+    border-radius: 10px;
+}
+
+/* scroller colour */
+.map-scroll-container::-webkit-scrollbar-thumb,
+textarea::-webkit-scrollbar-thumb{
+    background: rgba(126, 133, 153, 0.5);
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+/* click scroll */
+.map-scroll-container::-webkit-scrollbar-thumb:hover,
+textarea::-webkit-scrollbar-thumb:hover{
+    background: rgba(126, 133, 153, 0.8); 
+}
+
 /* CREATE BUTTON */
 .create button{
     border: none;
     background: none;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .create{
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+    position: absolute;
+    bottom: 0;             /* 贴紧右侧容器底部 */
+    right: 0;
 
     width: 100px;
     height: 40px;
+    margin-top: auto;
 
     box-sizing: border-box;
     border: none;
@@ -285,7 +497,7 @@ textarea {
 
     color: white;
     font-family: 'Slackey', cursive;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
 
     cursor: pointer;
@@ -320,61 +532,142 @@ textarea {
 /*       IMAGE CROP          */
 /* ========================= */
 .crop-modal {
-    left: 0;
+    position: fixed;
     top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
     display: none;
-    position:fixed;
+    justify-content: center;
+    align-items: center;
     z-index: 20000;
-    inset:0;
-    background:rgba(0,0,0,0.7);
+    box-sizing: border-box;
+    padding: 20px;
+}
+
+.crop-box {
+    width: 1000px;
+    max-width: 95vw; 
+    height: 750px;
+    max-height: 85vh; 
+
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-sizing: border-box;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.imgclose_button { 
+    position: absolute;
+    top: 15px;
+    right: 15px;
+
+    display: flex;
     justify-content: center;
     align-items: center;
 
-}
-
-.crop-box{
-    width: 1000px;
-    justify-self: center;
-
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(1px);
-    -webkit-backdrop-filter: blur(1px);
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 20px;
-    box-shadow:
-        0 8px 32px rgba(0,0,0,0.15);
-}
-
-/* Close button X */ 
-.imgclose_button { 
-    display: flex;
-    justify-self: end;
-    margin: 10px;
-    font-size: 35px; 
+    font-size: 28px; 
     font-weight: bold; 
+    color: #333;
     cursor: pointer; 
 
-    height: 30px;
-    width: 30px;
+    height: 36px;
+    width: 36px;
 
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(1px);
-    -webkit-backdrop-filter: blur(1px);
-    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 50%;
-    box-shadow:
-        0 8px 32px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    transition: all 0.2s ease;
 }
 
-.crop-container{
-    position:relative;
+.imgclose_button:hover {
+    background: #fff;
+    transform: scale(1.05);
+    color: #ff4d4d;
 }
 
-.crop-preview{
-    margin: 20px;
-    max-width: 700px;
-    max-height: 700px;
+.imgclose_button:active {
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.crop-container {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    margin-top: 25px;
+    margin-bottom: 65px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+}
+
+.crop-preview {
+    max-width: 100%;
+    max-height: 100%;
     display: block;
+}
+
+#confirmCropBtn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 120px;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(179, 234, 249, 0.532); 
+
+    color: white;
+    font-family: 'Slackey', cursive;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    
+    transform: translateZ(0);
+    transition: all 0.2s ease;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.4) inset,    
+        0 -2px 4px rgba(0, 0, 0, 0.08) inset,      
+        0 4px 0 rgba(109, 165, 172, 0.8),      
+        0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+#confirmCropBtn:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.45) inset,
+        0 -2px 5px rgba(0, 0, 0, 0.1) inset,
+        0 6px 0 rgba(88, 139, 178, 0.9),
+        0 10px 16px rgba(0, 0, 0, 0.22);           
+}
+
+#confirmCropBtn:active {
+    transform: translateY(2px);    
+    box-shadow:                  
+        0 1px 0 rgba(255, 255, 255, 0.3) inset,
+        0 -2px 4px rgba(0, 0, 0, 0.15) inset,
+        0 2px 0 rgba(119, 207, 200, 0.744),           
+        0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* ========================= */
@@ -394,8 +687,11 @@ textarea {
 }
 
 .preview{
-    width: 1000px;
-    height: 600px;
+    width: 1200px;
+    max-width: 95vw;
+    height: auto;
+    max-height: 85vh;
+
     background: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(1px);
     -webkit-backdrop-filter: blur(1px);
@@ -410,6 +706,7 @@ textarea {
 
     padding: 20px;
     position: relative;
+    box-sizing: border-box;
 }
 
 /* ===== MODAL IMAGE ===== */
@@ -419,6 +716,8 @@ textarea {
     justify-content: center;
     align-items: center;
     width: 100%;
+    margin-top: 20px;
+    margin-bottom: 60px;
 }
 
 .preview-img{
@@ -429,23 +728,80 @@ textarea {
 
 /* ===== CLOSE BUTTON ===== */
 .preview-close{
-    position:absolute;
-    top:10px;
-    right:15px;
-    cursor:pointer;
-    background-color: white;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+
+    height: 36px;
+    width: 36px;
+
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    transition: all 0.2s ease;
+}
+
+.preview-close:hover {
+    background: #fff;
+    transform: scale(1.05);
+    color: #ff4d4d;
+}
+
+.preview-close:active {
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.5);
 }
 
 /* ===== NAV BUTTONS ===== */
 .preview-arrow{
-    position:absolute;
-    top:50%;
-    transform:translateY(-50%);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%); 
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 22px; 
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+
+    height: 40px;
+    width: 40px;
+
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    transition: all 0.2s ease;
 }
 
 /* left / right */
 .left-arrow{ left:10px; }
 .right-arrow{ right:10px; }
+
+.preview-arrow:hover {
+    background: #fff;
+    transform: translateY(-50%) scale(1.08); 
+}
+
+.preview-arrow:active {
+    transform: translateY(-50%) scale(0.92);
+    background: rgba(255, 255, 255, 0.5);
+}
 
 /* ===== ACTION BUTTONS (KEEP ONLY POSITION) ===== */
 .preview-btn{
@@ -455,24 +811,63 @@ textarea {
 
     display: flex;
     gap: 10px;
+    z-index: 10;
 }
 
 .preview-btn button{
-    padding: 10px 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 16px;
+    height: 40px;
     border: none;
     border-radius: 10px;
-    background: #7e8599;
+
+    background: rgba(179, 234, 249, 0.532);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
     color: white;
+    font-family: 'Slackey', cursive;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
 
-    transition: 0.2s;
+    transform: translateZ(0);
+    transition: all 0.2s ease;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.4) inset,    
+        0 -2px 4px rgba(0, 0, 0, 0.08) inset,      
+        0 4px 0 rgba(109, 165, 172, 0.8),      
+        0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
+.preview-btn button:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.45) inset,
+        0 -2px 5px rgba(0, 0, 0, 0.1) inset,
+        0 6px 0 rgba(93, 142, 148, 0.9),
+        0 10px 16px rgba(0, 0, 0, 0.22);
+}
+
+.preview-btn button:active {
+    transform: translateY(2px);    
+    box-shadow:                  
+        0 1px 0 rgba(255, 255, 255, 0.3) inset,
+        0 -2px 4px rgba(0, 0, 0, 0.15) inset,
+        0 2px 0 rgba(119, 207, 200, 0.744),           
+        0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== DISABLED STATE (禁用按钮的特殊处理) ===== */
 .cover-button.disabled {
-    background-color: #ccc;
-    color: #666;
+    background-color: rgba(200, 200, 200, 0.4);
+    backdrop-filter: blur(5px);
+    color: white;
     cursor: not-allowed;
     pointer-events: none;
-    opacity: 0.8;
+    opacity: 0.7;
+    transform: none;
+    box-shadow: none;
 }
-

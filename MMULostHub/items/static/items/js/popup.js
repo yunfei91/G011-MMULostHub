@@ -88,6 +88,16 @@ function showConfirm(title, message, callback){
     popup.style.display = "flex";
 }
 
+popup.addEventListener("click", function(event){
+
+    if(event.target === popup){
+
+        popup.style.display = "none";
+
+        popupCallback = null;
+    }
+});
+
 /* ====================================== 
     CREATE / EDIT IMAGE PREVIEW POPUP       
 ====================================== */
@@ -158,6 +168,16 @@ function showStatusPopup(postId) {
         popup.style.display = "none";
     };
 }
+
+const statusPopup = document.getElementById("statusPopup");
+
+statusPopup.addEventListener("click", function(event){
+
+    if(event.target === statusPopup){
+
+        statusPopup.style.display = "none";
+    }
+});
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
         yt - POST POPUP FUNCTION        

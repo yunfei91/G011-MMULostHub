@@ -401,3 +401,26 @@ if(existingImagesElement){
 
     renderImages();
 }
+
+window.addEventListener("click", function(event){
+    
+    // Preview Modal
+    const previewModal = document.getElementById("preview_modal");
+
+    if(event.target === previewModal){
+        previewModal.style.display = "none";
+    }
+
+    // Crop Modal
+    const cropModal = document.getElementById("crop_modal");
+
+    if(event.target === cropModal){
+
+        cropModal.style.display = "none";
+
+        if(cropper){
+            cropper.destroy();
+            cropper = null;
+        }
+    }
+});

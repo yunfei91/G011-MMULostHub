@@ -939,3 +939,13 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
 
     }
 });
+
+window.addEventListener("click", function(event){
+
+    // Map Modal
+    const mapModal = document.getElementById("map_modal");
+
+    if(event.target === mapModal){
+        mapModal.style.display = "none";
+    }
+});

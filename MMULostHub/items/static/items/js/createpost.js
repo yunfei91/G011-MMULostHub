@@ -74,5 +74,27 @@ function confirmCreate(event) {
 
         }
     );
+}
 
+const datetimeInput = document.getElementById("post_datetime");
+
+datetimeInput.addEventListener("focus", function () {
+
+    document.addEventListener("click", closeDatetime);
+
+});
+
+datetimeInput.addEventListener("change", function () {
+    datetimeInput.blur();
+    
+});
+
+function closeDatetime(e){
+
+    if(e.target !== datetimeInput){
+
+        datetimeInput.blur();
+
+        document.removeEventListener("click", closeDatetime);
+    }
 }
