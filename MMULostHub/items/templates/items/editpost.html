@@ -269,6 +269,9 @@
             <!-- ====================================== -->
             <!--         IMAGE PREVIEW MODAL           -->
             <!-- ====================================== -->
+            <!-- ====================================== -->
+            <!--         IMAGE PREVIEW MODAL           -->
+            <!-- ====================================== -->
             <div id="preview_modal" class="preview-modal">
 
                 <div class="preview">
@@ -282,27 +285,31 @@
                         ❮
                     </button>
 
-                    <!-- show image -->
-                    <img id="preview_modal_image" class="preview-modal-image">
-
                     <!-- right arrow -->
                     <button type="button" id="next_image_btn" class="preview-arrow right-arrow">
                         ❯
                     </button>
 
-                    <button type="button" id="crop_again_btn" class="crop-again-btn">
-                        Crop Again
-                    </button>
+                    <div class = 'img-box'>
+                        <!-- show image -->
+                        <img id="preview_modal_image" class="preview-img">
+                    </div>
 
-                    <!-- delete -->
-                    <button type="button" id="delete_image" class="delete-preview-btn">
-                        Delete
-                    </button>
+                    <div class = 'preview-btn'>
+                        <button type="button" id="crop_again_btn" class="crop-again-btn">
+                            Crop Again
+                        </button>
 
-                    <!-- set iamge as cover button-->
-                    <button type="button" id="cover_btn" class="cover-button">
-                        Cover Image
-                    </button>
+                        <!-- set iamge as cover button-->
+                        <button type="button" id="cover_btn" class="cover-button">
+                            Set Cover
+                        </button>
+
+                        <!-- delete -->
+                        <button type="button" id="delete_image" class="delete-preview-btn">
+                            Delete Image
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -318,18 +325,21 @@
                         &times;   <!-- x icon -->
                     </span>
 
+                    <div id = "location_label" class = "location_label"></div>
+
                     <!-- Scroller -->
                     <div class="map-scroll-container">
-                        <div id = "location_label" class = "location_label"></div>
                         <div class="big-map-box">
-                            <img
-                                src="{% static 'images/map-img.jpg' %}"
-                                id="bigMap"
-                                class="bigMap"
-                                alt="MMU Big Map"
-                            >
-                            <div id="bigMap_marker" class="bigMap-marker">
-                                📍
+                            <div class="map-relative-wrapper" style="position: relative; display: inline-block;">
+                                <img
+                                    src="{% static 'images/map-img.jpg' %}"
+                                    id="bigMap"
+                                    class="bigMap"
+                                    alt="MMU Big Map"
+                                >
+                                <div id="bigMap_marker" class="bigMap-marker">
+                                    📍
+                                </div>
                             </div>
                         </div>
                     </div>

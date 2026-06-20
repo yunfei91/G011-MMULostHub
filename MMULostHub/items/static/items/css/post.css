@@ -112,6 +112,14 @@ input[type="datetime-local"]{
     cursor: pointer;
 }
 
+/* ===== DELETE BUTTON ===== */
+.remove-image-btn{
+    position:absolute;
+    top:0;
+    right:0;
+}
+
+
 textarea {
     display: flex;
     flex: 1;
@@ -148,11 +156,20 @@ textarea {
     display: flex;
     flex-direction: column;
     align-items: end;
+    margin-bottom: 10px;
 }
 
 /* ========================= */
 /*      BIG & SMALL MAP      */
 /* ========================= */
+.map_box{
+    position: relative;
+}
+
+.smallMap { 
+    width: 565px; 
+} 
+
 .smallMap,
 .bigMap {
     position: relative;
@@ -168,30 +185,33 @@ textarea {
 }
 
 .map_modal {
-    display: none; 
-    position: fixed;                                    /* fixed position wont move with the */
-    z-index: 10000; 
-    inset: 0;                                           /* full screen */
-    
-}
-
-.smallMap { 
-    width: 600px; 
-} 
-
-/* Big popup map */ 
-.bigMap { 
-    width: 950px;
-    height: auto;
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.8);
+    justify-content:center;
+    align-items:center;
+    z-index: 20000;
 }
 
 /* White popup box */ 
-.mapmodal_content { 
-    width: 100%; 
-    max-width: 950px;                                       /* = bigmap img width */
-    margin: 10px auto; 
-    padding: 30px; 
-    position: relative;                                     /* relative to close button position */
+.mapmodal_content{
+    width: 1000px;
+    max-height: 90vh;   
+    overflow: hidden;   
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 20px;
+    position: relative;
+
+    background: white;
+    border-radius: 20px;
 }
 
 /* Close button X */ 
@@ -204,32 +224,45 @@ textarea {
     cursor: pointer; 
 }
 
-/* ========================= */
-/* MAP SCROLL AREA */
-/* ========================= */
+.map-scroll-container{
+    flex: 1; 
+    width: 100%;
+    max-height: 100%;
 
-.map-scroll-container {
-    max-height: 800px;
-    overflow: auto;                                             /* scroll line  */
-    margin-top: 20px;
-}
-
-.big-map-box{
-    position: relative;                                         /* relative to marker(absolute) */
-}
-
-.map_box{
-    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: block;
 }
 
 .location_label{
-    display:none;
+    display: none;
+
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    z-index: 1000;
+
+    padding: 10px 20px;
+
+    background: rgba(255,255,255,0.95);
+    border-radius: 10px;
+    font-weight: bold;
 }
 
-.popup{
-    z-index: 20000;
+/* Big popup map */ 
+.bigMap{
+    display: block; 
+    width: 100%;
+    height: auto;
 }
 
+.big-map-box{
+    width: 100%;
+    display: block;
+    position: relative;                                        /* relative to marker(absolute) */
+}
 
 /* CREATE BUTTON */
 .create button{
@@ -241,8 +274,6 @@ textarea {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-
-    margin-top: 50px;
 
     width: 100px;
     height: 40px;
@@ -284,6 +315,7 @@ textarea {
         0 3px 0 #565c6e,
         0 5px 10px rgba(0,0,0,0.25);
 }
+
 /* ========================= */
 /*       IMAGE CROP          */
 /* ========================= */
@@ -292,7 +324,7 @@ textarea {
     top: 0;
     display: none;
     position:fixed;
-    z-index:20000;
+    z-index: 20000;
     inset:0;
     background:rgba(0,0,0,0.7);
     justify-content: center;
@@ -346,17 +378,8 @@ textarea {
 }
 
 /* ========================= */
-/*       IMAGE PREVIEW       */
+/*    IMAGE PREVIEW  MODAL   */
 /* ========================= */
-
-/* ===== DELETE BUTTON ===== */
-.remove-image-btn{
-    position:absolute;
-    top:0;
-    right:0;
-}
-
-/* ===== MODAL ===== */
 .preview-modal{
     display:none;
     position:fixed;
@@ -367,10 +390,12 @@ textarea {
     background:rgba(0,0,0,0.8);
     justify-content:center;
     align-items:center;
+    z-index: 20000;
 }
 
 .preview{
     width: 1000px;
+    height: 600px;
     background: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(1px);
     -webkit-backdrop-filter: blur(1px);
@@ -379,13 +404,27 @@ textarea {
     box-shadow:
         0 8px 32px rgba(0,0,0,0.15);
 
-    align-items:center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 20px;
+    position: relative;
 }
 
 /* ===== MODAL IMAGE ===== */
-.preview-modal-image{
-    max-width:80%;
-    max-height:80%;
+.img-box{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.preview-img{
+    max-width: 80%;
+    max-height: 500px;
+    object-fit: contain;
 }
 
 /* ===== CLOSE BUTTON ===== */
@@ -409,16 +448,24 @@ textarea {
 .right-arrow{ right:10px; }
 
 /* ===== ACTION BUTTONS (KEEP ONLY POSITION) ===== */
-.delete-preview-btn{
-    position:absolute;
-    bottom:50px;
-    right:10px;
+.preview-btn{
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+
+    display: flex;
+    gap: 10px;
 }
 
-.cover-button{
-    position:absolute;
-    bottom:50px;
-    right:80px;
+.preview-btn button{
+    padding: 10px 16px;
+    border: none;
+    border-radius: 10px;
+    background: #7e8599;
+    color: white;
+    cursor: pointer;
+
+    transition: 0.2s;
 }
 
 .cover-button.disabled {
@@ -429,8 +476,3 @@ textarea {
     opacity: 0.8;
 }
 
-.crop-again-btn{
-    position:absolute;
-    bottom:50px;
-    right:180px;
-}

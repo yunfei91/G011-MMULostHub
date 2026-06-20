@@ -88,21 +88,6 @@ function showConfirm(title, message, callback){
     popup.style.display = "flex";
 }
 
-popupConfirmBtn.onclick=function(){
-
-    popup.style.display="none";
-
-    if(popupCallback){
-
-        popupCallback();
-
-        popupCallback=null;
-
-    }
-
-}
-
-
 /* ====================================== 
     CREATE / EDIT IMAGE PREVIEW POPUP       
 ====================================== */
@@ -204,10 +189,14 @@ function openPost(el) { // el=this connection
         profileLink.href = el.dataset.profile;
     }
 
-    images = el.dataset.images
-        ? el.dataset.images.split("|").filter(i => i)
-        : [];
-
+    images = [];
+    if (el.dataset.postImage) {
+        images = el.dataset.postImage.split("|").filter(i => i.trim());
+    } else if (el.dataset.images) {
+        images = el.dataset.images.split("|").filter(i => i.trim());
+    } else if (el.dataset.image) {
+        images = el.dataset.image.split("|").filter(i => i.trim());
+    }
     currentIndex = 0;
     showImg();
 
@@ -232,17 +221,6 @@ function openPost(el) { // el=this connection
     document.getElementById("m_category").innerText = el.dataset.category;
     document.getElementById("m_location").innerText = el.dataset.locationName || "Unknown Location";
     document.getElementById("m_description").innerText = el.dataset.description;
-
-    console.log(el.dataset.images);
-
-    images = el.dataset.images
-        ? el.dataset.images.split("|").filter(i => i)
-        : [];
-
-    console.log(images);
-    
-    currentIndex = 0;
-    showImg();
 
     /** ============================= */
     /**   Post Navigation Binding    */
@@ -341,20 +319,18 @@ function openPost(el) { // el=this connection
     }
 
     if (
-        String(ownerId) === String(CURRENT_USER_ID) &&
-        status === "open"
+        String(ownerId) == String(CURRENT_USER_ID) && status == "open"
     ) {
         statusBtn.style.cursor = "pointer";
     }
     else{
-        statusBtn.style.cursor = "not-allowed";
+        statusBtn.style.cursor = "none";
     }
 
     statusBtn.onclick = function () {
 
         if (
-            String(ownerId) !== String(CURRENT_USER_ID) ||
-            status !== "open"
+            String(ownerId) !== String(CURRENT_USER_ID) || status !== "open"
         ) {
             return;
         }

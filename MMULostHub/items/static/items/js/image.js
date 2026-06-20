@@ -29,6 +29,7 @@ const imagePreviewContainer = document.getElementById("imageGrid");
         UPLOAD IMAGE BUTTON FUNCTION     
     ====================================== */
 uploadBtn.addEventListener("click", function(){
+    imageInput.value = "";
     imageInput.click();
 });
 
@@ -166,10 +167,6 @@ function renderImages(){
 
     imagePreviewContainer.innerHTML = "";
 
-    uploadBtn.addEventListener("click", function () {
-        imageInput.click();
-    });
-
     imagePreviewContainer.appendChild(uploadBtn);
 
     window.croppedImages.forEach((imgObj,index)=>{
@@ -253,7 +250,7 @@ function openPreviewModal(){
         cropAgainBtn.style.display = "none";
     }
     else{
-        cropAgainBtn.style.display = "block";
+        cropAgainBtn.style.display = "flex";
     }
 
     updateCoverButtonState();
