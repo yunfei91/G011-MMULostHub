@@ -1417,17 +1417,6 @@ footer{
     z-index: 9988;
 }
 
-.posts-view:active:not(:has(.popup-status button:active, .prev-btn:active, .next-btn:active, .post-nav-dropdown-btn:active, .btn:active)) {
-    transform: translateY(2px) scale(0.98);
-    box-shadow:
-        inset 0 2px 4px rgba(0,0,0,.08),
-        0 2px 0 #b2bcc9,
-        0 4px 8px rgba(120,130,145,.15),
-        0 6px 12px rgba(181,209,250,.30);
-
-    z-index: 9988;
-}
-
 /* ========================= */
 /*       PAGINATION          */
 /* ========================= */
