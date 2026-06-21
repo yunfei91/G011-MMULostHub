@@ -863,6 +863,7 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
                 break;
             }
         }
+        locationSelect.dispatchEvent(new Event("change"));
     }
 
     

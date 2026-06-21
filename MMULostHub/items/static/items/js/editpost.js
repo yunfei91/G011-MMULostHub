@@ -78,3 +78,128 @@ function confirmEdit(event) {
             form.requestSubmit();
     });
 }
+
+/* ===================================== */
+/*              DATE TIME                */
+/* ===================================== */
+const datetimeInput = document.getElementById("post_datetime");
+
+datetimeInput.addEventListener("focus", function () {
+
+    document.addEventListener("click", closeDatetime);
+
+});
+
+datetimeInput.addEventListener("change", function () {
+    this.blur();
+});
+
+function closeDatetime(e){
+
+    if(e.target !== datetimeInput){
+
+        datetimeInput.blur();
+
+        document.removeEventListener("click", closeDatetime);
+    }
+}
+
+/* ===================================== */
+/*         SELECTION DROPDOWN            */
+/* ===================================== */
+document.querySelectorAll(".custom-source").forEach(select => {
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "custom-select";
+
+    const selected = document.createElement("div");
+    selected.className = "selected";
+
+    const defaultOption = select.options[select.selectedIndex];
+
+    selected.textContent = defaultOption.textContent;
+
+    if (!select.value) {
+        selected.classList.add("placeholder");
+    }
+
+    const optionsContainer = document.createElement("div");
+    optionsContainer.className = "options";
+
+    [...select.options].forEach(option => {
+
+        const optionDiv = document.createElement("div");
+
+        optionDiv.className = "option";
+        optionDiv.textContent = option.textContent;
+
+        if (option.value === select.value) {
+            optionDiv.classList.add("selected-option");
+        }
+
+        optionDiv.addEventListener("click", () => {
+
+            if (select.value !== option.value) {
+                select.value = option.value;
+                select.dispatchEvent(new Event("change"));
+            }
+
+            wrapper.classList.remove("active");
+        });
+
+        optionsContainer.appendChild(optionDiv);
+
+    });
+
+    select.addEventListener("change", function () {
+        const currentOption = [...select.options].find(opt => opt.value === select.value);
+        if (currentOption) {
+            selected.textContent = currentOption.textContent;
+            selected.classList.remove("placeholder");
+        } else {
+            selected.textContent = "Please choose a location";
+            selected.classList.add("placeholder");
+        }
+
+        optionsContainer.querySelectorAll(".option").forEach(optDiv => {
+            if (optDiv.textContent === selected.textContent) {
+                optDiv.classList.add("selected-option");
+            } else {
+                optDiv.classList.remove("selected-option");
+            }
+        });
+    });
+
+    selected.addEventListener("click", e => {
+
+        e.stopPropagation();
+
+        document
+            .querySelectorAll(".custom-select")
+            .forEach(dropdown => {
+
+                if (dropdown !== wrapper) {
+                    dropdown.classList.remove("active");
+                }
+
+            });
+
+        wrapper.classList.toggle("active");
+    });
+
+    wrapper.appendChild(selected);
+    wrapper.appendChild(optionsContainer);
+
+    select.parentNode.insertBefore(wrapper, select);
+
+});
+
+document.addEventListener("click", () => {
+
+    document
+        .querySelectorAll(".custom-select")
+        .forEach(dropdown =>
+            dropdown.classList.remove("active")
+        );
+
+});

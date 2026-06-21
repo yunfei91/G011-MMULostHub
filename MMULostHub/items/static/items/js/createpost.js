@@ -76,6 +76,9 @@ function confirmCreate(event) {
     );
 }
 
+/* ===================================== */
+/*              DATE TIME                */
+/* ===================================== */
 const datetimeInput = document.getElementById("post_datetime");
 
 datetimeInput.addEventListener("focus", function () {
@@ -98,6 +101,9 @@ function closeDatetime(e){
     }
 }
 
+/* ===================================== */
+/*         SELECTION DROPDOWN            */
+/* ===================================== */
 document.querySelectorAll(".custom-source").forEach(select => {
 
     const wrapper = document.createElement("div");
@@ -130,25 +136,35 @@ document.querySelectorAll(".custom-source").forEach(select => {
 
         optionDiv.addEventListener("click", () => {
 
-            select.value = option.value;
-
-            selected.textContent = option.textContent;
-
-            selected.classList.remove("placeholder");
-
-            optionsContainer
-                .querySelectorAll(".option")
-                .forEach(opt =>
-                    opt.classList.remove("selected-option")
-                );
-
-            optionDiv.classList.add("selected-option");
+            if (select.value !== option.value) {
+                select.value = option.value;
+                select.dispatchEvent(new Event("change"));
+            }
 
             wrapper.classList.remove("active");
         });
 
         optionsContainer.appendChild(optionDiv);
 
+    });
+
+    select.addEventListener("change", function () {
+        const currentOption = [...select.options].find(opt => opt.value === select.value);
+        if (currentOption) {
+            selected.textContent = currentOption.textContent;
+            selected.classList.remove("placeholder");
+        } else {
+            selected.textContent = "Please choose a location";
+            selected.classList.add("placeholder");
+        }
+
+        optionsContainer.querySelectorAll(".option").forEach(optDiv => {
+            if (optDiv.textContent === selected.textContent) {
+                optDiv.classList.add("selected-option");
+            } else {
+                optDiv.classList.remove("selected-option");
+            }
+        });
     });
 
     selected.addEventListener("click", e => {
