@@ -85,8 +85,7 @@ datetimeInput.addEventListener("focus", function () {
 });
 
 datetimeInput.addEventListener("change", function () {
-    datetimeInput.blur();
-    
+    this.blur();
 });
 
 function closeDatetime(e){
@@ -98,3 +97,90 @@ function closeDatetime(e){
         document.removeEventListener("click", closeDatetime);
     }
 }
+
+document.querySelectorAll(".custom-source").forEach(select => {
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "custom-select";
+
+    const selected = document.createElement("div");
+    selected.className = "selected";
+
+    const defaultOption = select.options[select.selectedIndex];
+
+    selected.textContent = defaultOption.textContent;
+
+    if (!select.value) {
+        selected.classList.add("placeholder");
+    }
+
+    const optionsContainer = document.createElement("div");
+    optionsContainer.className = "options";
+
+    [...select.options].forEach(option => {
+
+        const optionDiv = document.createElement("div");
+
+        optionDiv.className = "option";
+        optionDiv.textContent = option.textContent;
+
+        if (option.value === select.value) {
+            optionDiv.classList.add("selected-option");
+        }
+
+        optionDiv.addEventListener("click", () => {
+
+            select.value = option.value;
+
+            selected.textContent = option.textContent;
+
+            selected.classList.remove("placeholder");
+
+            optionsContainer
+                .querySelectorAll(".option")
+                .forEach(opt =>
+                    opt.classList.remove("selected-option")
+                );
+
+            optionDiv.classList.add("selected-option");
+
+            wrapper.classList.remove("active");
+        });
+
+        optionsContainer.appendChild(optionDiv);
+
+    });
+
+    selected.addEventListener("click", e => {
+
+        e.stopPropagation();
+
+        document
+            .querySelectorAll(".custom-select")
+            .forEach(dropdown => {
+
+                if (dropdown !== wrapper) {
+                    dropdown.classList.remove("active");
+                }
+
+            });
+
+        wrapper.classList.toggle("active");
+    });
+
+    wrapper.appendChild(selected);
+    wrapper.appendChild(optionsContainer);
+
+    select.parentNode.insertBefore(wrapper, select);
+
+});
+
+document.addEventListener("click", () => {
+
+    document
+        .querySelectorAll(".custom-select")
+        .forEach(dropdown =>
+            dropdown.classList.remove("active")
+        );
+
+});

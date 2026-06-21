@@ -110,18 +110,18 @@
                         <!--        SELECT POST TYPE        -->
                         <!-- ============================== -->
                         <label> Type: </label>
-                        <select name = "post_type">
+                        <select name = "post_type" class="custom-source">
 
                             <!-- Default -->
-                            <option value = ""> Select Post Type </option>
+                            <option value = "" selected disabled hidden> Select Post Type </option>
 
                             <!-- Select Lost Post-->
-                            <option value = "lost" {% if post_data.post_type == "lost" %} selected {% endif %}> 
+                            <option value = "lost" {% if post_data.post_type == "lost" %} selected {% endif %}  class = 'choice'> 
                                 Lost Post 
                             </option>
 
                             <!-- Select Found Post-->
-                            <option value = "found" {% if post_data.post_type == "found" %} selected {% endif %}> 
+                            <option value = "found" {% if post_data.post_type == "found" %} selected {% endif %}  class = 'choice'> 
                                 Found Post 
                             </option>
 
@@ -162,14 +162,14 @@
                         <!--            SELECT ITEM CATEGORY                    -->
                         <!-- ================================================== -->
                         <label> Item Category: </label>
-                        <select name = "post_itemcategory">
+                        <select name = "post_itemcategory" class="custom-source">
 
                             <!-- Default -->
-                            <option value = ""> Select Category </option>
+                            <option value = "" selected disabled hidden> Select Category </option>
 
                             <!-- Show (modal.py) and Select Item Categories -->
                             {% for value, label in item_categories %}
-                                <option value="{{ value }}" {% if post_data.post_itemcategory == value %} selected {% endif %}>
+                                <option value="{{ value }}" {% if post_data.post_itemcategory == value %} selected {% endif %}  class = 'choice'>
                                     {{ label }}
                                 </option>
                             {% endfor %}
@@ -181,14 +181,14 @@
                         <!--            SELECT LOCATION                      -->
                         <!-- ================================================== -->
                         <label> Location: </label>
-                        <select name = "post_location" id = "post_location">
+                        <select name = "post_location" id = "post_location" class="custom-source">
 
                             <!-- Default -->
-                            <option value =""> Select Location </option>
+                            <option value ="" selected disabled hidden> Select Location </option>
                             
                             <!-- Show (migration 0002) and Select Locations -->
                             {% for loc in locations %}
-                                <option value="{{loc.location_code}}" {% if post_data.post_location == loc.location_code %} selected {% endif %}>
+                                <option value="{{loc.location_code}}" {% if post_data.post_location == loc.location_code %} selected {% endif %}  class = 'choice'>
                                     {{loc.location_name}}
                                 </option>
                             {% endfor %}
