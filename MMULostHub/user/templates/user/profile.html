@@ -275,7 +275,7 @@
                                                                 alt="Post Image" 
                                                                 class="post-image"
                                                                 data-current-index="0"
-                                                                data-images="{% for img in post.images.all %}{{ img.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
+                                                                sorted-images="{% for img in post.sorted_images %}{{ img.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
 
                                                             {% if post.images.count > 1 %}
                                                                 <button class="next-btn" id="next_btn_{{ post.id }}" type="button" 
@@ -553,7 +553,7 @@
                                                                 alt="Post Image" 
                                                                 class="post-image"
                                                                 data-current-index="0"
-                                                                data-images="{% for img in post.images.all %}{{ img.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
+                                                                sorted-images="{% for img in post.sorted_images %}{{ img.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
 
                                                             {% if post.images.count > 1 %}
                                                                 <button class="next-btn" id="next_btn_{{ post.id }}" type="button" 
@@ -832,7 +832,7 @@
                                                                 alt="Post Image" 
                                                                 class="post-image"
                                                                 data-current-index="0"
-                                                                data-images="{% for img in post.images.all %}{{ img.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
+                                                                sorted-images="{% for img in post.sorted_images %}{{ img.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
 
                                                             {% if post.images.count > 1 %}
                                                                 <button class="next-btn" id="next_btn_{{ post.id }}" type="button" 
@@ -1441,7 +1441,7 @@
                 const imgElement = document.getElementById("post_img_" + postId);
                 if (!imgElement) return;
 
-                const imagesAttr = imgElement.getAttribute("data-images");
+                const imagesAttr = imgElement.getAttribute("sorted-images");
                 if (!imagesAttr) return;
                 const images = imagesAttr.split(",");
 
