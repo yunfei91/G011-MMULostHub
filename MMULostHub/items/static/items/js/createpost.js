@@ -71,7 +71,6 @@ function confirmCreate(event) {
             document.getElementById("cropped_images").value = JSON.stringify(imageData);
 
             form.requestSubmit();
-
         }
     );
 }
