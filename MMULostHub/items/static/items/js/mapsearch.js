@@ -9,109 +9,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const regions = getRegions();
     const tooltip = document.getElementById("map-tooltip");
 
-    const canvas = document.getElementById("map-overlay");
-    const ctx = canvas.getContext("2d");
-
-
-    // ===============================
-    //     Canvas size = Map Size
-    // ===============================
-    function resizeCanvas() {
-
-        // real w & l
-        canvas.width = map.clientWidth;
-        canvas.height = map.clientHeight;
-
-        // w & l in website
-        canvas.style.width = map.clientWidth + "px";
-        canvas.style.height = map.clientHeight + "px";
-    }
-
-    resizeCanvas();
-
-    // will change whenever size the website is in other device
-    window.addEventListener("resize", resizeCanvas);
-
-    // ===============================
-    //      COLOUR MAP REGIONS
-    // ===============================
-    function drawRegion(region) {
-
-        // change to canvas default = no drawing yet
-        ctx.clearRect(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-
-        // fill up colour
-        ctx.fillStyle = "blue";
-
-        // ===============================
-        //       REGIONS SHAPE 
-        // ===============================
-        const scaleX = map.clientWidth / map.naturalWidth;
-        const scaleY = map.clientHeight / map.naturalHeight;
-
-        // ===============================
-        //           Rectangle
-        // ===============================
-        if (region.type === "rectangle") {
-
-            // fillRect = draw rectangle
-            ctx.fillRect(
-                region.x1 * scaleX,
-                region.y1 * scaleY,
-                (region.x2 - region.x1) * scaleX,
-                (region.y2 - region.y1) * scaleY
-            );
-        }
-
-        // ===============================
-        //           Polygon
-        // ===============================
-        if (region.type === "polygon") {
-
-            // connect line one by one (coordinate)
-            ctx.beginPath();
-
-            ctx.moveTo(
-                region.points[0][0] * scaleX,
-                region.points[0][1] * scaleY
-            );
-
-            for (let i = 1; i < region.points.length; i++) {
-
-                ctx.lineTo(
-                    region.points[i][0] * scaleX,
-                    region.points[i][1] * scaleY
-                );
-            }
-
-            ctx.closePath();
-            ctx.fill();
-        }
-
-        // ===============================
-        //           Circle
-        // ===============================
-        if (region.type === "circle") {
-
-            ctx.beginPath();
-
-            ctx.arc(
-                region.centerX * scaleX,
-                region.centerY * scaleY,
-                region.radius * scaleX,
-                0,
-                Math.PI * 2
-            );
-
-            ctx.fill();
-        }
-    }
-
     // ===============================
     //  FIND REGION WHEN MOUSE CLICK
     // ===============================
@@ -187,17 +84,19 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ==================================
-    //      MAP HOVER (COLOUR REGION)
+    //              MAP HOVER 
     // ==================================
+    map.style.pointerEvents = "auto";
+
     map.addEventListener("mousemove", function (event) {
 
         const rect = map.getBoundingClientRect();
 
-        const scaleX = map.naturalWidth / map.clientWidth;
-        const scaleY = map.naturalHeight / map.clientHeight;
+        const relativeX = (event.clientX - rect.left) / rect.width;
+        const relativeY = (event.clientY - rect.top) / rect.height;
 
-        const x = (event.clientX - rect.left) * scaleX;
-        const y = (event.clientY - rect.top) * scaleY;
+        const x = relativeX * map.naturalWidth;
+        const y = relativeY * map.naturalHeight;
 
         const found = findRegion(x, y);
 
@@ -207,15 +106,11 @@ document.addEventListener("DOMContentLoaded", function () {
             // mouse change to hand
             map.style.cursor = "pointer";
 
-            // fill colour
-            drawRegion(found);
-
             // blw mouse appear region name
             tooltip.style.display = "block";
             tooltip.textContent = found.name;
-            tooltip.style.left = (event.clientX - rect.left + 15) + "px";
-            tooltip.style.top = (event.clientY - rect.top + 15) + "px";
-
+            tooltip.style.left = (event.clientX - rect.left - 40 ) + "px";
+            tooltip.style.top = (event.clientY - rect.top ) + "px";
         }
 
         // no region found 
@@ -224,22 +119,31 @@ document.addEventListener("DOMContentLoaded", function () {
             // default back mouse and no region name
             map.style.cursor = "default";
             tooltip.style.display = "none";
-
-            // clear colour fill
-            ctx.clearRect(
-                0,
-                0,
-                canvas.width,
-                canvas.height
-            );
         }
     });
 
-    map.addEventListener("mouseleave", function () {
+    // =========================
+    //    CHECK CLICK REGION
+    // =========================
+    map.addEventListener("click", function (event) {
+        const rect = map.getBoundingClientRect();
 
-        map.style.cursor = "default";
-        tooltip.style.display = "none";
+        const relativeX = (event.clientX - rect.left) / rect.width;
+        const relativeY = (event.clientY - rect.top) / rect.height;
 
+        const x = relativeX * map.naturalWidth;
+        const y = relativeY * map.naturalHeight;
+
+        const found = findRegion(x, y);
+
+        if (!found) {
+            showAllPosts();
+            return;
+        }
+
+        filterPosts(found.code, found.name);
+        document.getElementById("back-btn").style.display = "block";
+        updateURL(found.code);
     });
 
     // ===============================
@@ -251,11 +155,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const noneMsg = document.getElementById("related-none-msg");
 
         posts.forEach(post => {post.style.display = "block";});
-
         noneMsg.style.display = "none";
-
         document.getElementById("back-btn").style.display = "none";
-
         document.getElementById("unknown-btn").style.display = "inline-block";
 
         const url = new URL(window.location.href);
