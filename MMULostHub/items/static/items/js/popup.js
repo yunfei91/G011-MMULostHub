@@ -95,17 +95,18 @@ document.addEventListener("DOMContentLoaded", () => {
 /* ====================================== 
     YT-CREATE / EDIT IMAGE PREVIEW POPUP       
 ====================================== */
-// show imag preview popup when clcick any image
+// Display the currently selected image in the popup
 function showImg() {
+    // Get image element inside the popup
     const img = document.getElementById("m_image");
 
     // if multiple image will view with < and > 
     if (images.length > 0) {
         img.src = images[currentIndex];
-        img.style.display = "block";
+        img.style.display = "block"; // show img
     }
     
-    // if only one image then just view 
+    // Hide image area when no image is available 
     else {
         img.style.display = "none";
     }
@@ -118,7 +119,7 @@ function showImg() {
 function nextImg() {
     if (currentIndex < images.length - 1) {
         currentIndex++;
-        showImg();
+        showImg(); // Refresh to display new img
     }
 }
 
@@ -132,12 +133,16 @@ function prevImg() {
 
 // change image when click next or previuos image button
 function updateButtons() {
+    // Get previous and next navigation buttons
     const prevBtn = document.querySelector(".prev-btn");
     const nextBtn = document.querySelector(".next-btn");
 
+    // Exit if navigation buttons do not exist
     if (!prevBtn || !nextBtn) return;
 
+    // Disable previous button on first image
     prevBtn.disabled = (currentIndex === 0);
+    // Disable next button on last image
     nextBtn.disabled = (currentIndex === images.length - 1);
 }
 
@@ -169,35 +174,36 @@ function showStatusPopup(postId) {
 let images = [];
 currentIndex = 0;
 
+// Open post details popup
 function openPost(el) { // el=this connection
 
     // =========================
     // OPEN MODAL
     // =========================
-    const modal = document.getElementById("postModal");
+    const modal = document.getElementById("postModal"); // Get post modal element
     modal.style.display = "flex"; // Show popup modal , block=show element
 
     document.getElementById("m_type").innerText = // Set popup title, innerText=change text inside element
         el.dataset.type.toUpperCase() + " POST"; // Read HTML, convert lower to upper
 
-    document.getElementById("m_user").innerText = el.dataset.name;
+    document.getElementById("m_user").innerText = el.dataset.name; // Display post author's name
     const avatar = document.getElementById("m_avatar");
 
     if (avatar && el.dataset.avatar) {
-        avatar.src = el.dataset.avatar;
+        avatar.src = el.dataset.avatar; // Set author avatar image
     }
 
     const profileLink = document.getElementById("m_user_link");
 
     if (profileLink && el.dataset.profile) {
-        profileLink.href = el.dataset.profile;
+        profileLink.href = el.dataset.profile; // Set profile page link
     }
 
     images = el.dataset.images
-        ? el.dataset.images.split("|").filter(i => i)
+        ? el.dataset.images.split("|").filter(i => i) // Load post images into array
         : [];
 
-    currentIndex = 0;
+    currentIndex = 0; // Reset image index to first image
     showImg();
 
     /* ************************************* 
@@ -236,11 +242,13 @@ function openPost(el) { // el=this connection
     /** ============================= */
     /**   Post Navigation Binding    */
     /** ============================= */
+    // Check whether current user owns this post
     const isOwner = String(el.dataset.userId) === String(CURRENT_USER_ID);
 
     const postNav = document.querySelector("#postModal .post-nav");
     if (!postNav) return;
 
+    // Generate return URL after editing post
     const nextUrl =
         window.location.pathname +
         window.location.search +
@@ -249,6 +257,7 @@ function openPost(el) { // el=this connection
 
     const currentPath = window.location.pathname + window.location.search;
 
+    // Show edit and delete options for post owner
     if (isOwner) {
         postNav.innerHTML = `
             <div class="post-nav-dropdown">
@@ -274,7 +283,7 @@ function openPost(el) { // el=this connection
                 </div>
             </div>
         `;
-    } else {
+    } else { // Show reporting options for other users' posts
         postNav.innerHTML = `
             <div class="post-nav-dropdown">
                 <button class="post-nav-dropdown-btn" onclick="toggleDropdown(event)">⋮</button>
@@ -298,7 +307,7 @@ function openPost(el) { // el=this connection
     }
 
     /* ======================================= 
-                 POST STATUS        
+                YF - POST STATUS        
      ========================================= */
     const status = el.dataset.status;
     const ownerId = el.dataset.userId;
@@ -352,12 +361,15 @@ function openPost(el) { // el=this connection
     };
 }
 
+// Close post popup and reset related states
 function closePost() {
+
+    // Hide popup modal
     document.getElementById("postModal").style.display = "none";
 
     const url = new URL(window.location);
 
-    url.searchParams.delete("post");
+    url.searchParams.delete("post"); // Remove post parameter from URL
 
     window.history.replaceState(
         {},
@@ -365,7 +377,7 @@ function closePost() {
         url.toString()
     );
 
-    // reset image state
+    // Reset image gallery data
     images = [];
     currentIndex = 0;
 }
@@ -377,27 +389,33 @@ window.addEventListener("click", function (event) {
     const modal = document.getElementById("postModal");
     if (!modal) return;
 
+    // Close popup when clicking modal background
     if (event.target === modal) {
         closePost();
     }
 
+    // Ignore clicks inside navigation menu
     if (event.target.closest(".post-nav")) return;
 
     document.querySelectorAll(".post-nav-menu").forEach(menu => {
         if (!menu.contains(event.target)) {
-            menu.classList.remove("show");
+            menu.classList.remove("show"); // Hide opened dropdown menu
         }
     });
 });
 
+// Toggle post action dropdown menu
 window.toggleDropdown = function(event) {
-    event.stopPropagation()
+    event.stopPropagation() // Prevent click event from bubbling to window
 
+    // Get current dropdown container
     const dropdown = event.currentTarget.closest(".post-nav-dropdown");
 
+    // Get all dropdown menus
     document.querySelectorAll('.post-nav-dropdown').forEach(el => {
+        // Close other opened dropdowns
         if (el !== dropdown) el.classList.remove('show');
     });
 
-    dropdown.classList.toggle('show');
+    dropdown.classList.toggle('show'); // Toggle visibility of current dropdown
 }
