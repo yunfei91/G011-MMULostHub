@@ -458,12 +458,16 @@ def map_search(request):
 
     post_box = Post.objects.all().order_by('-id')
 
-    location = request.GET.get("location", "").strip()
+    location = request.GET.get("location", "").strip().lower()
 
-    if location and location.lower() != "none" and location.lower() != "undefined":
+    if location == "unknown":
+        post_box = post_box.filter(post_location__isnull=True)
+
+    elif location and location not in ["none", "undefined", ""]:
         post_box = post_box.filter(post_location__location_code=location)
     else:
         location = None
+
 
     for post in post_box:
         post.sorted_images = post.images.all().order_by('order')

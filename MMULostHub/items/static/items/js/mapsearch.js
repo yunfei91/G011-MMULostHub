@@ -67,7 +67,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
     const locationCode = urlParams.get("location");
 
-    if (locationCode) {
+    if (locationCode === "unknown") {
+        filterUnknownPosts();
+        document.getElementById("back-btn").style.display = "block";
+        document.getElementById("unknown-btn").style.display = "none";
+    }
+    else if(locationCode) {
 
         // find region in all regions according to the location code taken from url
         const region = regions.find(r => r.code === locationCode);
@@ -122,46 +127,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // =========================
-    //    CHECK CLICK REGION
-    // =========================
-    map.addEventListener("click", function (event) {
-        const rect = map.getBoundingClientRect();
-
-        const relativeX = (event.clientX - rect.left) / rect.width;
-        const relativeY = (event.clientY - rect.top) / rect.height;
-
-        const x = relativeX * map.naturalWidth;
-        const y = relativeY * map.naturalHeight;
-
-        const found = findRegion(x, y);
-
-        if (!found) {
-            showAllPosts();
-            return;
-        }
-
-        filterPosts(found.code, found.name);
-        document.getElementById("back-btn").style.display = "block";
-        updateURL(found.code);
-    });
-
     // ===============================
     //          SHOW ALL POSTS
     // ===============================
     function showAllPosts() {
-
-        const posts = document.querySelectorAll(".post");
-        const noneMsg = document.getElementById("related-none-msg");
-
-        posts.forEach(post => {post.style.display = "block";});
-        noneMsg.style.display = "none";
-        document.getElementById("back-btn").style.display = "none";
-        document.getElementById("unknown-btn").style.display = "inline-block";
-
         const url = new URL(window.location.href);
         url.searchParams.delete("location");
-        window.history.pushState({}, "", url);
+        window.location.href = url.toString();
     }
 
     window.showAllPosts = showAllPosts;
@@ -171,48 +143,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // ===================================
     function showUnknownPosts() {
 
-        const posts = document.querySelectorAll(".post");
-        const noneMsg = document.getElementById("related-none-msg");
-
-        let visibleCount = 0;
-
-        posts.forEach(post => {
-
-            // find post wth no location
-            const location = post.dataset.locationCode || "";
-
-            // confirn found post is really no location
-            if (location.trim() === "") {
-
-                post.style.display = "block";
-                visibleCount++;
-
-            } 
-
-            // post will location wont show
-            else {
-
-                post.style.display = "none";
-            }
-        });
-
-        // no post with No location will show nonMsg
-        if (visibleCount === 0) {
-
-            noneMsg.style.display = "block";
-            noneMsg.textContent =
-                "No posts with unknown location";
-
-        } 
-        // got post with No location noneMsg wont appear
-        else {
-
-            noneMsg.style.display = "none";
-        }
-
-        // show back button and unknown location buton
-        document.getElementById("back-btn").style.display = "inline-block";
-        document.getElementById("unknown-btn").style.display = "none";
+        const url = new URL(window.location.href);
+        url.searchParams.set("location", "unknown");
+        window.location.href = url.toString();
     }
 
     window.showUnknownPosts = showUnknownPosts;
@@ -250,7 +183,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function filterPosts(locationCode,locationName = locationCode) {
         
         const posts = document.querySelectorAll(".post");
-        const noneMsg = document.getElementById("related-none-msg");
 
         let visibleCount = 0;
 
@@ -270,19 +202,37 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        // if none post match to location selcted show noneMsg
-        if (visibleCount === 0) {
-            noneMsg.style.display = "block";
-            noneMsg.textContent =
-                `No posts in ${locationName}`;
-        } 
-        // got post match noneMsg wont appear
-        else {
-            noneMsg.style.display = "none";
-        }
-
         document.getElementById("back-btn").style.display = "inline-block";
         document.getElementById("unknown-btn").style.display = "inline-block";
+    }
+
+    // =========================
+    //      FILTER POSTS
+    // =========================
+    function filterUnknownPosts(locationCode,locationName = locationCode) {
+        
+        const posts = document.querySelectorAll(".post");
+
+        let visibleCount = 0;
+
+        posts.forEach(post => {
+
+            // get post location code ("location" / " "none)
+            const postLocation = post.dataset.locationCode || "";
+            const match = !postLocation || postLocation === "none";
+
+            // found match post
+            if (match) {
+                post.style.display = "block";
+                visibleCount++;
+            }
+            else {
+                post.style.display = "none";
+            }
+        });
+
+        document.getElementById("back-btn").style.display = "inline-block";
+        document.getElementById("unknown-btn").style.display = "none";
     }
 
     // =========================
