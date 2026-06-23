@@ -220,15 +220,6 @@
                     </div>
                 </div>
 
-                <!-- --------------------------------- -->
-                <!--        YF - SERACH RESULT         -->
-                <!-- --------------------------------- -->
-                {% if query %}
-                    <p class="search-result">
-                        Search result for "{{ query }}"
-                    </p>
-                {% endif %}
-
                 <h2>Found Posts</h2>
 
                 <!-- ===================================== -->
@@ -409,7 +400,7 @@
                     <!-- --------------------------------- -->
                     {% empty %}
                         <div class = "no-post">
-                            <p> No posts available. </p>
+                            <img src="{% static 'images/nopost-bg.png' %}" class="nopost-img">
                         </div>
                     {% endfor %}
 

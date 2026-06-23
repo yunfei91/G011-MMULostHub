@@ -215,6 +215,21 @@
     margin: 0 30px 50px 50px;
 }
 
+.no-post {
+    margin-bottom: 60px;
+    grid-column: 1 / -1;  
+    justify-self: start; 
+    width: 100%;
+    max-width: 1000px; 
+    height: auto; 
+}
+
+.no-post img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
 /* ----- Post View ----- */
 .post-view{
     width:100%;
