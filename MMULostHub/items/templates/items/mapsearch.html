@@ -6,6 +6,7 @@
          <!-- CSS Links -->
         <link rel="stylesheet" href="{% static 'items/css/popup.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/mapsearch.css' %}">
+        <link rel="stylesheet" href="{% static 'items/css/mapsearch-layout.css' %}">
 
         <!-- JS Links -->
         <script src="{% static 'items/js/popup.js' %}" defer></script>
@@ -14,7 +15,6 @@
         <script>const CURRENT_USER_ID = "{{ request.user.id }}";</script>              <!-- differ = load complete html then load java -->
         
         <!-- yt added -->
-        <link rel="stylesheet" href="{% static 'items/css/main-layout.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/post-popup.css' %}">
 
         <script src="{% static 'items/js/header.js' %}" defer></script>
@@ -110,11 +110,12 @@
 
                                 <h2> Campus Map </h2>
 
-                                <img id="map" src="{% static 'images/map-img.jpg' %}" class="map">
+                                <!-- Button To Check All UNKNOWN Loc Posts -->
+                                <button id="unknown-btn" class = "unknown" onclick="showUnknownPosts()" alt='Unknown Location Posts'>
+                                    <img src="{% static 'images/unknown-icon.png' %}">
+                                </button>
 
-                                <!-- a drwaing paper to add element form js file -->
-                                <!-- to add the colour when user mouse is on any selcted area on map -->
-                                <canvas id="map-overlay"></canvas>
+                                <img id="map" src="{% static 'images/map-img.jpg' %}" class="map">
 
                                 <div id="map-tooltip"></div>
                             </div>
@@ -126,19 +127,10 @@
                     <!-- ================================= -->
                     <div class="map-right">
 
-                        <div class="map-controls">
-
-                            <!-- Back To Show ALL Posts -->
-                            <button id="back-btn" onclick="showAllPosts()" style="display:none;">
-                                Back
-                            </button>
-
-                            <!-- Button To Check All UNKNOWN Loc Posts -->
-                            <button id="unknown-btn" onclick="showUnknownPosts()">
-                                Unknown Location
-                            </button>
-
-                        </div>
+                        <!-- Back To Show ALL Posts -->
+                        <button id="back-btn" onclick="showAllPosts()" style="display:none;" class = "back-btn">
+                            <
+                        </button>
 
                         <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
                         <!--        YT - POST VIEW SECTION         -->
@@ -327,7 +319,6 @@
                                     <p> No posts available. </p>
                                 </div>
                             {% endfor %}
-
                         </div>
 
                         <!-- ================================ -->
@@ -335,25 +326,13 @@
                         <!-- ================================ -->
                         <div class="pagination">
 
-                            <!-- FIRST -->
                             {% if posts.has_previous %}
-                                <a href="?page=1
-                                {% if query %}&q={{ query }}{% endif %}
-                                {% for c in selected_category %}&category={{ c }}{% endfor %}
-                                {% for l in selected_location %}&location={{ l }}{% endfor %}
-                                {% if start_date %}&start_date={{ start_date }}{% endif %}
-                                {% if end_date %}&end_date={{ end_date }}{% endif %}
-                                " class = "pagearrow">
+                                <!-- FIRST -->
+                                <a href="?page=1{% if query %}&q={{ query }}{% endif %}{% if selected_location %}&location={{ selected_location }}{% endif %}" class="pagearrow">
                                     <<
                                 </a>
 
-                                <a href="?page={{ posts.previous_page_number }}
-                                {% if query %}&q={{ query }}{% endif %}
-                                {% for c in selected_category %}&category={{ c }}{% endfor %}
-                                {% for l in selected_location %}&location={{ l }}{% endfor %}
-                                {% if start_date %}&start_date={{ start_date }}{% endif %}
-                                {% if end_date %}&end_date={{ end_date }}{% endif %}
-                                " class = "pagearrow">
+                                <a href="?page={{ posts.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_location %}&location={{ selected_location }}{% endif %}" class="pagearrow">
                                     <
                                 </a>
 
@@ -372,13 +351,7 @@
                                         {% if num == posts.number %}
                                             <span class="current">{{ num }}</span>
                                         {% else %}
-                                            <a href="?page={{ num }}
-                                            {% if query %}&q={{ query }}{% endif %}
-                                            {% for c in selected_category %}&category={{ c }}{% endfor %}
-                                            {% for l in selected_location %}&location={{ l }}{% endfor %}
-                                            {% if start_date %}&start_date={{ start_date }}{% endif %}
-                                            {% if end_date %}&end_date={{ end_date }}{% endif %}"
-                                            class="pagenum">
+                                            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if selected_location %}&location={{ selected_location }}{% endif %}" class="pagenum">
                                                 {{ num }}
                                             </a>
                                         {% endif %}
@@ -392,13 +365,7 @@
                                         {% if num == posts.number %}
                                             <span class="current">{{ num }}</span>
                                         {% else %}
-                                            <a href="?page={{ num }}
-                                            {% if query %}&q={{ query }}{% endif %}
-                                            {% for c in selected_category %}&category={{ c }}{% endfor %}
-                                            {% for l in selected_location %}&location={{ l }}{% endfor %}
-                                            {% if start_date %}&start_date={{ start_date }}{% endif %}
-                                            {% if end_date %}&end_date={{ end_date }}{% endif %}"
-                                            class="pagenum">
+                                            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if selected_location %}&location={{ selected_location }}{% endif %}" class="pagenum">
                                                 {{ num }}
                                             </a>
                                         {% endif %}
@@ -412,13 +379,7 @@
                                         {% if num == posts.number %}
                                             <span class="current">{{ num }}</span>
                                         {% else %}
-                                            <a href="?page={{ num }}
-                                            {% if query %}&q={{ query }}{% endif %}
-                                            {% for c in selected_category %}&category={{ c }}{% endfor %}
-                                            {% for l in selected_location %}&location={{ l }}{% endfor %}
-                                            {% if start_date %}&start_date={{ start_date }}{% endif %}
-                                            {% if end_date %}&end_date={{ end_date }}{% endif %}"
-                                            class="pagenum">
+                                            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if selected_location %}&location={{ selected_location }}{% endif %}" class="pagenum">
                                                 {{ num }}
                                             </a>
                                         {% endif %}
@@ -430,23 +391,11 @@
 
                             <!-- NEXT + LAST -->
                             {% if posts.has_next %}
-                                <a href="?page={{ posts.next_page_number }}
-                                {% if query %}&q={{ query }}{% endif %}
-                                {% for c in selected_category %}&category={{ c }}{% endfor %}
-                                {% for l in selected_location %}&location={{ l }}{% endfor %}
-                                {% if start_date %}&start_date={{ start_date }}{% endif %}
-                                {% if end_date %}&end_date={{ end_date }}{% endif %}
-                                " class = "pagearrow">
+                                <a href="?page={{ posts.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_location %}&location={{ selected_location }}{% endif %}" class="pagearrow">
                                     >
                                 </a>
 
-                                <a href="?page={{ posts.paginator.num_pages }}
-                                {% if query %}&q={{ query }}{% endif %}
-                                {% for c in selected_category %}&category={{ c }}{% endfor %}
-                                {% for l in selected_location %}&location={{ l }}{% endfor %}
-                                {% if start_date %}&start_date={{ start_date }}{% endif %}
-                                {% if end_date %}&end_date={{ end_date }}{% endif %}
-                                " class = "pagearrow">
+                                <a href="?page={{ posts.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if selected_location %}&location={{ selected_location }}{% endif %}" class="pagearrow">
                                     >>
                                 </a>
                             {% else %}
@@ -577,13 +526,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- ============================== -->
-            <!--     TO PAGE TOP BUTTON         -->
-            <!-- ============================== -->
-            <div class="scroll_top" id="scrollTopBtn" onclick="scrollToTop()">
-                <img src="{% static 'images/top-icon.png' %}" alt="Back To Top" class="top-icon">
             </div>
 
             <!-- ============================== -->

@@ -458,21 +458,27 @@ def map_search(request):
 
     post_box = Post.objects.all().order_by('-id')
 
+    location = request.GET.get("location", "").strip()
+
+    if location and location.lower() != "none" and location.lower() != "undefined":
+        post_box = post_box.filter(post_location__location_code=location)
+    else:
+        location = None
+
     for post in post_box:
         post.sorted_images = post.images.all().order_by('order')
         
-    location = request.GET.get("location")
-
-    paginator = Paginator(post_box, 9)
+    paginator = Paginator(post_box, 8)
     page_number = request.GET.get('page')
     posts = paginator.get_page(page_number)
-    
-    if location:
-        post_box = post_box.filter(post_location__location_code=location)
+
+    query = request.GET.get('q', '')
 
     return render(request, 'items/mapsearch.html', {
         'posts': posts,
         'locations': MMULocation.objects.all(),
+        'selected_location': location,
+        'query': query,
     })
 
 

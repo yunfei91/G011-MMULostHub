@@ -289,11 +289,11 @@ document.addEventListener("DOMContentLoaded", function () {
     //      UPDATE WEB URL
     // =========================
     function updateURL(code) {
-        const url = new URL(window.location.href);
+        const url = new URL(window.location.origin + window.location.pathname);
         url.searchParams.set("location", code);
 
         // pushState = wont refresh whenever url change or not
-        window.history.pushState({}, "", url);
+        window.location.href = url.toString();
     }
 
     // =========================
