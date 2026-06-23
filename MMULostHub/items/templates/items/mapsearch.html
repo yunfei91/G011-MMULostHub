@@ -95,7 +95,6 @@
                         </li>
                     </ul>
                 </nav>
-
             </div>
             
             <div class="content">
@@ -317,7 +316,7 @@
                             <!-- ================================= -->
                             {% empty %}
                                 <div class = "no-post">
-                                    <p> No posts available. </p>
+                                    <img src="{% static 'images/nopost-bg.png' %}" class="nopost-img">
                                 </div>
                             {% endfor %}
                         </div>
