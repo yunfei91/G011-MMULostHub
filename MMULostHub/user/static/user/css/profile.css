@@ -797,8 +797,15 @@ footer{
 }
 
 .no-posts{
-    font-family: 'Sansation';
-    font-size: 20px;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.no-posts img {
+    width: clamp(500px, 60vw, 800px);
+    height: auto;
 }
 
 /* ===================================== */
@@ -1161,6 +1168,9 @@ footer{
 
 .posts-list{
     display: grid ! important;
+    display:flex;
+    flex-direction:column;
+    min-height:100%;
     width: 100%;
     grid-template-columns: repeat(2, 1fr); 
     gap: 50px 20px;

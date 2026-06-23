@@ -341,7 +341,9 @@
                                         </div>
                                     </div>
                                 {% empty %}
-                                    <p class="no-posts">No posts</p>
+                                    <div class="no-posts"> 
+                                        <img src="{% static 'images/nopost.png' %}" alt="No Posts">
+                                    </div>
                                 {% endfor %}
                             </div>
 
@@ -620,7 +622,9 @@
                                         </div>
                                     </div>
                                 {% empty %}
-                                    <p class="no-posts">No lost posts</p>
+                                    <div class="no-posts"> 
+                                        <img src="{% static 'images/nopost.png' %}" alt="No Posts">
+                                    </div>
                                 {% endfor %}
                             </div>
 
@@ -899,7 +903,9 @@
                                         </div>
                                     </div>
                                 {% empty %}
-                                        <p class="no-posts"> No found posts </p>
+                                    <div class="no-posts"> 
+                                        <img src="{% static 'images/nopost.png' %}" alt="No Posts">
+                                    </div>
                                 {% endfor %}
                             </div>
 
