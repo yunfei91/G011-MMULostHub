@@ -7,6 +7,7 @@
 
         <link rel="stylesheet" type="text/css" href="{% static 'user/css/admin-login.css' %}">
     
+        <!-- Google Material Icons library : show/hide pass icon -->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     </head>
 
@@ -32,7 +33,7 @@
                                 </div>
 
                                 <form id="loginForm" method="POST">
-                                    {% csrf_token %}
+                                    {% csrf_token %} <!-- CSRF protection token -->
 
                                     <input type="text" id="email" name="email" placeholder="Admin Email" value="{{ email }}">
 
@@ -71,32 +72,42 @@
                 window.location.replace("{% url 'beginning' %}")
             }
 
+            // Get form and popup elements
             const form = document.getElementById("loginForm");
             const popup = document.getElementById("errorPopup");
 
+            // Display temporary popup message
             function showPopup(msg){
+                // Set popup message content
                 popup.innerHTML = msg;
                 popup.classList.add("show");
 
+                // Automatically hide popup after delay
                 setTimeout(() => {
                     popup.classList.remove("show");
                 }, 2500);
             }
 
+            // Validate form before submission
             form.addEventListener("submit", function(e){
 
+                // Get user input values
                 const email = document.getElementById("email").value.trim();
                 const pw = document.getElementById("password").value.trim();
 
+                // Ensure all required fields are filled
                 if(!email || !pw){
+                    // Prevent form submission
                     e.preventDefault();
                     showPopup("Please fill in all fields");
                     return;
                 }
             });
 
+            // Get error message from backend
             const backendError = "{{ error_message|escapejs }}";
 
+            // Display backend error if available
             if(backendError){
                 showPopup(backendError);
             }
@@ -105,10 +116,10 @@
                 const input = document.getElementById(inputId);
 
                 if(input.type === "password"){
-                    input.type = "text";
+                    input.type = "text"; // Show password text
                     icon.textContent = "visibility";
                 } else {
-                    input.type = "password";
+                    input.type = "password"; // Hide password text
                     icon.textContent = "visibility_off";
                 }
             }

@@ -9,8 +9,13 @@ from django.urls import reverse
 from .models import ChatRoom, Message
 from user.models import Profile
 
+# yt added
+# Prevent browser cache, user cannot press back to access previous page
+from django.views.decorators.cache import never_cache 
+
 # Create your views here.
-@login_required
+@login_required(login_url='beginning')
+@never_cache
 def inbox(request):
 
     rooms = ChatRoom.objects.filter(
@@ -54,7 +59,8 @@ def inbox(request):
         'room_data': room_data
     })
 
-@login_required
+@login_required(login_url='beginning')
+@never_cache
 def start_chat(request, username):
 
     profile, _ = Profile.objects.get_or_create(user=request.user) # Create profile if not exist
@@ -80,7 +86,8 @@ def start_chat(request, username):
 
     return redirect('chat_room', room_id=room.id)
 
-@login_required
+@login_required(login_url='beginning')
+@never_cache
 def chat_room(request, room_id):
 
     profile, _ =Profile.objects.get_or_create(user=request.user) # Create profile if not exist

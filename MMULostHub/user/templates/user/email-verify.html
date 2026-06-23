@@ -29,11 +29,12 @@
                                 </div>
                                 
                                 <form method="POST">
-                                    {% csrf_token %}
+                                    {% csrf_token %} <!-- CSRF protection token -->
 
                                     <div class="otp-status">
                                         <div class="otp-row">
                                             <span class="otp-title">OTP Code</span>
+                                            <!-- Display OTP countdown status -->
                                             <span id="otpBadge"></span>
                                         </div>
                                     </div>
@@ -47,15 +48,18 @@
                                         <input type="text" maxlength="1" class="otp-digit">
                                     </div>
                                     
-                                    <input type="hidden" name="otp" id="otpHidden"> <!-- Hidden input to store full OTP from each box at frontend for backend -->
+                                    <!-- Hidden input to store complete OTP from each box at frontend for backend -->
+                                    <input type="hidden" name="otp" id="otpHidden">
 
                                     <div class="resend-status">
                                         <button class="resend-btn" type="button" id="resendBtn" {% if not can_resend %}disabled{% endif %}>
                                             Resend code
                                         </button>
+                                        <!-- Display resend countdown timer -->
                                         <span id="resendBadge"></span>
                                     </div>
 
+                                    <!-- Hidden submit button for automatic form submission -->
                                     <button type="submit" hidden></button>
                                 </form>
 
@@ -72,7 +76,9 @@
             </footer>
         </div>
 
-        {{ otp_remaining|json_script:"otp-time" }} <!-- Pass python to JS, after pass <script><p id="otpTimer">60</script>-->
+        <!-- Pass python to JS, after pass <script><p id="otpTimer">60</script>-->
+        {{ otp_remaining|json_script:"otp-time" }}
+        <!-- Pass resend countdown time from backend to JavaScript -->
         {{ resend_remaining|json_script:"resend-time" }}
 
         <script>
@@ -82,6 +88,7 @@
 
             const popup = document.getElementById("errorPopup");
 
+            // Display popup notification
             function showPopup(msg, type = "error") {
                 if (!popup) return;
 
@@ -99,29 +106,35 @@
             let resendTime = 0;
             
             try {
-                otpTime = JSON.parse(document.getElementById("otp-time").textContent); // Convert string to number
+                // Initialize OTP countdown timer // Convert string to number
+                otpTime = JSON.parse(document.getElementById("otp-time").textContent);
+                // Initialize resend countdown timer
                 resendTime = JSON.parse(document.getElementById("resend-time").textContent);
             } catch (e) {
                 console.log("Timer init error", e);
             }
 
+            // Get OTP timer and resend button elements
             const otpBadge = document.getElementById("otpBadge");
             const resendBadge = document.getElementById("resendBadge");
             const resendBtn = document.getElementById("resendBtn");
 
+            // Get all OTP input boxes
             const inputs = document.querySelectorAll(".otp-digit");
             const hiddenInput = document.getElementById("otpHidden");
             const form = document.querySelector("form");
             const otpBox = document.getElementById("otpBox");
 
-            if (inputs.length > 0) { // Focus first box
+            // Focus first OTP input field
+            if (inputs.length > 0) {
                 inputs[0].focus();
             }
 
+            // Combine OTP digits into hidden field
             function updateHidden() {
                 hiddenInput.value = Array.from(inputs) // Combine OTP 6-digits
                 .map(i => i.value)
-                .join("");
+                .join(""); // Merge all OTP digits into one value
             }
 
             inputs.forEach((input, index) => {
@@ -141,6 +154,7 @@
                     }
                 });
 
+                // Handle keyboard navigation
                 input.addEventListener("keydown", (e) => {
                     if (e.key === "Backspace" && !input.value && index > 0) { // Move back when delete
                         inputs[index - 1].focus();
@@ -148,7 +162,7 @@
                 });
 
                 input.addEventListener("paste", (e) => { // Copy and paste
-                    e.preventDefault();
+                    e.preventDefault(); // Override default paste behavior
 
                     let data = e.clipboardData
                         .getData("text")
@@ -170,14 +184,18 @@
                 });
             });
 
+            // Execute after page load
             window.addEventListener("load", () => {
+                // Retrieve error message from backend
                 const backendError = "{{ error|escapejs }}";
 
                 if (backendError && backendError !== "None" && backendError.trim() !== "") {
+                    // Display backend validation error
                     showPopup(backendError);
                 }
 
                 if (otpBox && backendError) {
+                    // Trigger shake animation on invalid OTP
                     otpBox.classList.add("shake");
 
                     setTimeout(() => {
@@ -187,11 +205,13 @@
             });
 
             function updateTimers() {
-                // OTP
+                // Update OTP and resend countdown timers
                 if (otpTime > 0) {
+                    // Display OTP remaining time
                     otpBadge.innerText = otpTime + " s";
                     otpBadge.classList.remove("expired");
                 } else {
+                    // Mark OTP as expired
                     otpBadge.innerText = "Expired";
                     otpBadge.classList.add("expired");
                 }
@@ -199,9 +219,11 @@
                 // Resend
                 if (resendTime > 0) {
                     resendBadge.innerText = resendTime + " s";
+                    // Disable resend button during cooldown
                     resendBtn.disabled = true;
                 } else {
                     resendBadge.innerText = "";
+                    // Enable resend button when cooldown ends
                     resendBtn.disabled = false;
                 }
 
@@ -213,6 +235,7 @@
 
             updateTimers();
 
+            // Retrieve cookie value by name
             function getCookie(name) {
                 let cookieValue = null;
 
@@ -230,6 +253,7 @@
                 return cookieValue;
             }
 
+            // Handle resend OTP request
             resendBtn.addEventListener("click", function () {
                 fetch("{% url 'resend_otp' %}", { // Send request to backend
                     method: "POST",
@@ -253,13 +277,13 @@
                     resendTime = 30;
                     resendBtn.disabled = true;
 
-                    inputs.forEach(i => i.value = ""); // Clear input boxes
+                    inputs.forEach(i => i.value = ""); // Clear all OTP input fields
                     inputs[0].focus();
                     hiddenInput.value = "";
                 })
                 .catch(err => {
                     console.error(err);
-                    showPopup("Something went wrong");
+                    showPopup("Something went wrong"); // Display unexpected error message
                 });
             });
         </script>

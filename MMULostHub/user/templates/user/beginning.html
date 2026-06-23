@@ -54,24 +54,29 @@
         </div>
 
         <script>
+            // Initialize browser back navigation protection
+            // Avoid user go back into user page after logout
            function initBackLock() {
+                // Add new history record status , block back btn
                 window.history.pushState(null, "", window.location.href);
             }
             
             initBackLock();
 
+            // Display popup message with specified type
             function showPopup(msg, type = "error") {
                 const popup = document.getElementById("errorPopup");
 
                 if (popup) {
+                    // Set popup message content
                     popup.innerHTML = msg;
-                    
+                    // Reset previous popup state
                     popup.classList.remove("error", "success", "show");
                     
                     void popup.offsetWidth; 
-
+                    // Apply popup style and display it
                     popup.classList.add(type, "show");
-
+                    // Automatically hide popup after delay
                     setTimeout(() => {
                         popup.classList.remove("show");
                     }, 3500);
@@ -79,8 +84,9 @@
             }
 
             window.onpopstate = function (event) { // Detect back button press
+                // Store warning flag in session storage
                 sessionStorage.setItem("show_back_warning", "true");
-
+                // Force to redirect beginning page
                 window.location.replace("{% url 'beginning' %}");
             };
 
@@ -98,15 +104,18 @@
                     window.history.replaceState({}, document.title, window.location.pathname); // Clear URL
                 }
 
+                // Check for stored back-navigation warning
                 if (sessionStorage.getItem("show_back_warning") === "true") {
                     showPopup("Please login first to continue", "error");
                     sessionStorage.removeItem("show_back_warning");
                 }
             });
 
-           window.addEventListener("load", () => {
+            // execute after page resources finish loading
+            window.addEventListener("load", () => {
                 {% if messages %}
                     {% for message in messages %}
+                        // Check for logout success message
                         if ("{{ message }}" === "logout_success" || "{{ message.tags }}" === "success") {
                             showPopup("Logout successful!", "success");
                         } else {
