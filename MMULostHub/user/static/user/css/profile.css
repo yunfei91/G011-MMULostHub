@@ -42,7 +42,6 @@ body::before{
 
 .content{
     position: relative;
-    max-width: 1600px;
     min-height: 100vh;
     height: auto;
     padding: 0 30px;
@@ -617,7 +616,6 @@ footer{
 /* ===================================== */
 /*         Logout Success Popup          */
 /* ===================================== */
-
 .popup{
     position: fixed;
 
@@ -1199,6 +1197,7 @@ footer{
 @media (min-width: 1600px) {
     .posts-list {
         grid-template-columns: repeat(3, 1fr);
+        gap: 50px 35px;
     }
 }
 
@@ -1214,7 +1213,7 @@ footer{
 .posts-view{
     width:100%;
     max-width:500px;
-    min-width: 400px;
+    min-width: 200px;
     height: 710px;
     box-sizing:border-box;
     padding: 30px 50px 20px 50px;
