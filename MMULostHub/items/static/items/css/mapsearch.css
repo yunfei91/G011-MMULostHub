@@ -627,7 +627,7 @@
     .post-list {
         grid-template-columns: 1fr; 
         margin: 0 20px 50px 20px;
-    }
+    }g
 
     .post-view{
         width:100%;
