@@ -31,10 +31,12 @@ popupCancel.onclick = function () {
 
 };
 
+// RESET POPUP
 function resetPopupClass() {
     popup.classList.remove("popup-success", "popup-error", "popup-confirm");
 }
 
+// POPUP ERROR
 function showError(message){
 
     clearTimeout(popupTimer);
@@ -55,6 +57,7 @@ function showError(message){
     }, 1500);
 }
 
+// POPUP SUCCESS
 function showSuccess(message){
 
     clearTimeout(popupTimer);
@@ -75,6 +78,7 @@ function showSuccess(message){
     }, 1000);
 }
 
+// POPUP CONFIRMATION
 function showConfirm(title, message, callback){
 
     clearTimeout(popupTimer);
@@ -94,6 +98,7 @@ function showConfirm(title, message, callback){
     popup.style.display = "flex";
 }
 
+// CLICK OUTSIDE CLOSE
 popup.addEventListener("click", function(event){
 
     if(event.target === popup){
@@ -177,6 +182,7 @@ function showStatusPopup(postId) {
 
 const statusPopup = document.getElementById("statusPopup");
 
+// CLICK OUTSIDE CLOSE
 statusPopup.addEventListener("click", function(event){
 
     if(event.target === statusPopup){
@@ -322,7 +328,7 @@ function openPost(el) { // el=this connection
     const statusBtn = document.getElementById("status_btn");
     const statusContainer = document.getElementById("status_btn_container");
     
-    statusBtn.style.display = "inline-block";
+    statusBtn.style.display = "flex";
 
     statusBtn.innerText = status.charAt(0).toUpperCase() + status.slice(1);
 
@@ -334,6 +340,7 @@ function openPost(el) { // el=this connection
         "popup-status-claimed"
     );
 
+    // Change status
     if (status === "open") {
         statusBtn.classList.add("popup-status-open");
     }
@@ -344,6 +351,7 @@ function openPost(el) { // el=this connection
         statusBtn.classList.add("popup-status-claimed");
     }
 
+    // Check post owner for can click or not
     if (
         String(ownerId) == String(CURRENT_USER_ID) && status == "open"
     ) {
@@ -353,6 +361,7 @@ function openPost(el) { // el=this connection
         statusBtn.style.cursor = "none";
     }
 
+    //  Click status button
     statusBtn.onclick = function () {
 
         if (
@@ -403,6 +412,7 @@ window.addEventListener("click", function (event) {
     });
 });
 
+// Post Navigation Dropdown
 window.toggleDropdown = function(event) {
     event.stopPropagation();
 

@@ -733,8 +733,10 @@
                     <p> Set post as COMPLETED? </p>
                     <form id="status_form" method="POST">
                         {% csrf_token %}
-                        <button type="button" id="statusConfirmBtn">Confirm</button>
-                        <button type="button" id="statusCancelBtn">Cancel</button>
+                        <div class = "status-popup-btn">
+                            <button type="button" id="statusConfirmBtn">Confirm</button>
+                            <button type="button" id="statusCancelBtn">Cancel</button>
+                        </div>
                     </form>
                 </div>
             </div>

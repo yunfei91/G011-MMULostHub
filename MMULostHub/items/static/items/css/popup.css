@@ -1,3 +1,6 @@
+/* ========================= */
+/*        MSGS POPUP         */
+/* ========================= */
 .message-popup{
     display:none;
 
@@ -27,6 +30,7 @@
     font-size: 15px;
 }
 
+/* ----- ERROR & SUCCESS ----- */
 .popup-error .message-box,
 .popup-success .message-box{
 
@@ -41,8 +45,11 @@
 
     box-shadow: 0 5px 20px rgba(0,0,0,0.08);
 
+    animation: popupIn 0.25s ease;
+
 }
 
+/* ----- ERROR POPUP ----- */
 .popup-error .message-box{
     color: #150105;
     background: rgba(203, 146, 156, 0.8);
@@ -55,6 +62,7 @@
     color: #3f0913;
 }
 
+/* ----- SUCCESS POPUP ----- */
 .popup-success .message-box{
     color: #294521;
     background: rgba(182, 214, 184, 0.8);
@@ -67,7 +75,10 @@
     color: rgb(6, 50, 9);
 }
 
+/* ----- CORNFIRMATION POPUP ----- */
 .popup-confirm .message-box{
+    animation: popupIn 0.25s ease;
+
     width: 400px;
     border-radius: 12px;
     text-align: center;
@@ -100,6 +111,7 @@
     color: #092140;
 }
 
+/* ----- CONFIRM POPUP BUTTONS ----- */
 .popup-buttons{
     display: flex;
     justify-content: center;
@@ -165,19 +177,88 @@
     display: flex;
 }
 
-/* Popup box */
+/* ----- POPUP BOX ----- */
 .dlt-popup-box{
-    background: white;
-    padding: 20px;
     width: 320px;
+
+    padding: 30px 25px;
+    border-radius: 25px;
+
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(18px);
+
     text-align: center;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.6);
+
+    animation: popupIn 0.25s ease;
 }
 
-/* Button container */
+/* ----- DELETE MSG ----- */
+.dlt-popup-box p{
+    margin: 0 0 25px;
+
+    font-family: 'Slackey';
+    font-size: 15px;
+    line-height: 1.4;
+
+    color: #5a6070;
+
+}
+
+/* ----- DELETE POPUP BUTTON ----- */
 .dlt-popup-btns{
     display: flex;
     justify-content: center;
     gap: 15px;
+}
+
+.dlt-popup-btns button{
+    width: 170px;
+    height: 38.4px;
+
+    border: none;
+    border-radius: 20px;
+
+    padding: 10px 0;
+
+    background: #7e8599;
+    color: white;
+
+    font-family: 'Slackey';
+    font-size: 13px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.35) inset,
+        0 -2px 4px rgba(0,0,0,0.10) inset,
+        0 4px 0 #6a7184,
+        0 6px 12px rgba(0,0,0,0.20);
+
+    transition: all 0.2s ease;
+}
+
+.dlt-popup-btns button:hover{
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.32) inset,
+        0 -2px 5px rgba(0,0,0,0.12) inset,
+        0 7px 0 #565c6e,
+        0 12px 20px rgba(0,0,0,0.28);
+}
+
+.dlt-popup-btns button:active{
+    transform: translateY(2px);
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.25) inset,
+        0 -2px 4px rgba(0,0,0,0.18) inset,
+        0 3px 0 #565c6e,
+        0 5px 10px rgba(0,0,0,0.25);
 }
 
 /* ========================= */
@@ -198,9 +279,85 @@
     display: flex;
 }
 
+/* ----- STATUS CHNAGE POPUP BOX ----- */
 .status-popup-box{
-    background: white;
-    padding: 20px;
     width: 320px;
+
+    padding: 30px 25px;
+    border-radius: 25px;
+
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(18px);
+
     text-align: center;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.6);
+
+    animation: popupIn 0.25s ease;
+}
+
+/* ----- STATUS CHANGE POPUP MSG ----- */
+.status-popup-box p{
+    margin: 0 0 25px;
+
+    font-family: 'Slackey';
+    font-size: 15px;
+    line-height: 1.4;
+
+    color: #5a6070;
+}
+
+/* ----- STATUS POPUP BUTTON ----- */
+#status_form .status-popup-btn{
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#status_form .status-popup-btn button{
+    width: 170px;
+    height: 38.4px;
+
+    border: none;
+    border-radius: 20px;
+
+    padding: 10px 0;
+
+    background: #7e8599;
+    color: white;
+
+    font-family: 'Slackey';
+    font-size: 13px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.35) inset,
+        0 -2px 4px rgba(0,0,0,0.10) inset,
+        0 4px 0 #6a7184,
+        0 6px 12px rgba(0,0,0,0.20);
+
+    transition: all 0.2s ease;
+}
+
+#status_form .status-popup-btn button:hover{
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.32) inset,
+        0 -2px 5px rgba(0,0,0,0.12) inset,
+        0 7px 0 #565c6e,
+        0 12px 20px rgba(0,0,0,0.28);
+}
+
+#status_form .status-popup-btn button:active{
+    transform: translateY(2px);
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.25) inset,
+        0 -2px 4px rgba(0,0,0,0.18) inset,
+        0 3px 0 #565c6e,
+        0 5px 10px rgba(0,0,0,0.25);
 }
