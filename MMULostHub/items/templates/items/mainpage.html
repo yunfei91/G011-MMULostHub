@@ -191,7 +191,7 @@
 
                                     {% for location in locations %}
                                         <option value="{{ location.id }}"
-                                            {% if location.id|stringformat:'s' in selected_location %}selected{% endif %}>
+                                            {% if location.id|stringformat:'s' == selected_location %}selected{% endif %}>
                                             {{ location.location_name }}
                                         </option>
                                     {% endfor %}
