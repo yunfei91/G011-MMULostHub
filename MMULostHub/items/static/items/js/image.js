@@ -197,12 +197,13 @@ function renderImages(){
         removeBtn.addEventListener("click", function(){
             window.croppedImages.splice(index,1);
             renderImages();
+
+            showSuccess('Image Deleted');
         });
 
         previewBox.appendChild(img);
         previewBox.appendChild(removeBtn);
         imagePreviewContainer.appendChild(previewBox);
-
     });
 
     // hide container if empty
@@ -306,6 +307,8 @@ deletePreviewBtn.addEventListener("click", function(){
     window.croppedImages.splice(window.currentPreviewIndex,1);
 
     renderImages();
+
+    showSuccess('Image Deleted');
 
     // no image left
     if(window.croppedImages.length === 0){

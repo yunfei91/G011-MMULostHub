@@ -96,6 +96,24 @@
 
             <div class="content">
 
+                {% if messages %}
+                    <script>
+                        window.addEventListener("load", function () {
+                            {% for message in messages %}
+                                {% if message.tags == 'success' %}
+                                    if (typeof showSuccess === "function") {
+                                        showSuccess("{{ message|escapejs }}");
+                                    }
+                                {% elif message.tags == 'error' %}
+                                    if (typeof showError === "function") {
+                                        showError("{{ message|escapejs }}");
+                                    }
+                                {% endif %}
+                            {% endfor %}
+                        });
+                    </script>
+                {% endif %}
+
                 <!-- -------------------------------------------------- -->
                 <!--               YF - SEARCH FEATURE                  -->
                 <!-- -------------------------------------------------- -->
@@ -715,8 +733,10 @@
                     <p> Set post as COMPLETED? </p>
                     <form id="status_form" method="POST">
                         {% csrf_token %}
-                        <button type="button" id="statusConfirmBtn">Confirm</button>
-                        <button type="button" id="statusCancelBtn">Cancel</button>
+                        <div class = "status-popup-btn">
+                            <button type="button" id="statusConfirmBtn">Confirm</button>
+                            <button type="button" id="statusCancelBtn">Cancel</button>
+                        </div>
                     </form>
                 </div>
             </div>

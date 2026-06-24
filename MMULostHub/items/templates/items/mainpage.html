@@ -96,6 +96,24 @@
             </div>
             
             <div class="content">
+
+                {% if messages %}
+                    <script>
+                        window.addEventListener("load", function () {
+                            {% for message in messages %}
+                                {% if message.tags == 'success' %}
+                                    if (typeof showSuccess === "function") {
+                                        showSuccess("{{ message|escapejs }}");
+                                    }
+                                {% elif message.tags == 'error' %}
+                                    if (typeof showError === "function") {
+                                        showError("{{ message|escapejs }}");
+                                    }
+                                {% endif %}
+                            {% endfor %}
+                        });
+                    </script>
+                {% endif %}
                 
                 <!-- ================================================== -->
                 <!--                    SEARCH FEATURE                  -->
@@ -712,21 +730,16 @@
             <!--              POST STATUS CHANGE POPUP              -->
             <!-- ================================================== -->
             <div id="statusPopup" class="status-popup-modal">
-
                 <div class="status-popup-box">
-
                     <p> Set post as COMPLETED? </p>
-
-                    <button id="statusConfirmBtn">
-                        Confirm
-                    </button>
-
-                    <button id="statusCancelBtn">
-                        Cancel
-                    </button>
-
+                    <form id="status_form" method="POST">
+                        {% csrf_token %}
+                        <div class = "status-popup-btn">
+                            <button type="button" id="statusConfirmBtn">Confirm</button>
+                            <button type="button" id="statusCancelBtn">Cancel</button>
+                        </div>
+                    </form>
                 </div>
-
             </div>
 
             <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
