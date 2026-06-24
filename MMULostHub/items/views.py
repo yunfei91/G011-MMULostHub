@@ -455,20 +455,20 @@ def lost_posts(request):
 @login_required(login_url='beginning')
 @never_cache
 def map_search(request):
+        
+    location = request.GET.get("location")
 
-    post_box = Post.objects.all().order_by('-id')
+    post_box = Post.objects.all().prefetch_related('images').order_by('-id')
+
+    if location:
+        post_box = post_box.filter(post_location__location_code=location)
 
     for post in post_box:
         post.sorted_images = post.images.all().order_by('order')
-        
-    location = request.GET.get("location")
 
     paginator = Paginator(post_box, 9)
     page_number = request.GET.get('page')
     posts = paginator.get_page(page_number)
-    
-    if location:
-        post_box = post_box.filter(post_location__location_code=location)
 
     return render(request, 'items/mapsearch.html', {
         'posts': posts,
