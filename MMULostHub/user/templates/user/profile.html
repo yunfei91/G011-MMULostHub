@@ -16,6 +16,7 @@
         <meta http-equiv="Expires" content="0">
 
         <link rel="stylesheet" href="{% static 'user/css/profile.css' %}">
+        <link rel="stylesheet" href="{% static 'user/css/reverify-popup.css' %}">
 
         <script src="{% static 'items/js/header.js' %}" defer></script>
         <script src="{% static 'items/js/popup.js' %}" defer></script>
@@ -181,6 +182,32 @@
                 </div>
 
                 <div class="profile-right">
+
+                    {% if is_owner and need_reverify %}
+                        <div class="reverify-alert">
+
+                            <div class="alert-left">
+
+                                <div class="alert-icon">
+                                    ⚠
+                                </div>
+
+                                <div class="alert-text">
+                                    <h3>Your account has been reported</h3>
+                                    <p>
+                                        Please re-verify your email to continue using MMU Lost Hub.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <a href="{% url 'start_reverify' %}" class="reverifyacc-btn">
+                                Verify
+                            </a>
+
+                        </div>
+                    {% endif %}
+
                     <div class="selectbtn">
                         <button id="all-btn" onclick="showAll()">All</button>
                         <button id="lost-btn" onclick="showLost()">Lost</button>
