@@ -88,6 +88,29 @@
             <div class="content">
                 <h1>My Profile</h1>
 
+                {% if is_owner and need_reverify %}
+                    <div style="
+                        background:#fff3cd;
+                        color:#856404;
+                        padding:15px;
+                        border-radius:8px;
+                        margin-bottom:20px;
+                        border:1px solid #ffeeba;
+                    ">
+                        <b>Your account has been reported.</b><br>
+                        Please re-verify your email to continue using MMU Lost Hub.
+
+                        <br><br>
+
+                        <a href="{% url 'start_reverify' %}">
+                            <button type="button">
+                                Re-verify Now
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+
                 <!-- zinc add to report user button, only show when view other user profile-->
                 {% if request.user != user %}
                     <a href="{% url 'report_user' user.id %}">
