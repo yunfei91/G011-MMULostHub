@@ -96,6 +96,24 @@
 
             <div class="content">
 
+                {% if messages %}
+                    <script>
+                        window.addEventListener("load", function () {
+                            {% for message in messages %}
+                                {% if message.tags == 'success' %}
+                                    if (typeof showSuccess === "function") {
+                                        showSuccess("{{ message|escapejs }}");
+                                    }
+                                {% elif message.tags == 'error' %}
+                                    if (typeof showError === "function") {
+                                        showError("{{ message|escapejs }}");
+                                    }
+                                {% endif %}
+                            {% endfor %}
+                        });
+                    </script>
+                {% endif %}
+
                 <!-- -------------------------------------------------- -->
                 <!--               YF - SEARCH FEATURE                  -->
                 <!-- -------------------------------------------------- -->

@@ -6,15 +6,10 @@ let popupCallback = null;
 let popupTimer = null;
 
 const popup = document.getElementById("messagePopup");
-
 const popupIcon = document.getElementById("messageIcon");
-
 const popupTitle = document.getElementById("messageTitle");
-
 const popupText = document.getElementById("messageText");
-
 const popupBtn = document.getElementById("messageBtn");
-
 const popupCancel = document.getElementById("messageCancelBtn");
 
 popupBtn.onclick = function () {
@@ -36,15 +31,21 @@ popupCancel.onclick = function () {
 
 };
 
+function resetPopupClass() {
+    popup.classList.remove("popup-success", "popup-error", "popup-confirm");
+}
+
 function showError(message){
 
     clearTimeout(popupTimer);
 
+    resetPopupClass();
+    popup.classList.add("popup-error");
+
     popupTitle.innerText = "Error";
     popupText.innerText = message;
 
-    popupBtn.innerText = "OK";
-
+    popupBtn.style.display = "none";
     popupCancel.style.display = "none";
 
     popup.style.display = "flex";
@@ -58,11 +59,13 @@ function showSuccess(message){
 
     clearTimeout(popupTimer);
 
+    resetPopupClass();
+    popup.classList.add("popup-success");
+
     popupTitle.innerText = "Success";
     popupText.innerText = message;
 
-    popupBtn.innerText = "OK";
-
+    popupBtn.style.display = "none";
     popupCancel.style.display = "none";
 
     popup.style.display = "flex";
@@ -76,11 +79,14 @@ function showConfirm(title, message, callback){
 
     clearTimeout(popupTimer);
 
+    resetPopupClass();
+    popup.classList.add("popup-confirm");
+
     popupTitle.innerText = title;
     popupText.innerText = message;
 
+    popupBtn.style.display = "inline-block";
     popupBtn.innerText = "Confirm";
-
     popupCancel.style.display = "inline-block";
 
     popupCallback = callback;

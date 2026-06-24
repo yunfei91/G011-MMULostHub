@@ -68,7 +68,6 @@ function confirmEdit(event) {
 
     const coverIndex = 0;
     document.getElementById("cover_index").value = coverIndex;
-
     document.getElementById("cropped_images").value = JSON.stringify(imageData);
 
     showConfirm(
