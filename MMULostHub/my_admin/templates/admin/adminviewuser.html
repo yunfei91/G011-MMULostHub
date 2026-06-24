@@ -233,9 +233,7 @@
                         <div>
                             <b>Proof:</b><br>
                             {% if report.image %}
-                                <a href="{{ report.image.url }}" target="_blank">
-                                    <img src="{{ report.image.url }}" width="150">
-                                </a>
+                                <img src="{{ report.image.url }}" alt="Proof Image" class="admin-proof-img" onclick="openImage('{{ report.image.url }}')">
                             {% else %}
                                 No Image
                             {% endif %}
@@ -405,9 +403,7 @@
                     <div>
                         <b>Proof:</b><br>
                         {% if report.image %}
-                            <a href="{{ report.image.url }}" target="_blank">
-                                <img src="{{ report.image.url }}" width="150">
-                            </a>
+                            <img src="{{ report.image.url }}" alt="Proof Image" class="admin-proof-img" onclick="openImage('{{ report.image.url }}')">
                         {% else %}
                             No Image
                         {% endif %}
@@ -676,6 +672,11 @@
         </div>
     </div>
 
+    <div id="imageModal" class="image-modal">
+        <span class="close-image" onclick="closeImage()">&times;</span>
+        <img class="modal-image" id="modalImage">
+    </div>
+
     <footer>
         © 2026 MMU Lost Hub
         <br>
@@ -729,6 +730,20 @@
             "deleteForm",
             "Are you sure you want to delete this user?"
         );
+    }
+
+    function openImage(imageUrl){
+
+        document.getElementById("modalImage").src = imageUrl;
+
+        document.getElementById("imageModal")
+                .classList.add("show");
+    }
+
+    function closeImage(){
+
+        document.getElementById("imageModal")
+                .classList.remove("show");  
     }
 </script>
 

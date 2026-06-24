@@ -84,7 +84,8 @@
                     {% if feedback.image %}
                         <img src="{{ feedback.image.url }}"
                              alt="Feedback Photo"
-                             style="max-width:300px;">
+                             class="admin-proof-img"
+                             onclick="openImage('{{ feedback.image.url }}')">
                     {% else %}
                         No Image Provided
                     {% endif %}
@@ -112,15 +113,14 @@
 
             {% empty %}
 
-            <p>No feedback / Report yet</p>
-
+            <div class="empty-state">
+                <h3>No feedback yet</h3>
+                <p>Everything is clear for now.</p>
+            </div>
             {% endfor %}
 
         </div>
 
-        <!-- ================================ -->
-        <!--           PAGE CHANGE            -->
-        <!-- ================================ -->
         <div class="pagination">
 
             {% if feedbacks.has_previous %}
@@ -233,6 +233,18 @@
         </div>
     </div>
 
+    <div id="imageModal" class="image-modal">
+
+        <span class="close-image"
+                onclick="closeImage()">
+            &times;
+        </span>
+
+        <img id="modalImage"
+            class="modal-image">
+
+    </div>
+
     <footer>
         &copy; 2026 MMU Lost Hub.
     </footer>
@@ -266,6 +278,20 @@
         if(feedbackIdToSubmit){
             document.getElementById("feedback-form-" + feedbackIdToSubmit).submit();
         }
+    }
+
+    function openImage(imageUrl){
+
+        document.getElementById("modalImage").src = imageUrl;
+
+        document.getElementById("imageModal")
+                .classList.add("show");
+  }
+
+    function closeImage(){
+
+        document.getElementById("imageModal")
+                .classList.remove("show");
     }
 </script>
 

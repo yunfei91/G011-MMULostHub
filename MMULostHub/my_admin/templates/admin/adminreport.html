@@ -85,7 +85,8 @@
                     {% if report.image %}
                         <img src="{{ report.image.url }}"
                              alt="Report Photo"
-                             style="max-width:300px;">
+                             class="admin-proof-img"
+                             onclick="openImage('{{ report.image.url }}')">
                     {% else %}
                         No Image Provided
                     {% endif %}
@@ -94,8 +95,19 @@
                 <h3>Original Post Content</h3>
 
                 {% if report.post %}
+                <div class="original-post-box">
 
                     <p><strong>Post ID:</strong> {{ report.post.id }}</p>
+
+                    <p><strong>Post Image:</strong></p>
+
+                    {% if report.post.images.first %}
+                        <img src="{{ report.post.images.first.image.url }}"
+                            class="admin-proof-img"
+                            onclick="openImage('{{ report.post.images.first.image.url }}')">
+                    {% else %}
+                        No Post Image
+                    {% endif %}
 
                     <p><strong>Post Author:</strong> {{ report.post.post_user.username }}</p>
 
@@ -104,8 +116,10 @@
                     <p><strong>Category:</strong> {{ report.post.post_itemcategory }}</p>
 
                     <p><strong>Location:</strong> {{ report.post.post_location }}</p>
-
+ 
                     <p><strong>Description:</strong> {{ report.post.post_description }}</p>
+
+                 </div>
 
                 {% else %}
 
@@ -157,15 +171,15 @@
 
             {% empty %}
 
-            <p>No pending reports to display.</p>
+            <div class="empty-state">
+                <h3>No report yet</h3>
+                <p>Everything is clear for now.</p>
+            </div>
 
             {% endfor %}
 
         </div>
 
-        <!-- ================================ -->
-        <!--           PAGE CHANGE            -->
-        <!-- ================================ -->
         <div class="pagination">
 
             {% if reports.has_previous %}
@@ -282,6 +296,18 @@
         </div>
     </div>
 
+    <div id="imageModal" class="image-modal">
+
+        <span class="close-image"
+                onclick="closeImage()">
+            &times;
+        </span>
+
+        <img id="modalImage"
+            class="modal-image">
+
+    </div>
+
     <footer>
         © 2026 MMU Lost Hub.
     </footer>
@@ -333,6 +359,20 @@
         if(postIdToDelete){
             document.getElementById("delete-post-form-" + postIdToDelete).submit();
         }
+    }
+
+    function openImage(imageUrl){
+
+        document.getElementById("modalImage").src = imageUrl;
+
+        document.getElementById("imageModal")
+                .classList.add("show");
+    }
+
+    function closeImage(){
+
+        document.getElementById("imageModal")
+                .classList.remove("show");
     }
 </script>
 

@@ -344,7 +344,7 @@ header{
     flex: 1;
 
     width: 100%;
-    max-width: 1200px;
+    max-width: 1500px;
 
     margin: 0 auto;
     padding: 40px 60px 60px 60px;
@@ -717,7 +717,7 @@ footer{
 /* User management split screen */
 .admin-user-layout{
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 0.7fr 2.3fr;
     gap: 30px;
     align-items: start;
 }
@@ -733,8 +733,10 @@ footer{
 /* Reported user cards inside user page */
 .report-card-list{
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(320px, 1fr));
     gap: 20px;
+
+    max-width: 900px;
 }
 
 .back-btn{
@@ -750,15 +752,16 @@ footer{
 
 /* Big screen can show 3 cards */
 @media (min-width: 1200px){
-    .post-list{
-        grid-template-columns: repeat(3, 1fr);
+    .report-card-list{
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 /* Small screen back to 1 column */
 @media (max-width: 900px){
     .post-list,
-    .admin-user-layout{
+    .admin-user-layout,
+    .report-card-list{
         grid-template-columns: 1fr;
     }
 }
@@ -794,4 +797,70 @@ footer{
 
 .pagination .disabled{
     color: #d1d1d1;
+}
+
+.admin-proof-img{
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 12px;
+    cursor: pointer;
+    display: block;
+}
+
+.image-modal{
+    display:none;
+
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,0.6);
+
+    z-index:20000;
+
+    justify-content:center;
+    align-items:center;
+}
+
+.image-modal.show{
+    display:flex;
+}
+
+.modal-image{
+    max-width: 60vw;
+    max-height: 60vh;
+    width: auto;
+    height: auto;
+    border-radius:15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.close-image{
+    position:absolute;
+    top:20px;
+    right:35px;
+
+    color:white;
+    font-size:45px;
+    cursor:pointer;
+}
+
+.empty-state{
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 45px 25px;
+    border-radius: 25px;
+    background: rgba(255,255,255,0.65);
+    backdrop-filter: blur(18px);
+    color: #6a7184;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+}
+
+.empty-state h3{
+    margin: 0 0 10px;
+    font-family: 'Slackey';
+}
+
+.empty-state p{
+    margin: 0;
 }
