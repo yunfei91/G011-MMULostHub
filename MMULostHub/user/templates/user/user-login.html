@@ -79,13 +79,19 @@
         </div>
 
         <script>
+            /* ====================================== 
+                    Browser Navigation Control
+            ====================================== */
+            // Reload page when restored from browser cache
             window.addEventListener("pageshow", function (event) {
                 if (event.persisted) {
                     location.reload();
                 }
             });
 
+            // Replace current history state
             history.replaceState(null, null, location.href);
+            // Redirect to landing page when back button is pressed
             window.onpopstate = function () {
                 window.location.replace("{% url 'beginning' %}");
             };
@@ -94,13 +100,19 @@
                 window.location.replace("{% url 'beginning' %}")
             }
 
+            /* ====================================== 
+                        DOM Elements
+            ====================================== */
+            // Get form and popup elements
             const form = document.getElementById("loginForm");
             const popup = document.getElementById("errorPopup");
 
+            // Display popup notification message
             function showPopup(msg, type="error") {
 
                 popup.innerHTML = msg;
 
+                // Hide popup after timeout
                 popup.classList.remove("error", "success");
                 popup.classList.add(type, "show");
 
@@ -109,6 +121,9 @@
                 }, 3500);
             }
 
+            /* ====================================== 
+                        Email Validation
+            ====================================== */
             function isValidEmail(email) {
 
                 let pattern = /^[A-Za-z0-9._%+-]+@(mmu\.edu\.my|student\.mmu\.edu\.my)$/;
@@ -126,6 +141,7 @@
                 const email = document.getElementById("email").value.trim();
                 const pw = document.getElementById("password").value.trim();
 
+                // Prevent default form submission
                 if (!email || !pw) {
                     showPopup("Please fill in all fields");
                     return;
@@ -139,24 +155,29 @@
 
                 try {
                     const response = await fetch(
+                        // Verify account existence via AJAX request
                         `${checkEmailUrl}?email=${encodeURIComponent(email)}`
                     );
 
                     const data = await response.json();
 
+                    // Display message when account does not exist
                     if (!data.exists) {
                         showPopup("Haven't registered yet");
                         return;
                     }
 
-                    form.submit();
+                    form.submit(); // Submit form after successful validation
 
                 } catch(error) {
-                    console.error(error);
+                    console.error(error); // Handle email verification request error
                     showPopup("Error checking email");
                 }
             });
 
+            /* ====================================== 
+                        Login Messages
+            ====================================== */
             window.addEventListener("load", () => {
 
                 // Login error
@@ -177,10 +198,12 @@
             function showPassword(inputId, icon) {
                 const input = document.getElementById(inputId);
 
+                // Show password text
                 if (input.type === "password") {
                     input.type = "text";
                     icon.textContent = "visibility";
                 } else {
+                // Hide password text
                     input.type = "password";
                     icon.textContent = "visibility_off";
                 }

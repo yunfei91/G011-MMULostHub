@@ -29,7 +29,7 @@
                                 </div>
                         
                                 <form method="POST">
-                                    {% csrf_token %}
+                                    {% csrf_token %} <!-- CSRF protection token -->
                                     <input type="text" name="email" placeholder="Enter your MMU email" value="{{ email }}">
 
                                     <br><br><br>
@@ -54,29 +54,40 @@
                 window.location.replace("{% url 'beginning' %}")
             }
 
+            // Get popup element
             const popup = document.getElementById("errorPopup");
 
+            // Display popup notification
             function showPopup(msg, type = "error") {
+                // Stop execution if popup element does not exist
                 if (!popup) return;
 
+                // Set popup message content
                 popup.innerHTML = msg;
 
+                // Remove previous popup styles
                 popup.classList.remove("error", "success");
+                // Apply popup style and display it
                 popup.classList.add(type, "show");
 
+                // Automatically hide popup after 2.5 seconds
                 setTimeout(() => {
                     popup.classList.remove("show");
                 }, 2500);
             }
 
+            // Execute after page resources finish loading
             window.addEventListener("load", () => {
+                // Search error message from backend
                 const backendError = "{{ error|escapejs }}";
 
                 if (
+                    // Check whether a valid error message exists
                     backendError &&
                     backendError !== "None" &&
                     backendError.trim() !== ""
                 ) {
+                    // Display backend error message
                     showPopup(backendError, "error");
                 }
             });

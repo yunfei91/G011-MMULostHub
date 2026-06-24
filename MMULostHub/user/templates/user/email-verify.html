@@ -76,16 +76,26 @@
             </footer>
         </div>
 
+        <!-----------------------------------
+                Pass Backend Data to JS
+         ------------------------------------>
         <!-- Pass python to JS, after pass <script><p id="otpTimer">60</script>-->
         {{ otp_remaining|json_script:"otp-time" }}
         <!-- Pass resend countdown time from backend to JavaScript -->
         {{ resend_remaining|json_script:"resend-time" }}
 
         <script>
+
+            /* ======================================
+                  Navigation Control (Back btn)
+            ====================================== */
             function goBack() {
                 window.location.replace("{% url 'beginning' %}")
             }
 
+            /* ======================================
+                    Popup Notification System
+            ====================================== */
             const popup = document.getElementById("errorPopup");
 
             // Display popup notification
@@ -102,6 +112,9 @@
                 }, 2500);
             }
 
+            /* ======================================
+                    Initialize Countdown Timers
+            ====================================== */
             let otpTime = 0;
             let resendTime = 0;
             
@@ -114,6 +127,9 @@
                 console.log("Timer init error", e);
             }
 
+            /* ======================================
+                       OTP Elements Binding
+            ====================================== */
             // Get OTP timer and resend button elements
             const otpBadge = document.getElementById("otpBadge");
             const resendBadge = document.getElementById("resendBadge");
@@ -130,6 +146,9 @@
                 inputs[0].focus();
             }
 
+            /* ======================================
+                       OTP Processing Logic
+            ====================================== */
             // Combine OTP digits into hidden field
             function updateHidden() {
                 hiddenInput.value = Array.from(inputs) // Combine OTP 6-digits
@@ -137,6 +156,9 @@
                 .join(""); // Merge all OTP digits into one value
             }
 
+            /* ======================================
+                        OTP Input Events
+            ====================================== */
             inputs.forEach((input, index) => {
                 
                 input.addEventListener("input", (e) => { // Detect typing
@@ -184,6 +206,9 @@
                 });
             });
 
+            /* ======================================
+                      Backend Error Handling
+            ====================================== */
             // Execute after page load
             window.addEventListener("load", () => {
                 // Retrieve error message from backend
@@ -204,6 +229,9 @@
                 }
             });
 
+            /* ======================================
+                     Countdown Timer Update
+            ====================================== */
             function updateTimers() {
                 // Update OTP and resend countdown timers
                 if (otpTime > 0) {
@@ -235,6 +263,9 @@
 
             updateTimers();
 
+            /* ======================================
+                        Cookie Utility
+            ====================================== */
             // Retrieve cookie value by name
             function getCookie(name) {
                 let cookieValue = null;
@@ -253,6 +284,9 @@
                 return cookieValue;
             }
 
+            /* ======================================
+                        Resend OTP Request
+            ====================================== */
             // Handle resend OTP request
             resendBtn.addEventListener("click", function () {
                 fetch("{% url 'resend_otp' %}", { // Send request to backend
