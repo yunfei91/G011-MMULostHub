@@ -33,6 +33,9 @@ import re # Regular expression for validation
 def beginning(request):
     return render(request, 'user/beginning.html')
 
+# ======================================================
+#                   User Login
+# ======================================================
 def user_login(request):
     if request.method == 'POST': # Form submitted
         # Get email, if no email will use empty '' , remove spaces, lowercase
@@ -87,6 +90,9 @@ def user_login(request):
     
     return render(request, 'user/user-login.html')
 
+# ======================================================
+#                   Forgot pw
+# ======================================================
 def forgot_pw(request):
     email = "" # Initialize email variable
 
@@ -145,28 +151,38 @@ def reset_otp_verify(request):
     
     now = time.time()
 
+    # OTP resend cooldown in 30 seconds
     resend_cooldown = 30
+    # Calculate remaining resend cooldown time
     resend_remaining = int(resend_cooldown - (now - data['otp_time']))
+    # Prevent negative countdown values
     resend_remaining = max(0, resend_remaining)
 
+    # OTP validity period in 60 seconds
     otp_valid_seconds = 60
+    # Calculate remaining OTP validity time
     otp_remaining = int(otp_valid_seconds - (now - data['otp_time']))
     otp_remaining = max(0, otp_remaining)
 
     context = {
         'otp_remaining': otp_remaining,
         'resend_remaining': resend_remaining,
+        # Allow OTP resend when cooldown ends
         'can_resend': resend_remaining == 0,
+        # Check whether OTP has expired
         'expired': otp_remaining == 0
     }
 
     if request.method == 'POST':
+        # Get OTP entered by the user
         user_otp = request.POST.get('otp', '')
 
+        # Reject expired OTP
         if context['expired']:
             context['error'] = "OTP expired"
             return render(request, 'user/resetpw-otp.html', context)
 
+        # Check if user entered OTP matches the stored system OTP
         if user_otp != data['otp']:
             context['error'] = "Invalid OTP"
             return render(request, 'user/resetpw-otp.html', context)
@@ -175,30 +191,39 @@ def reset_otp_verify(request):
 
     return render(request, 'user/resetpw-otp.html', context)
 
+# Handle OTP resend request via AJAX
 def resend_reset_otp(request):
     if request.method != "POST":
+        # Return error response for invalid request method
         return JsonResponse({'error': 'Invalid request'}, status=400)
     
     data = request.session.get('reset_data')
 
+    # Check if session exists
     if not data:
+        # Return error if reset session has expired
         return JsonResponse({'error': 'Session expired'}, status=400)
     
     now = time.time()
     
+    # Enforce OTP resend cooldown (30 seconds)
     if now - data['otp_time'] < 30:
         return JsonResponse({
             'error': 'Please wait before requesting a new OTP.'
         }, status=400)
     
+    # Generate a new 6-digit OTP
     otp = str(random.randint(100000, 999999))
 
+    # Update OTP and timestamp in session, let old OTP invalid
     data['otp'] = otp
     data['otp_time'] = now
 
+    # Save updated OTP data back to session
     request.session['reset_data'] = data
     request.session.modified = True
 
+    # Send new OTP to user's email
     send_otp_email(data['email'], otp)
 
     return JsonResponse({'success': True})
@@ -206,7 +231,7 @@ def resend_reset_otp(request):
 def reset_pw(request):
     data = request.session.get('reset_data')
 
-    if not data: # Must come from OTP page
+    if not data: # Must come from OTP page URL , flow by flow
         return redirect('forgot_pw')
 
     if request.method == 'POST':
@@ -223,10 +248,13 @@ def reset_pw(request):
                 'error': "Passwords do not match"
             })
 
+        # Get user from database using email
         user = User.objects.get(username=data['email'])
+        # Hash and set the new password securely
         user.set_password(password)
         user.save()
 
+        # Clear reset session data after successful password reset
         request.session.pop('reset_data', None)
 
         messages.success(request, "Password reset successful!")
@@ -235,7 +263,11 @@ def reset_pw(request):
 
     return render(request, 'user/reset-pw.html')
 
+# ======================================================
+#                   Admin Login
+# ======================================================
 def admin_login(request):
+    # Store error message and email input transfer to page
     error_message = ""
     email = ""
 
@@ -243,13 +275,17 @@ def admin_login(request):
         email = (request.POST.get('email') or '').strip().lower()
         password = request.POST.get('password') or ''
 
+        # Validate required fields
         if not email or not password:
             error_message = "Please fill in all fields"
         else:
+            # Check db the user exist or not , password correct or not
             user = authenticate(request, username=email, password=password)
 
+            # Check email or password if authentication failed
             if user is None:
                 error_message = "Invalid admin credentials"
+            # Check the email is admin or not
             elif not user.is_staff:
                 error_message = "You are not authorized as admin."
             else:
@@ -261,6 +297,9 @@ def admin_login(request):
         'email': email
     })
 
+# ======================================================
+#                   Register
+# ======================================================
 def register(request):
     # Handle form submission
     if request.method == 'POST':
@@ -274,13 +313,15 @@ def register(request):
         password_error = ""
         confirm_password_error = ""
 
+        # Show error if name is empty
         if not name:
             name_error = "Please enter your name."
-        elif Profile.objects.filter(name=name).exists(): # Check duplicate name
+        # Check duplicate name , if name already exists in Profile
+        elif Profile.objects.filter(name=name).exists(): 
             name_error = "Name already taken."
 
         if not email:
-            email_error = "Please enter your email."
+            email_error = "Please enter your MMU email."
         elif not (
             re.match(r'^[A-Za-z0-9._%+-]+@mmu\.edu\.my$',email)
             or
@@ -298,6 +339,7 @@ def register(request):
         elif password != confirm_password:
             confirm_password_error = "Passwords do not match."
 
+        # Return form with validation errors if any exist
         if name_error or email_error or password_error or confirm_password_error:
             return render(request, 'user/register.html', {
                 'name_error': name_error,
@@ -324,6 +366,21 @@ def register(request):
     
     return render(request, 'user/register.html')
 
+def check_name(request):
+    name = (request.GET.get('name') or '').strip()
+    exists = Profile.objects.filter(name=name).exists() # Check name exists
+
+    return JsonResponse({'exists': exists}) # Return result to frontend
+
+def check_email(request):
+    email = (request.GET.get('email') or '').strip().lower()
+    exists = User.objects.filter(username=email).exists()
+
+    return JsonResponse({'exists': exists})
+
+# ======================================================
+#                  Email Verification
+# ======================================================
 def send_otp_email(email, otp):
 
     html_content =render_to_string("email/otp_email.html", { # convert template to word
@@ -342,18 +399,6 @@ def send_otp_email(email, otp):
 
     email_msg.attach_alternative(html_content, "text/html") # Attach HTML version
     email_msg.send()
-
-def check_name(request):
-    name = (request.GET.get('name') or '').strip()
-    exists = Profile.objects.filter(name=name).exists() # Check name exists
-
-    return JsonResponse({'exists': exists}) # Return result to frontend
-
-def check_email(request):
-    email = (request.GET.get('email') or '').strip().lower()
-    exists = User.objects.filter(username=email).exists()
-
-    return JsonResponse({'exists': exists})
 
 def verify_email(request):
     data = request.session.get('register_data') # Get session data
@@ -438,6 +483,9 @@ def resend_otp(request):
 
     return JsonResponse({'success': True})
 
+# ======================================================
+#                   Logout
+# ======================================================
 def user_logout(request):
     logout(request) # Django logout, clear login session and let user become anonymous user
     request.session.flush() # Completely clear session data
@@ -456,6 +504,9 @@ def user_logout(request):
 
     return response # send final response to browser
 
+# ======================================================
+#                   Profile
+# ======================================================
 @login_required(login_url='beginning')
 @never_cache # Must login first
 def update_name(request):
@@ -465,10 +516,12 @@ def update_name(request):
 
         name = (request.POST.get("name") or "").strip()
 
+        # empty name
         if not name:
             messages.error(request, "Name cannot be empty.")
             return redirect('profile')
         
+        # Check for duplicate name excluding current user
         if Profile.objects.filter(name=name).exclude(user=request.user).exists(): # Check duplicate name except self
             messages.error(request, "Name already taken.")
             return redirect('profile')
@@ -476,6 +529,7 @@ def update_name(request):
         request.user.first_name = name # Update Django User
         request.user.save()
 
+        # Update or create user profile and save name
         profile, _ = Profile.objects.get_or_create(user=request.user)
         profile.name = name # Update profile
         profile.save()
@@ -488,29 +542,35 @@ def update_name(request):
 @never_cache
 def profile(request, user_id=None): #zinc add if else
 
+    # Determine whether to display another user's profile
     if user_id:
         user = User.objects.get(id=user_id)
     else:
         user = request.user
 
+    # Create user profile , make sure profile exists
     profile, created = Profile.objects.get_or_create(user=user)
     need_reverify = profile.need_reverify #zinc add reverify acc
 
+    # Get all posts created by the user (latest first)
     posts = Post.objects.filter(post_user=user).order_by('-id')
 
     all_posts_list = posts
     lost_posts_list = posts.filter(post_type='lost').select_related('cover_image').prefetch_related('images')
     found_posts_list = posts.filter(post_type='found').select_related('cover_image').prefetch_related('images')
 
+    # Get pagination page numbers from query parameters
     all_page = request.GET.get('all_page', 1)
     lost_page = request.GET.get('lost_page', 1)
     found_page = request.GET.get('found_page', 1)
     PER_PAGE = 6
 
+    # Paginate all posts with defined page size
     all_posts = Paginator(all_posts_list, PER_PAGE).get_page(all_page)
     lost_posts = Paginator(lost_posts_list, PER_PAGE).get_page(lost_page)
     found_posts = Paginator(found_posts_list, PER_PAGE).get_page(found_page)
 
+    # Arrange post images by display order
     for post in all_posts:
         post.sorted_images = post.images.all().order_by('order')
     for post in lost_posts:
@@ -518,11 +578,13 @@ def profile(request, user_id=None): #zinc add if else
     for post in found_posts:
         post.sorted_images = post.images.all().order_by('order')
 
+    # Determine active tab in UI
     active_tab = request.GET.get('tab', 'all')
 
     #zinc add is_owner
     is_owner = (request.user == user)
 
+    # Render profile page with user data and posts
     return render(request, 'user/profile.html', {
         'user': user,
         'profile': profile,
@@ -546,6 +608,7 @@ def update_bio(request):
     if request.method == 'POST':
         bio = request.POST.get('bio', '')
 
+        # Get or create user profile
         profile, created = Profile.objects.get_or_create(user=request.user)
         profile.bio = bio # Update bio
         profile.save()
@@ -560,14 +623,18 @@ def update_bio(request):
 def update_avatar(request):
 
     if request.method == 'POST':
+        # Get uploaded avatar file
         avatar = request.FILES.get('avatar')
 
+        # Get or create user profile , make sure profile exists
         profile, _ = Profile.objects.get_or_create(user=request.user)
 
         if avatar:
+            # Delete old avatar file if it exists , avoid extra use storage
             if profile.avatar:
                 profile.avatar.delete(save=False)
 
+            # Save new avatar image to profile
             profile.avatar = avatar
             profile.save()
 
@@ -577,6 +644,9 @@ def update_avatar(request):
 
     return redirect('profile')
 
+# ======================================================
+#              YF - View other profile
+# ======================================================
 @login_required(login_url='beginning')
 @never_cache
 # yunfee add to check other user's profile
@@ -636,8 +706,13 @@ def userProfile(request, username):
         'active_tab': active_tab,
     })
 
+
+# ======================================================
+#              ZINC - Reverify email
+# ======================================================
 #zinc add def start_reverify 
-@login_required
+@login_required(login_url='beginning')
+@never_cache
 def start_reverify(request):
 
     otp = str(random.randint(100000, 999999))
@@ -657,7 +732,8 @@ def start_reverify(request):
     return redirect('reverify_otp')
 
 #zinc add def reverify_otp
-@login_required
+@login_required(login_url='beginning')
+@never_cache
 def reverify_otp(request):
 
     data = request.session.get(
@@ -751,7 +827,8 @@ def reverify_otp(request):
     )
 
 #zinc add def resend_reverify_otp
-@login_required
+@login_required(login_url='beginning')
+@never_cache
 def resend_reverify_otp(request):
 
     if request.method != "POST":
