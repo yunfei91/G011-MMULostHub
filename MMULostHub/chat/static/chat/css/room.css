@@ -1027,24 +1027,6 @@ footer{
     overflow:hidden;
 }
 
-.chat-body::-webkit-scrollbar{
-    width:8px;
-}
-
-.chat-body::-webkit-scrollbar-track{
-    background:rgba(255,255,255,.25);
-    border-radius:20px;
-}
-
-.chat-body::-webkit-scrollbar-thumb{
-    background:rgba(126,133,153,.55);
-    border-radius:20px;
-}
-
-.chat-body::-webkit-scrollbar-thumb:hover{
-    background:rgba(126,133,153,.8);
-}
-
 .chat-body{
     scrollbar-width:thin;
     scrollbar-color:rgba(126,133,153,.55) rgba(255,255,255,.25);
@@ -1063,4 +1045,23 @@ footer{
 .back:hover{
     color:#565c6e;
     transform:translateX(-2px);
+}
+
+.chat-body::-webkit-scrollbar{
+    width:8px;
+}
+
+.chat-body::-webkit-scrollbar-track{
+    background:rgba(255,255,255,0.25);
+    border-radius:20px;
+}
+
+.chat-body::-webkit-scrollbar-thumb{
+    background:rgba(126,133,153,0.55);
+    border-radius:20px;
+    border:2px solid rgba(255,255,255,0.35);
+}
+
+.chat-body::-webkit-scrollbar-thumb:hover{
+    background:rgba(126,133,153,0.8);
 }
