@@ -73,8 +73,8 @@ imageInput.addEventListener("change", function(e){
                 cropper = null;
             }
 
+            // open cropper
             cropPreview.onload = function(){
-
                 if(cropper){
                     cropper.destroy();
                     cropper = null;
@@ -166,7 +166,6 @@ cropButton.addEventListener("click", function(){
 function renderImages(){
 
     imagePreviewContainer.innerHTML = "";
-
     imagePreviewContainer.appendChild(uploadBtn);
 
     window.croppedImages.forEach((imgObj,index)=>{
@@ -261,9 +260,7 @@ function openPreviewModal(){
     CLOSE PREVIEW MODAL BUTTON FUNCTION
 ====================================== */
 closePreview.addEventListener("click", function(){
-
     previewModal.style.display = "none";
-
 });
 
 /* ======================================
@@ -305,9 +302,7 @@ prevBtn.addEventListener("click", function(){
 deletePreviewBtn.addEventListener("click", function(){
 
     window.croppedImages.splice(window.currentPreviewIndex,1);
-
     renderImages();
-
     showSuccess('Image Deleted');
 
     // no image left
@@ -320,7 +315,6 @@ deletePreviewBtn.addEventListener("click", function(){
 
     // prevent overflow
     if(window.currentPreviewIndex >= window.croppedImages.length){
-
         window.currentPreviewIndex = window.croppedImages.length - 1;
     }
 
@@ -405,6 +399,7 @@ if(existingImagesElement){
     renderImages();
 }
 
+// Close Ppup when click other place
 window.addEventListener("click", function(event){
     
     // Preview Modal

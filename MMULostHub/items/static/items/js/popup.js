@@ -12,23 +12,19 @@ const popupText = document.getElementById("messageText");
 const popupBtn = document.getElementById("messageBtn");
 const popupCancel = document.getElementById("messageCancelBtn");
 
+// close popup when click ok button + run function
 popupBtn.onclick = function () {
-
     popup.style.display = "none";
-
     if (popupCallback) {
         popupCallback();
         popupCallback = null;
     }
-
 };
 
+// close popup when click cancel button
 popupCancel.onclick = function () {
-
     popup.style.display = "none";
-
     popupCallback = null;
-
 };
 
 // RESET POPUP
@@ -100,11 +96,8 @@ function showConfirm(title, message, callback){
 
 // CLICK OUTSIDE CLOSE
 popup.addEventListener("click", function(event){
-
     if(event.target === popup){
-
         popup.style.display = "none";
-
         popupCallback = null;
     }
 });
@@ -164,18 +157,16 @@ function updateButtons() {
 function showStatusPopup(postId) {
 
     const popup = document.getElementById("statusPopup");
-
     popup.style.display = "flex";
 
+    // stautus popup confirm button
     document.getElementById("statusConfirmBtn").onclick = function () {
-
         document.getElementById("status_form").action = `/items/update-status/${postId}/`;
-
         document.getElementById("status_form").submit();
     };
 
+    // status popup cancel button
     document.getElementById("statusCancelBtn").onclick = function () {
-
         popup.style.display = "none";
     };
 }
@@ -184,9 +175,7 @@ const statusPopup = document.getElementById("statusPopup");
 
 // CLICK OUTSIDE CLOSE
 statusPopup.addEventListener("click", function(event){
-
     if(event.target === statusPopup){
-
         statusPopup.style.display = "none";
     }
 });
@@ -415,7 +404,6 @@ window.addEventListener("click", function (event) {
 // Post Navigation Dropdown
 window.toggleDropdown = function(event) {
     event.stopPropagation();
-
     const dropdown = event.currentTarget.closest(".post-nav-dropdown");
     
     document.querySelectorAll('.post-nav-dropdown').forEach(el => {

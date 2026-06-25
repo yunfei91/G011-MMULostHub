@@ -327,7 +327,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                         
                             <!-- ================================= -->
                             <!--         NO POST MSG               -->
@@ -447,7 +446,7 @@
 
                                                     <!-- OWNER -->
                                                     {% if request.user.id == post.post_user.id %}
-
+                                                    
                                                         <div class="btn">
                                                             <a id="edit_link" href="">
                                                                 Edit Post
@@ -463,7 +462,6 @@
 
                                                     <!-- OTHER USERS -->
                                                     {% else %}
-
                                                         <div class="btn">
                                                             <a id="report_post_link" href="">
                                                                 Report
@@ -475,9 +473,7 @@
                                                                 Report User
                                                             </a>
                                                         </div>
-
                                                     {% endif %}
-
                                                 </div>
                                             </div>
                                         </div>

@@ -912,6 +912,7 @@
     box-shadow: 0 6px 16px rgba(112, 139, 150, 0.15);
 }
 
+/* X Mark */
 .chip span {
     margin-left: 10px;
     cursor: pointer;

@@ -241,7 +241,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const url = new URL(window.location.origin + window.location.pathname);
         url.searchParams.set("location", code);
 
-        // pushState = wont refresh whenever url change or not
         window.location.href = url.toString();
     }
 

@@ -158,7 +158,6 @@ function removeFilter(key, value) {
 window.addEventListener("load", function () {
 
     const params = new URLSearchParams(window.location.search);
-
     const postId = params.get("post");
 
     if (!postId) {
@@ -175,51 +174,57 @@ window.addEventListener("load", function () {
 });
 
 /* ===================================== */
-/*         FILTER DROPDOWN UI            */
+/*          FILTER DROPDOWN              */
 /* ===================================== */
-
+// Customize Search Bar Filter Dropdown
 document.querySelectorAll(".filter-source").forEach(select => {
 
-    // hide original select
+    // hide original select dropdown
     select.style.display = "none";
 
+    // make new dropdown warpper
     const wrapper = document.createElement("div");
     wrapper.className = "filter-select";
 
+    // initialise selected options
     const selected = document.createElement("div");
     selected.className = "filter-selected";
 
+    // deafult 
     const defaultOption = select.options[select.selectedIndex];
 
-    selected.textContent = defaultOption
-        ? defaultOption.textContent
-        : "Select";
+    selected.textContent = defaultOption? defaultOption.textContent: "Select";
 
+    // if selcted is a default make it as placeholder
     if (!select.value) {
         selected.classList.add("placeholder");
     }
 
+    // all options
     const optionsContainer = document.createElement("div");
     optionsContainer.className = "filter-options";
 
+    // go through all options
     [...select.options].forEach(option => {
 
+        // change all option into option div
         const optionDiv = document.createElement("div");
-
         optionDiv.className = "filter-option";
         optionDiv.textContent = option.textContent;
 
+        // check option is selected or not
         if (option.value === select.value) {
             optionDiv.classList.add("selected-option");
         }
 
+        // Check clickeed option
         optionDiv.addEventListener("click", () => {
 
+            // if selected option not selected bfr change to selected 
             if (select.value !== option.value) {
-
                 select.value = option.value;
 
-                // trigger original onchange
+                // change option to selected
                 select.dispatchEvent(
                     new Event("change", {
                         bubbles: true
@@ -227,24 +232,22 @@ document.querySelectorAll(".filter-source").forEach(select => {
                 );
             }
 
+            // close dropdown list
             wrapper.classList.remove("active");
         });
-
         optionsContainer.appendChild(optionDiv);
     });
 
+    // change selected option layout
     select.addEventListener("change", function () {
 
-        const currentOption =
-            [...select.options].find(
-                opt => opt.value === select.value
-            );
+        const currentOption = [...select.options].find(opt => opt.value === select.value);
 
+        // change text inside selection box
         if (currentOption) {
+            selected.textContent = currentOption.textContent;
 
-            selected.textContent =
-                currentOption.textContent;
-
+            // remove placeholder if selected not default / empty select
             if (select.value) {
                 selected.classList.remove("placeholder");
             } else {
@@ -252,42 +255,28 @@ document.querySelectorAll(".filter-source").forEach(select => {
             }
         }
 
-        optionsContainer
-            .querySelectorAll(".filter-option")
-            .forEach(optDiv => {
+        optionsContainer.querySelectorAll(".filter-option").forEach(optDiv => {
 
-                if (
-                    optDiv.textContent ===
-                    selected.textContent
-                ) {
-                    optDiv.classList.add(
-                        "selected-option"
-                    );
-                } else {
-                    optDiv.classList.remove(
-                        "selected-option"
-                    );
-                }
-
-            });
-
+            // if select option have selected bfr 
+            if (optDiv.textContent === selected.textContent) {
+                optDiv.classList.add("selected-option");
+            } else {
+                optDiv.classList.remove("selected-option");
+            }
+        });
     });
 
+    // selcted option close dropdown
     selected.addEventListener("click", e => {
 
         e.stopPropagation();
 
-        document
-            .querySelectorAll(".filter-select")
-            .forEach(dropdown => {
+        document.querySelectorAll(".filter-select").forEach(dropdown => {
 
-                if (dropdown !== wrapper) {
-                    dropdown.classList.remove(
-                        "active"
-                    );
-                }
-
-            });
+            if (dropdown !== wrapper) {
+                dropdown.classList.remove("active");
+            }
+        });
 
         wrapper.classList.toggle("active");
 
@@ -296,27 +285,19 @@ document.querySelectorAll(".filter-source").forEach(select => {
     wrapper.appendChild(selected);
     wrapper.appendChild(optionsContainer);
 
-    select.parentNode.insertBefore(
-        wrapper,
-        select
-    );
-
+    // run DOM to change dropdown layout
+    select.parentNode.insertBefore(wrapper,select);
 });
 
+// clcik other rplace close dropdown
 document.addEventListener("click", () => {
-
-    document
-        .querySelectorAll(".filter-select")
-        .forEach(dropdown => {
-
-            dropdown.classList.remove("active");
-
-        });
-
+    document.querySelectorAll(".filter-select").forEach(dropdown => {
+        dropdown.classList.remove("active");
+    });
 });
 
 /* ===================================== */
-/*           DATE CUSTOM UI              */
+/*           DATE CUSTOM                 */
 /* ===================================== */
 function bindDate(inputId, textId, placeholder) {
 
@@ -324,6 +305,7 @@ function bindDate(inputId, textId, placeholder) {
     const text = document.getElementById(textId);
     const wrapper = input.closest(".date-select");
 
+    // click text will show date picker
     text.addEventListener("click", () => {
 
         if (input.showPicker) {
@@ -331,35 +313,33 @@ function bindDate(inputId, textId, placeholder) {
         } else {
             input.focus();
         }
-
     });
 
+    // when date selected
     input.addEventListener("change", () => {
 
+        // have date input will change word inside to date
         if (input.value) {
-
             text.textContent = input.value;
-
-            wrapper.classList.add("filled"); // ⭐关键
-
-        } else {
-
+            wrapper.classList.add("filled");
+        } 
+        // not date input will change to start / end date (placeholder)
+        else {
             text.textContent = placeholder;
-
             wrapper.classList.remove("filled");
-
         }
         input.form.submit();
-
     });
 }
 
-// bind start + end
+// bind start / end
 window.addEventListener("load", () => {
 
+    // placeholder
     bindDate("startDateInput", "startDateText", "Start Date");
     bindDate("endDateInput", "endDateText", "End Date");
 
+    // check date iput selected
     document.querySelectorAll(".date-select").forEach(wrapper => {
 
         const input = wrapper.querySelector("input[type='date']");

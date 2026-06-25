@@ -103,43 +103,57 @@ function closeDatetime(e){
 /* ===================================== */
 /*         SELECTION DROPDOWN            */
 /* ===================================== */
+// Customize all dropdown list 
 document.querySelectorAll(".custom-source").forEach(select => {
 
+    // new wrapper for dropdown list
     const wrapper = document.createElement("div");
     wrapper.className = "custom-select";
 
+    // selected option
     const selected = document.createElement("div");
     selected.className = "selected";
 
+    // default option inside dropdown
     const defaultOption = select.options[select.selectedIndex];
 
+    // change selected option to default text
     selected.textContent = defaultOption.textContent;
 
+    // placeholder
     if (!select.value) {
         selected.classList.add("placeholder");
     }
 
+    // All options
     const optionsContainer = document.createElement("div");
     optionsContainer.className = "options";
 
+    // check all option have
     [...select.options].forEach(option => {
 
+        // create UI for all options
         const optionDiv = document.createElement("div");
-
         optionDiv.className = "option";
         optionDiv.textContent = option.textContent;
 
+        // change user selected option from options to selected-option
         if (option.value === select.value) {
             optionDiv.classList.add("selected-option");
         }
 
+        // click option
         optionDiv.addEventListener("click", () => {
 
+            // if optio selected not select before will change option
             if (select.value !== option.value) {
                 select.value = option.value;
+
+                // tell html select hev been changed
                 select.dispatchEvent(new Event("change"));
             }
 
+            // close dropdown
             wrapper.classList.remove("active");
         });
 
@@ -147,16 +161,23 @@ document.querySelectorAll(".custom-source").forEach(select => {
 
     });
 
+    // check selecetion change
     select.addEventListener("change", function () {
         const currentOption = [...select.options].find(opt => opt.value === select.value);
         if (currentOption) {
+
+            // updated text inside selection box
             selected.textContent = currentOption.textContent;
             selected.classList.remove("placeholder");
+
         } else {
+
+            // when nothing inside selection box will show
             selected.textContent = "Please choose a location";
             selected.classList.add("placeholder");
         }
 
+        // check all option and add selected option to selected 
         optionsContainer.querySelectorAll(".option").forEach(optDiv => {
             if (optDiv.textContent === selected.textContent) {
                 optDiv.classList.add("selected-option");
@@ -166,10 +187,9 @@ document.querySelectorAll(".custom-source").forEach(select => {
         });
     });
 
+    // close dropdown list
     selected.addEventListener("click", e => {
-
         e.stopPropagation();
-
         document
             .querySelectorAll(".custom-select")
             .forEach(dropdown => {
@@ -177,7 +197,6 @@ document.querySelectorAll(".custom-source").forEach(select => {
                 if (dropdown !== wrapper) {
                     dropdown.classList.remove("active");
                 }
-
             });
 
         wrapper.classList.toggle("active");
@@ -186,16 +205,15 @@ document.querySelectorAll(".custom-source").forEach(select => {
     wrapper.appendChild(selected);
     wrapper.appendChild(optionsContainer);
 
+    // insert DOM (HTML)
     select.parentNode.insertBefore(wrapper, select);
-
 });
 
+// click anywhere to close dropdown
 document.addEventListener("click", () => {
-
     document
         .querySelectorAll(".custom-select")
         .forEach(dropdown =>
             dropdown.classList.remove("active")
         );
-
 });

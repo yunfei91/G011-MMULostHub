@@ -480,7 +480,7 @@ def map_search(request):
     for post in post_box:
         post.sorted_images = post.images.all().order_by('order')
 
-    paginator = Paginator(post_box, 9)
+    paginator = Paginator(post_box, 8)
     page_number = request.GET.get('page')
     posts = paginator.get_page(page_number)
 
