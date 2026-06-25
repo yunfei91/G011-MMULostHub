@@ -76,7 +76,10 @@
 
                 <p><strong>User:</strong> {{ feedback.user.username }}</p>
 
-                <p><strong>Content:</strong> {{ feedback.comments }}</p>
+                <p><strong>Content:</strong></p>
+                <div class="feedback-content-box">
+                    {{ feedback.comments }}
+                </div>
 
                 <p>
                     <strong>Image:</strong><br>

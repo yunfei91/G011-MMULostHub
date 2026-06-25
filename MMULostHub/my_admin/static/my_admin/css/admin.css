@@ -798,6 +798,27 @@ td:last-child{
     z-index:10060;
 }
 
+.popup-btns button:hover{
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.32) inset,
+        0 -2px 5px rgba(0,0,0,0.12) inset,
+        0 7px 0 #565c6e,
+        0 12px 20px rgba(0,0,0,0.28);
+}
+
+.popup-btns button:active{
+    transform: translateY(2px);
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.25) inset,
+        0 -2px 4px rgba(0,0,0,0.18) inset,
+        0 3px 0 #565c6e,
+        0 5px 10px rgba(0,0,0,0.25);
+}
+
+
 .popup.show{
     opacity:1;
     visibility:visible;
@@ -1197,4 +1218,170 @@ footer{
     .reported-only-box .report-card-list{
         grid-template-columns:1fr;
     }
+}
+
+.reason-box,
+.description-box{
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding:10px 12px;
+    border-radius:12px;
+    background:rgba(255,255,255,.55);
+    border:1px solid rgba(106,113,132,.15);
+    font-size:14px;
+    line-height:1.4;
+    word-break:break-word;
+    overflow-wrap:anywhere;
+}
+
+.reason-box{
+    height:45px;
+}
+
+.description-box{
+    height:55px;
+}
+
+.report-post-list .report-card{
+    height:860px;
+    display:flex;
+    flex-direction:column;
+}
+
+.report-post-list .original-post-box{
+    flex:1;
+    overflow-y:auto;
+    overflow-x:hidden;
+    margin-top:12px;
+}
+
+.report-post-list h3{
+    margin:18px 0 10px;
+}
+
+.report-post-list .report-actions{
+    margin-top:auto;
+}
+
+.report-post-list .admin-proof-img{
+    height:145px;
+}
+
+/* ===================================== */
+/*      Clean Admin Scrollbar            */
+/* ===================================== */
+
+.reason-box,
+.original-post-box{
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    /* Firefox */
+    scrollbar-width:none;
+
+    /* IE */
+    -ms-overflow-style:none;
+}
+
+/* Chrome / Edge */
+.reason-box::-webkit-scrollbar,
+.original-post-box::-webkit-scrollbar{
+    display:none;
+}
+
+.feedback-content-box{
+    height:110px;
+
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    padding:10px 12px;
+    margin-bottom:12px;
+
+    border-radius:12px;
+    background:rgba(255,255,255,.55);
+    border:1px solid rgba(106,113,132,.15);
+
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+}
+
+.feedback-content-box::-webkit-scrollbar{
+    display:none;
+}
+
+.feedback-list .feedback-card{
+    height:480px;
+    display:flex;
+    flex-direction:column;
+}
+
+.feedback-list .feedback-card form{
+    margin-top:auto;
+}
+
+.feedback-list .feedback-card{
+    height:540px;
+    display:flex;
+    flex-direction:column;
+}
+
+.feedback-list .feedback-content-box{
+    height:110px;
+    min-height:110px;
+    flex-shrink:0;
+}
+
+.feedback-list .admin-proof-img{
+    height:150px;
+    flex-shrink:0;
+}
+
+.feedback-list .feedback-card form{
+    margin-top:auto;
+}
+
+.feedback-content-box,
+.reason-box,
+.description-box{
+    word-break:break-all;
+    overflow-wrap:anywhere;
+    white-space:normal;
+}
+
+.reported-reason-box{
+    height:110px;
+
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    padding:10px 12px;
+    margin-top:8px;
+
+    border-radius:12px;
+    background:rgba(255,255,255,.55);
+    border:1px solid rgba(106,113,132,.15);
+
+    word-break:break-all;
+    overflow-wrap:anywhere;
+    white-space:normal;
+
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+}
+
+.reported-reason-box::-webkit-scrollbar{
+    display:none;
+}
+
+.reported-only-box .report-card,
+.admin-user-layout .report-card{
+    height:690px;
+    display:flex;
+    flex-direction:column;
+}
+
+.reported-only-box .report-actions,
+.admin-user-layout .report-actions{
+    margin-top:auto;
 }

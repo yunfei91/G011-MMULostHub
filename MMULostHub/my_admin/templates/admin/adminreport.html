@@ -75,8 +75,10 @@
 
                 <p><strong>Reported By:</strong> {{ report.user.username }}</p>
 
-                <p><strong>Reported Reason:</strong> {{ report.comments }}</p>
-
+                <p><strong>Reported Reason:</strong></p>
+                <div class="reason-box">
+                    {{ report.comments }}
+                </div>
                 <p><strong>Reported Date:</strong> {{ report.created_at }}</p>
 
                 <p>
@@ -117,9 +119,10 @@
 
                     <p><strong>Location:</strong> {{ report.post.post_location }}</p>
 
-                 <p class="desceiption">
-                    <p><strong>Description:</strong> {{ report.post.post_description }}</p>
-                 </p>
+                    <p><strong>Description:</strong></p>
+                    <div class="description-box">
+                        {{ report.post.post_description }}
+                    </div>
                 </div>
 
                 {% else %}
