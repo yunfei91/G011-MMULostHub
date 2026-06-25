@@ -695,6 +695,7 @@ footer{
 }
 
 .chat-name{
+    font-family:'Sansation';
     font-size:18px;
     font-weight:bold;
 }
@@ -843,7 +844,11 @@ footer{
 }
 
 .message-content{
-    white-space: normal;
+    white-space:normal;
+    font-family:'Sansation';
+    font-size:15px;
+    line-height:1.5;
+    color:#333;
 }
 
 .other .message-bubble{
@@ -865,10 +870,9 @@ footer{
 }
 
 .message-time{
+    font-family:'Sansation';
     font-size:11px;
     color:#72788A;
-    margin-top:4px;
-    text-align:right;
 }
 
 .chat-image{
@@ -941,8 +945,8 @@ footer{
     flex-shrink:0;
     border-radius:14px;
     cursor:pointer;
-    height:45px;
-    width:80px;
+    height:35px;
+    width:65px;
 
     box-shadow:
         0 1px 0 rgba(255,255,255,0.35) inset,
@@ -1027,11 +1031,6 @@ footer{
     overflow:hidden;
 }
 
-.chat-body{
-    scrollbar-width:thin;
-    scrollbar-color:rgba(126,133,153,.55) rgba(255,255,255,.25);
-}
-
 /* Back arrow visible */
 .back{
     color:#7e8599;
@@ -1047,21 +1046,51 @@ footer{
     transform:translateX(-2px);
 }
 
+/* ===================================== */
+/*          Hide Chat Scrollbar          */
+/* ===================================== */
+
+.chat-body{
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    /* Firefox */
+    scrollbar-width:none;
+
+    /* IE */
+    -ms-overflow-style:none;
+}
+
+/* Chrome / Edge */
 .chat-body::-webkit-scrollbar{
-    width:8px;
+    display:none;
 }
 
-.chat-body::-webkit-scrollbar-track{
-    background:rgba(255,255,255,0.25);
-    border-radius:20px;
+
+.message-input-wrap{
+    position:relative;
+    flex:1;
+    display:flex;
+    align-items:center;
 }
 
-.chat-body::-webkit-scrollbar-thumb{
-    background:rgba(126,133,153,0.55);
-    border-radius:20px;
-    border:2px solid rgba(255,255,255,0.35);
+.message-input-wrap textarea{
+    width:100%;
+    height:45px;
+    padding:12px 75px 12px 18px;
+    box-sizing:border-box;
 }
 
-.chat-body::-webkit-scrollbar-thumb:hover{
-    background:rgba(126,133,153,0.8);
+.message-input-wrap .send-btn{
+    position:absolute;
+    right:6px;
+    top:50%;
+    transform:translateY(-50%);
+
+    width:55px;
+    height:32px;
+    border-radius:14px;
+
+    font-size:12px;
+    box-shadow:none;
 }

@@ -835,21 +835,20 @@ footer{
     font-size:18px;
 }
 
+/* Hide Inbox Scrollbar */
+
+.chat-list{
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    /* Firefox */
+    scrollbar-width:none;
+
+    /* IE */
+    -ms-overflow-style:none;
+}
+
+/* Chrome / Edge */
 .chat-list::-webkit-scrollbar{
-    width:8px;
-}
-
-.chat-list::-webkit-scrollbar-track{
-    background:rgba(255,255,255,0.25);
-    border-radius:20px;
-}
-
-.chat-list::-webkit-scrollbar-thumb{
-    background:rgba(126,133,153,0.55);
-    border-radius:20px;
-    border:2px solid rgba(255,255,255,0.35);
-}
-
-.chat-list::-webkit-scrollbar-thumb:hover{
-    background:rgba(126,133,153,0.8);
+    display:none;
 }
