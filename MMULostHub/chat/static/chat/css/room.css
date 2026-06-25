@@ -13,7 +13,6 @@ html,body{
 body{
     margin: 0;
     padding-top: 100px;
-    background:#ffffff;
     background-position: center;
     background-attachment: fixed;
     overflow: hidden;
@@ -29,7 +28,7 @@ body::before{
     background-position: center;
     background-repeat: no-repeat;
 
-    opacity: 0.3;   /* Control transparent */
+    opacity: 0.42;   /* Control transparent */
     pointer-events: none;
     z-index: -1;
 }
@@ -53,7 +52,7 @@ body::before{
 
     overflow:hidden;
 
-    padding:20px 0 70px 0;
+    padding:30px 0 90px;
     box-sizing:border-box;
 }
 
@@ -885,19 +884,23 @@ footer{
 ========================= */
 
 .chat-footer{
+    background:linear-gradient(
+        135deg,
+        rgba(255,255,255,.28),
+        rgba(240,248,255,.22)
+    );
 
-    background:rgba(255,255,255,.28);
-    backdrop-filter:blur(15px);
-    border-top:1px solid rgba(255,255,255,.35);
+    backdrop-filter:blur(3px);
+    -webkit-backdrop-filter:blur(3px);
+
     margin:0 18px 18px 18px;
     border-radius:25px;
-    -webkit-backdrop-filter:blur(15px);
 
-    border:1px solid rgba(255,255,255,.45);
+    border:1px solid rgba(255,255,255,.35);
 
     box-shadow:
-        0 4px 12px rgba(0,0,0,.08),
-        inset 0 1px 0 rgba(255,255,255,.4);
+        0 4px 12px rgba(181,209,250,.25),
+        inset 0 1px 0 rgba(255,255,255,.35);
 }
 
 .chat-form{
@@ -920,7 +923,8 @@ footer{
     font-size:15px;
     border:none;
     outline:none;
-    background:rgba(255,255,255,0.55);
+    background:rgba(255,255,255,0.38);
+    font-family:'Sansation';
 }
 
 .file-label{
@@ -1005,22 +1009,25 @@ footer{
 }
 
 .chat-wrapper{
-
     width:65%;
     max-width:1150px;
-    height:100%;
-    margin-bottom:18px;
+    height:72vh;
 
     display:flex;
     flex-direction:column;
 
-    border-radius:10px;
+    margin:0 auto;
+
+    border-radius:30px;
 
     background:linear-gradient(
         135deg,
-        rgba(197,252,232,.30),
-        rgba(181,209,250,.30)
+        rgba(197,252,232,.18),
+        rgba(181,209,250,.18)
     );
+
+    backdrop-filter:blur(2px);
+    -webkit-backdrop-filter:blur(2px);
 
     box-shadow:
         inset 0 1px 0 rgba(255,255,255,.35),
@@ -1093,4 +1100,68 @@ footer{
 
     font-size:12px;
     box-shadow:none;
+}
+
+/* ===================================== */
+/*      Teammate Chat Room Adjustments   */
+/* ===================================== */
+
+/* text space font */
+.chat-form textarea,
+.message-input-wrap textarea{
+    font-family:'Sansation', Arial, sans-serif;
+    font-size:15px;
+    color:#333;
+}
+
+/* send button font */
+.send-btn,
+.message-input-wrap .send-btn{
+    font-family:'Sansation', Arial, sans-serif;
+    font-size:13px;
+    font-weight:bold;
+}
+
+/* + button hover */
+.file-label{
+    font-family:'Slackey', cursive;
+    font-size:32px;
+    transition:all .2s ease;
+}
+
+.file-label:hover{
+    color:#565c6e;
+    transform:translateY(-2px) scale(1.08);
+}
+
+/* 3 dots button bigger */
+.menu-btn{
+    font-family:'Slackey', cursive;
+    font-size:26px;
+    line-height:1;
+    outline:none;
+}
+
+.menu-btn:focus{
+    outline:none;
+}
+
+/* remove black border / outline in image */
+.chat-image,
+.message-bubble img{
+    border:none;
+    outline:none;
+    display:block;
+}
+
+/* background blur a bit, follow post card */
+.chat-wrapper{
+    background:linear-gradient(
+        135deg,
+        rgba(197,252,232,.18),
+        rgba(181,209,250,.18)
+    );
+
+    backdrop-filter:blur(3px);
+    -webkit-backdrop-filter:blur(3px);
 }
