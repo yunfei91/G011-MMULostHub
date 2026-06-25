@@ -53,37 +53,84 @@
 
     <main class="admin-page-content">
 
-        {% if view_type != 'all' %}
+        {% if view_type == 'reported_only' %}
+
+        <div class="reported-only-header">
+
+            <div class="back-left">
+                <a href="{% url 'admin_user' %}" class="back-btn">
+                    ← Back to User Management
+                </a>
+            </div>
+
+            <div class="reported-only-center">
+
+                <h2>Admin User Management</h2>
+
+                    <div class="search-bar">
+                        <form method="GET" class="search-bar">
+                            <input type="hidden" name="view" value="{{ view_type }}">
+
+                            <input type="text"
+                                name="q"
+                                placeholder="Search user..."
+                                value="{{ query|default:'' }}">
+
+                            <button type="submit">Search</button>
+                        </form>
+                    </div>
+
+                    <div class="report-actions">
+                        <a href="{% url 'admin_user' %}?view=reported_only">
+                            <button type="button">View Reported Users</button>
+                        </a>
+
+                        <a href="{% url 'admin_user' %}?view=user_only">
+                            <button type="button">View All Users</button>
+                        </a>
+                    </div>
+
+                </div>
+
+                <div></div>
+
+            </div>
+
+            {% else %}
+
+            {% if view_type == 'user_only' %}
             <a href="{% url 'admin_user' %}" class="back-btn">
                 ← Back to User Management
             </a>
-        {% endif %}
+            {% endif %}
 
-        <h2>Admin User Management</h2>
+        <div class="header-center">
+            <h2>Admin User Management</h2>
 
-        <div class="search-bar">
-            <form method="GET" class="search-bar">
-                <input type="hidden" name="view" value="{{ view_type }}">
+            <div class="search-bar">
+                <form method="GET" class="search-bar">
+                    <input type="hidden" name="view" value="{{ view_type }}">
 
-                <input type="text"
-                       name="q"
-                       placeholder="Search user..."
-                       value="{{ query|default:'' }}">
+                    <input type="text"
+                        name="q"
+                        placeholder="Search user..."
+                        value="{{ query|default:'' }}">
 
-                <button type="submit">Search</button>
-            </form>
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+
+            <div class="report-actions">
+                <a href="{% url 'admin_user' %}?view=reported_only">
+                    <button type="button">View Reported Users</button>
+                </a>
+
+                <a href="{% url 'admin_user' %}?view=user_only">
+                    <button type="button">View All Users</button>
+                </a>
+            </div>
         </div>
-
-        <div class="report-actions">
-            <a href="{% url 'admin_user' %}?view=reported_only">
-                <button type="button">View Reported Users</button>
-            </a>
-
-            <a href="{% url 'admin_user' %}?view=user_only">
-                <button type="button">View All Users</button>
-            </a>
-        </div>
-
+            {% endif %}
         <br>
 
         {% if view_type == 'all' %}
@@ -365,7 +412,7 @@
 
         {% if view_type == 'reported_only' %}
 
-        <section class="admin-section-box">
+        <section class="admin-section-box reported-only-box">
             <h2>Reported Users</h2>
 
             <div class="report-card-list">
@@ -533,7 +580,7 @@
 
         {% if view_type == 'user_only' %}
 
-        <section class="admin-section-box">
+        <section class="admin-section-box user-only-box">
             <h2>All Users</h2>
 
             <form id="delete-selected-form"

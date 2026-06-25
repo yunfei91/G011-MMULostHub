@@ -34,7 +34,7 @@ body::before{
     background-size:65%;
     background-position:center;
     background-repeat:no-repeat;
-    opacity:.3;
+    opacity:.25;
     pointer-events:none;
     z-index:-1;
 }
@@ -89,7 +89,7 @@ header{
     margin-right:18px;
 }
 
-/* Header buttons */
+/* Header icon buttons */
 .home-icon,
 .logout-icon,
 .menu-icon{
@@ -129,7 +129,7 @@ header{
     transform:translateY(2px);
 }
 
-/* Hamburger menu icon */
+/* Hamburger icon */
 .menu-icon{
     flex-direction:column;
     justify-content:space-between;
@@ -263,10 +263,13 @@ header{
 .admin-page-content{
     flex:1;
     width:100%;
-    max-width:1500px;
+    max-width:1400px;
     margin:0 auto;
-    padding:40px 60px 60px;
+    padding:40px 30px 60px;
     box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 }
 
 h2{
@@ -274,18 +277,39 @@ h2{
     font-family:'Slackey';
     color:#6a7184;
     font-size:28px;
+    text-align:center;
 }
 
-/* Search bar */
+/* Back button */
+.back-btn{
+    align-self:flex-start;
+    display:inline-block;
+    margin:0 0 20px 0;
+    padding:9px 18px;
+    border-radius:18px;
+    background:#7e8599;
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+/* ===================================== */
+/*              Search Bar               */
+/* ===================================== */
+
 .search-bar{
+    width:100%;
     margin-bottom:25px;
+    display:flex;
+    justify-content:center;
 }
 
 .search-bar form,
 form.search-bar{
     display:flex;
-    gap:10px;
+    justify-content:center;
     align-items:center;
+    gap:10px;
 }
 
 .search-bar input{
@@ -306,9 +330,9 @@ form.search-bar{
 /*                Buttons                */
 /* ===================================== */
 
-.search-bar button,
 button,
-.btn{
+.btn,
+.search-bar button{
     border:none;
     border-radius:18px;
     padding:9px 18px;
@@ -321,42 +345,22 @@ button,
     transition:.2s ease;
 }
 
-.search-bar button:hover,
 button:hover,
-.btn:hover{
+.btn:hover,
+.search-bar button:hover{
     transform:translateY(-2px);
 }
 
-/* Smaller action buttons inside cards */
-.report-actions button,
-.report-actions .btn{
-    padding:7px 14px;
-    font-size:13px;
-    border-radius:16px;
-}
-
 /* ===================================== */
-/*       Feedback / Report Post Cards    */
+/*          Feedback Card Only           */
 /* ===================================== */
 
-.post-list{
+.feedback-card{
     width:100%;
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:18px;
-    align-items:start;
-}
-
-/* Main card style */
-.feedback-card,
-.report-card,
-.report-card-list .report-card{
-    width:100%;
+    max-width:500px;
     min-width:0;
-    overflow:hidden;
-    padding:18px;
-    margin-bottom:0;
     box-sizing:border-box;
+    padding:16px;
     border-radius:18px;
     background:rgba(255,255,255,.72);
     backdrop-filter:blur(18px);
@@ -365,7 +369,52 @@ button:hover,
         inset 0 1px 0 rgba(255,255,255,.6);
 }
 
-.feedback-card p,
+.feedback-card p{
+    margin:8px 0;
+    color:#333;
+    font-size:15px;
+    line-height:1.35;
+    word-break:break-word;
+    overflow-wrap:anywhere;
+}
+
+.feedback-card strong{
+    color:#6a7184;
+}
+
+.feedback-card hr{
+    display:none;
+}
+
+.feedback-card img,
+.feedback-card .admin-proof-img{
+    width:65%;
+    max-width:85%;
+    height:170px;
+    object-fit:cover;
+    object-position:center;
+    border-radius:12px;
+    cursor:pointer;
+    display:block;
+}
+
+/* ===================================== */
+/*          Report Post Card Only        */
+/* ===================================== */
+
+.report-card{
+    width:100%;
+    min-width:0;
+    box-sizing:border-box;
+    padding:18px;
+    border-radius:18px;
+    background:rgba(255,255,255,.72);
+    backdrop-filter:blur(18px);
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.15),
+        inset 0 1px 0 rgba(255,255,255,.6);
+}
+
 .report-card p{
     margin:8px 0;
     color:#333;
@@ -375,34 +424,95 @@ button:hover,
     overflow-wrap:anywhere;
 }
 
-.feedback-card strong,
 .report-card strong{
     color:#6a7184;
 }
 
-.feedback-card hr,
-.report-card hr,
-.post-list > hr{
+.report-card hr{
     display:none;
 }
 
-/* Proof images */
-.feedback-card img,
 .report-card img,
-.admin-proof-img{
-    width:300px;
-    max-width:100%;
-}
-
-.admin-proof-img{
-    height:80px;
+.report-card .admin-proof-img{
+    width:65%;
+    max-width:85%;
+    height:170px;
     object-fit:cover;
+    object-position:center;
     border-radius:12px;
     cursor:pointer;
     display:block;
 }
 
-/* Original post content box */
+/* ===================================== */
+/*        Reported User Card Only        */
+/* ===================================== */
+
+.report-card-list .report-card{
+    width:100%;
+    min-width:0;
+    box-sizing:border-box;
+    padding:18px;
+    border-radius:18px;
+    background:rgba(255,255,255,.72);
+    backdrop-filter:blur(18px);
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.15),
+        inset 0 1px 0 rgba(255,255,255,.6);
+    overflow:hidden;
+}
+
+.report-card-list .report-card p,
+.report-card-list .report-card div{
+    margin:8px 0;
+    color:#333;
+    font-size:15px;
+    line-height:1.35;
+    word-break:break-word;
+    overflow-wrap:anywhere;
+}
+
+.report-card-list .report-card strong,
+.report-card-list .report-card b{
+    color:#6a7184;
+}
+
+.report-card-list .admin-proof-img{
+    width:65%;
+    max-width: 85%;
+    height:170px;
+    object-fit:cover;
+    object-position:center;
+    border-radius:12px;
+    cursor:pointer;
+    display:block;
+}
+
+/* Remove old separators */
+.post-list > hr{
+    display:none;
+}
+
+/* ===================================== */
+/*          Feedback / Report Page       */
+/* ===================================== */
+
+.post-list{
+    width:100%;
+    max-width:1180px;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    justify-content:center;
+    align-items:start;
+    gap:18px;
+}
+
+.post-list .feedback-card,
+.post-list .report-card{
+    margin-bottom:0;
+}
+
+/* Original post content inside report card */
 .original-post-box{
     margin-top:18px;
     padding:16px;
@@ -421,64 +531,54 @@ button:hover,
 }
 
 /* ===================================== */
-/*            Report User Page           */
+/*          User Management Page         */
 /* ===================================== */
 
+/* All Users + Reported Users together */
 .admin-user-layout{
+    width:100%;
+    max-width:1400px;
     display:grid;
-    grid-template-columns:.7fr 2.3fr;
-    gap:30px;
+    grid-template-columns:2fr 3fr;
+    gap:28px;
     align-items:start;
 }
 
 .admin-section-box{
+    width:100%;
+    max-width:1180px;
+    margin:0 auto;
+    padding:25px;
+    box-sizing:border-box;
+    border-radius:25px;
     background:rgba(255,255,255,.45);
     backdrop-filter:blur(12px);
-    border-radius:25px;
-    padding:25px;
     box-shadow:0 10px 30px rgba(0,0,0,.12);
 }
 
-/* Reported user card list */
-.report-card-list{
-    display:grid;
-    grid-template-columns:repeat(2,480px);
-    justify-content:start;
-    gap:24px;
-    align-items:start;
-    max-width:100%;
-}
-
-.report-actions{
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-    margin-top:15px;
-}
-
-.back-btn{
-    display:inline-block;
-    margin-bottom:20px;
-    padding:9px 18px;
-    border-radius:18px;
-    background:#7e8599;
-    color:white;
-    text-decoration:none;
-    font-weight:bold;
+/* When inside split layout, boxes should fill their columns */
+.admin-user-layout .admin-section-box{
+    max-width:none;
 }
 
 /* ===================================== */
 /*              User Table               */
 /* ===================================== */
 
-table{
+.admin-section-box form{
+    width:100%;
+}
+
+.admin-section-box table{
     width:100%;
     max-width:900px;
+    margin:0 auto;
     border-collapse:collapse;
+    table-layout:fixed;
     overflow:hidden;
+    border-radius:20px;
     background:rgba(255,255,255,.72);
     backdrop-filter:blur(18px);
-    border-radius:20px;
     box-shadow:
         0 10px 30px rgba(0,0,0,.15),
         inset 0 1px 0 rgba(255,255,255,.6);
@@ -488,7 +588,10 @@ th,
 td{
     padding:14px 16px;
     text-align:left;
+    vertical-align:middle;
     border-bottom:1px solid rgba(106,113,132,.18);
+    word-break:break-word;
+    overflow-wrap:anywhere;
 }
 
 th{
@@ -504,6 +607,84 @@ td{
 
 tr:last-child td{
     border-bottom:none;
+}
+
+th:first-child,
+td:first-child{
+    width:45px;
+    text-align:center;
+}
+
+th:nth-child(3),
+td:nth-child(3){
+    width:80px;
+}
+
+th:last-child,
+td:last-child{
+    width:100px;
+    text-align:center;
+}
+
+/* Delete selected button */
+.admin-section-box form > button{
+    margin-bottom:18px;
+}
+
+/* ===================================== */
+/*         Reported User Cards           */
+/* ===================================== */
+
+/* Reported only page */
+.report-card-list{
+    width:100%;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(360px,440px));
+    justify-content:center;
+    align-items:start;
+    gap:24px;
+}
+
+/* Reported users inside split layout */
+.admin-user-layout .report-card-list{
+    grid-template-columns:repeat(2,minmax(260px,1fr));
+    gap:18px;
+}
+
+/* Reported user cards */
+.report-card-list .report-card{
+    display:block;
+    overflow:hidden;
+}
+
+/* Action buttons area */
+.report-actions{
+    display:flex;
+    flex-direction:row;
+    justify-content:flex-start;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:18px;
+}
+
+/* Action forms must not become full width */
+.report-actions form,
+.report-card .report-actions form,
+.report-card-list .report-actions form{
+    width:auto;
+    display:inline-block;
+    margin:0;
+}
+
+/* Smaller action buttons */
+.report-actions button,
+.report-actions .btn{
+    width:auto;
+    min-width:80px;
+    padding:7px 14px;
+    border-radius:16px;
+    font-size:13px;
 }
 
 /* ===================================== */
@@ -534,31 +715,13 @@ tr:last-child td{
     color:black;
 }
 
-.pagination .current{
+.pagination .current,
+.pagination span.current{
     color:#5d8be8;
 }
 
 .pagination .disabled{
     color:#d1d1d1;
-}
-
-/* ===================================== */
-/*                Footer                 */
-/* ===================================== */
-
-footer{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    min-height:50px;
-    margin-top:auto;
-    background:linear-gradient(225deg,#CED8D4,#D9E7FD,#B5D1FA);
-    box-shadow:0 10px 25px rgba(0,0,0,.4);
-    text-align:center;
-    font-size:12px;
-    font-weight:bold;
-    font-family:'Sansation';
-    line-height:1.2;
 }
 
 /* ===================================== */
@@ -714,20 +877,51 @@ footer{
 }
 
 /* ===================================== */
+/*                Footer                 */
+/* ===================================== */
+
+footer{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:50px;
+    margin-top:auto;
+    background:linear-gradient(225deg,#CED8D4,#D9E7FD,#B5D1FA);
+    box-shadow:0 10px 25px rgba(0,0,0,.4);
+    text-align:center;
+    font-size:12px;
+    font-weight:bold;
+    font-family:'Sansation';
+    line-height:1.2;
+}
+
+/* ===================================== */
 /*              Responsive               */
 /* ===================================== */
 
 @media (max-width:1200px){
-    .report-card-list{
-        grid-template-columns:repeat(2,minmax(320px,1fr));
+    .admin-user-layout{
+        grid-template-columns:1fr;
+    }
+
+    .admin-user-layout .report-card-list{
+        grid-template-columns:repeat(2,minmax(300px,1fr));
     }
 }
 
 @media (max-width:900px){
     .post-list,
-    .admin-user-layout,
-    .report-card-list{
+    .report-card-list,
+    .admin-user-layout .report-card-list{
         grid-template-columns:1fr;
+    }
+
+    .admin-page-content{
+        padding:30px 20px 50px;
+    }
+
+    .admin-section-box{
+        padding:20px;
     }
 }
 
@@ -740,10 +934,6 @@ footer{
         height:52px;
     }
 
-    .admin-page-content{
-        padding:30px 20px 50px;
-    }
-
     .menu{
         width:250px;
     }
@@ -751,7 +941,7 @@ footer{
     .search-bar form,
     form.search-bar{
         flex-direction:column;
-        align-items:flex-start;
+        align-items:center;
     }
 
     .search-bar input{
@@ -768,93 +958,243 @@ footer{
     .pagination span{
         font-size:15px;
     }
+
+    .admin-proof-img,
+    .feedback-card img,
+    .report-card img{
+        height:170px;
+    }
+}
+
+/* =======================================
+   Reported Only Layout
+======================================= */
+
+.reported-only-header{
+    display:grid;
+    grid-template-columns:260px 1fr 260px;
+    align-items:start;
+    width:100%;
+    margin-bottom:35px;
+}
+
+.back-left{
+    display:flex;
+    justify-content:flex-start;
+}
+
+.reported-only-center{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.reported-only-center h2{
+    margin-bottom:22px;
+}
+
+.reported-only-center .search-bar{
+    justify-content:center;
+    margin-bottom:18px;
+}
+
+.reported-only-center .report-actions{
+    justify-content:center;
 }
 
 /* ===================================== */
-/*      Final Fix: Reported User Layout  */
+/* Remove white box for single views only */
 /* ===================================== */
 
-/* Full reported-only page */
-.admin-page-content > .admin-section-box > .report-card-list{
-    grid-template-columns: repeat(2, 460px);
-    justify-content: start;
-    gap: 24px;
+.user-only-box,
+.reported-only-box{
+    background: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
+    border: none;
+    padding: 0;
 }
 
-/* Reported users inside All Users split layout */
-.admin-user-layout .report-card-list{
-    grid-template-columns: repeat(2, minmax(240px, 1fr));
-    gap: 18px;
+.header-center,
+.reported-only-center{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 }
 
-/* Make cards smaller and balanced */
-.report-card-list .report-card{
-    width: 100%;
-    padding: 18px;
-    border-radius: 18px;
+.header-center .search-bar,
+.reported-only-center .search-bar{
+    margin-bottom:8px;
 }
 
-/* Prevent image/card overflow */
-.report-card-list .admin-proof-img{
-    width: 100%;
-    max-width: 320px;
-    height: 80px;
+.header-center .report-actions,
+.reported-only-center .report-actions{
+    display:flex;
+    justify-content:center;
+    gap:16px;
+    margin-top:0;
 }
 
-/* Fix back button being too close to header */
+.header-center .report-actions button,
+.reported-only-center .report-actions button{
+    min-width:170px;
+    height:44px;
+    font-size:15px;
+    border-radius:22px;
+}
+
 .back-btn{
-    margin-top: 15px;
+    align-self:flex-start;
 }
 
-/* Smaller buttons */
-.report-actions button,
-.report-actions .btn{
-    padding: 7px 14px;
-    font-size: 13px;
+/* =========================
+   Reported User Only
+   3 columns × 2 rows
+========================= */
+
+.reported-only-box .report-card-list{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:28px;
+    align-items:start;
 }
 
-/* Smaller pagination */
-.pagination{
-    gap: 10px;
-    padding: 8px 18px;
-    border-radius: 18px;
-}
-
-.pagination a,
-.pagination span{
-    font-size: 16px;
+/* Card fills each grid cell */
+.reported-only-box .report-card{
+    width:100%;
+    margin:0;
 }
 
 /* ===================================== */
-/*   Final Fix: Reported Only Page Size  */
+/* Report Post Page - 3 x 2 Grid         */
 /* ===================================== */
 
-/* Make the reported-only white container smaller */
-main.admin-page-content > section.admin-section-box{
-    max-width: 1180px;
-    margin: 0 auto;
+.report-post-list{
+    width:100%;
+    max-width:1400px;
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+    gap:24px;
+    align-items:start;
 }
 
-/* Center reported user cards inside the box */
-main.admin-page-content > section.admin-section-box .report-card-list{
-    grid-template-columns: repeat(2, 440px);
-    justify-content: center;
-    gap: 24px;
+.report-post-list .report-card{
+    width:100%;
+    margin:0;
 }
 
-/* Make each reported user card smaller */
-main.admin-page-content > section.admin-section-box .report-card{
-    max-width: 440px;
+/* Make report post images fit better in smaller cards */
+.report-post-list .admin-proof-img{
+    width:100%;
+    max-width:100%;
+    height:150px;
+    object-fit:cover;
 }
 
-/* Make proof image fit the smaller card */
-main.admin-page-content > section.admin-section-box .admin-proof-img{
-    width: 100%;
-    max-width: 300px;
-    height: 75px;
+/* Original post box image also same size */
+.report-post-list .original-post-box .admin-proof-img{
+    width:100%;
+    max-width:100%;
+    height:150px;
+    object-fit:cover;
 }
 
-/* Smaller gap above section */
-main.admin-page-content{
-    padding-top: 25px;
+/* ===================================== */
+/* Feedback Page - 3 x 2 Grid            */
+/* ===================================== */
+
+.feedback-list{
+    width:100%;
+    max-width:1400px;
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+    gap:24px;
+    align-items:start;
+}
+
+.feedback-list .feedback-card{
+    width:100%;
+    max-width:none;
+    margin:0;
+}
+
+.feedback-list .admin-proof-img{
+    width:100%;
+    max-width:100%;
+    height:150px;
+    object-fit:cover;
+}
+
+/* ===================================== */
+/* Final Grid Control                    */
+/* Feedback + Report Post + Reported User*/
+/* ===================================== */
+
+.feedback-list,
+.report-post-list,
+.reported-only-box .report-card-list{
+    width:100%;
+    max-width:1350px;                 /* overall grid width */
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+    gap:24px;                         /* space between cards */
+    align-items:start;
+}
+
+/* Same card width */
+.feedback-list .feedback-card,
+.report-post-list .report-card,
+.reported-only-box .report-card{
+    width:100%;
+    max-width:none;
+    margin:0;
+    box-sizing:border-box;
+}
+
+/* Prevent long text from breaking grid */
+.feedback-card,
+.report-card{
+    overflow:hidden;
+}
+
+.feedback-card p,
+.report-card p,
+.report-card div{
+    word-break:break-word;
+    overflow-wrap:anywhere;
+}
+
+/* Image size */
+.feedback-list .admin-proof-img,
+.report-post-list .admin-proof-img,
+.reported-only-box .admin-proof-img{
+    width:100%;
+    max-width:100%;
+    height:150px;
+    object-fit:cover;
+}
+
+/* Card spacing inside */
+.feedback-card,
+.report-post-list .report-card,
+.reported-only-box .report-card{
+    padding:18px;
+}
+
+/* Responsive */
+@media (max-width:1200px){
+    .feedback-list,
+    .report-post-list,
+    .reported-only-box .report-card-list{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width:768px){
+    .feedback-list,
+    .report-post-list,
+    .reported-only-box .report-card-list{
+        grid-template-columns:1fr;
+    }
 }

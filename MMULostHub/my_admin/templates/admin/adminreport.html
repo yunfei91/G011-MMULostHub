@@ -67,7 +67,7 @@
 
         <h2>Reports</h2>
 
-        <div class="post-list">
+        <div class="post-list report-post-list">
 
             {% for report in reports %}
 
@@ -116,10 +116,11 @@
                     <p><strong>Category:</strong> {{ report.post.post_itemcategory }}</p>
 
                     <p><strong>Location:</strong> {{ report.post.post_location }}</p>
- 
-                    <p><strong>Description:</strong> {{ report.post.post_description }}</p>
 
-                 </div>
+                 <p class="desceiption">
+                    <p><strong>Description:</strong> {{ report.post.post_description }}</p>
+                 </p>
+                </div>
 
                 {% else %}
 
