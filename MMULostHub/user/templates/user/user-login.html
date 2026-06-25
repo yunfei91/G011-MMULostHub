@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MMU Lost Hub</title>
+        
+        <link rel="stylesheet" type="text/css" href="{% static 'user/css/user-login.css' %}">
+    
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    </head>
+
+    <body>
+        <div class="whole-page">
+            <header>
+                <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
+            </header>
+
+            <div class="content">
+                <div class="banner">
+                    <div class="web-logo">
+                        <img src="{% static 'images/WebLogo-top.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo-top">
+                        <img src="{% static 'images/WebLogo-base.png' %}" alt="MMU Lost Hub Logo" class="losthub-logo-base">
+                    </div>
+
+                    <div class="box-input">
+                        <div class="auth-panel">
+                            <div class="auth-card">
+                                <div class="auth-header">
+                                    <button class="back-button" onclick="goBack()"><</button>
+                                    <h2>Welcome to MMU Lost Hub</h2>
+                                </div>
+
+                                <form id="loginForm" method="POST">
+                                    {% csrf_token %}
+
+                                    <input type="text" id="email" name="email" placeholder="Email" value="{{ email }}" >
+                                    {% if email_error %}
+                                        <p class="message error-message">{{ email_error }}</p>
+                                    {% endif %}
+                                    
+                                    <!--Password-->
+                                    <div class="password-box">
+                                        <input type="password" id="password" name="password" placeholder="Password">
+                                        <span class="show-password material-icons" onclick="showPassword('password', this)">
+                                        visibility_off
+                                        </span>
+
+                                        <p class="forgot-pw">
+                                            <a href="{% url 'forgot_pw' %}">Forgot Password?</a>
+                                        </p>
+                                    </div>
+                                    {% if password_error %}
+                                        <p class="message error-message">{{ password_error }}</p>
+                                    {% endif %}
+
+                                    <br><br><br>
+                                    <button class="login-btn" type="submit">Login</button>
+                                </form>
+                                
+                                <p class="switch-text">
+                                    Don't have an account?
+                                    <a href="{% url 'register' %}">Register Here</a>
+                                    <br><br>
+                                    Are you an admin?
+                                    <a href="{% url 'admin_login' %}">Login as Admin</a>
+                                </p>
+                                
+                                <div id="errorPopup" class="popup"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer>
+                <p>© 2026 MMU Lost Hub<br>
+                <br>Designed by:<br>Kho Yee Theng<br>Tan Yun Fee<br>Lim Tze Ying</p>
+            </footer>
+        </div>
+
+        <script>
+            window.addEventListener("pageshow", function (event) {
+                if (event.persisted) {
+                    location.reload();
+                }
+            });
+
+            history.replaceState(null, null, location.href);
+            window.onpopstate = function () {
+                window.location.replace("{% url 'beginning' %}");
+            };
+
+            function goBack() {
+                window.location.replace("{% url 'beginning' %}")
+            }
+
+            const form = document.getElementById("loginForm");
+            const popup = document.getElementById("errorPopup");
+
+            function showPopup(msg, type="error") {
+
+                popup.innerHTML = msg;
+
+                popup.classList.remove("error", "success");
+                popup.classList.add(type, "show");
+
+                setTimeout(() => {
+                    popup.classList.remove("show");
+                }, 3500);
+            }
+
+            function isValidEmail(email) {
+
+                let pattern = /^[A-Za-z0-9._%+-]+@(mmu\.edu\.my|student\.mmu\.edu\.my)$/;
+
+                return pattern.test(email);
+            }
+
+            let emailValid = false;
+            const checkEmailUrl = "{% url 'check_email' %}";
+
+            form.addEventListener("submit", async function(e){
+
+                e.preventDefault();
+
+                const email = document.getElementById("email").value.trim();
+                const pw = document.getElementById("password").value.trim();
+
+                if (!email || !pw) {
+                    showPopup("Please fill in all fields");
+                    return;
+                }
+
+                /* Email Validation */
+                if (!isValidEmail(email)) {
+                    showPopup("Invalid MMU email format");
+                    return;
+                }
+
+                try {
+                    const response = await fetch(
+                        `${checkEmailUrl}?email=${encodeURIComponent(email)}`
+                    );
+
+                    const data = await response.json();
+
+                    if (!data.exists) {
+                        showPopup("Haven't registered yet");
+                        return;
+                    }
+
+                    form.submit();
+
+                } catch(error) {
+                    console.error(error);
+                    showPopup("Error checking email");
+                }
+            });
+
+            window.addEventListener("load", () => {
+
+                // Login error
+                const loginError = "{{ user_login_error|escapejs }}";
+
+                if (loginError) {
+                    showPopup(loginError, "error");
+                }
+
+                // Django messages
+                {% if messages %}
+                    {% for message in messages %}
+                        showPopup("{{ message|escapejs }}", "{% if message.tags == 'success' %}success{% else %}error{% endif %}");
+                    {% endfor %}
+                {% endif %}
+            });
+
+            function showPassword(inputId, icon) {
+                const input = document.getElementById(inputId);
+
+                if (input.type === "password") {
+                    input.type = "text";
+                    icon.textContent = "visibility";
+                } else {
+                    input.type = "password";
+                    icon.textContent = "visibility_off";
+                }
+            }
+        </script>
+    </body>
+</html>

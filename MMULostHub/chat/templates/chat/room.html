@@ -1,0 +1,303 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Room</title>
+        <!-- yt added -->
+        <link rel="stylesheet" href="{% static 'chat/css/room.css' %}">
+
+        <script src="{% static 'items/js/logout.js' %}" defer></script>
+        <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
+
+        <title> 
+            MMU Lost Hub 
+        </title>
+        
+        <!-- Prevent browser cache, user cannot press back to access previous page -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
+        <!-- Older browser cache prevention -->
+        <meta http-equiv="Pragma" content="no-cache">
+        <!-- Expire page immediately -->
+        <meta http-equiv="Expires" content="0">
+
+    </head>
+
+    <body>
+        <div class="whole-page">
+            <header>
+                <div class="header-left"> <!-- yt adjusted for css uses-->              
+                    <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
+                    <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
+                </div>
+
+                <div class="header-right"> <!-- yt adjusted for css uses-->
+                    <!-- Home icon -->
+                    <a href="{% url 'mainPage' %}" class="home-icon">
+                        <img src="{% static 'images/homeicon.png' %}" alt="Home">
+                    </a>
+
+                    <a href="{% url 'chat_inbox' %}" class="chat-icon">
+                        <img src="{% static 'images/chaticon.png' %}" alt="Chat">
+                    </a>
+
+                    <!-- Menu button --> <!-- yt adjusted for css uses-->
+                    <button type="button" class="menu-icon" onclick="toggleMenu()">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </header>
+
+            <div id="overlay" class="overlay"></div> <!-- yt adjusted for css uses-->
+
+            <!-- ================================================== -->
+            <!--            Dropdown Menu Navigation                -->
+            <!-- ================================================== -->
+            <div class = "dropdown-nav">
+                
+                <nav id="menu" class="menu"> <!-- yt adjusted for css uses-->
+                    <ul>
+                        <li>
+                        <a href="{% url 'lost_posts' %}"> Lost Post </a>  
+                        </li>
+                        <li>
+                        <a href="{% url 'found_posts' %}"> Found Post </a>
+                        </li>
+                        <li>
+                        <a href="{% url 'profile' %}"> Profile </a>
+                        </li>
+                        <li>
+                        <a href="{% url 'feedback_form' %}"> Feedback </a>
+                        </li>
+                        <li class="logout">
+                        <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a> 
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="chat-wrapper">
+                <div class="chat-header">
+
+                    {% if next_url %}
+                        <a href="{{ next_url }}" class="back">←</a>
+                    {% else %}
+                        <a href="{% url 'chat_inbox' %}" class="back">←</a>
+                    {% endif %}
+
+                    {% if other_user.profile.avatar %}
+                        <img src="{{ other_user.profile.avatar.url }}" class="header-avatar">
+                    {% else %}
+                        <img src="{% static 'images/default.png' %}" class="header-avatar">
+                    {% endif %}
+
+                    <div class="chat-name">
+                        <a href="{% url 'userProfile' other_user.username %}" class="chat-name-link">
+                            {{ other_user.profile.name|default:other_user.username }}
+                        </a>
+                    </div>
+
+                    <div class="chat-menu">
+
+                        <button
+                            type="button"
+                            class="menu-btn"
+                            onclick="toggleChatMenu()">
+                            ⋮
+                        </button>
+
+                        <div
+                            id="chatMenuDropdown"
+                            class="chat-menu-dropdown">
+
+                            <a href="{% url 'report_user' other_user.id %}">
+                                Report User
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-body">
+
+                    {% for message in messages %}
+
+                        <div class="message-row {% if message.sender == request.user %}mine{% else %}other{% endif %}">
+
+                            {% if message.sender != request.user %}
+
+                                {% if other_user.profile.avatar %}
+                                    <img src="{{ other_user.profile.avatar.url }}" class="message-avatar">
+                                {% else %}
+                                    <img src="{% static 'images/default.png' %}" class="message-avatar">
+                                {% endif %}
+                            {% endif %}
+
+                            <div class="message-bubble">
+                                {% if message.file %}
+
+                                    {% if message.message_type == 'image' %}
+
+                                        <img
+                                            src="{{ message.file.url }}"
+                                            class="chat-image">
+
+                                    {% elif message.message_type == 'audio' %}
+
+                                        <audio controls>
+                                            <source src="{{ message.file.url }}">
+                                        </audio>
+
+                                    {% else %}
+
+                                        <a href="{{ message.file.url }}" target="_blank">
+                                            Download File
+                                        </a>
+
+                                    {% endif %}
+                                {% endif %}
+                                
+                                {% if message.content %}
+                                    <div class="message-content">
+                                        {{ message.content|linebreaksbr }}
+                                    </div>
+                                {% endif %}
+
+                                <div class="message-time">
+                                    {{ message.created_at|date:"h:i A" }}
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>No messages yet. Start the conversation!</p>
+                    {% endfor %}
+
+                    <div id="bottom"></div>
+
+                </div>
+
+                <div class="chat-footer">
+                    <div id="previewBox" class="preview-box">
+                        <img id="imagePreview">
+                        <div class="remove-preview" onclick="removePreview()">
+                        Remove Image
+                        </div>
+                    </div>
+
+                    <form
+                    method="POST"
+                    enctype="multipart/form-data"
+                    class="chat-form">
+
+                    {% csrf_token %}
+
+                    <label class="file-label">
+                        +
+                        <input type="file" name="file" id="fileInput" onchange="previewImage(this)">
+                    </label>
+
+                    <textarea name="content" placeholder="Type a message..."></textarea>
+
+                    <button type="submit" class="send-btn">
+                        Send
+                    </button>
+
+                    </form>
+
+                </div>
+
+                
+
+            </div>
+
+            <!-- yt added -->
+            <!-- Confirm Logout Popup -->
+            <div id="confirmPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Are you sure you want to logout?</p>
+
+                    <div class="popup-btns">
+                        <button onclick="confirmLogout()">OK</button>
+                        <button onclick="cancelLogout()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2026 MMU Lost Hub<br>
+        </footer>
+
+        <script>
+
+            function toggleChatMenu() {
+
+                const menu = document.getElementById("chatMenuDropdown");
+
+                if (menu.style.display === "block") {
+
+                    menu.style.display = "none";
+
+                } else {
+
+                    menu.style.display = "block";
+
+                }
+            }
+
+            window.onclick = function(event) {
+
+                if (!event.target.matches('.menu-btn')) {
+
+                    const menu = document.getElementById("chatMenuDropdown");
+
+                    if (menu) {
+                        menu.style.display = "none";
+                    }
+                }
+            }
+
+            function previewImage(input){
+
+                const file = input.files[0];
+
+                const previewBox = document.getElementById("previewBox");
+
+                const imagePreview = document.getElementById("imagePreview");
+
+                if(
+                    file && file.type.startsWith(
+                        "image/"
+                    )
+                ){
+                    imagePreview.src = URL.createObjectURL(file);
+
+                    previewBox.style.display = "block";
+                }
+
+                else{
+                    previewBox.style.display = "none";
+
+                    imagePreview.src = "";
+                }
+            }
+
+            function removePreview(){
+
+                document.getElementById("fileInput").value = "";
+
+                document.getElementById("imagePreview").src = "";
+
+                document.getElementById("previewBox").style.display = "none";
+            }
+
+            document.addEventListener("DOMContentLoaded", function() {
+
+                const chatBody = document.querySelector(".chat-body");
+
+                if (chatBody) {
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                }
+
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,168 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+        <!-- yt added -->
+        <link rel="stylesheet" href="{% static 'report/css/report-user.css' %}">
+        <link rel="stylesheet" href="{% static 'items/css/post-popup.css' %}">
+
+        <script src="{% static 'items/js/header.js' %}" defer></script>
+        <script src="{% static 'items/js/logout.js' %}" defer></script>
+        <script>
+            window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";
+            const CURRENT_USER_ID = "{{ request.user.id|default:'' }}";
+        </script>
+
+        <title> 
+            MMU Lost Hub 
+        </title>
+        
+        <!-- yt added -->
+        <!-- Prevent browser cache, user cannot press back to access previous page -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
+        <!-- Older browser cache prevention -->
+        <meta http-equiv="Pragma" content="no-cache">
+        <!-- Expire page immediately -->
+        <meta http-equiv="Expires" content="0">
+
+    </head>
+    <body>
+        <div class="whole-page">
+            <header>
+                <div class="header-left"> <!-- yt adjusted for css uses-->              
+                    <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
+                    <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
+                </div>
+
+                <div class="header-right"> <!-- yt adjusted for css uses-->
+                    <!-- Home icon -->
+                    <a href="{% url 'mainPage' %}" class="home-icon">
+                        <img src="{% static 'images/homeicon.png' %}" alt="Home">
+                    </a>
+
+                    <a href="{% url 'chat_inbox' %}" class="chat-icon">
+                        <img src="{% static 'images/chaticon.png' %}" alt="Chat">
+                    </a>
+
+                    <!-- Menu button --> <!-- yt adjusted for css uses-->
+                    <button type="button" class="menu-icon" onclick="toggleMenu()">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </header>
+
+            <div id="overlay" class="overlay"></div> <!-- yt adjusted for css uses-->
+
+            <!-- ================================================== -->
+            <!--            Dropdown Menu Navigation                -->
+            <!-- ================================================== -->
+            <div class = "dropdown-nav">
+                
+                <nav id="menu" class="menu"> <!-- yt adjusted for css uses-->
+                    <ul>
+                        <li>
+                            <a href="{% url 'lost_posts' %}"> Lost Post </a>  
+                        </li>
+                        <li>
+                            <a href="{% url 'found_posts' %}"> Found Post </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'profile' %}"> Profile </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'feedback_form' %}?next={{ next_url|urlencode }}"> Feedback </a>
+                        </li>
+                        <li class="logout">
+                            <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            
+            <div class="content">
+                <h2>Report User</h2>
+
+                <p>
+                    Reporting User:
+                    {{ reported_user.username }}
+                </p>
+
+                <form method="POST"
+                      enctype="multipart/form-data"
+                      action="{% url 'report_user' reported_user.id %}">
+                    {% csrf_token %}
+
+                    <input type="hidden" name="next" value="{{ next_url }}">
+                    <input type="hidden" name="user_id" value="{{ reported_user.id }}">
+
+                    <!-- Reason -->
+                    <label>Reason:</label>
+                    <br>
+
+                    <textarea name="comments"
+                              rows="5"
+                              cols="40"
+                              required></textarea>
+
+                    <br><br>
+
+                    <!-- Proof Image -->
+                    <label>Upload Proof:</label>
+                    <br>
+
+                    <input type="file"
+                           name="image"
+                           required
+                           accept="image/*">
+
+                    <br><br>
+
+                    <button type="submit" onclick="return checkProofImage()">
+                        Submit Report
+                    </button>
+
+                    {% if next_url %}
+                        <a href="{{ next_url }}">Cancel</a>
+                    {% else %}
+                        <a href="{% url 'mainPage' %}">Cancel</a>
+                    {% endif %}
+
+                </form>
+            </div>
+
+            <!-- yt added -->
+            <!-- Confirm Logout Popup -->
+            <div id="confirmPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Are you sure you want to logout?</p>
+
+                    <div class="popup-btns">
+                        <button onclick="confirmLogout()">OK</button>
+                        <button onclick="cancelLogout()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2026 MMU Lost Hub<br>
+        </footer>
+
+        <script>
+        function checkProofImage() {
+            const imageInput = document.querySelector('input[name="image"]');
+
+            if (!imageInput.files || imageInput.files.length === 0) {
+                alert("Please upload proof image before submitting.");
+                imageInput.focus();
+                return false;
+            }
+
+            return confirm("Are you sure you want to submit?");
+        }
+        </script>
+</body>
+</html>
