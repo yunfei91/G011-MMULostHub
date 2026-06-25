@@ -1299,7 +1299,7 @@ footer{
 
     color: #000;
 
-    white-space: normal;
+    white-space: pre-wrap;
     overflow-wrap: break-word;
 }
 
