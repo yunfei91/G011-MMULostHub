@@ -34,20 +34,18 @@ body::before{
 /*             Main Container            */
 /* ===================================== */
 .whole-page{
-    min-height: 100vh;
+    min-height: calc(100vh - 100px);   /* header 100px */
     display: flex;
     flex-direction: column;
 }
 
 .content{
-    flex:1;
+    flex: 1;
 
     display:flex;
     flex-direction:column;
 
-    justify-content:center;
-
-    padding:35px 0;
+    padding:15px 0 0;
 }
 
 /* ===================================== */
@@ -670,7 +668,7 @@ footer{
 
 .feedback-title{
     width: 82%;
-    margin: 0 auto 25px;
+    margin: 0 auto 5px;
 }
 
 .feedback-title h2{
@@ -689,19 +687,20 @@ footer{
 }
 
 .feedback-wrapper{
-
     width:72%;
     min-height:350px;
+
+    margin: auto;
     padding:35px 55px;
-    margin:0 auto;
+
     border-radius:28px;
     box-sizing:border-box;
-    background:rgba(255,255,255,.15);
-    backdrop-filter:blur(8px);
-    border:1px solid rgba(255,255,255,.65);
+
+    background:transparent;
+    border:none;
+
     box-shadow:
-        0 10px 30px rgba(0,0,0,.08),
-        inset 0 1px 0 rgba(255,255,255,.8);
+        0 10px 25px rgba(0,0,0,.08);
 }
 
 .feedback-wrapper form{
@@ -794,11 +793,58 @@ footer{
         0 2px 8px rgba(255,255,255,.45);
 }
 
-.feedback-title p{
-    margin-top: 18px;
 
-    font-family: 'Sansation', sans-serif;
-    font-size: 18px;
+#preview-container{
+    display:none;
+    position:relative;
 
-    color: #505050;
+    width:280px;
+
+    margin-top:18px;
+}
+
+#preview-image{
+    width:280px;
+    height:170px;
+
+    object-fit:cover;
+
+    border-radius:14px;
+
+    border:1px solid rgba(0,0,0,.08);
+
+    box-shadow:0 6px 18px rgba(0,0,0,.10);
+}
+
+#remove-image{
+
+    position:absolute;
+
+    top:10px;
+    right:10px;
+
+    width:30px;
+    height:30px;
+
+    border:none;
+    border-radius:50%;
+
+    background:rgba(0,0,0,.55);
+
+    color:white;
+
+    font-size:22px;
+    font-weight:bold;
+    line-height:30px;
+
+    padding:0;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+#remove-image:hover{
+
+    background:#d9534f;
 }
