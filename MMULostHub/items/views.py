@@ -481,10 +481,19 @@ def map_search(request):
         
     location = request.GET.get("location")
 
-    post_box = Post.objects.all().prefetch_related('images').order_by('-id')
+    post_box = Post.objects.all() \
+        .prefetch_related('images') \
+        .order_by('-id')
 
     if location:
-        post_box = post_box.filter(post_location__location_code=location)
+
+        # Unknown Location
+        if location == "unknown":
+            post_box = post_box.filter(post_location__isnull=True)
+
+        # Normal Location
+        else:
+            post_box = post_box.filter(post_location__location_code=location)
 
     for post in post_box:
         post.sorted_images = post.images.all().order_by('order')
