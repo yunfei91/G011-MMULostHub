@@ -1218,14 +1218,13 @@
             <div id="statusPopup" class="status-popup-modal">
                 <div class="status-popup-box">
                     <p> Set post as COMPLETED? </p>
-
-                    <button id="statusConfirmBtn">
-                        Confirm
-                    </button>
-
-                    <button id="statusCancelBtn">
-                        Cancel
-                    </button>
+                    <form id="status_form" method="POST">
+                        {% csrf_token %}
+                        <div class = "status-popup-btn">
+                            <button type="button" id="statusConfirmBtn">Confirm</button>
+                            <button type="button" id="statusCancelBtn">Cancel</button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
@@ -1569,21 +1568,21 @@
             ======================================= */
             let deleteForm = null;
 
+            // confirm delete popup
             function confirmDelete(event, form) {
                 event.preventDefault();
-
                 deleteForm = form;
-
                 document.getElementById("deletePostPopup").style.display = "flex";
             }
 
+            // confirm button
             function confirmDeletePost() {
-
                 if (deleteForm) {
                     deleteForm.submit();
                 }
             }
 
+            // close popup button
             function closeDeletePopup() {
                 document.getElementById("deletePostPopup").style.display = "none";
             }
@@ -1595,24 +1594,137 @@
             function toggleDropdown(event) {
                 event.stopPropagation();
 
-                const dropdown = event.currentTarget.closest(".post-nav-dropdown");
-                if (!dropdown) return;
-
+                const dropdown = event.target.closest(".post-nav-dropdown");
                 const isOpen = dropdown.classList.contains("show");
 
+                // close already have nav from other post
                 document.querySelectorAll('.post-nav-dropdown').forEach(el => {
                     el.classList.remove('show');
                 });
 
+                // open / close nav when click
                 if (!isOpen) {
                     dropdown.classList.add('show');
                 }
             }
 
-            // close when click outside
+            // CLOSE WHEN CLICK ANY NAV
+            document.querySelectorAll('.btn').forEach(el => {
+                el.addEventListener('click', function () {
+                    document.querySelectorAll('.post-nav-dropdown').forEach(drop => {
+                        drop.classList.remove('show');
+                    });
+                });
+            });
+
+            // CLOSE WHEN CLICK OTHER PLACE
             document.addEventListener("click", () => {
-                document.querySelectorAll(".post-nav-dropdown")
-                    .forEach(el => el.classList.remove("show"));
+                document.querySelectorAll(".post-nav-dropdown").forEach(el => {
+                    el.classList.remove("show");
+                });
+            });
+
+            /* ====================================== 
+                YF - POPUP FUNCTIONS        
+            ====================================== */
+            let popupCallback = null;
+            let popupTimer = null;
+
+            const popup = document.getElementById("messagePopup");
+            const popupIcon = document.getElementById("messageIcon");
+            const popupTitle = document.getElementById("messageTitle");
+            const popupText = document.getElementById("messageText");
+            const popupBtn = document.getElementById("messageBtn");
+            const popupCancel = document.getElementById("messageCancelBtn");
+
+            // close popup when click ok button + run function
+            popupBtn.onclick = function () {
+                popup.style.display = "none";
+                if (popupCallback) {
+                    popupCallback();
+                    popupCallback = null;
+                }
+            };
+
+            // close popup when click cancel button
+            popupCancel.onclick = function () {
+                popup.style.display = "none";
+                popupCallback = null;
+            };
+
+            // RESET POPUP
+            function resetPopupClass() {
+                popup.classList.remove("popup-success", "popup-error", "popup-confirm");
+            }
+
+            // POPUP ERROR
+            function showError(message){
+
+                clearTimeout(popupTimer);
+
+                resetPopupClass();
+                popup.classList.add("popup-error");
+
+                popupTitle.innerText = "Error";
+                popupText.innerText = message;
+
+                popupBtn.style.display = "none";
+                popupCancel.style.display = "none";
+
+                popup.style.display = "flex";
+
+                popupTimer = setTimeout(() => {
+                    popup.style.display = "none";
+                }, 2000);
+            }
+
+            // POPUP SUCCESS
+            function showSuccess(message){
+
+                clearTimeout(popupTimer);
+
+                resetPopupClass();
+                popup.classList.add("popup-success");
+
+                popupTitle.innerText = "Success";
+                popupText.innerText = message;
+
+                popupBtn.style.display = "none";
+                popupCancel.style.display = "none";
+
+                popup.style.display = "flex";
+
+                popupTimer = setTimeout(() => {
+                    popup.style.display = "none";
+                }, 1500);
+            }
+
+            // POPUP CONFIRMATION
+            function showConfirm(title, message, callback){
+
+                clearTimeout(popupTimer);
+
+                resetPopupClass();
+                popup.classList.add("popup-confirm");
+
+                popupTitle.innerText = title;
+                popupText.innerText = message;
+
+                popupBtn.style.display = "inline-block";
+                popupBtn.innerText = "Confirm";
+                popupCancel.style.display = "inline-block";
+
+                popupCallback = callback;
+
+                popup.style.display = "flex";
+            }
+
+            // CLICK OUTSIDE CLOSE
+            popup.addEventListener("click", function(event){
+                if(event.target === popup){
+                    popup.style.display = "none";
+                    popupCallback = null;
+                }
             });
 
             /* ====================================== 

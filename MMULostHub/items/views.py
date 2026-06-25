@@ -344,7 +344,6 @@ def editPost(request,post_id):
         ]
     })
 
-
 # ======================================================
 #            MAIN PAGE - DELETE POST VIEW
 # ======================================================
@@ -524,6 +523,11 @@ def update_post_status(request, post_id):
         post.post_status = "claimed"
 
     post.save()
+
+    messages.success(
+        request,
+        "Post status updated successfully!"
+    )
 
     next_url = request.POST.get("next")
 
