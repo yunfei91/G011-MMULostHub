@@ -1,42 +1,35 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-
-<head>
-        <!-- yt added -->
+    <head>
         <link rel="stylesheet" href="{% static 'report/css/report-user.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/post-popup.css' %}">
 
         <script src="{% static 'items/js/header.js' %}" defer></script>
         <script src="{% static 'items/js/logout.js' %}" defer></script>
+
         <script>
             window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";
             const CURRENT_USER_ID = "{{ request.user.id|default:'' }}";
         </script>
 
-        <title> 
-            MMU Lost Hub 
-        </title>
-        
-        <!-- yt added -->
-        <!-- Prevent browser cache, user cannot press back to access previous page -->
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
-        <!-- Older browser cache prevention -->
-        <meta http-equiv="Pragma" content="no-cache">
-        <!-- Expire page immediately -->
-        <meta http-equiv="Expires" content="0">
+        <title>MMU Lost Hub</title>
 
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
     </head>
+
     <body>
         <div class="whole-page">
+
             <header>
-                <div class="header-left"> <!-- yt adjusted for css uses-->              
+                <div class="header-left">
                     <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
-                    <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
+                    <img src="{% static 'images/WebLogo-header.png' %}" alt="Lost Hub Logo" class="losthub-logo">
                 </div>
 
-                <div class="header-right"> <!-- yt adjusted for css uses-->
-                    <!-- Home icon -->
+                <div class="header-right">
                     <a href="{% url 'mainPage' %}" class="home-icon">
                         <img src="{% static 'images/homeicon.png' %}" alt="Home">
                     </a>
@@ -45,7 +38,6 @@
                         <img src="{% static 'images/chaticon.png' %}" alt="Chat">
                     </a>
 
-                    <!-- Menu button --> <!-- yt adjusted for css uses-->
                     <button type="button" class="menu-icon" onclick="toggleMenu()">
                         <span></span>
                         <span></span>
@@ -54,62 +46,112 @@
                 </div>
             </header>
 
-            <div id="overlay" class="overlay"></div> <!-- yt adjusted for css uses-->
+            <div id="overlay" class="overlay"></div>
 
-            <!-- ================================================== -->
-            <!--            Dropdown Menu Navigation                -->
-            <!-- ================================================== -->
-            <div class = "dropdown-nav">
-                
-                <nav id="menu" class="menu"> <!-- yt adjusted for css uses-->
+            <div class="dropdown-nav">
+                <nav id="menu" class="menu">
                     <ul>
-                        <li>
-                        <a href="{% url 'lost_posts' %}"> Lost Post </a>  
-                        </li>
-                        <li>
-                        <a href="{% url 'found_posts' %}"> Found Post </a>
-                        </li>
-                        <li>
-                        <a href="{% url 'profile' %}"> Profile </a>
-                        </li>
-                        <li>
-                        <a href="{% url 'feedback_form' %}"> Feedback </a>
-                        </li>
+                        <li><a href="{% url 'lost_posts' %}">Lost Post</a></li>
+                        <li><a href="{% url 'found_posts' %}">Found Post</a></li>
+                        <li><a href="{% url 'profile' %}">Profile</a></li>
+                        <li><a href="{% url 'feedback_form' %}?next={{ next_url|urlencode }}">Feedback</a></li>
                         <li class="logout">
-                        <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
+                            <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
                         </li>
                     </ul>
                 </nav>
             </div>
-            
+
             <div class="content">
-                <h2>Report User</h2>
-                <p> Reporting User: {{ reported_user.username }}</p>
 
-                <form method="POST" enctype="multipart/form-data" action="{% url 'report_user' reported_user.id %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="user_id" value="{{ reported_user.id }}">
+                <div class="reportuser-title">
+                    <h2>Report User</h2>
+                    <p>
+                        Tell us why you are reporting
+                        <strong>{{ reported_user.username }}</strong>.
+                    </p>
+                </div>
 
-                    <!-- Reason -->
-                    <label>Reason:</label>
-                    <br>
-                    <textarea name="comments" rows="5" cols="40" required></textarea>
-                    <br><br>
+                <div class="reportuser-wrapper">
 
-                    <!-- Proof Image -->
-                    <label>Upload Proof:</label>
-                    <br>
-                    <input type="file" name="image" required accept="image/*">
-                    <br><br>
+                    <form
+                        id="reportUserForm"
+                        method="POST"
+                        enctype="multipart/form-data"
+                        action="{% url 'report_user' reported_user.id %}">
 
-                    <button type="submit" onclick="return checkProofImage()">
-                    Submit Report
-                    </button>
-                </form>
+                        {% csrf_token %}
+
+                        <input type="hidden" name="next" value="{{ next_url }}">
+                        <input type="hidden" name="user_id" value="{{ reported_user.id }}">
+
+                        <label for="comments">Reason for Reporting</label>
+
+                        <textarea
+                            id="comments"
+                            name="comments"
+                            rows="8"
+                            placeholder="Please describe the issue..."
+                            required></textarea>
+
+                        <div class="upload-group">
+                            <label for="image-upload">Upload Proof Image</label>
+
+                            <input
+                                type="file"
+                                id="image-upload"
+                                name="image"
+                                accept="image/*"
+                                required>
+
+                            <div id="preview-container">
+                                <button
+                                    type="button"
+                                    id="remove-image"
+                                    aria-label="Remove image">
+                                    ×
+                                </button>
+
+                                <img id="preview-image" alt="Preview">
+                            </div>
+                        </div>
+
+                        <div class="button-group">
+                            <button
+                                type="button"
+                                class="btn"
+                                onclick="validateReportUserForm()">
+                                SUBMIT
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+
             </div>
 
-            <!-- yt added -->
-            <!-- Confirm Logout Popup -->
+            <div id="imageRequiredPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Please upload proof image before submitting.</p>
+
+                    <div class="popup-btns">
+                        <button type="button" onclick="closeImageRequiredPopup()">OK</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="submitConfirmPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Are you sure you want to submit?</p>
+
+                    <div class="popup-btns">
+                        <button type="button" onclick="submitReportUserForm()">OK</button>
+                        <button type="button" onclick="closeSubmitConfirmPopup()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
             <div id="confirmPopup" class="popup-modal">
                 <div class="popup-box">
                     <p>Are you sure you want to logout?</p>
@@ -120,24 +162,55 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
         <footer>
-            <p>© 2026 MMU Lost Hub<br>
+            <p>© 2026 MMU Lost Hub</p>
         </footer>
 
         <script>
-        function checkProofImage() {
-            const imageInput = document.querySelector('input[name="image"]');
+            const input = document.getElementById("image-upload");
+            const preview = document.getElementById("preview-image");
+            const container = document.getElementById("preview-container");
+            const removeBtn = document.getElementById("remove-image");
 
-            if (!imageInput.files || imageInput.files.length === 0) {
-                alert("Please upload proof image before submitting.");
-                imageInput.focus();
-                return false;
+            input.addEventListener("change", function () {
+                if (this.files.length === 0) {
+                    container.style.display = "none";
+                    return;
+                }
+
+                preview.src = URL.createObjectURL(this.files[0]);
+                container.style.display = "block";
+            });
+
+            removeBtn.addEventListener("click", function () {
+                input.value = "";
+                preview.src = "";
+                container.style.display = "none";
+            });
+
+            function validateReportUserForm() {
+                if (!input.files || input.files.length === 0) {
+                    document.getElementById("imageRequiredPopup").classList.add("show");
+                    return;
+                }
+
+                document.getElementById("submitConfirmPopup").classList.add("show");
             }
 
-            return confirm("Are you sure you want to submit?");
-        }
+            function closeImageRequiredPopup() {
+                document.getElementById("imageRequiredPopup").classList.remove("show");
+            }
+
+            function closeSubmitConfirmPopup() {
+                document.getElementById("submitConfirmPopup").classList.remove("show");
+            }
+
+            function submitReportUserForm() {
+                document.getElementById("reportUserForm").submit();
+            }
         </script>
-</body>
+    </body>
 </html>

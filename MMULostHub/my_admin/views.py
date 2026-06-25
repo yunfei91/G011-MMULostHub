@@ -17,6 +17,7 @@ from .email_utils import (
 
 from user.models import Profile
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 
 
 # Admin Check
@@ -41,7 +42,9 @@ def admin_feedback_view(request):
 
     query = request.GET.get('q')
 
-    feedbacks = Feedback.objects.all().order_by(
+    feedbacks = Feedback.objects.filter(
+        status='Pending'
+    ).order_by(
         '-created_at'
     )
 
@@ -52,11 +55,17 @@ def admin_feedback_view(request):
             Q(user__username__icontains=query)
         )
 
+    # Pagination
+    paginator = Paginator(feedbacks, 6)
+    page_number = request.GET.get('page')
+    feedbacks = paginator.get_page(page_number)
+
     return render(
         request,
         'admin/adminfeedback.html',
         {
-            'feedbacks': feedbacks
+            'feedbacks': feedbacks,
+            'query': query,
         }
     )
 
@@ -79,11 +88,16 @@ def admin_report_view(request):
             Q(post__post_description__icontains=query)
         )
 
+    paginator = Paginator(reports, 6)
+    page_number = request.GET.get('page')
+    reports = paginator.get_page(page_number)
+
     return render(
         request,
         'admin/adminreport.html',
         {
-            'reports': reports
+            'reports': reports,
+            'query': query,
         }
     )
 
@@ -167,44 +181,44 @@ def update_report_status(request, report_id):
 @user_passes_test(is_admin)
 def admin_view_user(request):
 
-    query = request.GET.get('q')
+    query = request.GET.get('q', '')
+    view_type = request.GET.get('view', 'all')
 
-    # Search User
+    users = User.objects.filter(
+        is_staff=False,
+        is_superuser=False
+    )
+
+    reports = UserReport.objects.select_related(
+        'user',
+        'reported_by'
+    ).order_by('-created_at')
+
+    # Search
     if query:
-
-        users = User.objects.filter(
-            username__icontains=query,
-            is_staff=False,
-            is_superuser=False
+        users = users.filter(
+            Q(username__icontains=query) |
+            Q(email__icontains=query) |
+            Q(profile__name__icontains=query)
         )
 
-    else:
-
-        users = User.objects.filter(
-            is_staff=False,
-            is_superuser=False
+        reports = reports.filter(
+            Q(user__username__icontains=query) |
+            Q(user__email__icontains=query) |
+            Q(reported_by__username__icontains=query) |
+            Q(reported_by__email__icontains=query) |
+            Q(comments__icontains=query) |
+            Q(status__icontains=query)
         )
 
     # Ensure Profile Exists
     for user in users:
+        Profile.objects.get_or_create(user=user)
 
-        Profile.objects.get_or_create(
-            user=user
-        )
-
-    # View Type
-    view_type = request.GET.get(
-        'view',
-        'all'
-    )
-
-    users = users.select_related(
-        'profile'
-    )
+    users = users.select_related('profile')
 
     # Show Only Reported Users
     if view_type == 'reported_only':
-
         users = users.filter(
             profile__is_reported=True
         )
@@ -215,13 +229,14 @@ def admin_view_user(request):
         'username'
     )
 
-    # Reports
-    reports = UserReport.objects.select_related(
-        'user',
-        'reported_by'
-    ).order_by(
-        '-created_at'
-    )
+    # Pagination
+    user_paginator = Paginator(users, 10)
+    user_page_number = request.GET.get('user_page')
+    users = user_paginator.get_page(user_page_number)
+
+    report_paginator = Paginator(reports, 6)
+    report_page_number = request.GET.get('report_page')
+    reports = report_paginator.get_page(report_page_number)
 
     return render(
         request,
@@ -230,6 +245,7 @@ def admin_view_user(request):
             'users': users,
             'reports': reports,
             'view_type': view_type,
+            'query': query,
         }
     )
 

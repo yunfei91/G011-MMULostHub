@@ -86,7 +86,7 @@
                             <a href="{% url 'profile' %}"> Profile </a>
                         </li>
                         <li>
-                            <a href="{% url 'feedback_form' %}"> Feedback </a>
+                            <a href="{% url 'feedback_form' %}?next={{ request.get_full_path|urlencode }}"> Feedback </a>
                         </li>
                         <li class="logout">
                             <!-- Show logout confirmation popup -->
@@ -310,8 +310,8 @@
                             data-status="{{ post.post_status }}"
                             data-edit-url="{% url 'editPost' post.id %}"
                             data-delete-url="{% url 'deletePost' post.id %}"
-                            data-report-post-url="{% url 'submit_report' %}?post_id={{ post.id }}"
-                            data-report-user-url="{% url 'report_user' post.post_user.id %}">
+                            data-report-post-url="{% url 'submit_report' %}?post_id={{ post.id }}&next={{ request.get_full_path|urlencode }}"
+                            data-report-user-url="{% url 'report_user' post.post_user.id %}?next={{ request.get_full_path|urlencode }}">
                             
                             <div class = "post-box">
 
@@ -360,14 +360,14 @@
 
                                                         <div class = "btn">
                                                             <!-- ty Report Post Button -->
-                                                            <a href="{% url 'submit_report' %}?post_id={{ post.id }}">
+                                                            <a href="{% url 'submit_report' %}?post_id={{ post.id }}&next={{ request.get_full_path|urlencode }}">
                                                                 Report
                                                             </a>
                                                         </div>
 
                                                         <div class = "btn">
                                                             <!-- ty Report User Button -->
-                                                            <a href="{% url 'report_user' user.id %}">
+                                                            <a href="{% url 'report_user' post.post_user.id %}?next={{ request.get_full_path|urlencode }}">
                                                                 Report User
                                                             </a>
                                                         </div>
@@ -628,13 +628,13 @@
                                             {% else %}
 
                                                 <div class="btn">
-                                                    <a id="report_post_link" href="">
+                                                    <a id="report_post_link" href="{% url 'submit_report' %}?post_id={{ post.id }}">
                                                         Report
                                                     </a>
                                                 </div>
 
                                                 <div class="btn">
-                                                    <a id="report_user_link" href="">
+                                                    <a id="report_user_link" href="#">
                                                         Report User
                                                     </a>
                                                 </div>

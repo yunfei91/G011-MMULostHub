@@ -1,137 +1,313 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-    <head>
-        <!-- yt added -->
-        <link rel="stylesheet" href="{% static 'items/css/main-layout.css' %}">
+<head>
+    <!-- yt added -->
+    <link rel="stylesheet" href="{% static 'items/css/main-layout.css' %}">
 
-        <script src="{% static 'items/js/header.js' %}" defer></script>
-        <script src="{% static 'items/js/logout.js' %}" defer></script>
-        <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
+    <script src="{% static 'items/js/header.js' %}" defer></script>
+    <script src="{% static 'items/js/logout.js' %}" defer></script>
+    <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
 
-        <title> 
-            MMU Lost Hub 
-        </title>
-        
-        <!-- Prevent browser cache, user cannot press back to access previous page -->
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
-        <!-- Older browser cache prevention -->
-        <meta http-equiv="Pragma" content="no-cache">
-        <!-- Expire page immediately -->
-        <meta http-equiv="Expires" content="0">
-    </head>
+    <title> 
+        MMU Lost Hub 
+    </title>
+    
+    <!-- Prevent browser cache, user cannot press back to access previous page -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
+    <!-- Older browser cache prevention -->
+    <meta http-equiv="Pragma" content="no-cache">
+    <!-- Expire page immediately -->
+    <meta http-equiv="Expires" content="0">
 
-    <body>
-        <div class="whole-page">
-            <header>
-                <div class="header-left"> <!-- yt adjusted for css uses-->              
-                    <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
-                    <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
-                </div>
+    <link rel="stylesheet" href="{% static 'my_admin/css/admin.css' %}">
 
-                <div class="header-right"> <!-- yt adjusted for css uses-->
-                    <!-- Home icon -->
-                    <a href="{% url 'admin_mainpage' %}" class="home-icon">
-                        <img src="{% static 'images/homeicon.png' %}" alt="Home">
-                    </a>
+    <script src="{% static 'items/js/logout.js' %}" defer></script>
+</head>
 
-                    <!-- Menu button --> <!-- yt adjusted for css uses-->
-                    <button type="button" class="menu-icon" onclick="toggleMenu()">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </button>
-                </div>
-            </header>
+<body>
 
-            <div id="overlay" class="overlay"></div> <!-- yt adjusted for css uses-->
+<div class="whole-page">
 
-            <!-- ================================================== -->
-            <!--            Dropdown Menu Navigation                -->
-            <!-- ================================================== -->
-            <div class = "dropdown-nav">
-                
-                <nav id="menu" class="menu"> <!-- yt adjusted for css uses-->
-                    <ul>
-                        <li>
-                        <a href="{% url 'admin_user' %}"> View User </a>  
-                        </li>
-                        <li>
-                        <a href="{% url 'admin_feedback' %}"> View Feedback </a>
-                        </li>
-                        <li>
-                        <a href="{% url 'admin_report' %}"> View Report </a>
-                        </li>
-                        <li class="logout">
-                        <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-
-            <!--search bar-->
-            <div class="search-bar">
-                <form method="GET" class="search-bar">
-                    <input type="text" name='q' placeholder="Search for feedback...">
-                    <button type="submit">Search</button>
-                </form>
-            </div>
-            <hr>
-            <h2>Feedback</h2>
-
-            <!--feedback view demo-->
-            <div class="post-list">
-                
-                {% for feedback in feedbacks %}
-                <hr>
-                <div class="feedback-card">
-                    <p><strong>User:</strong>{{ feedback.user.username }}</p>
-                    <p><strong>Content:</strong>{{ feedback.comments }}</p>
-                    <p><strong>Image:</strong><br>
-                        {% if feedback.image %}
-                        <img src="{{ feedback.image.url }}" alt="Feedback Photo" style="max-width: 300px;">
-                        {% else %}
-                        No Image Provided
-                        {% endif %}
-                    </p>
-                    <p><strong>Date:</strong>{{ feedback.created_at }}</p>
-                    <p><strong>Status:</strong>{{ feedback.status }}</p>
-
-                    {% if feedback.status == 'Pending' %}
-                    <form action="{% url 'update_feedback_status' feedback.id %}" method="POST" style="display:inline;">
-                        {% csrf_token %}
-                <button 
-                    type="submit"
-                    class="btn"
-                    onclick="return confirm('Are you sure you want to mark this feedback as checked?')">
-                    Mark as Checked
-                </button>
-                    </form>
-                    {% endif %}
-
-                    <hr>
-                </div>
-                {% empty %}
-                <p>No feedback / Report yet</p>
-                {% endfor %}
-            </div>
-            
-            <!-- yt added -->
-            <!-- Confirm Logout Popup -->
-            <div id="confirmPopup" class="popup-modal">
-                <div class="popup-box">
-                    <p>Are you sure you want to logout?</p>
-
-                    <div class="popup-btns">
-                        <button onclick="confirmLogout()">Yes</button>
-                        <button onclick="cancelLogout()">Cancel</button>
-                    </div>
-                </div>
-            </div>
+    <header>
+        <div class="header-left">
+            <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
+            <img src="{% static 'images/WebLogo-header.png' %}" alt="Lost Hub Logo" class="losthub-logo">
         </div>
 
-        <footer>
-            <p>© 2026 MMU Lost Hub<br>
-        </footer>
-    </body>
+        <div class="header-right">
+            <a href="{% url 'admin_mainpage' %}" class="home-icon">
+                <img src="{% static 'images/HomeIcon.png' %}" alt="Home">
+            </a>
+
+            <button type="button" class="menu-icon" onclick="toggleAdminMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <div id="overlay" class="overlay"></div>
+
+    <div class="dropdown-nav">
+        <nav id="menu" class="menu">
+            <ul>
+                <li><a href="{% url 'admin_user' %}">View User</a></li>
+                <li><a href="{% url 'admin_feedback' %}">View Feedback</a></li>
+                <li><a href="{% url 'admin_report' %}">View Report</a></li>
+
+                <li class="logout">
+                    <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <main class="admin-page-content">
+
+        <div class="search-bar">
+            <form method="GET" class="search-bar">
+                <input type="text"
+                       name="q"
+                       placeholder="Search for feedback..."
+                       value="{{ query|default:'' }}">
+
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        <h2>Feedback</h2>
+
+        <div class="post-list feedback-list">
+
+            {% for feedback in feedbacks %}
+
+            <div class="feedback-card">
+
+                <p><strong>User:</strong> {{ feedback.user.username }}</p>
+
+                <p><strong>Content:</strong></p>
+                <div class="feedback-content-box">
+                    {{ feedback.comments }}
+                </div>
+
+                <p>
+                    <strong>Image:</strong><br>
+
+                    {% if feedback.image %}
+                        <img src="{{ feedback.image.url }}"
+                             alt="Feedback Photo"
+                             class="admin-proof-img"
+                             onclick="openImage('{{ feedback.image.url }}')">
+                    {% else %}
+                        No Image Provided
+                    {% endif %}
+                </p>
+
+                <p><strong>Date:</strong> {{ feedback.created_at }}</p>
+
+                <p><strong>Status:</strong> {{ feedback.status }}</p>
+
+                {% if feedback.status == 'Pending' %}
+                <form id="feedback-form-{{ feedback.id }}"
+                      method="POST"
+                      action="{% url 'update_feedback_status' feedback.id %}"
+                      style="display:inline;">
+                    {% csrf_token %}
+
+                    <button type="button"
+                            onclick="confirmFeedback({{ feedback.id }})">
+                        Mark as Checked
+                    </button>
+                </form>
+                {% endif %}
+
+            </div>
+
+            {% empty %}
+
+            <div class="empty-state">
+                <h3>No feedback yet</h3>
+                <p>Everything is clear for now.</p>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <div class="pagination">
+
+            {% if feedbacks.has_previous %}
+                <a href="?page=1{% if query %}&q={{ query }}{% endif %}" class="pagearrow">
+                    &lt;&lt;
+                </a>
+
+                <a href="?page={{ feedbacks.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" class="pagearrow">
+                    &lt;
+                </a>
+            {% else %}
+                <span class="disabled"> &lt;&lt; </span>
+                <span class="disabled"> &lt; </span>
+            {% endif %}
+
+            {% for num in feedbacks.paginator.page_range %}
+
+                {% if feedbacks.number <= 2 %}
+
+                    {% if num <= 3 %}
+                        {% if num == feedbacks.number %}
+                            <span class="current">{{ num }}</span>
+                        {% else %}
+                            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}" class="pagenum">
+                                {{ num }}
+                            </a>
+                        {% endif %}
+                    {% endif %}
+
+                {% elif feedbacks.number >= feedbacks.paginator.num_pages|add:"-1" %}
+
+                    {% if num >= feedbacks.paginator.num_pages|add:"-2" %}
+                        {% if num == feedbacks.number %}
+                            <span class="current">{{ num }}</span>
+                        {% else %}
+                            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}" class="pagenum">
+                                {{ num }}
+                            </a>
+                        {% endif %}
+                    {% endif %}
+
+                {% else %}
+
+                    {% if num >= feedbacks.number|add:"-1" and num <= feedbacks.number|add:"1" %}
+                        {% if num == feedbacks.number %}
+                            <span class="current">{{ num }}</span>
+                        {% else %}
+                            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}" class="pagenum">
+                                {{ num }}
+                            </a>
+                        {% endif %}
+                    {% endif %}
+
+                {% endif %}
+
+            {% endfor %}
+
+            {% if feedbacks.has_next %}
+                <a href="?page={{ feedbacks.next_page_number }}{% if query %}&q={{ query }}{% endif %}" class="pagearrow">
+                    &gt;
+                </a>
+
+                <a href="?page={{ feedbacks.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}" class="pagearrow">
+                    &gt;&gt;
+                </a>
+            {% else %}
+                <span class="disabled"> &gt; </span>
+                <span class="disabled"> &gt;&gt; </span>
+            {% endif %}
+
+        </div>
+
+    </main>
+
+    <div id="confirmPopup" class="popup-modal">
+        <div class="popup-box">
+            <p>Are you sure you want to logout?</p>
+
+            <div class="popup-btns">
+                <button onclick="confirmLogout()">OK</button>
+                <button onclick="cancelLogout()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="successPopup" class="popup"></div>
+
+    <div id="popup" class="popup hidden">
+        <div class="popup-box">
+            <h3 id="popup-title"></h3>
+            <p id="popup-message"></p>
+
+            <div class="popup-buttons">
+                <button id="popup-confirm">Confirm</button>
+                <button id="popup-cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="feedbackConfirmPopup" class="popup-modal">
+        <div class="popup-box">
+
+            <p>Are you sure you want to mark this feedback as checked?</p>
+
+            <div class="popup-btns">
+                <button onclick="submitFeedback()">OK</button>
+                <button onclick="cancelFeedback()">Cancel</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="imageModal" class="image-modal">
+
+        <span class="close-image"
+                onclick="closeImage()">
+            &times;
+        </span>
+
+        <img id="modalImage"
+            class="modal-image">
+
+    </div>
+
+    <footer>
+        <p>© 2026 MMU Lost Hub<br>
+    </footer>
+
+</div>
+
+<script>
+    function toggleAdminMenu(){
+        document.getElementById("menu").classList.toggle("show-menu");
+        document.getElementById("overlay").classList.toggle("show");
+        document.querySelector(".menu-icon").classList.toggle("active");
+    }
+
+    document.getElementById("overlay").onclick = function(){
+        toggleAdminMenu();
+    };
+
+    let feedbackIdToSubmit = null;
+
+    function confirmFeedback(id){
+        feedbackIdToSubmit = id;
+        document.getElementById("feedbackConfirmPopup").classList.add("show");
+    }
+
+    function cancelFeedback(){
+        feedbackIdToSubmit = null;
+        document.getElementById("feedbackConfirmPopup").classList.remove("show");
+    }
+
+    function submitFeedback(){
+        if(feedbackIdToSubmit){
+            document.getElementById("feedback-form-" + feedbackIdToSubmit).submit();
+        }
+    }
+
+    function openImage(imageUrl){
+
+        document.getElementById("modalImage").src = imageUrl;
+
+        document.getElementById("imageModal")
+                .classList.add("show");
+  }
+
+    function closeImage(){
+
+        document.getElementById("imageModal")
+                .classList.remove("show");
+    }
+</script>
+
+</body>
 </html>

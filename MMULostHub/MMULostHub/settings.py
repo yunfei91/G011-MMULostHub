@@ -116,7 +116,7 @@ USE_TZ = True
 
 LOGIN_URL = 'beginning'
 
-STATIC_URL = 'static/' #Used for css
+STATIC_URL = '/static/' #Used for css
 
 
 LOGIN_URL = '/user/user-login/'
