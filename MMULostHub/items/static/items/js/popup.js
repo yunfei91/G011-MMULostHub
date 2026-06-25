@@ -50,7 +50,7 @@ function showError(message){
 
     popupTimer = setTimeout(() => {
         popup.style.display = "none";
-    }, 1500);
+    }, 2000);
 }
 
 // POPUP SUCCESS
@@ -71,7 +71,7 @@ function showSuccess(message){
 
     popupTimer = setTimeout(() => {
         popup.style.display = "none";
-    }, 1000);
+    }, 1500);
 }
 
 // POPUP CONFIRMATION
