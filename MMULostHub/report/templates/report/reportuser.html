@@ -75,6 +75,7 @@
                 <div class="reportuser-wrapper">
 
                     <form
+                        id="reportUserForm"
                         method="POST"
                         enctype="multipart/form-data"
                         action="{% url 'report_user' reported_user.id %}">
@@ -117,9 +118,9 @@
 
                         <div class="button-group">
                             <button
-                                type="submit"
+                                type="button"
                                 class="btn"
-                                onclick="return confirm('Are you sure you want to submit?')">
+                                onclick="validateReportUserForm()">
                                 SUBMIT
                             </button>
                         </div>
@@ -128,6 +129,27 @@
 
                 </div>
 
+            </div>
+
+            <div id="imageRequiredPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Please upload proof image before submitting.</p>
+
+                    <div class="popup-btns">
+                        <button type="button" onclick="closeImageRequiredPopup()">OK</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="submitConfirmPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Are you sure you want to submit?</p>
+
+                    <div class="popup-btns">
+                        <button type="button" onclick="submitReportUserForm()">OK</button>
+                        <button type="button" onclick="closeSubmitConfirmPopup()">Cancel</button>
+                    </div>
+                </div>
             </div>
 
             <div id="confirmPopup" class="popup-modal">
@@ -168,6 +190,27 @@
                 preview.src = "";
                 container.style.display = "none";
             });
+
+            function validateReportUserForm() {
+                if (!input.files || input.files.length === 0) {
+                    document.getElementById("imageRequiredPopup").classList.add("show");
+                    return;
+                }
+
+                document.getElementById("submitConfirmPopup").classList.add("show");
+            }
+
+            function closeImageRequiredPopup() {
+                document.getElementById("imageRequiredPopup").classList.remove("show");
+            }
+
+            function closeSubmitConfirmPopup() {
+                document.getElementById("submitConfirmPopup").classList.remove("show");
+            }
+
+            function submitReportUserForm() {
+                document.getElementById("reportUserForm").submit();
+            }
         </script>
     </body>
 </html>

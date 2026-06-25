@@ -83,9 +83,11 @@
 
                 <div class="reportpost-wrapper">
 
-                    <form action="{% url 'submit_report' %}"
-                          method="POST"
-                          enctype="multipart/form-data">
+                    <form
+                        id="reportPostForm"
+                        action="{% url 'submit_report' %}"
+                        method="POST"
+                        enctype="multipart/form-data">
 
                         {% csrf_token %}
 
@@ -127,9 +129,9 @@
 
                         <div class="button-group">
                             <button
-                                type="submit"
+                                type="button"
                                 class="btn"
-                                onclick="return confirm('Are you sure you want to submit?')">
+                                onclick="openSubmitConfirmPopup()">
                                 SUBMIT
                             </button>
                         </div>
@@ -138,6 +140,17 @@
 
                 </div>
 
+            </div>
+
+            <div id="submitConfirmPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Are you sure you want to submit?</p>
+
+                    <div class="popup-btns">
+                        <button type="button" onclick="submitReportPostForm()">OK</button>
+                        <button type="button" onclick="closeSubmitConfirmPopup()">Cancel</button>
+                    </div>
+                </div>
             </div>
 
             <div id="confirmPopup" class="popup-modal">
@@ -178,6 +191,18 @@
                 preview.src = "";
                 container.style.display = "none";
             });
+
+            function openSubmitConfirmPopup() {
+                document.getElementById("submitConfirmPopup").classList.add("show");
+            }
+
+            function closeSubmitConfirmPopup() {
+                document.getElementById("submitConfirmPopup").classList.remove("show");
+            }
+
+            function submitReportPostForm() {
+                document.getElementById("reportPostForm").submit();
+            }
         </script>
     </body>
 </html>

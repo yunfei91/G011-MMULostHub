@@ -89,7 +89,7 @@
                 </div>
 
                 <div class="feedback-wrapper">
-                    <form action="{% url 'feedback_form' %}" method="POST" enctype="multipart/form-data">
+                    <form id="feedbackForm" action="{% url 'feedback_form' %}" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
 
                         <input type="hidden" name="next" value="{{ next_url }}">
@@ -127,15 +127,35 @@
 
                         <div class="button-group">
                             <button 
-                                type="submit"
+                                type="button"
                                 class="btn"
-                                onclick="return confirm('Are you sure you want to submit?')">
+                                onclick="openFeedbackSubmitPopup()">
                                 SUBMIT
                             </button>
                         </div>
                     </form>
                 </div>
 
+            </div>
+
+            <div id="feedbackSubmitPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Are you sure you want to submit?</p>
+
+                    <div class="popup-btns">
+                        <button
+                            type="button"
+                            onclick="submitFeedbackForm()">
+                            OK
+                        </button>
+
+                        <button 
+                            type="button"
+                            onclick="closeFeedbackSubmitPopup()">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- yt added -->
@@ -183,6 +203,24 @@
 
         container.style.display = "none";
     });
+
+    function openFeedbackSubmitPopup() {
+        document
+            .getElementById("feedbackSubmitPopup")
+            .classList.add("show");
+    }
+
+    function closeFeedbackSubmitPopup() {
+        document
+            .getElementById("feedbackSubmitPopup")
+            .classList.remove("show");
+    }
+
+    function submitFeedbackForm() {
+        document
+            .getElementById("feedbackForm")
+            .submit();
+    }
 
      </script>
     </body>
