@@ -1279,6 +1279,7 @@ footer{
 
 .post-description-box {
     margin: 8px 0;
+    padding: 10px;
 
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.607);
