@@ -35,7 +35,8 @@ def beginning(request):
 
 def user_login(request):
     if request.method == 'POST': # Form submitted
-        email = (request.POST.get('email') or '').strip().lower() # Get email, remove spaces, lowercase
+        # Get email, if no email will use empty '' , remove spaces, lowercase
+        email = (request.POST.get('email') or '').strip().lower()
         password = request.POST.get('password') or '' # Use empty string to prevent error when value=None
 
         # Store error messages
@@ -52,12 +53,16 @@ def user_login(request):
         ):
             email_error = "Please enter a valid MMU email."
 
+        # Validate password using Django password validators
         if password and not password_error:
             try:
+                # Check password against Django validation rules
                 validate_password(password)
             except ValidationError as e:
+                # Store the first validation error message
                 password_error = e.messages[0]
 
+        # Prevent password from being the same as email
         if password == email:
             password_error = "Password cannot be the same as email."
 
@@ -68,7 +73,7 @@ def user_login(request):
                 'email': email,
             })
         
-        user = authenticate(request, username=email, password=password) # Check user in db
+        user = authenticate(request, username=email, password=password) # Check user in db exist or not
 
         if user is None:
             user_login_error = "Wrong password"
@@ -77,14 +82,15 @@ def user_login(request):
                 'email': email,
             })
 
-        login(request, user) # Login success, create session
+        login(request, user) # Create user session after successful login
         return redirect('mainPage')
     
     return render(request, 'user/user-login.html')
 
 def forgot_pw(request):
-    email = ""
+    email = "" # Initialize email variable
 
+    # Process form submission
     if request.method == 'POST':
         email = (request.POST.get('email') or '').strip().lower()
 
@@ -104,21 +110,24 @@ def forgot_pw(request):
                 'email': email,
             })
         
+        # Check whether the email is registered
         if not User.objects.filter(username=email).exists():
             return render(request, 'user/forgot-pw.html', {
                 'error': "MMU email not registered",
                 'email': email,
             })
-
+        
+        # Generate a 6-digit OTP
         otp = str(random.randint(100000, 999999))
 
-        request.session['reset_data'] = { # Stor in session
+        # Store password reset information in session
+        request.session['reset_data'] = {
             'email': email,
             'otp': otp,
             'otp_time': time.time()
         }
 
-        send_otp_email(email, otp)
+        send_otp_email(email, otp) # Send OTP to the user's email
 
         return redirect('reset_otp_verify')
 
@@ -127,8 +136,10 @@ def forgot_pw(request):
     })
 
 def reset_otp_verify(request):
+    # Search reset information from session
     data = request.session.get('reset_data')
 
+    # Redirect if reset session does not exist
     if not data:
         return redirect('forgot_pw')
     
