@@ -784,8 +784,8 @@ footer{
 }
 
 .btn{
-    width: 150px;
-    height: 45px;
+    width: 170px;
+    height: 46px;
 
     border: none;
     border-radius: 10px;
@@ -793,9 +793,10 @@ footer{
     background: #7e8599;
     color: white;
 
-    font-family: 'Sansation', Arial, sans-serif;
-    font-size: 16px;
-    font-weight: 800;
+   font-family:'Slackey', cursive;
+   font-size:13px;
+   font-weight:normal;
+   letter-spacing:1px;
 
     cursor: pointer;
 
@@ -871,4 +872,47 @@ footer{
 #remove-image:hover{
 
     background:#d9534f;
+}
+
+/* File upload button */
+.upload-group input[type="file"]{
+    font-family:'Sansation', Arial, sans-serif;
+    font-size:13px;
+    letter-spacing:1px;
+    font-weight: 700;
+    color: #4f5668;
+}
+
+.upload-group input[type="file"]{
+    height:44px;
+    line-height:44px;
+}
+
+.upload-group input[type="file"]::file-selector-button{
+
+    height:44px;
+    width:135px;
+    display: inline-flex;
+    align-items: center;
+
+    padding:0;
+    margin-right:12px;
+
+    border:none;
+    border-radius:10px;
+
+    background:#7e8599;
+    color:#fff;
+
+    cursor:pointer;
+
+    font-family:'Slackey', cursive;
+    font-size:13px;
+    font-weight:normal;
+
+    box-sizing:border-box;
+}
+
+.upload-group input[type="file"]::file-selector-button:hover{
+    transform: translateY(-2px);
 }
