@@ -234,7 +234,11 @@ def admin_view_user(request):
     user_page_number = request.GET.get('user_page')
     users = user_paginator.get_page(user_page_number)
 
-    report_paginator = Paginator(reports, 4)
+    if view_type == 'reported_only':
+        report_paginator = Paginator(reports, 6)
+    else:
+        report_paginator = Paginator(reports, 4)
+        
     report_page_number = request.GET.get('report_page')
     reports = report_paginator.get_page(report_page_number)
 

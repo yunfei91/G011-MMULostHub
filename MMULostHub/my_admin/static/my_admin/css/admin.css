@@ -361,6 +361,7 @@ h2{
 
 .search-bar{
     margin-bottom: 25px;
+    width: fit-content;
 }
 
 .search-bar form,
@@ -730,6 +731,13 @@ footer{
     box-shadow: 0 10px 30px rgba(0,0,0,0.12);
 }
 
+/* View All Users only */
+.user-only-section{
+    width: fit-content;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
 /* Reported user cards inside user page */
 .report-card-list{
     display: grid;
@@ -863,4 +871,65 @@ footer{
 
 .empty-state p{
     margin: 0;
+}
+
+/* View Reported Users only: 3 x 2 */
+.reported-only-section .report-card-list{
+    max-width: none;
+    width: 100%;
+    grid-template-columns: repeat(3, minmax(280px, 1fr));
+}
+
+/* View All Users only: table centered */
+.user-only-section{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.user-only-section h2{
+    width: 100%;
+    text-align: left;
+}
+
+.user-only-section form{
+    width: 100%;
+    max-width: 980px;
+}
+
+.user-only-section button:first-child{
+    margin-left: 0;
+}
+
+.user-only-section table{
+    width: 100%;
+    margin: 18px auto 0;
+}
+
+/* Responsive */
+@media (max-width: 1200px){
+    .reported-only-section .report-card-list{
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 900px){
+    .reported-only-section .report-card-list{
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Center top controls in user-only / reported-only page */
+.user-only-section,
+.reported-only-section{
+    margin-top: 20px;
+}
+
+.admin-page-content > .back-btn,
+.admin-page-content > h2,
+.admin-page-content > .search-bar,
+.admin-page-content > .report-actions{
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
 }
