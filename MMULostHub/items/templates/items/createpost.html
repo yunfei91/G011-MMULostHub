@@ -9,14 +9,17 @@
 
         <!-- CSS Links -->
         <link rel="stylesheet" href="{% static 'items/css/post.css' %}">
-        <link rel="stylesheet" href="{% static 'items/css/map.css' %}">
         <link rel="stylesheet" href="{% static 'items/css/popup.css' %}">
+        <link rel="stylesheet" href="{% static 'items/css/post-layout.css' %}">
 
         <!-- JS Links -->
         <script src="{% static 'items/js/popup.js' %}" defer></script>
         <script src="{% static 'items/js/map.js' %}" defer></script>
         <script src="{% static 'items/js/createpost.js' %}" defer></script>                <!-- differ = load complete html then load java -->
         <script src="{% static 'items/js/image.js' %}" defer></script>
+        <script src="{% static 'items/js/header.js' %}" defer></script>
+        <script src="{% static 'items/js/logout.js' %}" defer></script>
+        <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
 
         <title> 
             MMU Lost Hub
@@ -33,291 +36,334 @@
     </head>
 
     <body>
-        <header>
-            <img src="{% static 'images/MMU Logo' %}" alt="MMU Logo" class = "mmu-logo">
-            <img src="{% static 'images/Web Logo' %}" alt="MMU Lost Hub Logo" class="losthub-logo">
-        </header>
+        <div class="whole-page">
+            <header>
 
-        <!-- ================================================== -->
-        <!--            Dropdown Menu Navigation                -->
-        <!-- ================================================== -->
-        <div class = "dropdown-nav">
-            <nav>
-                Menu button
-            </nav>
-            <div class = "dropdown-content">
-                <a href = "{% url 'mainPage' %}"> Home </a>
-                <a href = "{% url 'lost_posts' %}"> Lost Post </a>                 
-                <a href = "{% url 'found_posts' %}"> Found Post </a>                
-                <a href = "{% url 'profile' %}"> Profile </a>   
-                <a href="{% url 'chat_inbox' %}">Inbox</a>                    
-                <a href = "{% url 'feedback_form' %}"> Feedback/Report </a>
-                <a href="{% url 'logout' %}"> Logout </a>                   
-
-            </div>
-        </div>
-
-        <!-- ================================================== -->
-        <!--            Create Post Section                     -->
-        <!-- ================================================== -->
-        <div class = "create-post-box">
-            <h2>
-                CREATE POST
-            </h2>
-
-            <!-- ================================================== -->
-            <!--    Backend to Check Which Popup Msg To Display     -->
-            <!-- ================================================== -->
-            {% if messages %}
-                <script>                                                    // js code
-                    window.addEventListener("load", function () {
-
-                        //loop messages inside createpost.js
-                        {% for message in messages %} 
-
-                            {% if message.tags == "success" %}     
-
-                                // true = auto close popup / 2000 = 2 seconds
-                                showPopup("Success", "{{ message }}", true, 1000);
-
-                            {% else %}
-                                // show info = show error message 
-                                showPopup("Info", "{{ message }}", true, 1000);
-
-                            {% endif %}
-
-                        {% endfor %}
-                    });
-                </script>
-            {% endif %}
-
-            <form method = "POST" enctype = 'multipart/form-data'>      <!-- enctype add to upload photo -->
-                {% csrf_token %}                                        <!-- Django security protection code -->
-                
-                <!-- ============================== -->
-                <!--        SELECT POST TYPE        -->
-                <!-- ============================== -->
-                <label> Type: </label>
-                <select name = "post_type">
-
-                    <!-- Default -->
-                    <option value = ""> Select Post Type </option>
-
-                    <!-- Select Lost Post-->
-                    <option value = "lost" {% if post_data.post_type == "lost" %} selected {% endif %}> 
-                        Lost Post 
-                    </option>
-
-                    <!-- Select Found Post-->
-                    <option value = "found" {% if post_data.post_type == "found" %} selected {% endif %}> 
-                        Found Post 
-                    </option>
-
-                </select>
-
-                <br><br>
-
-                <!-- ================================================== -->
-                <!--                SELECT DATE TIME                    -->
-                <!-- ================================================== -->
-                <label> Date Time: </label>
-                <input type = "datetime-local" name = "post_datetime" value = "{{ post_data.post_datetime }}">
-
-                <br><br> 
-
-                <!-- ================================================== -->
-                <!--                   UPLOAD IMAGES                    -->
-                <!-- ================================================== -->
-                <label> Upload Item Image: </label>
-                
-                <input type = "file" id = "post_image" name = "userposts_images" accept = "image/*" hidden>                 <!-- Input image field / accept = "image/* (limit oni can choose photo) / id is for java-->
-                
-                <button type="button" id="uploadBtn">
-                    Add Image
-                </button>
-                
-                <!-- ====================================== -->
-                <!--       PREVIEW UPLOADED IMAGES          -->
-                <!-- ====================================== -->
-                <div id = "imagePreview_container" class = "imagePreview-container">
+                <!-- yt adjusted for css uses-->
+                <div class="header-left">               
+                    <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
+                    <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
                 </div>
 
-                <input type="hidden" name="cropped_images" id="cropped_images">
+                <!-- yt adjusted for css uses-->
+                <div class="header-right">
+                    <!-- Home icon -->
+                    <a href="{% url 'mainPage' %}" class="home-icon">
+                        <img src="{% static 'images/homeicon.png' %}" alt="Home">
+                    </a>
 
-                <br><br>
+                    <a href="{% url 'chat_inbox' %}" class="chat-icon">
+                        <img src="{% static 'images/chaticon.png' %}" alt="Chat">
+                    </a>
+
+                    <!-- Menu button -->
+                    <button type="button" class="menu-icon" onclick="toggleMenu()">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- yt adjusted for css uses-->
+            <div id="overlay" class="overlay"></div> 
+
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <!--              YT - DROPDWOWN NAV MENU               -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <div class = "dropdown-nav">
+                
+                <!-- yt adjusted for css uses-->
+                <nav id="menu" class="menu"> 
+                    <ul>
+                        <li>
+                            <a href="{% url 'lost_posts' %}"> Lost Post </a>  
+                        </li>
+                        <li>
+                            <a href="{% url 'found_posts' %}"> Found Post </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'profile' %}"> Profile </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'feedback_form' %}"> Feedback </a>
+                        </li>
+                        <li class="logout">
+                            <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="content">
 
                 <!-- ================================================== -->
-                <!--            SELECT ITEM CATEGORY                    -->
+                <!--            Create Post Section                     -->
                 <!-- ================================================== -->
-                <label> Item Category: </label>
-                <select name = "post_itemcategory">
+                <h2>CREATE POST</h2>
 
-                    <!-- Default -->
-                    <option value = ""> Select Category </option>
-
-                    <!-- Show (modal.py) and Select Item Categories -->
-                    {% for value, label in item_categories %}
-                        <option value="{{ value }}" {% if post_data.post_itemcategory == value %} selected {% endif %}>
-                            {{ label }}
-                        </option>
-                    {% endfor %}
-                </select>
-
-                <br><br>
-
-                <!-- ================================================== -->
-                <!--            SELECT LOCATION                      -->
-                <!-- ================================================== -->
-                <label> Location: </label>
-                <select name = "post_location" id = "post_location">
-
-                    <!-- Default -->
-                    <option value =""> Select Location </option>
+                <form method = "POST" enctype = 'multipart/form-data' class = "form" >      <!-- enctype add to upload photo -->
+                    {% csrf_token %}                                        <!-- Django security protection code -->
                     
-                    <!-- Show (migration 0002) and Select Locations -->
-                    {% for loc in locations %}
-                        <option value="{{loc.location_code}}" {% if post_data.post_location == loc.location_code %} selected {% endif %}>
-                            {{loc.location_name}}
-                        </option>
-                    {% endfor %}
+                    <div class = 'form-left'>
+                        <!-- ============================== -->
+                        <!--        SELECT POST TYPE        -->
+                        <!-- ============================== -->
+                        <label> Type: </label>
+                        <select name = "post_type" class="custom-source">
 
-                </select>
+                            <!-- Default -->
+                            <option value = "" selected disabled hidden> Select Post Type </option>
 
-                <br><br>
+                            <!-- Select Lost Post-->
+                            <option value = "lost" {% if post_data.post_type == "lost" %} selected {% endif %}  class = 'choice'> 
+                                Lost Post 
+                            </option>
 
-                <!-- ================================================== -->
-                <!--            MAP SELECT LOCATION                     -->
-                <!-- ================================================== -->
-                <p>Click Map to choose location: </p>
-                <div class = "map_box">
-                    <img src="{% static 'images/map-img.jpg' %}" id="smallMap" class="smallMap">
-                    <div id = "smallMap_marker" class = "smallMap-marker"> 📍 </div>
-                </div>
+                            <!-- Select Found Post-->
+                            <option value = "found" {% if post_data.post_type == "found" %} selected {% endif %}  class = 'choice'> 
+                                Found Post 
+                            </option>
 
-                <br><br>
+                        </select>
 
-                <!-- ================================================== -->
-                <!--                    DESCRIPTION                     -->
-                <!-- ================================================== -->
-                <label> Item Description: </label>
+                        <br><br>
 
-                <!-- placeholder = display text at text area -->
-                <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ ">
-                    {{ post_data.post_description }}
-                </textarea>
+                        <!-- ================================================== -->
+                        <!--                SELECT DATE TIME                    -->
+                        <!-- ================================================== -->
+                        <label> Date Time: </label>
+                        <input type = "datetime-local" id="post_datetime" name = "post_datetime" value = "{{ post_data.post_datetime }}">
 
-                <br><br>
+                        <br><br> 
 
-                <!-- onclick = will run a confirm popup first from createpost.js -->
-                <button type = "button" onclick = "confirmCreate(event)">
-                        Create Post 
-                </button>
+                        <!-- ================================================== -->
+                        <!--                   UPLOAD IMAGES                    -->
+                        <!-- ================================================== -->
+                        <label> Upload Item Image: </label>
+                        
+                        <input type = "file" id = "post_image" name = "userposts_images" accept = "image/*" hidden>                 <!-- Input image field / accept = "image/* (limit oni can choose photo) / id is for java-->
 
-            </form>
-        </div>
+                        <div class = "img" id = "imageGrid">
 
-        <!-- ====================================== -->
-        <!--          CROP IMAGE MODAL             -->
-        <!-- ====================================== -->
-        <div id ="crop_modal" class = "crop-modal">
+                            <button type="button" id="uploadBtn">
+                                +
+                            </button>
 
-            <!-- close crop modal button -->
-            <span id="close_crop" class="imgclose_button">
-                &times;
-            </span>
+                        </div>
 
-            <div id ="crop_container" class = "crop-container">
+                        <div id = "imagePreview_container" class = "imagePreview-container"></div>
 
-                <!-- Display photo uploaded to crop -->
-                <img id = 'crop_preview' class = "crop-preview">
+                        <input type="hidden" name="cropped_images" id="cropped_images">
 
-                <button type="button" id="confirmCropBtn">
-                    Crop
-                </button>
-            
+                        <br><br>
+
+                        <!-- ================================================== -->
+                        <!--            SELECT ITEM CATEGORY                    -->
+                        <!-- ================================================== -->
+                        <label> Item Category: </label>
+                        <select name = "post_itemcategory" class="custom-source">
+
+                            <!-- Default -->
+                            <option value = "" selected disabled hidden> Select Category </option>
+
+                            <!-- Show (modal.py) and Select Item Categories -->
+                            {% for value, label in item_categories %}
+                                <option value="{{ value }}" {% if post_data.post_itemcategory == value %} selected {% endif %}  class = 'choice'>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+                        <br><br>
+
+                        <!-- ================================================== -->
+                        <!--            SELECT LOCATION                      -->
+                        <!-- ================================================== -->
+                        <label> Location: </label>
+                        <select name = "post_location" id = "post_location" class="custom-source">
+
+                            <!-- Default -->
+                            <option value ="" selected disabled hidden> Select Location </option>
+                            
+                            <!-- Show (migration 0002) and Select Locations -->
+                            {% for loc in locations %}
+                                <option value="{{loc.location_code}}" {% if post_data.post_location == loc.location_code %} selected {% endif %}  class = 'choice'>
+                                    {{loc.location_name}}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+
+                        <br><br>
+
+                        <!-- ================================================== -->
+                        <!--                    DESCRIPTION                     -->
+                        <!-- ================================================== -->
+                        <label> Item Description: </label>
+
+                        <!-- placeholder = display text at text area -->
+                        <textarea name = "post_description" placeholder = " Describe the item or give it a name ^-^ ">{{ post_data.post_description }}</textarea>
+                    </div>
+
+                    <div class = 'form-right'>
+                        <!-- ================================================== -->
+                        <!--            MAP SELECT LOCATION                     -->
+                        <!-- ================================================== -->
+                        <p>Click Map to choose location: </p>
+                        <div class = "map_box">
+                            <img src="{% static 'images/map-img.jpg' %}" id="smallMap" class="smallMap">
+                            <div id = "smallMap_marker" class = "smallMap-marker"> 📍 </div>
+                        </div>
+
+                        <!-- onclick = will run a confirm popup first from createpost.js -->
+                        <button type = "button" onclick="confirmCreate(event)" class = 'create'>
+                                CREATE
+                        </button>
+                    </div>
+
+                </form>
             </div>
-        </div>
 
-        <!-- ====================================== -->
-        <!--         IMAGE PREVIEW MODAL           -->
-        <!-- ====================================== -->
-        <div id="preview_modal" class="preview-modal">
+            <!-- ====================================== -->
+            <!--          CROP IMAGE MODAL             -->
+            <!-- ====================================== -->
+            <div id ="crop_modal" class = "crop-modal">
 
-            <span id="close_preview" class="preview-close">
-                &times;
-            </span>
+                <div class = 'crop-box'>
+                    <!-- close crop modal button -->
+                    <span id="close_crop" class="crop-close">
+                        &times;
+                    </span>
 
-            <!-- left arrow -->
-            <button type="button" id="prev_image_btn" class="preview-arrow left-arrow">
-                ❮
-            </button>
+                    <div id ="crop_container" class = "crop-container">
 
-            <!-- show image -->
-            <img id="preview_modal_image" class="preview-modal-image">
+                        <!-- Display photo uploaded to crop -->
+                        <img id = 'crop_preview' class = "crop-preview">
+                    
+                    </div>
 
-            <!-- right arrow -->
-            <button type="button" id="next_image_btn" class="preview-arrow right-arrow">
-                ❯
-            </button>
+                    <button type="button" id="confirmCropBtn">
+                        Crop
+                    </button>
+                </div>
+            </div>
 
-            <button type="button" id="crop_again_btn" class="crop-again-btn">
-                Crop Again
-            </button>
+            <!-- ====================================== -->
+            <!--         IMAGE PREVIEW MODAL           -->
+            <!-- ====================================== -->
+            <div id="preview_modal" class="preview-modal">
 
-            <!-- delete -->
-            <button type="button" id="delete_image" class="delete-preview-btn">
-                Delete
-            </button>
+                <div class="preview">
 
-            <!-- set iamge as cover button-->
-            <button type="button" id="cover_btn" class="cover-button">
-                Cover Image
-            </button>
+                    <span id="close_preview" class="preview-close">
+                        &times;
+                    </span>
 
-        </div>
+                    <!-- left arrow -->
+                    <button type="button" id="prev_image_btn" class="preview-arrow left-arrow">
+                        ❮
+                    </button>
 
-        <!-- ================================================== -->
-        <!--                    MAP MODAL                       -->
-        <!-- ================================================== -->
-        <div id="map_modal" class="map_modal">
+                    <!-- right arrow -->
+                    <button type="button" id="next_image_btn" class="preview-arrow right-arrow">
+                        ❯
+                    </button>
 
-            <div class="mapmodal_content">
+                    <div class = 'img-box'>
+                        <!-- show image -->
+                        <img id="preview_modal_image" class="preview-img">
+                    </div>
 
-                <!-- Close map button -->
-                <span id="close_map" class="mapclose_button">
-                    &times;   <!-- x icon -->
-                </span>
+                    <div class = 'preview-btn'>
+                        <button type="button" id="crop_again_btn" class="crop-again-btn">
+                            Crop Again
+                        </button>
 
-                <!-- Scroller -->
-                <div class="map-scroll-container">
+                        <!-- set iamge as cover button-->
+                        <button type="button" id="cover_btn" class="cover-button">
+                            Set Cover
+                        </button>
+
+                        <!-- delete -->
+                        <button type="button" id="delete_image" class="delete-preview-btn">
+                            Delete Image
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================================================== -->
+            <!--                    MAP MODAL                       -->
+            <!-- ================================================== -->
+            <div id="map_modal" class="map_modal">
+
+                <div class="mapmodal_content">
+
+                    <!-- Close map button -->
+                    <span id="close_map" class="mapclose_button">
+                        &times;   <!-- x icon -->
+                    </span>
+
                     <div id = "location_label" class = "location_label"></div>
-                    <div class="big-map-box">
-                        <img
-                            src="{% static 'images/map-img.jpg' %}"
-                            id="bigMap"
-                            class="bigMap"
-                            alt="MMU Big Map"
-                        >
-                        <div id="bigMap_marker" class="bigMap-marker">
-                            📍
+
+                    <!-- Scroller -->
+                    <div class="map-scroll-container">
+                        <div class="big-map-box">
+                            <div class="map-relative-wrapper" style="position: relative; display: inline-block;">
+                                <img
+                                    src="{% static 'images/map-img.jpg' %}"
+                                    id="bigMap"
+                                    class="bigMap"
+                                    alt="MMU Big Map"
+                                >
+                                <div id="bigMap_marker" class="bigMap-marker">
+                                    📍
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- ================================================== -->
-        <!--             POP UP BOX MODAL                       -->
-        <!-- ================================================== -->
-        <div id = "popup" class = "popup hidden">
-            <div class = "popup-box">
-                <h3 id = "popup-title"></h3>
-                <p id = "popup-message"></p>
-                <button id = "popup-confirm"> OK </button>
-                <button id = "popup-cancel"> Cancel </button>
+            <!-- ====================================== -->
+            <!--           MESSAGE POPUP               -->
+            <!-- ====================================== -->
+            <div id="messagePopup" class="message-popup">
+
+                <div class="message-box">
+
+                    <h3 id="messageTitle"></h3>
+
+                    <p id="messageText"></p>
+
+                    <div class="popup-buttons">
+
+                        <button id="messageBtn">OK</button>
+
+                        <button id="messageCancelBtn">Cancel</button>
+
+                    </div>
+                </div>
             </div>
-        </div>
 
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <!--            yt - LOGOUT POPUP CONFIMATION           -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <div id="confirmPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Are you sure you want to logout?</p>
+
+                    <div class="popup-btns">
+                        <button onclick="confirmLogout()">OK</button>
+                        <button onclick="cancelLogout()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Logout Success Popup -->
+            <div id="successPopup" class="popup"></div>
+                        
+        </div>
     </body>
 
     <footer>

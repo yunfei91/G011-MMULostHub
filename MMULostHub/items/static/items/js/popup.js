@@ -2,94 +2,104 @@
 /* ====================================== 
             POPUP FUNCTIONS        
 ====================================== */
-// Wait until HTML loaded then start function
-document.addEventListener("DOMContentLoaded", () => {
+let popupCallback = null;
+let popupTimer = null;
 
-    // Get popup elements mainpage.js, createpost.js, editpost.js 
-    const popup = document.getElementById("popup");
-    const popupTitle = document.getElementById("popup-title");
-    const popupText = document.getElementById("popup-message");
-    const popupConfirm = document.getElementById("popup-confirm");
-    const popupCancel = document.getElementById("popup-cancel");
+const popup = document.getElementById("messagePopup");
+const popupIcon = document.getElementById("messageIcon");
+const popupTitle = document.getElementById("messageTitle");
+const popupText = document.getElementById("messageText");
+const popupBtn = document.getElementById("messageBtn");
+const popupCancel = document.getElementById("messageCancelBtn");
 
-    /* ====================================== 
-            CONFIRM BUTTON       
-     ====================================== */
-    // wait until user press confirm then start function
-    let confirmCallback = null;
+// close popup when click ok button + run function
+popupBtn.onclick = function () {
+    popup.style.display = "none";
+    if (popupCallback) {
+        popupCallback();
+        popupCallback = null;
+    }
+};
 
-    // user click confirm button start function
-    popupConfirm.addEventListener("click", () => {
+// close popup when click cancel button
+popupCancel.onclick = function () {
+    popup.style.display = "none";
+    popupCallback = null;
+};
 
-        // hide popup after confirm
-        popup.classList.add("hidden");  
+// RESET POPUP
+function resetPopupClass() {
+    popup.classList.remove("popup-success", "popup-error", "popup-confirm");
+}
 
-        if (confirmCallback) {
+// POPUP ERROR
+function showError(message){
 
-            // run function inside jf respectively
-            confirmCallback();
+    clearTimeout(popupTimer);
 
-            // reset after run function to avoid run repeatly
-            confirmCallback = null;
-        }
-    });
+    resetPopupClass();
+    popup.classList.add("popup-error");
 
-    /* ====================================== 
-            CANCEL BUTTON         
-     ====================================== */
-    popupCancel.addEventListener("click", () => {
+    popupTitle.innerText = "Error";
+    popupText.innerText = message;
 
-        // close pupup after click cancel button
-        popup.classList.add("hidden");
+    popupBtn.style.display = "none";
+    popupCancel.style.display = "none";
 
-        // don't run function bcz no confirm
-        confirmCallback = null;
+    popup.style.display = "flex";
 
-    });
+    popupTimer = setTimeout(() => {
+        popup.style.display = "none";
+    }, 2000);
+}
 
-    /* ====================================== 
-            POPUP MESSAGE (ERROR)        
-     ====================================== */
-    window.showPopup = function (           // parameters
-        title, 
-        message, 
-        autoClose = false, 
-        duration = 2000
-    ) {
-        popupTitle.innerText = title;
-        popupText.innerText = message;
-        popupConfirm.innerText = "OK";
-        popupCancel.style.display = "none";     // hide cancel button while error popup
-        confirmCallback = null;                 // default no run function while error popup
-        popup.classList.remove("hidden");       // show popup | classlist = css setting to hide popup
+// POPUP SUCCESS
+function showSuccess(message){
 
-        // error popup will auto close
-        if (autoClose) {
-            setTimeout(() => {
+    clearTimeout(popupTimer);
 
-                // hide popup after 2s / duration set inside js
-                popup.classList.add("hidden");
+    resetPopupClass();
+    popup.classList.add("popup-success");
 
-            }, duration);
-        }
-    };
+    popupTitle.innerText = "Success";
+    popupText.innerText = message;
 
-    /* ====================================== 
-            POPUP CONFIRMATION         
-     ====================================== */
-    window.showConfirmPopup = function (title, message, callback) {
-        popupTitle.innerText = title;
-        popupText.innerText = message;
-        popupConfirm.innerText = "Confirm";
-        popupCancel.style.display = "inline-block";
-        confirmCallback = callback;
-        popup.classList.remove("hidden");
-    };
+    popupBtn.style.display = "none";
+    popupCancel.style.display = "none";
 
-    window.closePopup = function () {
-        popup.classList.add("hidden");
-    };
+    popup.style.display = "flex";
 
+    popupTimer = setTimeout(() => {
+        popup.style.display = "none";
+    }, 1500);
+}
+
+// POPUP CONFIRMATION
+function showConfirm(title, message, callback){
+
+    clearTimeout(popupTimer);
+
+    resetPopupClass();
+    popup.classList.add("popup-confirm");
+
+    popupTitle.innerText = title;
+    popupText.innerText = message;
+
+    popupBtn.style.display = "inline-block";
+    popupBtn.innerText = "Confirm";
+    popupCancel.style.display = "inline-block";
+
+    popupCallback = callback;
+
+    popup.style.display = "flex";
+}
+
+// CLICK OUTSIDE CLOSE
+popup.addEventListener("click", function(event){
+    if(event.target === popup){
+        popup.style.display = "none";
+        popupCallback = null;
+    }
 });
 
 /* ====================================== 
@@ -152,21 +162,28 @@ function updateButtons() {
 function showStatusPopup(postId) {
 
     const popup = document.getElementById("statusPopup");
-
     popup.style.display = "flex";
 
+    // stautus popup confirm button
     document.getElementById("statusConfirmBtn").onclick = function () {
-
         document.getElementById("status_form").action = `/items/update-status/${postId}/`;
-
         document.getElementById("status_form").submit();
     };
 
+    // status popup cancel button
     document.getElementById("statusCancelBtn").onclick = function () {
-
         popup.style.display = "none";
     };
 }
+
+const statusPopup = document.getElementById("statusPopup");
+
+// CLICK OUTSIDE CLOSE
+statusPopup.addEventListener("click", function(event){
+    if(event.target === statusPopup){
+        statusPopup.style.display = "none";
+    }
+});
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
         yt - POST POPUP FUNCTION        
@@ -226,18 +243,7 @@ function openPost(el) { // el=this connection
     document.getElementById("m_date").innerText = el.dataset.date;
     document.getElementById("m_category").innerText = el.dataset.category;
     document.getElementById("m_location").innerText = el.dataset.locationName || "Unknown Location";
-    document.getElementById("m_description").innerText = el.dataset.description;
-
-    console.log(el.dataset.images);
-
-    images = el.dataset.images
-        ? el.dataset.images.split("|").filter(i => i)
-        : [];
-
-    console.log(images);
-    
-    currentIndex = 0;
-    showImg();
+    document.getElementById("m_description").innerText = (el.dataset.description && el.dataset.description.trim() !== "") ? el.dataset.description.trim() : "No description";
 
     /** ============================= */
     /**   Post Navigation Binding    */
@@ -316,7 +322,7 @@ function openPost(el) { // el=this connection
     const statusBtn = document.getElementById("status_btn");
     const statusContainer = document.getElementById("status_btn_container");
     
-    statusBtn.style.display = "inline-block";
+    statusBtn.style.display = "flex";
 
     statusBtn.innerText = status.charAt(0).toUpperCase() + status.slice(1);
 
@@ -328,6 +334,7 @@ function openPost(el) { // el=this connection
         "popup-status-claimed"
     );
 
+    // Change status
     if (status === "open") {
         statusBtn.classList.add("popup-status-open");
     }
@@ -338,21 +345,21 @@ function openPost(el) { // el=this connection
         statusBtn.classList.add("popup-status-claimed");
     }
 
+    // Check post owner for can click or not
     if (
-        String(ownerId) === String(CURRENT_USER_ID) &&
-        status === "open"
+        String(ownerId) == String(CURRENT_USER_ID) && status == "open"
     ) {
         statusBtn.style.cursor = "pointer";
     }
     else{
-        statusBtn.style.cursor = "not-allowed";
+        statusBtn.style.cursor = "none";
     }
 
+    //  Click status button
     statusBtn.onclick = function () {
 
         if (
-            String(ownerId) !== String(CURRENT_USER_ID) ||
-            status !== "open"
+            String(ownerId) !== String(CURRENT_USER_ID) || status !== "open"
         ) {
             return;
         }

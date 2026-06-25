@@ -1,19 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {                 //  DOMContentLoaded = wait html to load first then load js file to avoid cannot get element by id        
 
-    /* ============================================== 
-            Create Post Upload Image and Preview       
-     =============================================== */
-    document.getElementById("post_image").addEventListener("change", function (event) {     // addEventListener = see it's changes / changes = when user upload img
-        const file = event.target.files[0];                 // event = user action / target = input user added / files = user chosen file / [0] = first file
-
-        if (file) {                 // when user choose img then will run this if
-            const preview = document.getElementById("image_preview");
-
-            preview.src = URL.createObjectURL(file);                // website cannot directly preview file but need to convert into url
-            preview.style.display = "block";                        // from html display:none change to block
-        }
-    });
-
     /* ====================================== 
             Create Post Upload Image        
      ====================================== */
@@ -728,7 +714,7 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
 
     // open map modal when click small map
     mapSmall.addEventListener("click", function(){
-        modal.style.display = "block";
+        modal.style.display = "flex";
     });
 
     //close map modal when click close button
@@ -741,8 +727,11 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
                 Big Map Choose Area Functions            
     ===================================================*/
     mapBig.addEventListener("click", function(event){
+        
+        const rect = mapBig.getBoundingClientRect();
 
-        const rect = mapBig.getBoundingClientRect();            // Get bigMap's position inside website
+        const clickX = event.clientX - rect.left;
+        const clickY = event.clientY - rect.top;
 
         // natural = original width | client = width inside computer/website
         const scaleX = mapBig.naturalWidth / mapBig.clientWidth;
@@ -750,12 +739,11 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
 
         // event = mouse click
         // count the accurate coordinate in the map
-        const x = (event.clientX - rect.left) * scaleX;
-        const y = (event.clientY - rect.top) * scaleY;
+        const x = clickX * scaleX;
+        const y = clickY * scaleY;
 
         // show inside console the accurate coordinate to add to above                                          CONSOLE
         console.log("Clicked Position:", x, y);
-
 
         /* ====================================== 
                         Marker       
@@ -763,8 +751,8 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
 
         // Display Marker inside bigMap
         bigMarker.style.display = "block";
-        bigMarker.style.left = (event.clientX - rect.left) + "px";
-        bigMarker.style.top = (event.clientY - rect.top) + "px";
+        bigMarker.style.left = clickX + "px";
+        bigMarker.style.top = clickY + "px";
 
         // To make marker position in smallMap smaller bcz SmallMap
         const scaleSmallX = mapSmall.clientWidth / mapBig.clientWidth;
@@ -772,8 +760,8 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
         
         // Display Marker inside smallMap
         smallMarker.style.display = "block";
-        smallMarker.style.left = (event.clientX - rect.left) * scaleSmallX + "px";
-        smallMarker.style.top = (event.clientY - rect.top) * scaleSmallY + "px";
+        smallMarker.style.left = (clickX * scaleSmallX) + "px";
+        smallMarker.style.top = (clickY * scaleSmallY) + "px";
 
         /* =================================================================== 
                 Auto choose Loaction Dropdown after choosing are in Map        
@@ -796,7 +784,7 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
                     selectLocation(region.code);
 
                     // show a label above bigMap to show the location area user choose
-                    locationLabel.style.display = "block";
+                    locationLabel.style.display = "flex";
                     locationLabel.innerText = "Selected Location: " + region.name;
 
                     // location found then end loop
@@ -820,7 +808,7 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
                     selectLocation(region.code);
 
                     // show a label above bigMap to show the lacation area name user choose
-                    locationLabel.style.display = "block";
+                    locationLabel.style.display = "flex";
                     locationLabel.innerText = "Selected Location: " + region.name;
                     
                     // location found then end loop
@@ -841,7 +829,7 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
 
                     selectLocation(region.code);
 
-                    locationLabel.style.display = "block";
+                    locationLabel.style.display = "flex";
                     locationLabel.innerText = "Selected Location: " + region.name;
 
                     foundLocation = true;
@@ -853,19 +841,13 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
         // User chosen point is not inside any location region
         if(!foundLocation){
             // show pop up
-            showPopup(
-                "Invalid Area",
-                "This area is not assigned to any MMU places. Please choose another area or choose a location inside the dropdown list.",
-                true,   // auto close
-                1500
-            );
-
+            showError("This area is not assigned to any MMU places. Choose another.");
            
             // auto change te dropdown list to default
             selectLocation("");
 
             // show a label above bigMap to show none are chosen
-            locationLabel.style.display = "block";
+            locationLabel.style.display = "flex";
             locationLabel.innerText = "None Location Chosen. Please choose an area again.";
         }
     });
@@ -881,6 +863,7 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
                 break;
             }
         }
+        locationSelect.dispatchEvent(new Event("change"));
     }
 
     
@@ -955,5 +938,15 @@ document.addEventListener("DOMContentLoaded", function () {                 //  
         smallMarker.style.left = (centerX * scaleX) + "px";
         smallMarker.style.top  = (centerY * scaleY) + "px";
 
+    }
+});
+
+window.addEventListener("click", function(event){
+
+    // Map Modal
+    const mapModal = document.getElementById("map_modal");
+
+    if(event.target === mapModal){
+        mapModal.style.display = "none";
     }
 });

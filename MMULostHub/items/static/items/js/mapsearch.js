@@ -9,109 +9,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const regions = getRegions();
     const tooltip = document.getElementById("map-tooltip");
 
-    const canvas = document.getElementById("map-overlay");
-    const ctx = canvas.getContext("2d");
-
-
-    // ===============================
-    //     Canvas size = Map Size
-    // ===============================
-    function resizeCanvas() {
-
-        // real w & l
-        canvas.width = map.clientWidth;
-        canvas.height = map.clientHeight;
-
-        // w & l in website
-        canvas.style.width = map.clientWidth + "px";
-        canvas.style.height = map.clientHeight + "px";
-    }
-
-    resizeCanvas();
-
-    // will change whenever size the website is in other device
-    window.addEventListener("resize", resizeCanvas);
-
-    // ===============================
-    //      COLOUR MAP REGIONS
-    // ===============================
-    function drawRegion(region) {
-
-        // change to canvas default = no drawing yet
-        ctx.clearRect(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-
-        // fill up colour
-        ctx.fillStyle = "blue";
-
-        // ===============================
-        //       REGIONS SHAPE 
-        // ===============================
-        const scaleX = map.clientWidth / map.naturalWidth;
-        const scaleY = map.clientHeight / map.naturalHeight;
-
-        // ===============================
-        //           Rectangle
-        // ===============================
-        if (region.type === "rectangle") {
-
-            // fillRect = draw rectangle
-            ctx.fillRect(
-                region.x1 * scaleX,
-                region.y1 * scaleY,
-                (region.x2 - region.x1) * scaleX,
-                (region.y2 - region.y1) * scaleY
-            );
-        }
-
-        // ===============================
-        //           Polygon
-        // ===============================
-        if (region.type === "polygon") {
-
-            // connect line one by one (coordinate)
-            ctx.beginPath();
-
-            ctx.moveTo(
-                region.points[0][0] * scaleX,
-                region.points[0][1] * scaleY
-            );
-
-            for (let i = 1; i < region.points.length; i++) {
-
-                ctx.lineTo(
-                    region.points[i][0] * scaleX,
-                    region.points[i][1] * scaleY
-                );
-            }
-
-            ctx.closePath();
-            ctx.fill();
-        }
-
-        // ===============================
-        //           Circle
-        // ===============================
-        if (region.type === "circle") {
-
-            ctx.beginPath();
-
-            ctx.arc(
-                region.centerX * scaleX,
-                region.centerY * scaleY,
-                region.radius * scaleX,
-                0,
-                Math.PI * 2
-            );
-
-            ctx.fill();
-        }
-    }
-
     // ===============================
     //  FIND REGION WHEN MOUSE CLICK
     // ===============================
@@ -170,7 +67,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
     const locationCode = urlParams.get("location");
 
-    if (locationCode) {
+    if (locationCode === "unknown") {
+        filterUnknownPosts();
+        document.getElementById("back-btn").style.display = "block";
+        document.getElementById("unknown-btn").style.display = "none";
+    }
+    else if(locationCode) {
 
         // find region in all regions according to the location code taken from url
         const region = regions.find(r => r.code === locationCode);
@@ -187,17 +89,19 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ==================================
-    //      MAP HOVER (COLOUR REGION)
+    //              MAP HOVER 
     // ==================================
+    map.style.pointerEvents = "auto";
+
     map.addEventListener("mousemove", function (event) {
 
         const rect = map.getBoundingClientRect();
 
-        const scaleX = map.naturalWidth / map.clientWidth;
-        const scaleY = map.naturalHeight / map.clientHeight;
+        const relativeX = (event.clientX - rect.left) / rect.width;
+        const relativeY = (event.clientY - rect.top) / rect.height;
 
-        const x = (event.clientX - rect.left) * scaleX;
-        const y = (event.clientY - rect.top) * scaleY;
+        const x = relativeX * map.naturalWidth;
+        const y = relativeY * map.naturalHeight;
 
         const found = findRegion(x, y);
 
@@ -207,15 +111,11 @@ document.addEventListener("DOMContentLoaded", function () {
             // mouse change to hand
             map.style.cursor = "pointer";
 
-            // fill colour
-            drawRegion(found);
-
             // blw mouse appear region name
             tooltip.style.display = "block";
             tooltip.textContent = found.name;
-            tooltip.style.left = (event.clientX - rect.left + 15) + "px";
-            tooltip.style.top = (event.clientY - rect.top + 15) + "px";
-
+            tooltip.style.left = (event.clientX - rect.left - 40 ) + "px";
+            tooltip.style.top = (event.clientY - rect.top ) + "px";
         }
 
         // no region found 
@@ -224,43 +124,16 @@ document.addEventListener("DOMContentLoaded", function () {
             // default back mouse and no region name
             map.style.cursor = "default";
             tooltip.style.display = "none";
-
-            // clear colour fill
-            ctx.clearRect(
-                0,
-                0,
-                canvas.width,
-                canvas.height
-            );
         }
-    });
-
-    map.addEventListener("mouseleave", function () {
-
-        map.style.cursor = "default";
-        tooltip.style.display = "none";
-
     });
 
     // ===============================
     //          SHOW ALL POSTS
     // ===============================
     function showAllPosts() {
-
-        const posts = document.querySelectorAll(".post");
-        const noneMsg = document.getElementById("related-none-msg");
-
-        posts.forEach(post => {post.style.display = "block";});
-
-        noneMsg.style.display = "none";
-
-        document.getElementById("back-btn").style.display = "none";
-
-        document.getElementById("unknown-btn").style.display = "inline-block";
-
         const url = new URL(window.location.href);
         url.searchParams.delete("location");
-        window.history.pushState({}, "", url);
+        window.location.href = url.toString();
     }
 
     window.showAllPosts = showAllPosts;
@@ -270,48 +143,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // ===================================
     function showUnknownPosts() {
 
-        const posts = document.querySelectorAll(".post");
-        const noneMsg = document.getElementById("related-none-msg");
-
-        let visibleCount = 0;
-
-        posts.forEach(post => {
-
-            // find post wth no location
-            const location = post.dataset.locationCode || "";
-
-            // confirn found post is really no location
-            if (location.trim() === "") {
-
-                post.style.display = "block";
-                visibleCount++;
-
-            } 
-
-            // post will location wont show
-            else {
-
-                post.style.display = "none";
-            }
-        });
-
-        // no post with No location will show nonMsg
-        if (visibleCount === 0) {
-
-            noneMsg.style.display = "block";
-            noneMsg.textContent =
-                "No posts with unknown location";
-
-        } 
-        // got post with No location noneMsg wont appear
-        else {
-
-            noneMsg.style.display = "none";
-        }
-
-        // show back button and unknown location buton
-        document.getElementById("back-btn").style.display = "inline-block";
-        document.getElementById("unknown-btn").style.display = "none";
+        const url = new URL(window.location.href);
+        url.searchParams.set("location", "unknown");
+        window.location.href = url.toString();
     }
 
     window.showUnknownPosts = showUnknownPosts;
@@ -333,7 +167,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // clicked coordinate not in region 
         if (!found) {
-            showPopup("Invalid Area", "No region found", true, 1500);
             showAllPosts();
             return;
         }
@@ -349,7 +182,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function filterPosts(locationCode,locationName = locationCode) {
         
         const posts = document.querySelectorAll(".post");
-        const noneMsg = document.getElementById("related-none-msg");
 
         let visibleCount = 0;
 
@@ -369,30 +201,47 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        // if none post match to location selcted show noneMsg
-        if (visibleCount === 0) {
-            noneMsg.style.display = "block";
-            noneMsg.textContent =
-                `No posts in ${locationName}`;
-        } 
-        // got post match noneMsg wont appear
-        else {
-            noneMsg.style.display = "none";
-        }
-
         document.getElementById("back-btn").style.display = "inline-block";
         document.getElementById("unknown-btn").style.display = "inline-block";
+    }
+
+    // =========================
+    //      FILTER POSTS
+    // =========================
+    function filterUnknownPosts(locationCode,locationName = locationCode) {
+        
+        const posts = document.querySelectorAll(".post");
+
+        let visibleCount = 0;
+
+        posts.forEach(post => {
+
+            // get post location code ("location" / " "none)
+            const postLocation = post.dataset.locationCode || "";
+            const match = !postLocation || postLocation === "none";
+
+            // found match post
+            if (match) {
+                post.style.display = "block";
+                visibleCount++;
+            }
+            else {
+                post.style.display = "none";
+            }
+        });
+
+        document.getElementById("back-btn").style.display = "inline-block";
+        document.getElementById("unknown-btn").style.display = "none";
     }
 
     // =========================
     //      UPDATE WEB URL
     // =========================
     function updateURL(code) {
-        const url = new URL(window.location.href);
+        const url = new URL(window.location.origin + window.location.pathname);
         url.searchParams.set("location", code);
 
-        // pushState = wont refresh whenever url change or not
-        window.history.pushState({}, "", url);
+        window.location.href = url.toString();
     }
 
     // =========================

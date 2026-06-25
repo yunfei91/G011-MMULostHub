@@ -23,12 +23,13 @@ const prevBtn = document.getElementById("prev_image_btn");
 const nextBtn = document.getElementById("next_image_btn");
 const deletePreviewBtn = document.getElementById("delete_image");
 const setCoverBtn = document.getElementById("cover_btn");
-const imagePreviewContainer = document.getElementById("imagePreview_container");
+const imagePreviewContainer = document.getElementById("imageGrid");
 
 /* ====================================== 
         UPLOAD IMAGE BUTTON FUNCTION     
     ====================================== */
 uploadBtn.addEventListener("click", function(){
+    imageInput.value = "";
     imageInput.click();
 });
 
@@ -39,7 +40,7 @@ imageInput.addEventListener("change", function(e){
 
     // user only can upload 5 img only
     if(window.croppedImages.length >= 5){
-        showPopup("Error", "Maximum 5 images only.", true, 1000);
+        showError("Maximum 5 images only.");
         imageInput.value = "";
         return;
     }
@@ -64,7 +65,7 @@ imageInput.addEventListener("change", function(e){
             window.currentOriginalImage = event.target.result;
 
             // show crop modal
-            cropModal.style.display = "block";
+            cropModal.style.display = "flex";
 
             // destroy old cropper 
             if(cropper){
@@ -72,8 +73,8 @@ imageInput.addEventListener("change", function(e){
                 cropper = null;
             }
 
+            // open cropper
             cropPreview.onload = function(){
-
                 if(cropper){
                     cropper.destroy();
                     cropper = null;
@@ -156,7 +157,7 @@ cropButton.addEventListener("click", function(){
     imageInput.value = "";
 
     // show popup when crop successfully
-    showPopup("Success", "Image cropped successfully!", true, 500);
+    showSuccess("Image cropped successfully!");
 });
 
 /* ======================================
@@ -165,6 +166,7 @@ cropButton.addEventListener("click", function(){
 function renderImages(){
 
     imagePreviewContainer.innerHTML = "";
+    imagePreviewContainer.appendChild(uploadBtn);
 
     window.croppedImages.forEach((imgObj,index)=>{
 
@@ -194,20 +196,21 @@ function renderImages(){
         removeBtn.addEventListener("click", function(){
             window.croppedImages.splice(index,1);
             renderImages();
+
+            showSuccess('Image Deleted');
         });
 
         previewBox.appendChild(img);
         previewBox.appendChild(removeBtn);
         imagePreviewContainer.appendChild(previewBox);
-
     });
 
     // hide container if empty
     if(window.croppedImages.length === 0){
-        imagePreviewContainer.style.display = "none";
+        imagePreviewContainer.style.display = "grid";
     }
     else{
-        imagePreviewContainer.style.display = "flex";
+        imagePreviewContainer.style.display = "grid";
     }
 }
 
@@ -247,7 +250,7 @@ function openPreviewModal(){
         cropAgainBtn.style.display = "none";
     }
     else{
-        cropAgainBtn.style.display = "block";
+        cropAgainBtn.style.display = "flex";
     }
 
     updateCoverButtonState();
@@ -257,9 +260,7 @@ function openPreviewModal(){
     CLOSE PREVIEW MODAL BUTTON FUNCTION
 ====================================== */
 closePreview.addEventListener("click", function(){
-
     previewModal.style.display = "none";
-
 });
 
 /* ======================================
@@ -301,8 +302,8 @@ prevBtn.addEventListener("click", function(){
 deletePreviewBtn.addEventListener("click", function(){
 
     window.croppedImages.splice(window.currentPreviewIndex,1);
-
     renderImages();
+    showSuccess('Image Deleted');
 
     // no image left
     if(window.croppedImages.length === 0){
@@ -314,7 +315,6 @@ deletePreviewBtn.addEventListener("click", function(){
 
     // prevent overflow
     if(window.currentPreviewIndex >= window.croppedImages.length){
-
         window.currentPreviewIndex = window.croppedImages.length - 1;
     }
 
@@ -328,7 +328,7 @@ deletePreviewBtn.addEventListener("click", function(){
 cropAgainBtn.addEventListener("click", function(){
 
     previewModal.style.display = "none";
-    cropModal.style.display = "block";
+    cropModal.style.display = "flex";
 
     // crop with oriinal image
     const imageToCrop = window.croppedImages[currentPreviewIndex].originalImage;
@@ -347,6 +347,7 @@ cropAgainBtn.addEventListener("click", function(){
             aspectRatio: 4/3,
             viewMode: 1,
             autoCropArea: 1,
+            
         });
     };
 
@@ -372,7 +373,7 @@ setCoverBtn.addEventListener("click", function() {
     updateCoverButtonState();
 
     // show popup when change to cover already
-    showPopup("Success", "Set as cover image!", true, 1000);
+    showSuccess("Set as cover image succesfully~");
 });
 
 /* ======================================
@@ -397,3 +398,27 @@ if(existingImagesElement){
 
     renderImages();
 }
+
+// Close Ppup when click other place
+window.addEventListener("click", function(event){
+    
+    // Preview Modal
+    const previewModal = document.getElementById("preview_modal");
+
+    if(event.target === previewModal){
+        previewModal.style.display = "none";
+    }
+
+    // Crop Modal
+    const cropModal = document.getElementById("crop_modal");
+
+    if(event.target === cropModal){
+
+        cropModal.style.display = "none";
+
+        if(cropper){
+            cropper.destroy();
+            cropper = null;
+        }
+    }
+});

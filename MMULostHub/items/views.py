@@ -36,7 +36,7 @@ def mainPage(request):
 
     # search by filter many | getlist = can choose many to filter
     selected_category = request.GET.getlist('category')
-    selected_locations = request.GET.getlist('location')
+    selected_location = request.GET.get('location', '').strip()
     selected_category = [c for c in selected_category if c]
 
     # search by filter date range
@@ -60,7 +60,7 @@ def mainPage(request):
         'locations': MMULocation.objects.all(),
         'query': query,
         'selected_category': selected_category,
-        'selected_location': selected_locations,
+        'selected_location': selected_location,
         'start_date': start_date,
         'end_date': end_date,
     })
@@ -75,14 +75,13 @@ def apply_filters(request, post_box):
 
     # search by filter many | getlist = can choose many to filter
     selected_category = request.GET.getlist('category')
-    selected_locations = request.GET.getlist('location')
+    selected_location = request.GET.get('location', '').strip()
 
     # search by filter date range
     start_date = request.GET.get('start_date', '')
     end_date = request.GET.get('end_date', '')
 
     selected_category = [c for c in selected_category if c]
-    selected_locations = [l for l in selected_locations if l]
 
     # keyword
     if query:
@@ -104,9 +103,10 @@ def apply_filters(request, post_box):
         )
 
     # location
-    if selected_locations:
+    if selected_location:
         post_box = post_box.filter(
-            Q(post_location_id__in=selected_locations) | Q(post_location__isnull=True)
+            Q(post_location_id=selected_location) |
+            Q(post_location__isnull=True)
         )
 
     # start date
@@ -398,6 +398,13 @@ def found_posts(request):
         post.sorted_images = post.images.all().order_by('order')
         
     # yf add to search 
+    query = request.GET.get('q', '').strip()
+    selected_category = request.GET.getlist('category')
+    selected_location = request.GET.get('location', '').strip()
+    selected_category = [c for c in selected_category if c]
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+
     post_box = apply_filters(request, post_box)
 
     # yf add for paginator (change page)
@@ -411,11 +418,11 @@ def found_posts(request):
         #yf add to search
         'item_categories': CATEGORY_CHOICES,
         'locations': MMULocation.objects.all(),
-        'query': request.GET.get('q', ''),
-        'selected_category': request.GET.getlist('category'),
-        'selected_location': request.GET.getlist('location'),
-        'start_date': request.GET.get('start_date', ''),
-        'end_date': request.GET.get('end_date', ''),
+        'query': query,
+        'selected_category': selected_category,
+        'selected_location': selected_location,
+        'start_date': start_date,
+        'end_date': end_date,
     })
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -439,6 +446,13 @@ def lost_posts(request):
         post.sorted_images = post.images.all().order_by('order')
 
     #yf add to search
+    query = request.GET.get('q', '').strip()
+    selected_category = request.GET.getlist('category')
+    selected_location = request.GET.get('location', '').strip()
+    selected_category = [c for c in selected_category if c]
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+
     post_box = apply_filters(request, post_box)
 
     # yf add for paginator (change page)
@@ -452,11 +466,11 @@ def lost_posts(request):
         # yf add to sesrch
         'item_categories': CATEGORY_CHOICES,
         'locations': MMULocation.objects.all(),
-        'query': request.GET.get('q', ''),
-        'selected_category': request.GET.getlist('category'),
-        'selected_location': request.GET.getlist('location'),
-        'start_date': request.GET.get('start_date', ''),
-        'end_date': request.GET.get('end_date', ''),
+        'query': query,
+        'selected_category': selected_category,
+        'selected_location': selected_location,
+        'start_date': start_date,
+        'end_date': end_date,
     })
 
 # ======================================================
@@ -465,15 +479,23 @@ def lost_posts(request):
 @login_required(login_url='beginning')
 @never_cache
 def map_search(request):
-
-    post_box = Post.objects.all().order_by('-id')
+        
     location = request.GET.get("location")
-    
+
+    post_box = Post.objects.all().prefetch_related('images').order_by('-id')
+
     if location:
         post_box = post_box.filter(post_location__location_code=location)
 
+    for post in post_box:
+        post.sorted_images = post.images.all().order_by('order')
+
+    paginator = Paginator(post_box, 8)
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
+
     return render(request, 'items/mapsearch.html', {
-        'posts': post_box,
+        'posts': posts,
         'locations': MMULocation.objects.all(),
     })
 
