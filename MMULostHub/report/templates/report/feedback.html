@@ -82,35 +82,41 @@
             </div>
             
             <div class="content">
-        
-                <h2>Feedback / Report</h2>
-                <p>Leave your comments / suggestions here!</p>
 
-                <form action="{% url 'feedback_form' %}" method="POST" enctype="multipart/form-data">
+                <div class="feedback-title">
+                    <h2>Feedback</h2>
+                    <p>Leave your comments / suggestions here!</p>
+                </div>
+
+                <div class="feedback-wrapper">
+                    <form action="{% url 'feedback_form' %}" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
 
-                    <input type="hidden" name="next" value="{{ next_url }}">
+                        <input type="hidden" name="next" value="{{ next_url }}">
 
-                    <label for="comments">Your feedback:</label>
-                    <textarea id="comments"
-                              name="comments"
-                              placeholder="Please enter your feedback here..."
-                              rows="10"></textarea>
+                        <label for="comments">Your Feedback</label>
 
-                    <div class="upload-group" style="margin-top: 15px;">
-                        <label for="image-upload">Upload Image (optional):</label>
-                        <input type="file" id="image-upload" name="image-upload" accept="image/*">
-                    </div> 
+                        <textarea id="comments"
+                                  name="comments"
+                                  placeholder="Please enter your feedback here..."
+                                  rows="10"></textarea>
 
-                    <div class="button-group">
-                        <button 
-                            type="submit"
-                            class="btn"
-                            onclick="return confirm('Are you sure you want to submit?')">
-                            SUBMIT
-                        </button>
-                    </div>
-                </form>
+                        <div class="upload-group">
+                            <label for="image-upload">Upload Image (optional)</label>
+                            <input type="file" id="image-upload" name="image-upload" accept="image/*">
+                        </div>
+
+                        <div class="button-group">
+                            <button 
+                                type="submit"
+                                class="btn"
+                                onclick="return confirm('Are you sure you want to submit?')">
+                                SUBMIT
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
             </div>
 
             <!-- yt added -->
