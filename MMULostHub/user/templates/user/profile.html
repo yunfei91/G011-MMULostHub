@@ -353,8 +353,8 @@
 
                                                     <!-- Display post description content -->
                                                     <div class="post-description-box">
-                                                        <div id="m_description">
-                                                            {{ post.post_description }}
+                                                        <div class="m_description">
+                                                            {{ post.post_description|default:"No description" }}
                                                         </div>
                                                     </div>
                                                     <!-- --------------------------------- -->
@@ -640,8 +640,8 @@
                                                     </div>
 
                                                     <div class="post-description-box">
-                                                        <div id="m_description">
-                                                            {{ post.post_description }}
+                                                        <<div class="m_description">
+                                                            {{ post.post_description|default:"No description" }}
                                                         </div>
                                                     </div>
 
@@ -921,8 +921,8 @@
                                                     </div>
 
                                                     <div class="post-description-box">
-                                                        <div id="m_description">
-                                                            {{ post.post_description }}
+                                                        <div class="m_description">
+                                                            {{ post.post_description|default:"No description" }}
                                                         </div>
                                                     </div>
 
