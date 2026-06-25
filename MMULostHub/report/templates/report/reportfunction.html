@@ -1,4 +1,5 @@
 {% load static %}
+<!DOCTYPE html>
 <html>
     <head>
         <link rel="stylesheet" href="{% static 'report/css/report-post.css' %}">
@@ -6,34 +7,29 @@
 
         <script src="{% static 'items/js/header.js' %}" defer></script>
         <script src="{% static 'items/js/logout.js' %}" defer></script>
+
         <script>
             window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";
             const CURRENT_USER_ID = "{{ request.user.id|default:'' }}";
         </script>
 
-        <title>
-            MMU Lost Hub
-        </title>
+        <title>MMU Lost Hub</title>
 
         <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
         <meta http-equiv="Pragma" content="no-cache">
         <meta http-equiv="Expires" content="0">
-
     </head>
 
     <body>
-
         <div class="whole-page">
 
             <header>
-
                 <div class="header-left">
                     <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
-                    <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
+                    <img src="{% static 'images/WebLogo-header.png' %}" alt="Lost Hub Logo" class="losthub-logo">
                 </div>
 
                 <div class="header-right">
-
                     <a href="{% url 'mainPage' %}" class="home-icon">
                         <img src="{% static 'images/homeicon.png' %}" alt="Home">
                     </a>
@@ -47,151 +43,111 @@
                         <span></span>
                         <span></span>
                     </button>
-
                 </div>
-
             </header>
 
             <div id="overlay" class="overlay"></div>
 
             <div class="dropdown-nav">
-
                 <nav id="menu" class="menu">
                     <ul>
-
                         <li>
-                            <a href="{% url 'lost_posts' %}">
-                                Lost Post
-                            </a>
+                            <a href="{% url 'lost_posts' %}">Lost Post</a>
                         </li>
 
                         <li>
-                            <a href="{% url 'found_posts' %}">
-                                Found Post
-                            </a>
+                            <a href="{% url 'found_posts' %}">Found Post</a>
                         </li>
 
                         <li>
-                            <a href="{% url 'profile' %}">
-                                Profile
-                            </a>
+                            <a href="{% url 'profile' %}">Profile</a>
                         </li>
 
                         <li>
-                            <a href="{% url 'feedback_form' %}?next={{ next_url|urlencode }}">
-                                Feedback
-                            </a>
+                            <a href="{% url 'feedback_form' %}?next={{ next_url|urlencode }}">Feedback</a>
                         </li>
 
                         <li class="logout">
-                            <a href="javascript:void(0);" onclick="showLogoutConfirm()">
-                                Logout
-                            </a>
+                            <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
                         </li>
-
                     </ul>
                 </nav>
-
             </div>
 
             <div class="content">
 
-                <h2>Report Post</h2>
+                <div class="reportpost-title">
+                    <h2>Report Post</h2>
+                    <p>Tell us why you are reporting this post.</p>
+                </div>
 
-                {% if post %}
-                    <p>
-                        You are reporting post ID:
-                        {{ post.id }}
-                        by
-                        {{ post.post_user.username }}
-                    </p>
+                <div class="reportpost-wrapper">
 
-                    <p>
-                        <strong>Type:</strong>
-                        {{ post.post_type }}
-                    </p>
+                    <form action="{% url 'submit_report' %}"
+                          method="POST"
+                          enctype="multipart/form-data">
 
-                    <p>
-                        <strong>Description:</strong>
-                        {{ post.post_description }}
-                    </p>
-                {% endif %}
+                        {% csrf_token %}
 
-                <form action="{% url 'submit_report' %}"
-                      method="POST"
-                      enctype="multipart/form-data">
+                        <input type="hidden" name="next" value="{{ next_url }}">
 
-                    {% csrf_token %}
+                        {% if post %}
+                            <input type="hidden" name="post_id" value="{{ post.id }}">
+                        {% endif %}
 
-                    <input type="hidden"
-                           name="next"
-                           value="{{ next_url }}">
+                        <label for="comments">Reason for Reporting</label>
 
-                    {% if post %}
-                        <input type="hidden"
-                               name="post_id"
-                               value="{{ post.id }}">
-                    {% endif %}
+                        <textarea
+                            id="comments"
+                            name="comments"
+                            rows="8"
+                            required
+                            placeholder="Please describe the issue..."></textarea>
 
-                    <div>
-                        <label for="comments">
-                            Reason for reporting:
-                        </label>
-                        <br>
+                        <div class="upload-group">
+                            <label for="image-upload">Upload Image (optional)</label>
 
-                        <textarea name="comments"
-                                  id="comments"
-                                  rows="4"
-                                  cols="50"
-                                  required
-                                  placeholder="Please describe the issue..."></textarea>
-                    </div>
+                            <input
+                                type="file"
+                                id="image-upload"
+                                name="image-upload"
+                                accept="image/*">
 
-                    <br>
+                            <div id="preview-container">
+                                <button
+                                    type="button"
+                                    id="remove-image"
+                                    aria-label="Remove image">
+                                    ×
+                                </button>
 
-                    <div>
-                        <label for="image-upload">
-                            Upload Image (Optional):
-                        </label>
+                                <img id="preview-image" alt="Preview">
+                            </div>
+                        </div>
 
-                        <input type="file"
-                               name="image-upload"
-                               id="image-upload">
-                    </div>
+                        <div class="button-group">
+                            <button
+                                type="submit"
+                                class="btn"
+                                onclick="return confirm('Are you sure you want to submit?')">
+                                SUBMIT
+                            </button>
+                        </div>
 
-                    <br>
+                    </form>
 
-                    <button type="submit"
-                            class="btn"
-                            onclick="return confirm('Are you sure you want to submit?')">
-                        SUBMIT
-                    </button>
-
-                    {% if next_url %}
-                        <a href="{{ next_url }}">Cancel</a>
-                    {% else %}
-                        <a href="{% url 'mainPage' %}">Cancel</a>
-                    {% endif %}
-
-                </form>
+                </div>
 
             </div>
 
             <div id="confirmPopup" class="popup-modal">
                 <div class="popup-box">
-
                     <p>Are you sure you want to logout?</p>
 
                     <div class="popup-btns">
-                        <button onclick="confirmLogout()">
-                            OK
-                        </button>
-
-                        <button onclick="cancelLogout()">
-                            Cancel
-                        </button>
+                        <button onclick="confirmLogout()">OK</button>
+                        <button onclick="cancelLogout()">Cancel</button>
                     </div>
-
                 </div>
             </div>
 
@@ -201,6 +157,27 @@
             <p>© 2026 MMU Lost Hub</p>
         </footer>
 
-    </body>
+        <script>
+            const input = document.getElementById("image-upload");
+            const preview = document.getElementById("preview-image");
+            const container = document.getElementById("preview-container");
+            const removeBtn = document.getElementById("remove-image");
 
+            input.addEventListener("change", function () {
+                if (this.files.length === 0) {
+                    container.style.display = "none";
+                    return;
+                }
+
+                preview.src = URL.createObjectURL(this.files[0]);
+                container.style.display = "block";
+            });
+
+            removeBtn.addEventListener("click", function () {
+                input.value = "";
+                preview.src = "";
+                container.style.display = "none";
+            });
+        </script>
+    </body>
 </html>

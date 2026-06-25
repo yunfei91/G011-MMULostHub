@@ -41,10 +41,8 @@ body::before{
 
 .content{
     flex: 1;
-
     display:flex;
     flex-direction:column;
-
     padding:15px 0 0;
 }
 
@@ -666,6 +664,9 @@ footer{
     }
 }
 
+/* ===================================== */
+/*           Feedback Title              */
+/* ===================================== */
 .feedback-title{
     width: 82%;
     margin: 0 auto 5px;
@@ -686,11 +687,30 @@ footer{
     color: #4f5668;
 }
 
+.feedback-title h2{
+    margin: 0;
+
+    font-family: 'Slackey', cursive;
+    font-size: 40px;
+
+    color: #1f1f1f;
+
+    letter-spacing: 1px;
+
+    font-weight: normal;
+
+    text-shadow:
+        0 2px 8px rgba(255,255,255,.45);
+}
+
+/* ===================================== */
+/*          Feedback Wrapper             */
+/* ===================================== */
 .feedback-wrapper{
     width:72%;
     min-height:350px;
 
-    margin: auto;
+    margin: 0 auto;
     padding:35px 55px;
 
     border-radius:28px;
@@ -703,10 +723,16 @@ footer{
         0 10px 25px rgba(0,0,0,.08);
 }
 
+/* ===================================== */
+/*            Feedback Form              */
+/* ===================================== */
 .feedback-wrapper form{
     width: 58%;
 }
 
+/* ===================================== */
+/*          Feedback Label               */
+/* ===================================== */
 .feedback-wrapper label{
     display: block;
     margin-bottom: 10px;
@@ -717,6 +743,9 @@ footer{
     color: #1f2738;
 }
 
+/* ===================================== */
+/*           Feedback Textarea           */
+/* ===================================== */
 .feedback-wrapper textarea{
     width: 100%;
     height: 140px;
@@ -735,6 +764,9 @@ footer{
     font-size: 16px;
 }
 
+/* ===================================== */
+/*            Upload Section             */
+/* ===================================== */
 .upload-group{
     margin-top: 28px;
 }
@@ -744,6 +776,9 @@ footer{
     font-size: 15px;
 }
 
+/* ===================================== */
+/*            Submit Button              */
+/* ===================================== */
 .button-group{
     margin-top: 32px;
 }
@@ -777,23 +812,11 @@ footer{
     transform: translateY(-3px);
 }
 
-.feedback-title h2{
-    margin: 0;
-
-    font-family: 'Slackey', cursive;
-    font-size: 40px;
-
-    color: #1f1f1f;
-
-    letter-spacing: 1px;
-
-    font-weight: normal;
-
-    text-shadow:
-        0 2px 8px rgba(255,255,255,.45);
-}
 
 
+/* ===================================== */
+/*            Image Preview              */
+/* ===================================== */
 #preview-container{
     display:none;
     position:relative;
@@ -816,6 +839,9 @@ footer{
     box-shadow:0 6px 18px rgba(0,0,0,.10);
 }
 
+/* ===================================== */
+/*          Remove Image Button          */
+/* ===================================== */
 #remove-image{
 
     position:absolute;
