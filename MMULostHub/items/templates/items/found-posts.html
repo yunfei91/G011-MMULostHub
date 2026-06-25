@@ -43,7 +43,7 @@
                     <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
                 </div>
 
-                <!-- yt adjusted for css uses-->
+                <!-- yt adjusted for css uses -->
                 <div class="header-right">
                     <!-- Home icon -->
                     <a href="{% url 'mainPage' %}" class="home-icon">
@@ -56,6 +56,7 @@
 
                     <!-- Menu button -->
                     <button type="button" class="menu-icon" onclick="toggleMenu()">
+                        <!-- Menu icon 3 lines -->
                         <span></span>
                         <span></span>
                         <span></span>
@@ -63,6 +64,7 @@
                 </div>
             </header>
 
+            <!-- outside of the menu list -->
             <div id="overlay" class="overlay"></div> 
 
             <!-- ================================================== -->
@@ -85,6 +87,7 @@
                             <a href="{% url 'feedback_form' %}"> Feedback </a>
                         </li>
                         <li class="logout">
+                            <!-- Show logout confirmation popup -->
                             <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
                         </li>
                     </ul>
@@ -263,13 +266,32 @@
                 <!-- ===================================== -->
                 <div class="post-list">
 
-                    {% for post in posts %}
+                    {% for post in posts %} <!-- Loop through all posts from backend -->
 
                         <!-- Open popup modal after clicked -->
                         <!-- Store username into HTML attribute, so JS can read it-->
+                        <!-- data-name = store display name (profile name or username) for JavaScript -->
+                        <!-- data-user = store username of post owner -->
+                        <!-- data-user-id = store user ID for permission checking -->
+                        <!-- data-avatar = store user avatar URL with fallback default image -->
+                        <!-- data-chat-url = store chat URL with return path parameter -->
+                        <!-- data-profile = store link to user profile page -->
+                        <!-- data-type = store post type (e.g., lost or found) -->
+                        <!-- data-date = store post creation datetime -->
+                        <!-- data-category = store human-readable item category -->
+                        <!-- data-location-code/data-location-name = store location code and location name -->
+                        <!-- data-description = store post description text -->
+                        <!-- data-images = store post images as a pipe-separated string -->
+                        <!-- data-post-id = store unique post ID -->
+                        <!-- data-status = store post status -->
+                        <!-- data-edit-url = store edit post URL -->
+                        <!-- data-delete-url = store delete post URL -->
+                        <!-- data-report-post-url = store report post URL -->
+                        <!-- data-report-user-url = store report user URL -->
+
                         <div class="post"
                             onclick="openPost(this)" 
-                            data-name="{% if post.post_user.profile.name %}
+                            data-name="{% if post.post_user.profile.name %} 
                                         {{ post.post_user.profile.name }}
                                     {% else %}
                                         {{ post.post_user.username }}
@@ -632,8 +654,11 @@
 
                             <div class="modal-left">
                                 <div class="popup-user">
-                                    <a id="m_user_link" href="">
+                                
+                                    <!-- Link to author's profile page -->
+                                    <a id="m_user_link" href=""> 
                                         <img id="m_avatar" src="" alt="avatar" class="popup-avatar">
+                                        <!-- Display author's name -->
                                         <span id="m_user"></span>
                                     </a>
                                 </div>
@@ -756,7 +781,7 @@
                     <p>Are you sure you want to logout?</p>
 
                     <div class="popup-btns">
-                        <button onclick="confirmLogout()">OK</button>
+                        <button onclick="confirmLogout()">Yes</button>
                         <button onclick="cancelLogout()">Cancel</button>
                     </div>
                 </div>
@@ -767,4 +792,5 @@
     <footer>
         <p>© 2026 MMU Lost Hub<br></p>
     </footer>
+    
 </html>

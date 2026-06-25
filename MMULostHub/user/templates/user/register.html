@@ -38,12 +38,14 @@
                                     {% if name_error %}
                                         <p class="message error-message">{{ name_error }}</p>
                                     {% endif %}
+
                                     <!--Email-->
                                     <input type="text" id="email" name="email" placeholder="Email" value="{{ email }}" oninput="checkEmail()">
                                     <p id="email-status"></p>
                                     {% if email_error %}
                                         <p class="message error-message">{{ email_error }}</p>
                                     {% endif %}
+
                                     <!--Password-->
                                     <div class="password-box">
                                         <input type="password" id="password" name="password" placeholder="Password" oninput="checkPassword()">
@@ -106,9 +108,14 @@
                 window.location.replace("{% url 'beginning' %}")
             }
             
+            /* ====================================== 
+                           Navigation
+            ====================================== */
+            // Redirect user to landing page
             const form = document.getElementById("registerForm");
             const popup = document.getElementById("errorPopup");
 
+            // Display popup message
             function showPopup(msg){
                 popup.innerHTML = msg;
                 popup.classList.add("show");
@@ -125,6 +132,10 @@
                 const pw = document.getElementById("password").value.trim();
                 const cpw = document.getElementById("confirm_password").value.trim();
 
+                /* ======================================
+                            Form Validation
+                ====================================== */
+                // Validate required fields
                 if (!name || !email || !pw || !cpw) {
                     e.preventDefault();
                     showPopup("Please fill in all fields");
@@ -165,14 +176,19 @@
             let passwordValid = false;
             let match = false;
 
+            /* ======================================
+                    Name Availability Check
+            ====================================== */
             let nameTimeout;
             let currentName = "";
             const checkNameUrl = "{% url 'check_name' %}";
 
+            // Track username validation state
             function checkName() {
                 const input = document.getElementById("name");
                 const status = document.getElementById("name-status");
-
+                
+                // Verify username availability via AJAX request
                 let name = input.value.trim();
                 currentName = name;
 
@@ -183,6 +199,7 @@
                     return;
                 }
 
+                // Show loading status while checking username
                 status.className = "message info-message";
                 status.innerHTML = "Checking...";
 
@@ -194,10 +211,12 @@
                         if (name !== currentName) return;
 
                         if (data.exists) {
+                            // Username already exists
                             status.className = "message error-message";
                             status.innerHTML = "Name already taken";
                             nameValid = false;
                         } else {
+                            // Username is available
                             status.className = "message success-message";
                             status.innerHTML = "Name available";
                             nameValid = true;
@@ -211,12 +230,15 @@
                 }, 1000);
             }
             
-            /*----------Email----------*/
+            /* ======================================
+                    Email Availability Check
+            ====================================== */
             let emailTimeout;
             let currentEmail = "";
             const checkEmailUrl = "{% url 'check_email'%}";
                 
                 function checkEmail() {
+                    // Track email validation state
                     const input = document.getElementById("email");
                     const status = document.getElementById("email-status");
 
@@ -239,6 +261,7 @@
 
                     emailTimeout = setTimeout(() => {
 
+                        // Validate MMU email format
                         let pattern = /^[A-Za-z0-9._%+-]+@(mmu\.edu\.my|student\.mmu\.edu\.my)$/;
                         
                         if (!pattern.test(email)) {
@@ -247,6 +270,7 @@
                             return;
                         }
 
+                        // Verify email availability via AJAX request
                         fetch(`${checkEmailUrl}?email=${encodeURIComponent(email)}`)
                         .then(res => res.json())
                         .then(data => {
@@ -270,8 +294,9 @@
                         });
                     }, 1500);
                 }
+
             /*----------Password----------*/
-           function setValid(id, ok){
+            function setValid(id, ok){
                 const el = document.getElementById(id);
                 el.classList.toggle("valid", ok);
                 el.classList.toggle("invalid", !ok);
@@ -282,6 +307,7 @@
                 const cpw = document.getElementById("confirm_password").value;
                 const matchText = document.getElementById("match-text");
 
+                // Validate password strength requirements
                 setValid("letter", /[A-Za-z]/.test(pw));
                 setValid("number", /[0-9]/.test(pw));
                 setValid("symbol", /[@#$*.]/.test(pw));
@@ -311,7 +337,10 @@
                     matchText.innerHTML = "Password not match";
                 }
             }
-            /* Show Password Button */
+
+            /* ======================================
+                    Password Visibility Toggle
+            ====================================== */
             function showPassword(inputId, icon) {
                 const input = document.getElementById(inputId);
 

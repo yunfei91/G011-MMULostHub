@@ -384,11 +384,16 @@ def deletePost(request, post_id):
 @never_cache
 def found_posts(request):
 
+    # Search all found item posts
+    # Load cover image data , improve performance
+    # Prefetch related images to reduce database queries
+    # Display newest posts first
     post_box = Post.objects.filter(post_type='found') \
     .select_related('cover_image') \
     .prefetch_related('images') \
     .order_by('-id')
 
+    # Process images for each post , arrange post images by display order
     for post in post_box:
         post.sorted_images = post.images.all().order_by('order')
         
@@ -420,11 +425,16 @@ def found_posts(request):
 @never_cache
 def lost_posts(request):
 
+    # Search all lost item posts
+    # Load cover image data , improve performance
+    # Prefetch related images to reduce database queries
+    # Display newest posts first
     post_box = Post.objects.filter(post_type='lost') \
     .select_related('cover_image') \
     .prefetch_related('images') \
     .order_by('-id')
 
+    # Process images for each post , arrange post images by display order
     for post in post_box:
         post.sorted_images = post.images.all().order_by('order')
 
@@ -492,11 +502,6 @@ def update_post_status(request, post_id):
         post.post_status = "claimed"
 
     post.save()
-
-    messages.success(
-        request,
-        "Post status updated successfully!"
-    )
 
     next_url = request.POST.get("next")
 

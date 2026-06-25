@@ -60,7 +60,8 @@ def submit_report(request):
 
     return render(request, 'report/reportfunction.html', {'post':post})
 
-@login_required
+@login_required(login_url='beginning')
+@never_cache
 @reverify_required
 def report_user(request, user_id):
     reported_user = get_object_or_404(User, id=user_id)

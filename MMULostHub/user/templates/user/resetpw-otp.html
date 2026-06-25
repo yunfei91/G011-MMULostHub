@@ -69,7 +69,8 @@
             </footer>
         </div>
 
-        {{ otp_remaining|json_script:"otp-time" }} <!-- Pass python to JS, after pass <script><p id="otpTimer">60</script>-->
+        <!-- Pass python to JS, after pass <script><p id="otpTimer">60</script>-->
+        {{ otp_remaining|json_script:"otp-time" }}
         {{ resend_remaining|json_script:"resend-time" }}
 
         <script>
@@ -96,7 +97,8 @@
             let resendTime = 0;
             
             try {
-                otpTime = JSON.parse(document.getElementById("otp-time").textContent); // Convert string to number
+                // Convert string to number
+                otpTime = JSON.parse(document.getElementById("otp-time").textContent);
                 resendTime = JSON.parse(document.getElementById("resend-time").textContent);
             } catch (e) {
                 console.log("Timer init error", e);
@@ -139,7 +141,8 @@
                 });
 
                 input.addEventListener("keydown", (e) => {
-                    if (e.key === "Backspace" && !input.value && index > 0) { // Move back when delete
+                    // Move back when delete
+                    if (e.key === "Backspace" && !input.value && index > 0) {
                         inputs[index - 1].focus();
                     }
                 });

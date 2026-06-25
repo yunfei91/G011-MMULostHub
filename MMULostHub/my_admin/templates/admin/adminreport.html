@@ -1,118 +1,174 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head>
-        <title>
-            MMU Lost Hub
+        <!-- yt added -->
+        <link rel="stylesheet" href="{% static 'items/css/main-layout.css' %}">
+
+        <script src="{% static 'items/js/header.js' %}" defer></script>
+        <script src="{% static 'items/js/logout.js' %}" defer></script>
+        <script>window.DJANGO_LOGOUT_URL = "{% url 'logout' %}";</script>
+
+        <title> 
+            MMU Lost Hub 
         </title>
+        
+        <!-- Prevent browser cache, user cannot press back to access previous page -->
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
+        <!-- Older browser cache prevention -->
+        <meta http-equiv="Pragma" content="no-cache">
+        <!-- Expire page immediately -->
+        <meta http-equiv="Expires" content="0">
     </head>
+
     <body>
-        <header>
-            <h1>
-                Lost Hub Logo
-            </h1>
-        </header>
-        <div class="dropdown-nav">
-            <nav>
-                Menu
-            </nav>
-            <div class="dropdown-content">
-                <a href="{% url 'admin_mainpage' %}">Home</a> <!--zinc admin home page link-->
-                <a href="{% url 'admin_user' %}">View User</a> <!--zinc view user link-->
-                <a href="{% url 'admin_feedback' %}">View Feedback</a> <!--zinc feedback/report link-->
-                <a href="{% url 'admin_report' %}">View Report</a>
-                <a href="{% url 'logout' %}">Logout</a> <!--yt logout link-->
+        <div class="whole-page">
+            <header>
+                <div class="header-left"> <!-- yt adjusted for css uses-->              
+                    <img src="{% static 'images/MMULogo.png' %}" alt="MMU Logo" class="mmu-logo">
+                    <img src="{% static 'images/WebLogo-header.png' %}" alt="MMU Logo" class="losthub-logo">
+                </div>
+
+                <div class="header-right"> <!-- yt adjusted for css uses-->
+                    <!-- Home icon -->
+                    <a href="{% url 'admin_mainpage' %}" class="home-icon">
+                        <img src="{% static 'images/homeicon.png' %}" alt="Home">
+                    </a>
+
+                    <!-- Menu button --> <!-- yt adjusted for css uses-->
+                    <button type="button" class="menu-icon" onclick="toggleMenu()">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </header>
+
+            <div id="overlay" class="overlay"></div> <!-- yt adjusted for css uses-->
+
+            <!-- ================================================== -->
+            <!--            Dropdown Menu Navigation                -->
+            <!-- ================================================== -->
+            <div class = "dropdown-nav">
+                
+                <nav id="menu" class="menu"> <!-- yt adjusted for css uses-->
+                    <ul>
+                        <li>
+                        <a href="{% url 'admin_user' %}"> View User </a>  
+                        </li>
+                        <li>
+                        <a href="{% url 'admin_feedback' %}"> View Feedback </a>
+                        </li>
+                        <li>
+                        <a href="{% url 'admin_report' %}"> View Report </a>
+                        </li>
+                        <li class="logout">
+                        <a href="javascript:void(0);" onclick="showLogoutConfirm()">Logout</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="content">
+                <div class="search-bar">
+                    <form method="GET" class="search-bar">
+                        <input type="text" name='q' placeholder="Search for Reports...">
+                        <button type="submit">Search</button>
+                    </form>
+                </div>
+                <h2>Reports</h2>
+
+                <!--report view demo-->
+                <div class="post-list">
+
+                {% for report in reports %}
+                <hr>
+                <div>
+                    <p><strong>Reported By:</strong>{{ report.user.username}}</p>
+                    <p><strong>Reported Reason:</strong>{{ report.comments }}</p>
+                    <p><strong>Reported Date:</strong>{{ report.created_at }}</p>
+                    <p><strong>Image:</strong><br>
+                            {% if report.image %}
+                            <img src="{{ report.image.url }}" alt="Report Photo" style="max-width: 300px;">
+                            {% else %}
+                            No Image Provided
+                            {% endif %}
+                        </p>
+
+                    <h3>Original Post Content:</h3>
+                    {% if report.post %}
+                    <p><strong>Post ID:</strong>{{ report.post.post.id }}</p>
+                    <p><strong>Post Author:</strong>{{ report.post.post_user.username }}</p>
+                    <p><strong>Type:</strong>{{ report.post.post_type }}</p>
+                    <p><strong>Category:</strong>{{ report.post.post_itemcategory }}</p>
+                    <p><strong>Location:</strong>{{ report.post.post_location }}</p>
+                    <p><strong>Description:</strong>{{ report.post.post_description }}</p>
+
+        <!--original post image-->
+                    <!-- <p><strong>Image:</strong><br> 
+
+                            {% if report.image %}
+                            <img src="{{ report.image.url }}" alt="Report Photo" style="max-width: 300px;">
+                            {% else %}
+                            No Image Provided
+                            {% endif %} 
+                        </p> -->
+                    {% else %}
+                    <p><em>Notice: This post has been deleted.</em></p>
+                    {% endif %}
+
+                    <p><strong>Status:</strong>{{ report.status }}</p>
+
+                    {% if report.status == 'Pending' %}
+                    <form action="{% url 'update_report_status' report.id %}" method="POST">
+                        {% csrf_token %}
+                    <button 
+                        type="submit"
+                        class="btn"
+                        onclick="return confirm('Are you sure you want to mark this reported post as checked?')">
+                        Mark as Checked
+                    </button>
+                    </form>
+                    {% endif %}
+
+                    {% if report.post %}
+                    <form action="{% url 'delete_post' report.post.id %}" method="POST">
+                        {% csrf_token %}
+                    <button 
+                        type="submit"
+                        class="btn"
+                        onclick="return confirm('Are you sure you want to delete this reported post?')">
+                        Delete
+                    </button>
+                    </form>
+                    {% endif %}
+
+                    <hr>
+                </div>
+
+                {% empty %}
+                <p>No pending reports to display</p>
+                {% endfor %}
+            </div>
+
+            <!-- yt added -->
+            <!-- Confirm Logout Popup -->
+            <div id="confirmPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Are you sure you want to logout?</p>
+
+                    <div class="popup-btns">
+                        <button onclick="confirmLogout()">Yes</button>
+                        <button onclick="cancelLogout()">Cancel</button>
+                    </div>
+                </div>
             </div>
         </div>
         
-        <div class="search-bar">
-            <form method="GET" class="search-bar">
-                <input type="text" name='q' placeholder="Search for Reports...">
-                <button type="submit">Search</button>
-            </form>
-        </div>
-        <hr>
-        <h2>Reports</h2>
-
-        <!--report view demo-->
-        <div class="post-list">
-
-        {% for report in reports %}
-        <hr>
-        <div>
-            <p><strong>Reported By:</strong>{{ report.user.username}}</p>
-            <p><strong>Reported Reason:</strong>{{ report.comments }}</p>
-            <p><strong>Reported Date:</strong>{{ report.created_at }}</p>
-              <p><strong>Image:</strong><br>
-                    {% if report.image %}
-                    <img src="{{ report.image.url }}" alt="Report Photo" style="max-width: 300px;">
-                    {% else %}
-                    No Image Provided
-                    {% endif %}
-                </p>
-
-            <h3>Original Post Content:</h3>
-            {% if report.post %}
-            <p><strong>Post ID:</strong>{{ report.post.post.id }}</p>
-            <p><strong>Post Author:</strong>{{ report.post.post_user.username }}</p>
-            <p><strong>Type:</strong>{{ report.post.post_type }}</p>
-            <p><strong>Category:</strong>{{ report.post.post_itemcategory }}</p>
-            <p><strong>Location:</strong>{{ report.post.post_location }}</p>
-            <p><strong>Description:</strong>{{ report.post.post_description }}</p>
-
-<!--original post image-->
-            <!-- <p><strong>Image:</strong><br> 
-
-                    {% if report.image %}
-                    <img src="{{ report.image.url }}" alt="Report Photo" style="max-width: 300px;">
-                    {% else %}
-                    No Image Provided
-                    {% endif %} 
-                </p> -->
-            {% else %}
-            <p><em>Notice: This post has been deleted.</em></p>
-            {% endif %}
-
-            <p><strong>Status:</strong>{{ report.status }}</p>
-
-            {% if report.status == 'Pending' %}
-            <form action="{% url 'update_report_status' report.id %}" method="POST">
-                {% csrf_token %}
-            <button 
-                type="submit"
-                class="btn"
-                onclick="return confirm('Are you sure you want to mark this reported post as checked?')">
-                Mark as Checked
-            </button>
-            </form>
-            {% endif %}
-
-            {% if report.post %}
-            <form action="{% url 'delete_post' report.post.id %}" method="POST">
-                {% csrf_token %}
-            <button 
-                type="submit"
-                class="btn"
-                onclick="return confirm('Are you sure you want to delete this reported post?')">
-                Delete
-            </button>
-            </form>
-            {% endif %}
-
-            <hr>
-        </div>
-
-        {% empty %}
-        <p>No pending reports to display</p>
-        {% endfor %}
-        
     </body>
 
-     <footer>
-        <p>
-            © 2026 MMU Lost Hub
-            <br>
-            Designed by: Kho Yee Theng / Tan Yun Fee / Lim Tze Ying
-        </p>
+    <footer>
+        <p>© 2026 MMU Lost Hub<br>
     </footer>
 
 </html>
