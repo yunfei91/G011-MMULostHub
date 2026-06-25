@@ -460,9 +460,8 @@ button:hover,
 
 .feedback-card img,
 .report-card img{
-    max-width: 300px;
-    border-radius: 15px;
-    margin-top: 8px;
+    width: 300px;
+    max-width: 100%;
 }
 
 .feedback-card hr,
@@ -863,4 +862,22 @@ footer{
 
 .empty-state p{
     margin: 0;
+}
+
+.feedback-card,
+.report-card{
+    min-width: 0;
+    overflow: hidden;
+}
+
+.feedback-card p,
+.report-card p{
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.feedback-card img,
+.report-card img,
+.admin-proof-img{
+    max-width: 100%;
 }
