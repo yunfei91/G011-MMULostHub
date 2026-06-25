@@ -1,0 +1,530 @@
+@import url('https://fonts.googleapis.com/css2?family=Slackey&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sansation&display=swap');
+html,body{
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+body{
+    margin: 0;
+    background: linear-gradient(225deg, #CED8D4, #CED8D4, #D9E7FD, #B5D1FA, #72788A);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+/* ===================================== */
+/*             Main Container            */
+/* ===================================== */
+.whole-page{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.content{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===================================== */
+/*                Header                 */
+/* ===================================== */
+header{
+    display: flex;
+    align-items: center;
+
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+.mmu-logo{
+    height: 60px;
+    width: auto;
+    padding-left: 10px;
+    text-align: left;   
+}
+
+/* ===================================== */
+/*        Banner / Logo Section          */
+/* ===================================== */
+.banner{
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    
+    width: 100%;
+    height: auto;
+    max-width: 100vw;
+    min-height: 500px;
+    padding: 10px;
+    gap: 5px;
+}
+
+.web-logo{
+    position: relative;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    height: 500px;
+}
+
+.losthub-logo-base{
+    position: relative;
+    max-height: 440px;
+    width: auto;
+
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.2));
+    z-index: 1;
+}
+
+.losthub-logo-top{
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    max-height: 200px;
+    width: auto;
+    padding-top: 190px;
+    padding-left: 190px;
+
+    animation: logoFloat 4s ease-in-out infinite;
+
+    filter:
+        drop-shadow(0 8px 14px rgba(0,0,0,0.22));
+
+    transition: transform 0.3s ease;
+    z-index: 2;
+}
+
+.losthub-logo-top:hover{
+    transform: translateY(-6px) scale(1.05);
+}
+
+.losthub-logo-top:active{
+    transform: translateY(2px) scale(0.98);
+}
+
+@keyframes logoFloat {
+    0% {
+        transform: translateY(0) scale(1) rotate(-1deg);
+    }
+
+    50% {
+        transform: translateY(-5px) scale(1.03) rotate(0deg);
+    }
+
+    100% {
+        transform: translateY(0) scale(1) rotate(-1deg);
+    }
+}
+
+/* ===================================== */
+/*             Auth Layout               */
+/* ===================================== */
+.box-input{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    
+    max-width: 100%;
+    padding: 30px 0 10px 0;
+    border-radius: 20px;
+    
+    text-align: center;
+}
+
+.auth-panel{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 420px;
+}
+
+.auth-card{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    
+    width: 100%;
+    max-width: 420px;
+    padding: 25px;
+
+    gap: 15px;
+    border-radius: 25px;
+    background: rgba(255,255,255,0.35);
+    backdrop-filter: blur(12px);
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.12),
+        0 2px 0 rgba(255,255,255,0.6) inset;   
+}
+
+/* ===================================== */
+/*              Auth Header              */
+/* ===================================== */
+.auth-header{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.back-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+    top: 0;
+    width: 35px;
+    height: 35px;
+
+    border-radius: 10px;
+    border: none;
+    background: #7e8599;
+    color: white;
+    font-family: 'Slackey';
+    font-size: 20px;
+    line-height: 1;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.35) inset,
+        0 -2px 4px rgba(0,0,0,0.10) inset,
+        0 4px 0 #6a7184,
+        0 6px 12px rgba(0,0,0,0.20);
+}
+
+.back-button:hover{
+    transform: translateY(-3px);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.35) inset,
+        0 -2px 5px rgba(0,0,0,0.12) inset,
+        0 7px 0 #565c6e,
+        0 12px 20px rgba(0,0,0,0.28);
+}
+
+.back-button:active{
+    transform: translateY(2px);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.25) inset,
+        0 -2px 4px rgba(0,0,0,0.18) inset,
+        0 3px 0 #565c6e,
+        0 5px 10px rgba(0,0,0,0.25);
+}
+
+.auth-card h2{
+    margin: 0;
+    line-height: 1;
+    font-family: 'Slackey';
+    font-size: 20px;
+    color: #4f5568;
+}
+
+/* ===================================== */
+/*                Inputs                 */
+/* ===================================== */
+.auth-card input{
+    width: 100%;
+    padding: 12px 14px;
+    margin: 5px 0;
+
+    box-sizing: border-box;
+    border-radius: 14px;
+    border: none;
+    outline: none;
+
+    background: rgba(255,255,255,0.6);
+
+    box-shadow:
+        inset 0 2px 4px rgba(0,0,0,0.08),
+        0 1px 0 rgba(255,255,255,0.7);
+
+    transition: 0.2s ease;
+}
+
+.auth-card input:focus{
+    transform: translateY(-2px);
+
+    box-shadow:
+        inset 0 2px 4px rgba(0,0,0,0.08),
+        0 6px 12px rgba(0,0,0,0.12);
+}
+
+input::placeholder{
+    font-size: 13px;
+    font-family: 'Sansation';
+}
+
+.auth-card p{
+    margin: 10px 0;
+    font-size: 13px;
+    font-family: 'Sansation';
+}
+
+.auth-card h3{
+    margin: 0 0 10px 0;
+    font-family: 'Sansation';
+    font-size: 14px;
+    color: rgba(0,0,0,0.5);
+}
+
+/* ===================================== */
+/*            Register Button            */
+/* ===================================== */
+.register-btn{
+    display: block;
+    margin: 0 auto;
+    padding: 12px 25px;
+
+    width: 100%;
+    max-width: 150px;
+    text-align: center;
+
+    border-radius: 25px;
+    border: none;
+    background: #7e8599;
+    color: white;
+    font-family: 'Slackey';
+    cursor: pointer;
+
+    box-shadow:
+    0 1px 0 rgba(255,255,255,0.35) inset, 
+    0 -2px 4px rgba(0,0,0,0.10) inset,  
+    0 4px 0 #6a7184,                 
+    0 6px 12px rgba(0,0,0,0.20);
+
+    transform: translateY(0);
+    transition: all 0.2s ease;
+}
+
+.register-btn:hover{
+    transform: translateY(-3px);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.32) inset,
+        0 -2px 5px rgba(0,0,0,0.12) inset,
+        0 7px 0 #565c6e,  
+        0 12px 20px rgba(0,0,0,0.28); 
+}
+
+.register-btn:active{
+    transform: translateY(2px);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.25) inset,
+        0 -2px 4px rgba(0,0,0,0.18) inset,
+        0 3px 0 #565c6e,
+        0 5px 10px rgba(0,0,0,0.25);
+}
+
+/* ===================================== */
+/*             Password Box              */
+/* ===================================== */
+.password-box{
+    position: relative;
+    width: 100%;
+}
+
+.password-box input{
+    width: 100%;
+    padding-right: 45px;
+    box-sizing: border-box;
+}
+
+.show-password{
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.show-password.material-icons {
+    font-size: 20px;
+    color: rgba(0,0,0,0.6);
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-textfield-decoration-container {
+    display: none !important;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+/* ===================================== */
+/*                Checklist              */
+/* ===================================== */
+.checklist{
+    display: flex;
+    width: 320px;
+    margin: 12px 0 12px 26px;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+.checklist p{
+    display: flex;
+    align-items: center;
+
+    margin: 0;
+    padding: 6px 12px;
+
+    border-radius: 999px;
+    gap: 6px;
+    font-size: 12px;
+    font-family: 'Sansation';
+
+    background: rgba(255,255,255,0.5);
+    border: 1px solid rgba(255,255,255,0.4);
+    color: #666;
+
+    transition: all 0.25s ease;
+}
+
+.checklist p::before{
+    content: "✖";
+    font-size: 11px;
+}
+
+.checklist p.valid{
+    background: rgba(90, 200, 120, 0.18);
+    border-color: rgba(90, 200, 120, 0.45);
+    color: #2e7d32;
+}
+
+.checklist p.valid::before{
+    content: "✔";
+}
+
+.checklist p.invalid{
+    opacity: 0.6;
+}
+
+/* ===================================== */
+/*                Messages               */
+/* ===================================== */
+.message {
+    display: inline-block;
+    
+    margin: 6px 0 0 0;
+    padding: 8px 12px;
+
+    border-radius: 10px;
+    font-size: 12px;
+    font-family: 'Sansation';
+    animation: fadeInError 0.2s ease;
+}
+
+.error-message {
+    color: #b00020;
+    background: rgba(176, 0, 32, 0.08);
+    border: 1px solid rgba(176, 0, 32, 0.25);
+}
+
+.success-message {
+    color: #1b5e20;
+    background: rgba(46, 125, 50, 0.08);
+    border: 1px solid rgba(46, 125, 50, 0.25);
+}
+
+.info-message {
+    color: #555;
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeInError {
+    from {
+        opacity: 0;
+        transform: translateY(-3px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===================================== */
+/*             Switch Text               */
+/* ===================================== */
+.switch-text{
+    font-size: 12px;
+    color: rgba(0,0,0,0.5);
+    text-align: center;
+}
+
+.switch-text a{
+    color: #6a7184;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.switch-text a:hover{
+    text-decoration: underline;
+    color: #598974;
+}
+
+/* ===================================== */
+/*                Footer                 */
+/* ===================================== */
+footer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-top: auto;
+    height: 100px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    text-align: center;
+
+    font-size: 12px;
+    font-weight: bold;
+    font-family: 'Sansation';
+    line-height: 1.3;
+}
+
+/* ===================================== */
+/*                Popup                  */
+/* ===================================== */
+.popup {
+    position: absolute;
+
+    top: -50px;
+    right: 88px;
+    width: 200px;
+    padding: 12px 20px;
+
+    border-radius: 12px;
+    text-align: center;
+    color: #b00020;
+    background: rgba(176, 0, 32, 0.08);
+    border: 1px solid rgba(176, 0, 32, 0.25);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.082);
+    transform: translateY(10px);
+
+    font-family: 'Sansation';
+    font-size: 13px;
+
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.popup.show {
+    opacity: 1;
+    transform: translateY(0);
+}
