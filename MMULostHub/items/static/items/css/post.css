@@ -214,10 +214,6 @@
 /* ===================================== */
 /*            DATE TIME INPUT            */
 /* ===================================== */
-input[type="datetime-local"] {
-    position: relative;
-}
-
 input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     position: absolute;
     top: 0;
@@ -231,6 +227,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 }
 
 input[type="datetime-local"]{
+    position: relative;
     display: inline-flex;
     align-items: center;
 
