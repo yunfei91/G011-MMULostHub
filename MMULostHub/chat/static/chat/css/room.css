@@ -683,7 +683,8 @@ footer{
     padding:10px 20px;
     flex-shrink:0;
 
-    overflow:hidden;
+    overflow:visible;
+    position:relative;
 }
 
 .back{
