@@ -167,7 +167,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // clicked coordinate not in region 
         if (!found) {
-            showError("No region found");
             showAllPosts();
             return;
         }

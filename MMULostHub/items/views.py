@@ -393,6 +393,13 @@ def found_posts(request):
         post.sorted_images = post.images.all().order_by('order')
         
     # yf add to search 
+    query = request.GET.get('q', '').strip()
+    selected_category = request.GET.getlist('category')
+    selected_location = request.GET.get('location', '').strip()
+    selected_category = [c for c in selected_category if c]
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+
     post_box = apply_filters(request, post_box)
 
     # yf add for paginator (change page)
@@ -406,11 +413,11 @@ def found_posts(request):
         #yf add to search
         'item_categories': CATEGORY_CHOICES,
         'locations': MMULocation.objects.all(),
-        'query': request.GET.get('q', ''),
-        'selected_category': request.GET.getlist('category'),
-        'selected_location': request.GET.getlist('location'),
-        'start_date': request.GET.get('start_date', ''),
-        'end_date': request.GET.get('end_date', ''),
+        'query': query,
+        'selected_category': selected_category,
+        'selected_location': selected_location,
+        'start_date': start_date,
+        'end_date': end_date,
     })
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -429,6 +436,13 @@ def lost_posts(request):
         post.sorted_images = post.images.all().order_by('order')
 
     #yf add to search
+    query = request.GET.get('q', '').strip()
+    selected_category = request.GET.getlist('category')
+    selected_location = request.GET.get('location', '').strip()
+    selected_category = [c for c in selected_category if c]
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+
     post_box = apply_filters(request, post_box)
 
     # yf add for paginator (change page)
@@ -442,11 +456,11 @@ def lost_posts(request):
         # yf add to sesrch
         'item_categories': CATEGORY_CHOICES,
         'locations': MMULocation.objects.all(),
-        'query': request.GET.get('q', ''),
-        'selected_category': request.GET.getlist('category'),
-        'selected_location': request.GET.getlist('location'),
-        'start_date': request.GET.get('start_date', ''),
-        'end_date': request.GET.get('end_date', ''),
+        'query': query,
+        'selected_category': selected_category,
+        'selected_location': selected_location,
+        'start_date': start_date,
+        'end_date': end_date,
     })
 
 # ======================================================
