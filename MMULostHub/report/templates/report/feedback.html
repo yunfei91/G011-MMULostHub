@@ -138,6 +138,16 @@
 
             </div>
 
+            <div id="feedbackErrorPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Please write something before submitting.</p>
+
+                    <div class="popup-btns">
+                        <button type="button" onclick="closeFeedbackErrorPopup()">OK</button>
+                    </div>
+                </div>
+            </div>
+
             <div id="feedbackSubmitPopup" class="popup-modal">
                 <div class="popup-box">
                     <p>Are you sure you want to submit?</p>
@@ -205,6 +215,13 @@
     });
 
     function openFeedbackSubmitPopup() {
+        const comments = document.getElementById("comments");
+
+        if (comments.value.trim() === ""){
+            document.getElementById("feedbackErrorPopup").classList.add("show");
+            return;
+        }
+
         document
             .getElementById("feedbackSubmitPopup")
             .classList.add("show");
@@ -216,7 +233,17 @@
             .classList.remove("show");
     }
 
+    function closeFeedbackErrorPopup() {
+            document
+            .getElementById("feedbackErrorPopup")
+            .classList.remove("show");
+    }
+
     function submitFeedbackForm() {
+        document
+            .getElementById("feedbackSubmitPopup")
+            .classList.remove("show");
+            
         document
             .getElementById("feedbackForm")
             .submit();

@@ -142,6 +142,16 @@
 
             </div>
 
+            <div id="reasonRequiredPopup" class="popup-modal">
+                <div class="popup-box">
+                    <p>Please write the reason before submitting.</p>
+
+                    <div class="popup-btns">
+                        <button type="button" onclick="closeReasonRequiredPopup()">OK</button>
+                    </div>
+                </div>
+            </div>
+
             <div id="submitConfirmPopup" class="popup-modal">
                 <div class="popup-box">
                     <p>Are you sure you want to submit?</p>
@@ -193,10 +203,24 @@
             });
 
             function openSubmitConfirmPopup() {
+                const comments = document.getElementById("comments");
+
+                if (comments.value.trim() === "") {
+                    document.getElementById("reasonRequiredPopup").classList.add("show");
+                    return;
+                }
+
                 document.getElementById("submitConfirmPopup").classList.add("show");
             }
 
+            function closeReasonRequiredPopup() {
+                document
+                    .getElementById("reasonRequiredPopup")
+                    .classList.remove("show");
+            }
+
             function closeSubmitConfirmPopup() {
+                document.getElementById("reasonRequiredPopup").classList.remove("show");
                 document.getElementById("submitConfirmPopup").classList.remove("show");
             }
 
