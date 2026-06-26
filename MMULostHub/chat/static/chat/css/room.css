@@ -752,7 +752,7 @@ footer{
     right:0;
     top:48px;
 
-    width:125px;
+    width:150px;
 
     background:rgba(255,255,255,0.75);
     backdrop-filter:blur(10px);
@@ -777,7 +777,7 @@ footer{
     color:black;
 
     font-family:'Slackey', cursive;
-    font-size:12px;
+    font-size:15px;
 
     background:transparent;
 }

@@ -3,7 +3,7 @@
 <html>
     <head>
         <link rel="stylesheet" href="{% static 'report/css/report-user.css' %}">
-        <link rel="stylesheet" href="{% static 'items/css/post-popup.css' %}">
+        <link rel="stylesheet" href="{% static 'report/css/popup.css' %}">
 
         <script src="{% static 'items/js/header.js' %}" defer></script>
         <script src="{% static 'items/js/logout.js' %}" defer></script>
@@ -131,22 +131,32 @@
 
             </div>
 
-            <div id="imageRequiredPopup" class="popup-modal">
-                <div class="popup-box">
+            <div id="reasonRequiredPopup" class="popup-modals">
+                <div class="popup-boxs">
+                    <p>Please write the reason before submitting.</p>
+
+                    <div class="popup-buttons">
+                        <button type="button" onclick="closeReasonRequiredPopup()">OK</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="imageRequiredPopup" class="popup-modals">
+                <div class="popup-boxs">
                     <p>Please upload proof image before submitting.</p>
 
-                    <div class="popup-btns">
+                    <div class="popup-buttons">
                         <button type="button" onclick="closeImageRequiredPopup()">OK</button>
                     </div>
                 </div>
             </div>
 
-            <div id="submitConfirmPopup" class="popup-modal">
-                <div class="popup-box">
+            <div id="submitConfirmPopup" class="popup-modals">
+                <div class="popup-boxs">
                     <p>Are you sure you want to submit?</p>
 
-                    <div class="popup-btns">
-                        <button type="button" onclick="submitReportUserForm()">OK</button>
+                    <div class="popup-buttons">
+                        <button type="button" onclick="submitReportUserForm()">Yes</button>
                         <button type="button" onclick="closeSubmitConfirmPopup()">Cancel</button>
                     </div>
                 </div>
@@ -192,6 +202,12 @@
             });
 
             function validateReportUserForm() {
+                const comments = document.getElementById("comments");
+                if (comments.value.trim() === ""){
+                    document.getElementById("reasonRequiredPopup").classList.add("show");
+                    return;
+                }
+
                 if (!input.files || input.files.length === 0) {
                     document.getElementById("imageRequiredPopup").classList.add("show");
                     return;
@@ -200,6 +216,10 @@
                 document.getElementById("submitConfirmPopup").classList.add("show");
             }
 
+            function closeReasonRequiredPopup() {
+                document.getElementById("reasonRequiredPopup").classList.remove("show");
+            }
+            
             function closeImageRequiredPopup() {
                 document.getElementById("imageRequiredPopup").classList.remove("show");
             }

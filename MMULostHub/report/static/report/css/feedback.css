@@ -1,4 +1,3 @@
-/* yt done the main layout for all page */ /* Pls copy this to your own css file, this only easy for you guys to use*/
 
 @import url('https://fonts.googleapis.com/css2?family=Slackey&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Sansation&display=swap');
@@ -40,7 +39,7 @@ body::before{
 }
 
 .content{
-    flex: 1;
+    flex:1;
     display:flex;
     flex-direction:column;
     padding:15px 0 0;
@@ -672,24 +671,17 @@ footer{
     margin: 0 auto 5px;
 }
 
-.feedback-title h2{
-    margin: 0 0 12px;
-    font-family: 'Sansation', Arial, sans-serif;
-    font-size: 38px;
-    font-weight: 800;
-    color: #2f3548;
-}
-
 .feedback-title p{
     margin: 0;
+    padding-bottom: 10px;
     font-family: 'Sansation', Arial, sans-serif;
     font-size: 18px;
     color: #4f5668;
 }
 
 .feedback-title h2{
-    margin: 0;
-
+    margin-top: 15px;
+    margin-bottom: 0;
     font-family: 'Slackey', cursive;
     font-size: 40px;
 
@@ -697,7 +689,7 @@ footer{
 
     letter-spacing: 1px;
 
-    font-weight: normal;
+    font-weight: bold;
 
     text-shadow:
         0 2px 8px rgba(255,255,255,.45);
@@ -710,24 +702,35 @@ footer{
     width:72%;
     min-height:350px;
 
-    margin: 0 auto;
+    margin:0 auto;
     padding:35px 55px;
 
     border-radius:28px;
     box-sizing:border-box;
 
-    background:transparent;
-    border:none;
+    background:
+        linear-gradient(
+            rgba(255,255,255,.25),
+            rgba(255,255,255,.25)
+        );
+    backdrop-filter: blur(3px);
+
+    background-repeat:no-repeat;
+    background-position:center;
+    background-size:55%;
+
+    border:1px solid rgba(255,255,255,.35);
 
     box-shadow:
-        0 10px 25px rgba(0,0,0,.08);
+        0 10px 30px rgba(0,0,0,.08),
+        inset 0 1px 0 rgba(255,255,255,.35);
 }
 
 /* ===================================== */
 /*            Feedback Form              */
 /* ===================================== */
 .feedback-wrapper form{
-    width: 58%;
+    width: 100%;
 }
 
 /* ===================================== */
@@ -780,12 +783,14 @@ footer{
 /*            Submit Button              */
 /* ===================================== */
 .button-group{
+    display: flex;
+    justify-content: end;
     margin-top: 32px;
 }
 
 .btn{
-    width: 150px;
-    height: 45px;
+    width: 170px;
+    height: 46px;
 
     border: none;
     border-radius: 10px;
@@ -793,9 +798,10 @@ footer{
     background: #7e8599;
     color: white;
 
-    font-family: 'Sansation', Arial, sans-serif;
-    font-size: 16px;
-    font-weight: 800;
+    font-family:'Slackey', cursive;
+    font-size:20px;
+    font-weight:normal;
+    letter-spacing:1px;
 
     cursor: pointer;
 
@@ -810,9 +816,22 @@ footer{
 
 .btn:hover{
     transform: translateY(-3px);
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.32) inset,
+        0 -2px 5px rgba(0,0,0,0.12) inset,
+        0 7px 0 #565c6e,
+        0 12px 20px rgba(0,0,0,0.28);
 }
 
+.btn:active{
+    transform:translateY(2px);
 
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.25) inset,
+        0 -2px 4px rgba(0,0,0,0.18) inset,
+        0 3px 0 #565c6e,
+        0 5px 10px rgba(0,0,0,0.25);
+}
 
 /* ===================================== */
 /*            Image Preview              */
@@ -873,4 +892,68 @@ footer{
 #remove-image:hover{
 
     background:#d9534f;
+}
+
+/* File upload button */
+.upload-group input[type="file"]{
+    font-family:'Sansation', Arial, sans-serif;
+    font-size:13px;
+    letter-spacing:1px;
+    font-weight: 700;
+    color: #4f5668;
+    height:50px;
+    line-height:50px;
+    padding-bottom: 8px;
+}
+
+.upload-group input[type="file"]::file-selector-button{
+
+    height:35px;
+    width:115px;
+    display: inline-flex;
+    align-items: center;
+
+    padding:0;
+    margin-right:12px;
+
+    border:none;
+    border-radius:10px;
+
+    background:#7e8599;
+    color:#fff;
+
+    cursor:pointer;
+
+    font-family:'Slackey', cursive;
+    font-size:13px;
+    font-weight:normal;
+
+    box-sizing:border-box;
+        box-shadow:
+        0 1px 0 rgba(255,255,255,0.35) inset,
+        0 -2px 4px rgba(0,0,0,0.10) inset,
+        0 4px 0 #6a7184,
+        0 6px 12px rgba(0,0,0,0.20);
+
+    transition: all .2s ease;
+}
+
+.upload-group input[type="file"]::file-selector-button:hover{
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.32) inset,
+        0 -2px 5px rgba(0,0,0,0.12) inset,
+        0 7px 0 #565c6e,
+        0 12px 20px rgba(0,0,0,0.28);
+}
+
+.upload-group input[type="file"]::file-selector-button:active{
+    transform:translateY(2px);
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.25) inset,
+        0 -2px 4px rgba(0,0,0,0.18) inset,
+        0 3px 0 #565c6e,
+        0 5px 10px rgba(0,0,0,0.25);
 }

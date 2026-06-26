@@ -3,13 +3,10 @@
 /* ===================================== */
 
 /* Dark overlay */
-.popup-modal{
+.popup-modals{
     display: none;
     position: fixed;
     inset: 0;
-
-    background: rgba(115,115,115,0.45);
-    backdrop-filter: blur(4px);
 
     justify-content: center;
     align-items: center;
@@ -17,12 +14,12 @@
     z-index: 10050;
 }
 
-.popup-modal.show{
+.popup-modals.show{
     display: flex;
 }
 
 /* Popup box */
-.popup-box{
+.popup-boxs{
     width: 320px;
 
     padding: 30px 25px;
@@ -41,7 +38,7 @@
 }
 
 /* Message */
-.popup-box p{
+.popup-boxs p{
     margin: 0 0 25px;
 
     font-family: 'Slackey';
@@ -57,14 +54,14 @@
 }
 
 /* Button container */
-.popup-btns{
+.popup-buttons{
     display: flex;
     justify-content: center;
     gap: 15px;
 }
 
 /* Buttons */
-.popup-btns button{
+.popup-buttons button{
     width: 170px;
     height: 38.4px;
 
@@ -90,7 +87,7 @@
     transition: all 0.2s ease;
 }
 
-.popup-btns button:hover{
+.popup-buttons button:hover{
     transform: translateY(-3px);
 
     box-shadow:
@@ -100,7 +97,7 @@
         0 12px 20px rgba(0,0,0,0.28);
 }
 
-.popup-btns button:active{
+.popup-buttons button:active{
     transform: translateY(2px);
 
     box-shadow:

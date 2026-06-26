@@ -4,7 +4,7 @@
     <head>
         <!-- yt added -->
         <link rel="stylesheet" href="{% static 'report/css/feedback.css' %}">
-        <link rel="stylesheet" href="{% static 'items/css/post-popup.css' %}">
+        <link rel="stylesheet" href="{% static 'report/css/popup.css' %}">
 
         <script src="{% static 'items/js/header.js' %}" defer></script>
         <script src="{% static 'items/js/logout.js' %}" defer></script>
@@ -138,15 +138,25 @@
 
             </div>
 
-            <div id="feedbackSubmitPopup" class="popup-modal">
-                <div class="popup-box">
+            <div id="feedbackErrorPopup" class="popup-modals">
+                <div class="popup-boxs">
+                    <p>Please write something before submitting.</p>
+
+                    <div class="popup-buttons">
+                        <button type="button" onclick="closeFeedbackErrorPopup()">OK</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="feedbackSubmitPopup" class="popup-modals">
+                <div class="popup-boxs">
                     <p>Are you sure you want to submit?</p>
 
-                    <div class="popup-btns">
+                    <div class="popup-buttons">
                         <button
                             type="button"
                             onclick="submitFeedbackForm()">
-                            OK
+                            Yes
                         </button>
 
                         <button 
@@ -205,6 +215,13 @@
     });
 
     function openFeedbackSubmitPopup() {
+        const comments = document.getElementById("comments");
+
+        if (comments.value.trim() === ""){
+            document.getElementById("feedbackErrorPopup").classList.add("show");
+            return;
+        }
+
         document
             .getElementById("feedbackSubmitPopup")
             .classList.add("show");
@@ -216,7 +233,17 @@
             .classList.remove("show");
     }
 
+    function closeFeedbackErrorPopup() {
+            document
+            .getElementById("feedbackErrorPopup")
+            .classList.remove("show");
+    }
+
     function submitFeedbackForm() {
+        document
+            .getElementById("feedbackSubmitPopup")
+            .classList.remove("show");
+            
         document
             .getElementById("feedbackForm")
             .submit();

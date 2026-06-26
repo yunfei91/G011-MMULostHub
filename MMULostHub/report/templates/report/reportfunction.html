@@ -3,7 +3,7 @@
 <html>
     <head>
         <link rel="stylesheet" href="{% static 'report/css/report-post.css' %}">
-        <link rel="stylesheet" href="{% static 'items/css/post-popup.css' %}">
+        <link rel="stylesheet" href="{% static 'report/css/popup.css' %}">
 
         <script src="{% static 'items/js/header.js' %}" defer></script>
         <script src="{% static 'items/js/logout.js' %}" defer></script>
@@ -142,12 +142,22 @@
 
             </div>
 
-            <div id="submitConfirmPopup" class="popup-modal">
-                <div class="popup-box">
+            <div id="reasonRequiredPopup" class="popup-modals">
+                <div class="popup-boxs">
+                    <p>Please write the reason before submitting.</p>
+
+                    <div class="popup-buttons">
+                        <button type="button" onclick="closeReasonRequiredPopup()">OK</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="submitConfirmPopup" class="popup-modals">
+                <div class="popup-boxs">
                     <p>Are you sure you want to submit?</p>
 
-                    <div class="popup-btns">
-                        <button type="button" onclick="submitReportPostForm()">OK</button>
+                    <div class="popup-buttons">
+                        <button type="button" onclick="submitReportPostForm()">Yes</button>
                         <button type="button" onclick="closeSubmitConfirmPopup()">Cancel</button>
                     </div>
                 </div>
@@ -193,10 +203,24 @@
             });
 
             function openSubmitConfirmPopup() {
+                const comments = document.getElementById("comments");
+
+                if (comments.value.trim() === "") {
+                    document.getElementById("reasonRequiredPopup").classList.add("show");
+                    return;
+                }
+
                 document.getElementById("submitConfirmPopup").classList.add("show");
             }
 
+            function closeReasonRequiredPopup() {
+                document
+                    .getElementById("reasonRequiredPopup")
+                    .classList.remove("show");
+            }
+
             function closeSubmitConfirmPopup() {
+                document.getElementById("reasonRequiredPopup").classList.remove("show");
                 document.getElementById("submitConfirmPopup").classList.remove("show");
             }
 
