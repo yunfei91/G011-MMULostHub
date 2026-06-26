@@ -34,7 +34,7 @@ class MMULocation (models.Model):
 
     latitude = models.FloatField(                       # coordinates (lat , long)
         null = True,
-        blank = True,
+ .        blank = True,
     )
 
     longitude = models.FloatField(
@@ -55,17 +55,28 @@ def post_image_path(instance, filename):
         filename
     )
 
+from .utils.supabase import upload_to_supabase
+
 class PostImage(models.Model):
 
     post = models.ForeignKey(
         'Post',
-        on_delete = models.CASCADE,
-        related_name = "images"
+        on_delete=models.CASCADE,
+        related_name="images"
     )
 
-    image = models.ImageField(upload_to = post_image_path)
+    image = models.URLField()  # ✔ 改这里
 
     order = models.PositiveIntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+
+        # 🔥 如果传进来的是 file（新上传）
+        if hasattr(self.image, "read"):
+            url = upload_to_supabase(self.image)
+            self.image = url
+
+        super().save(*args, **kwargs)
 
 # Lost and Found Post Model  
 class Post (models.Model):

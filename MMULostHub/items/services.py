@@ -1,6 +1,7 @@
 from .models import Post, PostImage, MMULocation
 from datetime import datetime
 from django.utils import timezone
+from .utils.supabase import upload_to_supabase
 
 # ======================================================
 #            Create Post Beckend Services

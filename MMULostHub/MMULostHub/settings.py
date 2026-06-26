@@ -112,6 +112,9 @@ USE_I18N = True
 
 USE_TZ = True
 
+SUPABASE_URL = "https://pdbydobgtrgtxqjtvcbb.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkYnlkb2JndHJndHhxanR2Y2JiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0OTc2NTcsImV4cCI6MjA5ODA3MzY1N30.BQ_ZDCHpX4-gDLjzUiZ9tBHtIbiUexIJVNauCuEWjiQ"
+SUPABASE_BUCKET = "media"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
