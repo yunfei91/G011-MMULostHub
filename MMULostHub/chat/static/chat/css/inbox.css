@@ -1,5 +1,3 @@
-/* yt done the main layout for all page */ /* Pls copy this to your own css file, this only easy for you guys to use*/
-
 @import url('https://fonts.googleapis.com/css2?family=Slackey&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Sansation&display=swap');
 
@@ -71,7 +69,7 @@ header{
     box-sizing: border-box;
 
     background: linear-gradient(225deg, #CED8D4, #D9E7FD, #B5D1FA);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 6px 10px rgba(0,0,0,0.18);
 
     transform-origin: top;
     transform: translateY(0) translateZ(0);
@@ -80,14 +78,6 @@ header{
                 background 0.35s ease;
 
     z-index: 10000;
-}
-
-header.shrink{
-    height: 75px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
-    transition:
-        transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-        height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ===================================== */
@@ -100,7 +90,7 @@ header.shrink{
 }
 
 .mmu-logo{
-    height: 55px;
+    height: 42px;
     width: auto;
     text-align: left;
     transition: height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
@@ -108,7 +98,7 @@ header.shrink{
 }
 
 .losthub-logo{
-    height: 65px;
+    height: 52px;
     width: auto;
     padding-left: 0;
     margin-left: 10px;
@@ -116,14 +106,6 @@ header.shrink{
    
     transition: height 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     transform-origin: left center;
-}
-
-header.shrink .mmu-logo{
-    height: 42px;
-}
-
-header.shrink .losthub-logo{
-    height: 52px;
 }
 
 /* ===================================== */
@@ -329,13 +311,6 @@ header.shrink .losthub-logo{
 .overlay.show{
     opacity: 1;
     visibility: visible;
-}
-
-/* ===================================== */
-/*          Dropdown Navigation          */
-/* ===================================== */
-header.shrink ~ .dropdown-nav{
-    top: 15px;
 }
 
 /* ===================================== */

@@ -804,6 +804,8 @@ footer{
 
     /* IE */
     -ms-overflow-style:none;
+
+    font-family:'Sansation';
 }
 
 .message-row{
@@ -887,6 +889,10 @@ footer{
 }
 
 .message-time{
+    display: flex;
+    justify-self: end;
+    padding-top: 5px;
+
     font-family:'Sansation';
     font-size:11px;
     color:#666;
@@ -905,11 +911,7 @@ footer{
 ========================= */
 
 .chat-footer{
-    background:linear-gradient(
-        135deg,
-        rgba(255,255,255,.28),
-        rgba(240,248,255,.22)
-    );
+    background:white;
 
     backdrop-filter:blur(3px);
     -webkit-backdrop-filter:blur(3px);
@@ -989,7 +991,7 @@ footer{
 }
 
 .send-btn:hover{
-    transform: scale(1.04);
+    opacity:0.9;
 }
 
 .send-btn:active{
