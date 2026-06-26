@@ -86,12 +86,14 @@
                     {% else %}
                         <a href="{% url 'chat_inbox' %}" class="back">←</a>
                     {% endif %}
-
+                    
+                    <a href="{% url 'userProfile' other_user.username %}">
                     {% if other_user.profile.avatar %}
                         <img src="{{ other_user.profile.avatar.url }}" class="header-avatar">
                     {% else %}
                         <img src="{% static 'images/default.png' %}" class="header-avatar">
                     {% endif %}
+                    </a>
 
                     <div class="chat-name">
                         <a href="{% url 'userProfile' other_user.username %}" class="chat-name-link">
@@ -125,12 +127,13 @@
                         <div class="message-row {% if message.sender == request.user %}mine{% else %}other{% endif %}">
 
                             {% if message.sender != request.user %}
-
+                            <a href="{% url 'userProfile' other_user.username %}">
                                 {% if other_user.profile.avatar %}
                                     <img src="{{ other_user.profile.avatar.url }}" class="message-avatar">
                                 {% else %}
                                     <img src="{% static 'images/default.png' %}" class="message-avatar">
                                 {% endif %}
+                            </a>
                             {% endif %}
 
                             <div class="message-bubble">

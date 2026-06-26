@@ -52,7 +52,7 @@ body::before{
 
     overflow:hidden;
 
-    padding:30px 0 90px;
+    padding:18px 0 62px;
     box-sizing:border-box;
 }
 
@@ -691,6 +691,11 @@ footer{
     object-fit:cover;
     background:#E1E8E5;
     margin-right:15px;
+    cursor:pointer;
+}
+
+.header-avatar:hover{
+    transform: scale(1.05);
 }
 
 .chat-name{
@@ -720,6 +725,11 @@ footer{
 
     cursor:pointer;
     transition:all .2s ease;
+
+    font-family:'Slackey', cursive;
+    font-size:26px;
+    line-height:1;
+    outline:none;
 }
 
 .menu-btn:active{
@@ -751,7 +761,7 @@ footer{
     right:0;
     top:48px;
 
-    width:170px;
+    width:125px;
 
     background:rgba(255,255,255,0.75);
     backdrop-filter:blur(10px);
@@ -768,7 +778,7 @@ footer{
 
 .chat-menu-dropdown a{
     display:block;
-    padding:15px 12px;
+    padding:8px 10px;
 
     text-align:center;
     text-decoration:none;
@@ -776,7 +786,7 @@ footer{
     color:black;
 
     font-family:'Slackey', cursive;
-    font-size:17px;
+    font-size:12px;
 
     background:transparent;
 }
@@ -794,9 +804,15 @@ footer{
     min-height:0;
 
     overflow-y:auto;
-    padding:25px;
+    overflow-x:hidden;
+    padding:18px 22px;
 
     background:transparent;
+    /* Firefox */
+    scrollbar-width:none;
+
+    /* IE */
+    -ms-overflow-style:none;
 }
 
 .message-row{
@@ -867,7 +883,7 @@ footer{
 
 .mine .message-bubble{
     background:rgba(210,255,241,.72);
-    padding:12px 16x;
+    padding:12px 16px;
 
     backdrop-filter:blur(12px);
     -webkit-backdrop-filter:blur(12px);
@@ -938,7 +954,10 @@ footer{
     border:none;
     outline:none;
     background:rgba(255,255,255,0.38);
-    font-family:'Sansation';
+    font-family:'Sansation',Arial, sans-serif;
+    overflow-y:auto;          
+    scrollbar-width:none;    /* Firefox */
+    -ms-overflow-style:none; /* IE/Edge old */
 }
 
 .file-label{
@@ -971,10 +990,19 @@ footer{
         0 -2px 4px rgba(0,0,0,0.10) inset,
         0 4px 0 #6a7184,
         0 6px 12px rgba(0,0,0,0.20);
+
+    transition: transform .15s ease;
+    font-family:'Sansation', Arial, sans-serif;
+    font-size:13px;
+    font-weight:bold;
 }
 
 .send-btn:hover{
-    opacity:0.9;
+    transform: scale(1.04);
+}
+
+.send-btn:active{
+    transform: scale(1.04);
 }
 
 .preview-box{
@@ -1023,9 +1051,11 @@ footer{
 }
 
 .chat-wrapper{
-    width:65%;
-    max-width:1150px;
-    height:72vh;
+    width:min(76%,1150px);
+    max-width:1000px;
+    height:calc(100dvh - 180px);
+    min-height: 430px;
+
 
     display:flex;
     flex-direction:column;
@@ -1071,16 +1101,6 @@ footer{
 /*          Hide Chat Scrollbar          */
 /* ===================================== */
 
-.chat-body{
-    overflow-y:auto;
-    overflow-x:hidden;
-
-    /* Firefox */
-    scrollbar-width:none;
-
-    /* IE */
-    -ms-overflow-style:none;
-}
 
 /* Chrome / Edge */
 .chat-body::-webkit-scrollbar{
@@ -1100,6 +1120,9 @@ footer{
     height:45px;
     padding:12px 75px 12px 18px;
     box-sizing:border-box;
+    overflow-y:auto;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
 }
 
 .message-input-wrap .send-btn{
@@ -1108,8 +1131,8 @@ footer{
     top:50%;
     transform:translateY(-50%);
 
-    width:55px;
-    height:32px;
+    width:50px;
+    height:30px;
     border-radius:14px;
 
     font-size:12px;
@@ -1117,23 +1140,11 @@ footer{
 }
 
 /* ===================================== */
-/*      Teammate Chat Room Adjustments   */
+/*        Chat Room Adjustments          */
 /* ===================================== */
 
-/* text space font */
-.chat-form textarea,
 .message-input-wrap textarea{
-    font-family:'Sansation', Arial, sans-serif;
-    font-size:15px;
     color:#333;
-}
-
-/* send button font */
-.send-btn,
-.message-input-wrap .send-btn{
-    font-family:'Sansation', Arial, sans-serif;
-    font-size:13px;
-    font-weight:bold;
 }
 
 /* + button hover */
@@ -1148,13 +1159,7 @@ footer{
     transform:translateY(-2px) scale(1.08);
 }
 
-/* 3 dots button bigger */
-.menu-btn{
-    font-family:'Slackey', cursive;
-    font-size:26px;
-    line-height:1;
-    outline:none;
-}
+
 
 .menu-btn:focus{
     outline:none;
@@ -1168,14 +1173,8 @@ footer{
     display:block;
 }
 
-/* background blur a bit, follow post card */
-.chat-wrapper{
-    background:linear-gradient(
-        135deg,
-        rgba(197,252,232,.18),
-        rgba(181,209,250,.18)
-    );
 
-    backdrop-filter:blur(3px);
-    -webkit-backdrop-filter:blur(3px);
+.message-input-wrap textarea::-webkit-scrollbar,
+.chat-form textarea::-webkit-scrollbar{
+    display:none;
 }
