@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import os
+from .utils.supabase import upload_to_supabase
 
 
 # ('storage name inside sqlite', 'display name on website')
@@ -34,7 +35,7 @@ class MMULocation (models.Model):
 
     latitude = models.FloatField(                       # coordinates (lat , long)
         null = True,
- .        blank = True,
+        blank = True,
     )
 
     longitude = models.FloatField(
@@ -55,8 +56,6 @@ def post_image_path(instance, filename):
         filename
     )
 
-from .utils.supabase import upload_to_supabase
-
 class PostImage(models.Model):
 
     post = models.ForeignKey(
@@ -65,14 +64,13 @@ class PostImage(models.Model):
         related_name="images"
     )
 
-    image = models.URLField()  # ✔ 改这里
+    image = models.URLField() 
 
     order = models.PositiveIntegerField(default=0)
 
     def save(self, *args, **kwargs):
 
-        # 🔥 如果传进来的是 file（新上传）
-        if hasattr(self.image, "read"):
+        if self.image and hasattr(self.image, "read"):
             url = upload_to_supabase(self.image)
             self.image = url
 
@@ -141,6 +139,6 @@ class Post (models.Model):
         return f"{self.post_type}: {self.post_itemcategory}"
 
 # yt added
-@property
-def sorted_images(self):
-    return self.images.all().order_by("order")
+    @property
+    def sorted_images(self):
+        return self.images.all().order_by("order")
