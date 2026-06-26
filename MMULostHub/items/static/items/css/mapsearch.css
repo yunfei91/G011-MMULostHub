@@ -146,8 +146,16 @@
     height: 100%;
     overflow-y: auto; 
     padding: none;
-    padding-top: 20px;
+    padding-top: 0px;
     box-sizing: border-box;
+}
+
+#location-title{
+    font-size:28px;
+    font-family: 'Slackey', cursive;
+    font-weight:bold;
+    margin-bottom:25px;
+    text-align:center;
 }
 
 .back-btn button{

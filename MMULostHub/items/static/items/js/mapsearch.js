@@ -180,6 +180,8 @@ document.addEventListener("DOMContentLoaded", function () {
     //      FILTER POSTS
     // =========================
     function filterPosts(locationCode,locationName = locationCode) {
+
+        document.getElementById("location-title").textContent = locationName;
         
         const posts = document.querySelectorAll(".post");
 
@@ -209,6 +211,8 @@ document.addEventListener("DOMContentLoaded", function () {
     //      FILTER POSTS
     // =========================
     function filterUnknownPosts(locationCode,locationName = locationCode) {
+
+        document.getElementById("location-title").textContent = "Unknown Location";
         
         const posts = document.querySelectorAll(".post");
 
