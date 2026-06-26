@@ -1,0 +1,108 @@
+/* ===================================== */
+/*                Logout                 */
+/* ===================================== */
+
+/* Dark overlay */
+.popup-modals{
+    display: none;
+    position: fixed;
+    inset: 0;
+
+    justify-content: center;
+    align-items: center;
+
+    z-index: 10050;
+}
+
+.popup-modals.show{
+    display: flex;
+}
+
+/* Popup box */
+.popup-boxs{
+    width: 320px;
+
+    padding: 30px 25px;
+    border-radius: 25px;
+
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(18px);
+
+    text-align: center;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.6);
+
+    animation: popupIn 0.25s ease;
+}
+
+/* Message */
+.popup-boxs p{
+    margin: 0 0 25px;
+
+    font-family: 'Slackey';
+    font-size: 15px;
+    line-height: 1.4;
+
+    color: #6a7184;
+
+    text-shadow:
+        0 1px 0 #ffffff,
+        0 2px 0 #d6dbe8,
+        0 3px 6px rgba(0,0,0,0.15);
+}
+
+/* Button container */
+.popup-buttons{
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* Buttons */
+.popup-buttons button{
+    width: 170px;
+    height: 38.4px;
+
+    border: none;
+    border-radius: 20px;
+
+    padding: 10px 0;
+
+    background: #7e8599;
+    color: white;
+
+    font-family: 'Slackey';
+    font-size: 13px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.35) inset,
+        0 -2px 4px rgba(0,0,0,0.10) inset,
+        0 4px 0 #6a7184,
+        0 6px 12px rgba(0,0,0,0.20);
+
+    transition: all 0.2s ease;
+}
+
+.popup-buttons button:hover{
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.32) inset,
+        0 -2px 5px rgba(0,0,0,0.12) inset,
+        0 7px 0 #565c6e,
+        0 12px 20px rgba(0,0,0,0.28);
+}
+
+.popup-buttons button:active{
+    transform: translateY(2px);
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.25) inset,
+        0 -2px 4px rgba(0,0,0,0.18) inset,
+        0 3px 0 #565c6e,
+        0 5px 10px rgba(0,0,0,0.25);
+}

@@ -1,0 +1,1195 @@
+/* ===================================== */
+/*              Admin CSS                */
+/* ===================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Slackey&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sansation&display=swap');
+
+/* ===================================== */
+/*            Page Content               */
+/* ===================================== */
+
+.admin-page-content{
+    flex:1;
+    width:100%;
+    max-width:1400px;
+    margin:0 auto;
+    padding:40px 30px 60px;
+    box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    font-family:'Sansation';
+}
+
+h2{
+    margin:0 0 25px;
+    font-family:'Slackey';
+    color:#6a7184;
+    font-size:28px;
+    text-align:center;
+}
+
+/* Back button */
+.back-btn{
+    align-self:flex-start;
+    display:inline-block;
+    margin:0 0 20px 0;
+    padding:9px 18px;
+    border-radius:18px;
+    background:#7e8599;
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+/* ===================================== */
+/*              Search Bar               */
+/* ===================================== */
+
+.search-bar{
+    width:100%;
+    margin-bottom:25px;
+    display:flex;
+    justify-content:center;
+}
+
+.search-bar form,
+form.search-bar{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+}
+
+.search-bar input{
+    width:260px;
+    padding:10px 14px;
+    border:none;
+    border-radius:15px;
+    font-family:'Sansation';
+    font-size:14px;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+.search-bar input:focus{
+    outline:2px solid #B5D1FA;
+}
+
+/* ===================================== */
+/*                Buttons                */
+/* ===================================== */
+
+button,
+.btn,
+.search-bar button{
+    border:none;
+    border-radius:18px;
+    padding:9px 18px;
+    background:#7e8599;
+    color:white;
+    font-family:'Sansation';
+    font-weight:bold;
+    font-size:14px;
+    cursor:pointer;
+    transition:.2s ease;
+}
+
+button:hover,
+.btn:hover,
+.search-bar button:hover{
+    transform:translateY(-2px);
+}
+
+/* ===================================== */
+/*          Feedback Card Only           */
+/* ===================================== */
+
+.feedback-card{
+    width:100%;
+    max-width:500px;
+    min-width:0;
+    box-sizing:border-box;
+    padding:16px;
+    border-radius:18px;
+    background:rgba(255,255,255,.72);
+    backdrop-filter:blur(18px);
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.15),
+        inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+.feedback-card p{
+    margin:8px 0;
+    color:#333;
+    font-size:15px;
+    line-height:1.35;
+    word-break:break-word;
+    overflow-wrap:anywhere;
+}
+
+.feedback-card strong{
+    color:#6a7184;
+}
+
+.feedback-card hr{
+    display:none;
+}
+
+.feedback-card img,
+.feedback-card .admin-proof-img{
+    width:65%;
+    max-width:85%;
+    height:170px;
+    object-fit:cover;
+    object-position:center;
+    border-radius:12px;
+    cursor:pointer;
+    display:block;
+}
+
+/* ===================================== */
+/*          Report Post Card Only        */
+/* ===================================== */
+
+.report-card{
+    width:100%;
+    min-width:0;
+    box-sizing:border-box;
+    padding:18px;
+    border-radius:18px;
+    background:rgba(255,255,255,.72);
+    backdrop-filter:blur(18px);
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.15),
+        inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+.report-card p{
+    margin:8px 0;
+    color:#333;
+    font-size:15px;
+    line-height:1.35;
+    word-break:break-word;
+    overflow-wrap:anywhere;
+}
+
+.report-card strong{
+    color:#6a7184;
+}
+
+.report-card hr{
+    display:none;
+}
+
+.report-card img,
+.report-card .admin-proof-img{
+    width:65%;
+    max-width:85%;
+    height:170px;
+    object-fit:cover;
+    object-position:center;
+    border-radius:12px;
+    cursor:pointer;
+    display:block;
+}
+
+/* ===================================== */
+/*        Reported User Card Only        */
+/* ===================================== */
+
+.report-card-list .report-card{
+    width:100%;
+    min-width:0;
+    box-sizing:border-box;
+    padding:18px;
+    border-radius:18px;
+    background:rgba(255,255,255,.72);
+    backdrop-filter:blur(18px);
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.15),
+        inset 0 1px 0 rgba(255,255,255,.6);
+    overflow:hidden;
+}
+
+.report-card-list .report-card p,
+.report-card-list .report-card div{
+    margin:8px 0;
+    color:#333;
+    font-size:15px;
+    line-height:1.35;
+    word-break:break-word;
+    overflow-wrap:anywhere;
+}
+
+.report-card-list .report-card strong,
+.report-card-list .report-card b{
+    color:#6a7184;
+}
+
+.report-card-list .admin-proof-img{
+    width:65%;
+    max-width: 85%;
+    height:170px;
+    object-fit:cover;
+    object-position:center;
+    border-radius:12px;
+    cursor:pointer;
+    display:block;
+}
+
+/* Remove old separators */
+.post-list > hr{
+    display:none;
+}
+
+/* ===================================== */
+/*          Feedback / Report Page       */
+/* ===================================== */
+
+.post-list{
+    width:100%;
+    max-width:1180px;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    justify-content:center;
+    align-items:start;
+    gap:18px;
+}
+
+.post-list .feedback-card,
+.post-list .report-card{
+    margin-bottom:0;
+}
+
+/* Original post content inside report card */
+.original-post-box{
+    margin-top:18px;
+    padding:16px;
+    border-radius:15px;
+    background:rgba(255,255,255,.58);
+    border:1px solid rgba(170,170,170,.35);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+.original-post-box p{
+    margin:7px 0;
+}
+
+.original-post-box img{
+    margin-top:6px;
+}
+
+/* ===================================== */
+/*          User Management Page         */
+/* ===================================== */
+
+/* All Users + Reported Users together */
+.admin-user-layout{
+    width:100%;
+    max-width:1400px;
+    display:grid;
+    grid-template-columns:2fr 3fr;
+    gap:28px;
+    align-items:start;
+}
+
+.admin-section-box{
+    width:100%;
+    max-width:1180px;
+    margin:0 auto;
+    padding:25px;
+    box-sizing:border-box;
+    border-radius:25px;
+    background:rgba(255,255,255,.45);
+    backdrop-filter:blur(12px);
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+}
+
+/* When inside split layout, boxes should fill their columns */
+.admin-user-layout .admin-section-box{
+    max-width:none;
+}
+
+/* ===================================== */
+/*              User Table               */
+/* ===================================== */
+
+.admin-section-box form{
+    width:100%;
+}
+
+.admin-section-box table{
+    width:100%;
+    max-width:900px;
+    margin:0 auto;
+    border-collapse:collapse;
+    table-layout:fixed;
+    overflow:hidden;
+    border-radius:20px;
+    background:rgba(255,255,255,.72);
+    backdrop-filter:blur(18px);
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.15),
+        inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+th,
+td{
+    padding:14px 16px;
+    text-align:left;
+    vertical-align:middle;
+    border-bottom:1px solid rgba(106,113,132,.18);
+    word-break:break-word;
+    overflow-wrap:anywhere;
+}
+
+th{
+    color:#6a7184;
+    font-family:'Slackey';
+    font-size:14px;
+}
+
+td{
+    color:#333;
+    font-family:'Sansation';
+}
+
+tr:last-child td{
+    border-bottom:none;
+}
+
+th:first-child,
+td:first-child{
+    width:45px;
+    text-align:center;
+}
+
+th:nth-child(3),
+td:nth-child(3){
+    width:80px;
+}
+
+th:last-child,
+td:last-child{
+    width:100px;
+    text-align:center;
+}
+
+/* Delete selected button */
+.admin-section-box form > button{
+    margin-bottom:18px;
+}
+
+/* ===================================== */
+/*         Reported User Cards           */
+/* ===================================== */
+
+/* Reported only page */
+.report-card-list{
+    width:100%;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(360px,440px));
+    justify-content:center;
+    align-items:start;
+    gap:24px;
+}
+
+/* Reported users inside split layout */
+.admin-user-layout .report-card-list{
+    grid-template-columns:repeat(2,minmax(260px,1fr));
+    gap:18px;
+}
+
+/* Reported user cards */
+.report-card-list .report-card{
+    display:block;
+    overflow:hidden;
+}
+
+/* Action buttons area */
+.report-actions{
+    display:flex;
+    flex-direction:row;
+    justify-content:flex-start;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:18px;
+}
+
+/* Action forms must not become full width */
+.report-actions form,
+.report-card .report-actions form,
+.report-card-list .report-actions form{
+    width:auto;
+    display:inline-block;
+    margin:0;
+}
+
+/* Smaller action buttons */
+.report-actions button,
+.report-actions .btn{
+    width:auto;
+    min-width:80px;
+    padding:7px 14px;
+    border-radius:16px;
+    font-size:13px;
+}
+
+/* ===================================== */
+/*              Pagination               */
+/* ===================================== */
+
+.pagination{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    width:fit-content;
+    margin:30px auto 18px;
+    padding:8px 18px;
+    background:rgba(255,255,255,.9);
+    border-radius:18px;
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+.pagination a,
+.pagination span{
+    min-width:20px;
+    text-align:center;
+    text-decoration:none;
+    font-family:'Sansation', Arial, sans-serif;
+    font-size:16px;
+    font-weight:900;
+    color:black;
+}
+
+.pagination .current,
+.pagination span.current{
+    color:#5d8be8;
+}
+
+.pagination .disabled{
+    color:#d1d1d1;
+}
+
+/* ===================================== */
+/*                Logout                 */
+/* ===================================== */
+
+/* Dark overlay */
+.popup-modal{
+    display: none;
+    position: fixed;
+    inset: 0;
+
+    background: rgba(115,115,115,0.45);
+    backdrop-filter: blur(4px);
+
+    justify-content: center;
+    align-items: center;
+
+    z-index: 10050;
+}
+
+.popup-modal.show{
+    display: flex;
+}
+
+/* Popup box */
+.popup-box{
+    width: 320px;
+
+    padding: 30px 25px;
+    border-radius: 25px;
+
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(18px);
+
+    text-align: center;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.6);
+
+    animation: popupIn 0.25s ease;
+}
+
+/* Message */
+.popup-box p{
+    margin: 0 0 25px;
+
+    font-family: 'Slackey';
+    font-size: 15px;
+    line-height: 1.4;
+
+    color: #6a7184;
+
+    text-shadow:
+        0 1px 0 #ffffff,
+        0 2px 0 #d6dbe8,
+        0 3px 6px rgba(0,0,0,0.15);
+}
+
+/* Button container */
+.popup-btns{
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* Buttons */
+.popup-btns button{
+    width: 170px;
+    height: 38.4px;
+
+    border: none;
+    border-radius: 20px;
+
+    padding: 10px 0;
+
+    background: #7e8599;
+    color: white;
+
+    font-family: 'Slackey';
+    font-size: 13px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.35) inset,
+        0 -2px 4px rgba(0,0,0,0.10) inset,
+        0 4px 0 #6a7184,
+        0 6px 12px rgba(0,0,0,0.20);
+
+    transition: all 0.2s ease;
+}
+
+.popup-btns button:hover{
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.32) inset,
+        0 -2px 5px rgba(0,0,0,0.12) inset,
+        0 7px 0 #565c6e,
+        0 12px 20px rgba(0,0,0,0.28);
+}
+
+.popup-btns button:active{
+    transform: translateY(2px);
+
+    box-shadow:
+        0 1px 0 rgba(255,255,255,0.25) inset,
+        0 -2px 4px rgba(0,0,0,0.18) inset,
+        0 3px 0 #565c6e,
+        0 5px 10px rgba(0,0,0,0.25);
+}
+
+/* ===================================== */
+/*         Logout Success Popup          */
+/* ===================================== */
+
+.popup{
+    position: fixed;
+
+    top: 25px;
+    left: 50%;
+
+    min-width: 250px;
+    padding: 14px 24px;
+
+    border-radius: 20px;
+
+    background: rgba(255,255,255,0.65);
+    backdrop-filter: blur(18px);
+
+    border: 1px solid rgba(126,133,153,0.15);
+
+    color: #6a7184;
+
+    text-align: center;
+    font-family: 'Sansation';
+    font-size: 14px;
+    font-weight: bold;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,0.15);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: translateX(-50%) translateY(-20px);
+
+    transition: all 0.3s ease;
+
+    z-index: 10060;
+}
+
+.popup.show{
+    opacity: 1;
+    visibility: visible;
+
+    transform: translateX(-50%) translateY(0);
+}
+
+@keyframes popupIn{
+    from{
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to{
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ===================================== */
+/*              Image Modal              */
+/* ===================================== */
+
+.image-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+    z-index:20000;
+    justify-content:center;
+    align-items:center;
+}
+
+.image-modal.show{
+    display:flex;
+}
+
+.modal-image{
+    max-width:60vw;
+    max-height:60vh;
+    width:auto;
+    height:auto;
+    border-radius:15px;
+    box-shadow:0 10px 30px rgba(0,0,0,.3);
+}
+
+.close-image{
+    position:absolute;
+    top:20px;
+    right:35px;
+    color:white;
+    font-size:45px;
+    cursor:pointer;
+}
+
+/* ===================================== */
+/*              Empty State              */
+/* ===================================== */
+
+.empty-state{
+    grid-column:1 / -1;
+    text-align:center;
+    padding:45px 25px;
+    border-radius:25px;
+    background:rgba(255,255,255,.65);
+    backdrop-filter:blur(18px);
+    color:#6a7184;
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+}
+
+.empty-state h3{
+    margin:0 0 10px;
+    font-family:'Slackey';
+}
+
+.empty-state p{
+    margin:0;
+}
+
+/* ===================================== */
+/*                Footer                 */
+/* ===================================== */
+
+footer{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:50px;
+    margin-top:auto;
+    background:linear-gradient(225deg,#CED8D4,#D9E7FD,#B5D1FA);
+    box-shadow:0 10px 25px rgba(0,0,0,.4);
+    text-align:center;
+    font-size:12px;
+    font-weight:bold;
+    font-family:'Sansation';
+    line-height:1.2;
+}
+
+/* ===================================== */
+/*              Responsive               */
+/* ===================================== */
+
+@media (max-width:1200px){
+    .admin-user-layout{
+        grid-template-columns:1fr;
+    }
+
+    .admin-user-layout .report-card-list{
+        grid-template-columns:repeat(2,minmax(300px,1fr));
+    }
+}
+
+@media (max-width:900px){
+    .post-list,
+    .report-card-list,
+    .admin-user-layout .report-card-list{
+        grid-template-columns:1fr;
+    }
+
+    .admin-page-content{
+        padding:30px 20px 50px;
+    }
+
+    .admin-section-box{
+        padding:20px;
+    }
+}
+
+@media (max-width:768px){
+    .mmu-logo{
+        height:45px;
+    }
+
+    .losthub-logo{
+        height:52px;
+    }
+
+    .menu{
+        width:250px;
+    }
+
+    .search-bar form,
+    form.search-bar{
+        flex-direction:column;
+        align-items:center;
+    }
+
+    .search-bar input{
+        width:100%;
+        box-sizing:border-box;
+    }
+
+    .pagination{
+        gap:8px;
+        padding:7px 14px;
+    }
+
+    .pagination a,
+    .pagination span{
+        font-size:15px;
+    }
+
+    .admin-proof-img,
+    .feedback-card img,
+    .report-card img{
+        height:170px;
+    }
+}
+
+/* =======================================
+   Reported Only Layout
+======================================= */
+
+.reported-only-header{
+    display:grid;
+    grid-template-columns:260px 1fr 260px;
+    align-items:start;
+    width:100%;
+    margin-bottom:35px;
+}
+
+.back-left{
+    display:flex;
+    justify-content:flex-start;
+}
+
+.reported-only-center{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.reported-only-center h2{
+    margin-bottom:22px;
+}
+
+.reported-only-center .search-bar{
+    justify-content:center;
+    margin-bottom:18px;
+}
+
+.reported-only-center .report-actions{
+    justify-content:center;
+}
+
+/* ===================================== */
+/* Remove white box for single views only */
+/* ===================================== */
+
+.user-only-box,
+.reported-only-box{
+    background: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
+    border: none;
+    padding: 0;
+}
+
+.header-center,
+.reported-only-center{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.header-center .search-bar,
+.reported-only-center .search-bar{
+    margin-bottom:8px;
+}
+
+.header-center .report-actions,
+.reported-only-center .report-actions{
+    display:flex;
+    justify-content:center;
+    gap:16px;
+    margin-top:0;
+}
+
+.header-center .report-actions button,
+.reported-only-center .report-actions button{
+    min-width:170px;
+    height:44px;
+    font-size:15px;
+    border-radius:22px;
+}
+
+.back-btn{
+    align-self:flex-start;
+}
+
+/* =========================
+   Reported User Only
+   3 columns × 2 rows
+========================= */
+
+.reported-only-box .report-card-list{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:28px;
+    align-items:start;
+}
+
+/* Card fills each grid cell */
+.reported-only-box .report-card{
+    width:100%;
+    margin:0;
+}
+
+/* ===================================== */
+/* Report Post Page - 3 x 2 Grid         */
+/* ===================================== */
+
+.report-post-list{
+    width:100%;
+    max-width:1400px;
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+    gap:24px;
+    align-items:start;
+}
+
+.report-post-list .report-card{
+    width:100%;
+    margin:0;
+}
+
+/* Make report post images fit better in smaller cards */
+.report-post-list .admin-proof-img{
+    width:100%;
+    max-width:100%;
+    height:150px;
+    object-fit:cover;
+}
+
+/* Original post box image also same size */
+.report-post-list .original-post-box .admin-proof-img{
+    width:100%;
+    max-width:100%;
+    height:150px;
+    object-fit:cover;
+}
+
+/* ===================================== */
+/* Feedback Page - 3 x 2 Grid            */
+/* ===================================== */
+
+.feedback-list{
+    width:100%;
+    max-width:1400px;
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+    gap:24px;
+    align-items:start;
+}
+
+.feedback-list .feedback-card{
+    width:100%;
+    max-width:none;
+    margin:0;
+}
+
+.feedback-list .admin-proof-img{
+    width:100%;
+    max-width:100%;
+    height:150px;
+    object-fit:cover;
+}
+
+/* ===================================== */
+/* Final Grid Control                    */
+/* Feedback + Report Post + Reported User*/
+/* ===================================== */
+
+.feedback-list,
+.report-post-list,
+.reported-only-box .report-card-list{
+    width:100%;
+    max-width:1350px;                 /* overall grid width */
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+    gap:24px;                         /* space between cards */
+    align-items:start;
+}
+
+/* Same card width */
+.feedback-list .feedback-card,
+.report-post-list .report-card,
+.reported-only-box .report-card{
+    width:100%;
+    max-width:none;
+    margin:0;
+    box-sizing:border-box;
+}
+
+/* Prevent long text from breaking grid */
+.feedback-card,
+.report-card{
+    overflow:hidden;
+}
+
+.feedback-card p,
+.report-card p,
+.report-card div{
+    word-break:break-word;
+    overflow-wrap:anywhere;
+}
+
+/* Image size */
+.feedback-list .admin-proof-img,
+.report-post-list .admin-proof-img,
+.reported-only-box .admin-proof-img{
+    width:100%;
+    max-width:100%;
+    height:150px;
+    object-fit:cover;
+}
+
+/* Card spacing inside */
+.feedback-card,
+.report-post-list .report-card,
+.reported-only-box .report-card{
+    padding:18px;
+}
+
+/* Responsive */
+@media (max-width:1200px){
+    .feedback-list,
+    .report-post-list,
+    .reported-only-box .report-card-list{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width:768px){
+    .feedback-list,
+    .report-post-list,
+    .reported-only-box .report-card-list{
+        grid-template-columns:1fr;
+    }
+}
+
+.reason-box,
+.description-box{
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding:10px 12px;
+    border-radius:12px;
+    background:rgba(255,255,255,.55);
+    border:1px solid rgba(106,113,132,.15);
+    font-size:14px;
+    line-height:1.4;
+    word-break:break-word;
+    overflow-wrap:anywhere;
+}
+
+.reason-box{
+    height:45px;
+}
+
+.description-box{
+    height:55px;
+}
+
+.report-post-list .report-card{
+    height:860px;
+    display:flex;
+    flex-direction:column;
+}
+
+.report-post-list .original-post-box{
+    flex:1;
+    overflow-y:auto;
+    overflow-x:hidden;
+    margin-top:12px;
+}
+
+.report-post-list h3{
+    margin:18px 0 10px;
+}
+
+.report-post-list .report-actions{
+    margin-top:auto;
+}
+
+.report-post-list .admin-proof-img{
+    height:145px;
+}
+
+/* ===================================== */
+/*      Clean Admin Scrollbar            */
+/* ===================================== */
+
+.reason-box,
+.original-post-box{
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    /* Firefox */
+    scrollbar-width:none;
+
+    /* IE */
+    -ms-overflow-style:none;
+}
+
+/* Chrome / Edge */
+.reason-box::-webkit-scrollbar,
+.original-post-box::-webkit-scrollbar{
+    display:none;
+}
+
+.feedback-content-box{
+    height:110px;
+
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    padding:10px 12px;
+    margin-bottom:12px;
+
+    border-radius:12px;
+    background:rgba(255,255,255,.55);
+    border:1px solid rgba(106,113,132,.15);
+
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+}
+
+.feedback-content-box::-webkit-scrollbar{
+    display:none;
+}
+
+.feedback-list .feedback-card{
+    height:480px;
+    display:flex;
+    flex-direction:column;
+}
+
+.feedback-list .feedback-card form{
+    margin-top:auto;
+}
+
+.feedback-list .feedback-card{
+    height:540px;
+    display:flex;
+    flex-direction:column;
+}
+
+.feedback-list .feedback-content-box{
+    height:110px;
+    min-height:110px;
+    flex-shrink:0;
+}
+
+.feedback-list .admin-proof-img{
+    height:150px;
+    flex-shrink:0;
+}
+
+.feedback-list .feedback-card form{
+    margin-top:auto;
+}
+
+.feedback-content-box,
+.reason-box,
+.description-box{
+    word-break:break-all;
+    overflow-wrap:anywhere;
+    white-space:normal;
+}
+
+.reported-reason-box{
+    height:110px;
+
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    padding:10px 12px;
+    margin-top:8px;
+
+    border-radius:12px;
+    background:rgba(255,255,255,.55);
+    border:1px solid rgba(106,113,132,.15);
+
+    word-break:break-all;
+    overflow-wrap:anywhere;
+    white-space:normal;
+
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+}
+
+.reported-reason-box::-webkit-scrollbar{
+    display:none;
+}
+
+.reported-only-box .report-card,
+.admin-user-layout .report-card{
+    height:690px;
+    display:flex;
+    flex-direction:column;
+}
+
+.reported-only-box .report-actions,
+.admin-user-layout .report-actions{
+    margin-top:auto;
+}
