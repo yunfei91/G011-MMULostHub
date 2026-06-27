@@ -26,7 +26,7 @@ load_dotenv()
 SECRET_KEY = 'django-insecure-kh(yau+ya-&uq5=w0)gayj3)wj^uj#h5b5ag!1xq(d+n^dd8$='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -126,10 +126,15 @@ LOGIN_REDIRECT_URL = 'mainPage'
 LOGOUT_REDIRECT_URL = 'beginning'
 LOGIN_URL = 'beginning'
 LOGIN_URL = '/user/user-login/'
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_TIMEOUT = 5
+
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
