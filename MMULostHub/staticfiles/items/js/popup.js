@@ -179,11 +179,13 @@ function showStatusPopup(postId) {
 const statusPopup = document.getElementById("statusPopup");
 
 // CLICK OUTSIDE CLOSE
-statusPopup.addEventListener("click", function(event){
-    if(event.target === statusPopup){
-        statusPopup.style.display = "none";
-    }
-});
+if (statusPopup) {
+    statusPopup.addEventListener("click", function(event){
+        if(event.target === statusPopup){
+            statusPopup.style.display = "none";
+        }
+    });
+}
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
         yt - POST POPUP FUNCTION        
