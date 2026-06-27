@@ -293,7 +293,7 @@
                             data-user="{{ post.post_user.username }}"
                             data-user-id="{{ post.post_user.id }}"
                             data-avatar="{% if post.post_user.profile and post.post_user.profile.avatar %}
-                                        {{ post.post_user.profile.avatar.url }}
+                                        {{ post.post_user.profile.avatar }}
                                         {% else %}
                                         {% static 'images/default.png' %}
                                         {% endif %}"
@@ -305,7 +305,7 @@
                             data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
                             data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
                             data-description="{{ post.post_description }}"
-                            data-images="{% for img in post.sorted_images %}{{ img.image.url }}|{% endfor %}"
+                            data-images="{% for img in post.sorted_images %}{{ img.image }}|{% endfor %}"
 
                             data-post-id="{{ post.id }}"
                             data-status="{{ post.post_status }}"
@@ -330,7 +330,7 @@
 
                                                 <img class="avatar"
                                                     src="{% if profile.avatar %}
-                                                            {{ profile.avatar.url }}
+                                                            {{ profile.avatar }}
                                                         {% else %}
                                                             {% static 'images/default.png' %}
                                                         {% endif %}"

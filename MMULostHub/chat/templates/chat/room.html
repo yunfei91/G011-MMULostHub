@@ -88,7 +88,7 @@
                     
                     <a href="{% url 'userProfile' other_user.username %}">
                     {% if other_user.profile.avatar %}
-                        <img src="{{ other_user.profile.avatar.url }}" class="header-avatar">
+                        <img src="{{ other_user.profile.avatar }}" class="header-avatar">
                     {% else %}
                         <img src="{% static 'images/default.png' %}" class="header-avatar">
                     {% endif %}
@@ -128,7 +128,7 @@
                             {% if message.sender != request.user %}
                             <a href="{% url 'userProfile' other_user.username %}">
                                 {% if other_user.profile.avatar %}
-                                    <img src="{{ other_user.profile.avatar.url }}" class="message-avatar">
+                                    <img src="{{ other_user.profile.avatar }}" class="message-avatar">
                                 {% else %}
                                     <img src="{% static 'images/default.png' %}" class="message-avatar">
                                 {% endif %}
@@ -141,18 +141,18 @@
                                     {% if message.message_type == 'image' %}
 
                                         <img
-                                            src="{{ message.file.url }}"
+                                            src="{{ message.file }}"
                                             class="chat-image">
 
                                     {% elif message.message_type == 'audio' %}
 
                                         <audio controls>
-                                            <source src="{{ message.file.url }}">
+                                            <source src="{{ message.file }}">
                                         </audio>
 
                                     {% else %}
 
-                                        <a href="{{ message.file.url }}" target="_blank">
+                                        <a href="{{ message.file }}" target="_blank">
                                             Download File
                                         </a>
 

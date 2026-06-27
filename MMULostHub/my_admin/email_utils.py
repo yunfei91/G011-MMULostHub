@@ -52,9 +52,9 @@ def send_user_report_verified_email(email):
 
     message = (
         "Dear User,\n\n"
-        "Your account has been reported and reviewed by our admin team.\n\n"
-        "You are required to verify your account again in your profile page.\n\n"
-        "Please complete the verification process to continue using all features.\n\n"
+        "Your account has been reported.\n\n"
+        "You are required to reverify your account again in your profile page.\n\n"
+        "Please complete the verification process to continue using MMU Lost Hub.\n\n"
         "Best regards,\n"
         "MMU LostHub Team\n"
         "This is an automated email. Please do not reply."
@@ -101,7 +101,7 @@ def send_account_deleted_email(email):
     message = (
         "Dear User,\n\n"
         "Your MMU LostHub account has been disabled by the admin team.\n\n"
-        "If you believe this was a mistake, please contact support.\n\n"
+        "If you believe this was a mistake, please email us.\n\n"
         "Best regards,\n"
         "MMU LostHub Team\n"
         "This is an automated email. Please do not reply."

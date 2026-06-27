@@ -91,7 +91,7 @@
                         <a href="{% url 'chat_room' item.room.id %}" class="chat-card">
 
                             {% if item.other_user.profile.avatar %}
-                                <img src="{{ item.other_user.profile.avatar.url }}" class="avatar">
+                                <img src="{{ item.other_user.profile.avatar }}" class="avatar">
                             {% else %}
                                 <img src="{% static 'images/default.png' %}" class="avatar">
                             {% endif %}

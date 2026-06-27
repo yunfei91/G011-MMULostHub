@@ -351,6 +351,12 @@ cropAgainBtn.addEventListener("click", function(){
         });
     };
 
+    if (window.croppedImages[currentPreviewIndex].isExisting) {
+        cropPreview.crossOrigin = "anonymous"; 
+    } else {
+        cropPreview.removeAttribute("crossOrigin");
+    }
+
     cropPreview.src = imageToCrop;
 });
 

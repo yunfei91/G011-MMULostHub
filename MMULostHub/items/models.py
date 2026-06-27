@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import os
-from .utils.supabase import upload_to_supabase
-
+from items.utils.supabase import upload_to_supabase
 
 # ('storage name inside sqlite', 'display name on website')
 CATEGORY_CHOICES = [
@@ -64,7 +63,7 @@ class PostImage(models.Model):
         related_name="images"
     )
 
-    image = models.URLField() 
+    image_url = models.URLField(max_length=500, null=True, blank=True)
 
     order = models.PositiveIntegerField(default=0)
 

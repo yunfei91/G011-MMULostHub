@@ -1,7 +1,7 @@
 from .models import Post, PostImage, MMULocation
 from datetime import datetime
 from django.utils import timezone
-from .utils.supabase import upload_to_supabase
+from utils.supabase import upload_to_supabase
 
 # ======================================================
 #            Create Post Beckend Services
@@ -103,20 +103,25 @@ def create_post (post_data, user):
     # enumareate = automatic assign number for each image  accrodeing to index+1
     for index, img in enumerate(images):
 
-        # create post image and save to database
-        post_image = PostImage.objects.create(
-            post = new_post,
-            image = img,
-            order = index
-        )
+        try:
+            # upload to supabase
+            supabase_url = upload_to_supabase(img, folder="posts")
+        except Exception as e:
+            # if cannot upload to supabase will show error
+            new_post.delete()
+            raise ValueError(f"Failed to upload image to Supabase: {str(e)}")
 
+        # create post 
+        post_image = PostImage.objects.create(
+            post=new_post,
+            image_url=supabase_url,
+            order=index
+        )
         saved_images.append(post_image)
 
     # first image = cover image
     if saved_images:
-
         new_post.cover_image = saved_images[0]
-
         new_post.save()
 
     return new_post
@@ -207,10 +212,15 @@ def edit_post(post, data):
         # new uploaded image
         elif item["type"] == "new":
 
+            try:
+                supabase_url = upload_to_supabase(item["file"], folder="posts")
+            except Exception as e:
+                raise ValueError(f"Failed to upload new image to Supabase: {str(e)}")
+
             post_image = PostImage.objects.create(
-                post = post,
-                image = item["file"],
-                order = item["order"]
+                post=post,
+                image_url=supabase_url,
+                order=item["order"]
             )
 
             # save all images inside new list

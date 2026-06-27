@@ -338,7 +338,7 @@ def editPost(request,post_id):
         'existing_images': [
             {
                 'id': img.id,
-                'url': img.image.url
+                'url': img.image_url
             }
             for img in post.images.all().order_by('order')
         ]
