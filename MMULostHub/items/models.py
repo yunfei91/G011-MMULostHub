@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import os
-from items.utils.supabase import upload_to_supabase
+from utils.supabase import upload_to_supabase
 
 # ('storage name inside sqlite', 'display name on website')
 CATEGORY_CHOICES = [
