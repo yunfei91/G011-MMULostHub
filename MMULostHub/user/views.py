@@ -400,12 +400,13 @@ def send_otp_email(email, otp):
         to = [email]
     )
 
-    email_msg.attach_alternative(html_content, "text/html") # Attach HTML version
-    try:
-        email_msg.send(fail_silently=False)
-    except Exception as e:
-        print("EMAIL ERROR:", repr(e))
-        raise
+    email_msg.attach_alternative(html_content, "text/html")
+
+    print("Before send...")
+
+    email_msg.send(fail_silently=False)
+
+    print("After send.")
 
 def verify_email(request):
     data = request.session.get('register_data') # Get session data
