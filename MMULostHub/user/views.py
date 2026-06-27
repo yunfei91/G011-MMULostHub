@@ -405,17 +405,7 @@ def send_otp_email(email, otp):
 
     email_msg.attach_alternative(html_content, "text/html")
 
-    try:
-        print("Sending email...")
-        email_msg.send(fail_silently=False)
-        print("Email sent!")
-
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        print(type(e))
-        print(e)
-        raise
+    email_msg.send()
 
 def verify_email(request):
     data = request.session.get('register_data') # Get session data
