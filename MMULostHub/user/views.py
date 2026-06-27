@@ -386,6 +386,9 @@ def check_email(request):
 # ======================================================
 def send_otp_email(email, otp):
 
+    print(settings.EMAIL_HOST_USER)
+    print(settings.EMAIL_HOST_PASSWORD is not None)
+
     html_content =render_to_string("email/otp_email.html", { # convert template to word
         "otp": otp, # Pass data into template
         "email": email
@@ -402,11 +405,17 @@ def send_otp_email(email, otp):
 
     email_msg.attach_alternative(html_content, "text/html")
 
-    print("Before send...")
+    try:
+        print("Sending email...")
+        email_msg.send(fail_silently=False)
+        print("Email sent!")
 
-    email_msg.send(fail_silently=False)
-
-    print("After send.")
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        print(type(e))
+        print(e)
+        raise
 
 def verify_email(request):
     data = request.session.get('register_data') # Get session data
