@@ -384,28 +384,33 @@ def check_email(request):
 # ======================================================
 #                  Email Verification
 # ======================================================
+import resend
+from django.conf import settings
+
+resend.api_key = settings.RESEND_API_KEY
+
+
+# ======================================================
+#                  Email Verification
+# ======================================================
+import resend
+from django.conf import settings
+
+resend.api_key = settings.RESEND_API_KEY
+
+
 def send_otp_email(email, otp):
 
-    print(settings.EMAIL_HOST_USER)
-    print(settings.EMAIL_HOST_PASSWORD is not None)
-
-    html_content =render_to_string("email/otp_email.html", { # convert template to word
-        "otp": otp, # Pass data into template
-        "email": email
+    resend.Emails.send({
+        "from": "MMU Lost Hub <onboarding@resend.dev>",
+        "to": [email],
+        "subject": "MMU Lost Hub - OTP Verification",
+        "html": f"""
+            <h2>Your OTP Code</h2>
+            <h1>{otp}</h1>
+            <p>This code will expire soon.</p>
+        """
     })
-
-    text_content = strip_tags(html_content) # Create plain text version by removing HTML tags
-
-    email_msg = EmailMultiAlternatives( # Create email message
-        subject = "MMU Lost Hub - Email Verification Code",
-        body = text_content,
-        from_email = settings.DEFAULT_FROM_EMAIL,
-        to = [email]
-    )
-
-    email_msg.attach_alternative(html_content, "text/html")
-
-    email_msg.send()
 
 def verify_email(request):
     data = request.session.get('register_data') # Get session data

@@ -127,15 +127,8 @@ LOGOUT_REDIRECT_URL = 'beginning'
 LOGIN_URL = 'beginning'
 LOGIN_URL = '/user/user-login/'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = "smtp-relay.brevo.com"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 EMAIL_TIMEOUT = 20
 
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-
-DEFAULT_FROM_EMAIL = "MMU Lost Hub <adminlosthub@gmail.com>"
