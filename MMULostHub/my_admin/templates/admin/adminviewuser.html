@@ -303,8 +303,8 @@
 
                         <div>
                             <b>Proof:</b><br>
-                            {% if report.image %}
-                                <img src="{{ report.image }}" alt="Proof Image" class="admin-proof-img" onclick="openImage('{{ report.image }}')">
+                            {% if report.image_url %}
+                                <img src="{{ report.image_url }}" alt="Proof Image" class="admin-proof-img" onclick="openImage('{{ report.image_url }}')">
                             {% else %}
                                 No Image
                             {% endif %}
@@ -476,8 +476,8 @@
 
                     <div>
                         <b>Proof:</b><br>
-                        {% if report.image %}
-                            <img src="{{ report.image }}" alt="Proof Image" class="admin-proof-img" onclick="openImage('{{ report.image }}')">
+                        {% if report.image_url %}
+                            <img src="{{ report.image_url }}" alt="Proof Image" class="admin-proof-img" onclick="openImage('{{ report.image_url }}')">
                         {% else %}
                             No Image
                         {% endif %}

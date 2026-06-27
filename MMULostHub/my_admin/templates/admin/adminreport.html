@@ -103,11 +103,11 @@
                 <p>
                     <strong>Image:</strong><br>
 
-                    {% if report.image %}
-                        <img src="{{ report.image }}"
+                    {% if report.image_url %}
+                        <img src="{{ report.image_url }}"
                              alt="Report Photo"
                              class="admin-proof-img"
-                             onclick="openImage('{{ report.image }}')">
+                             onclick="openImage('{{ report.image_url }}')">
                     {% else %}
                         No Image Provided
                     {% endif %}
@@ -123,7 +123,7 @@
                     <p><strong>Post Image:</strong></p>
 
                     {% if report.post.images.first %}
-                        <img src="{{ report.post.images.first.image }}"
+                        <img src="{{ report.post.images.first.image_url }}"
                             class="admin-proof-img"
                             onclick="openImage('{{ report.post.images.first.image }}')">
                     {% else %}

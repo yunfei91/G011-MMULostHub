@@ -165,15 +165,17 @@ def createPost(request):
 
                     # check image format got ;base64; or not 
                     # if got then change to file format and save with new order
-                    format, imgstr = img.split(';base64,')
-                    ext = format.split('/')[-1]
+                    image_data = img["image"]
+                    if ';base64,' in image_data:
+                        format, imgstr = image_data.split(';base64,')
+                        ext = format.split('/')[-1]
 
-                    image_file = ContentFile(
-                        base64.b64decode(imgstr),
-                        name=f'cropped_{timezone.now().timestamp()}.{ext}'
-                    )
-
-                    image_files.append(image_file)
+                        image_file = ContentFile(
+                            base64.b64decode(imgstr),
+                            name=f'cropped_{timezone.now().timestamp()}.{ext}'
+                        )
+                        image_file.content_type = f'image/{ext}'
+                        image_files.append(image_file)
             
             else:
                 uploaded = request.FILES.get('userposts_images')
@@ -285,7 +287,7 @@ def editPost(request,post_id):
                                 base64.b64decode(imgstr),
                                 name = f"{uuid.uuid4()}.{ext}"
                             )
-
+                            image_file.content_type = f'image/{ext}'
                             images_order.append({
                                 "type": "new",
                                 "file": image_file,

@@ -94,11 +94,11 @@
                 <p>
                     <strong>Image:</strong><br>
 
-                    {% if feedback.image %}
-                        <img src="{{ feedback.image }}"
+                    {% if feedback.image_url %}
+                        <img src="{{ feedback.image_url }}"
                              alt="Feedback Photo"
                              class="admin-proof-img"
-                             onclick="openImage('{{ feedback.image }}')">
+                             onclick="openImage('{{ feedback.image_url }}')">
                     {% else %}
                         No Image Provided
                     {% endif %}

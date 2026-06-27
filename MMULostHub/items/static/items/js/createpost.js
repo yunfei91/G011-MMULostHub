@@ -64,9 +64,12 @@ function confirmCreate(event) {
         "Do you want to create this post?",
         function () {
 
-            const imageData = window.croppedImages
-                .filter(img => img.type === "new")
-                .map(img => img.image);
+            const imageData = window.croppedImages.map((img, index) => ({
+                id: img.id,
+                image: img.image,
+                type: img.type,
+                order: index
+            }));
 
             document.getElementById("cropped_images").value = JSON.stringify(imageData);
 

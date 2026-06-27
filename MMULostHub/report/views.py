@@ -39,12 +39,11 @@ def feedback_form_view(request):
             image_url = upload_to_supabase(image)
             image_name = image.name
 
-        create_feedback.objects.create(
-            user=request.user,
+        create_feedback(
             comments=comments,
             image_url=image_url,
             image_name=image_name,
-            status='Pending'
+            user=request.user
         )
 
         if next_url:
@@ -140,6 +139,8 @@ def report_user(request, user_id):
 
         comments = request.POST.get('comments')
         image = request.FILES.get('image')
+        image_url = None
+        image_name = None
 
         if not image:
             messages.error(request, "Proof image is required.")

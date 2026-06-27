@@ -136,23 +136,23 @@
                             {% endif %}
 
                             <div class="message-bubble">
-                                {% if message.file %}
+                                {% if message.file_url %}
 
                                     {% if message.message_type == 'image' %}
 
                                         <img
-                                            src="{{ message.file }}"
+                                            src="{{ message.file_url }}"
                                             class="chat-image">
 
                                     {% elif message.message_type == 'audio' %}
 
                                         <audio controls>
-                                            <source src="{{ message.file }}">
+                                            <source src="{{ message.file_url }}">
                                         </audio>
 
                                     {% else %}
 
-                                        <a href="{{ message.file }}" target="_blank">
+                                        <a href="{{ message.file_url }}" target="_blank">
                                             Download File
                                         </a>
 

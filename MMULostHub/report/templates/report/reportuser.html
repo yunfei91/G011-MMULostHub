@@ -214,6 +214,7 @@
                 }
 
                 document.getElementById("submitConfirmPopup").classList.add("show");
+                
             }
 
             function closeReasonRequiredPopup() {
@@ -229,7 +230,9 @@
             }
 
             function submitReportUserForm() {
-                document.getElementById("reportUserForm").submit();
+                document.getElementById("submitConfirmPopup").classList.remove("show");
+                const form = document.getElementById("reportUserForm");
+                form.submit();
             }
         </script>
     </body>
