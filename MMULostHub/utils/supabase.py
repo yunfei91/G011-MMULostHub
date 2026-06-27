@@ -24,4 +24,4 @@ def upload_to_supabase(file, folder="uploads"):
         }
     )
 
-    return supabase.storage.from_(BUCKET).get_public_url(filename)["publicUrl"]
+    return supabase.storage.from_(BUCKET).get_public_url(filename)
