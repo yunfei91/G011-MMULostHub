@@ -384,15 +384,6 @@ def check_email(request):
 # ======================================================
 #                  Email Verification
 # ======================================================
-import resend
-from django.conf import settings
-
-resend.api_key = settings.RESEND_API_KEY
-
-
-# ======================================================
-#                  Email Verification
-# ======================================================
 def send_otp_email(email, otp):
 
     html_content =render_to_string("email/otp_email.html", { # convert template to word
