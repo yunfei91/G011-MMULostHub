@@ -401,7 +401,11 @@ def send_otp_email(email, otp):
     )
 
     email_msg.attach_alternative(html_content, "text/html") # Attach HTML version
-    email_msg.send()
+    try:
+        email_msg.send(fail_silently=False)
+    except Exception as e:
+        print("EMAIL ERROR:", repr(e))
+        raise
 
 def verify_email(request):
     data = request.session.get('register_data') # Get session data
