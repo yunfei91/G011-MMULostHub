@@ -12,6 +12,9 @@ from django.core.paginator import Paginator
 # check if the user exists if not then 404
 from django.shortcuts import get_object_or_404
 
+# yf added to connect supabase (real server)
+from utils.supabase import upload_to_supabase
+
 from .services import create_user_account # Custom function for create user
 from .models import Profile 
 from items.models import Post
@@ -631,11 +634,13 @@ def update_avatar(request):
 
         if avatar:
             # Delete old avatar file if it exists , avoid extra use storage
-            if profile.avatar:
-                profile.avatar.delete(save=False)
+            image_url = upload_to_supabase(
+                avatar,
+                folder="avatars"
+            )
 
             # Save new avatar image to profile
-            profile.avatar = avatar
+            profile.avatar = image_url
             profile.save()
 
             messages.success(request, "Profile picture updated successfully!")

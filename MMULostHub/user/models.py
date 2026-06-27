@@ -6,7 +6,7 @@ class Profile(models.Model):
     # One-to-one relationship with Django User
     user = models.OneToOneField(User, on_delete=models.CASCADE) 
     name = models.CharField(max_length=100, blank=True)
-    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    avatar = models.URLField(blank=True, null=True)
     bio = models.CharField(max_length=255, blank=True, null=True, default="")
     
     #zinc add 

@@ -24,7 +24,8 @@ class Message(models.Model):
     content = models.TextField(blank=True, null=True)
     message_type = models.CharField(max_length=10, choices=MESSAGE_TYPE, default='text')
     is_read = models.BooleanField(default=False)
-    file = models.FileField(upload_to='chat_files/', validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'gif', 'pdf', 'docx', 'mp3', 'wav', 'm4a'])], blank=True, null=True)
+    file_url = models.URLField(blank=True, null=True)
+    file_name = models.CharField(max_length=255, blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

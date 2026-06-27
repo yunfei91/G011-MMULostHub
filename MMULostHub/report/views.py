@@ -8,6 +8,8 @@ from .models import Report, UserReport
 from django.contrib.auth.models import User
 from user.decorators import reverify_required
 
+# yf added to connect supabase (real server)
+from utils.supabase import upload_to_supabase
 
 def get_safe_next_url(request):
     next_url = request.GET.get('next') or request.POST.get('next')
@@ -30,11 +32,19 @@ def feedback_form_view(request):
 
         comments = request.POST.get('comments')
         image = request.FILES.get('image-upload')
+        image_url = None
+        image_name = None
 
-        create_feedback(
+        if image:
+            image_url = upload_to_supabase(image)
+            image_name = image.name
+
+        create_feedback.objects.create(
+            user=request.user,
             comments=comments,
-            image=image,
-            user=request.user
+            image_url=image_url,
+            image_name=image_name,
+            status='Pending'
         )
 
         if next_url:
@@ -60,6 +70,12 @@ def submit_report(request):
         post_id = request.POST.get('post_id')
         comments = request.POST.get('comments')
         image = request.FILES.get('image-upload')
+        image_url = None
+        image_name = None
+
+        if image:
+            image_url = upload_to_supabase(image)
+            image_name = image.name
 
         post_instance = get_object_or_404(
             Post,
@@ -70,7 +86,8 @@ def submit_report(request):
             user=request.user,
             post=post_instance,
             comments=comments,
-            image=image
+            image_url=image_url,
+            image_name=image_name
         )
 
         if next_url:
@@ -125,27 +142,19 @@ def report_user(request, user_id):
         image = request.FILES.get('image')
 
         if not image:
+            messages.error(request, "Proof image is required.")
+            return redirect(request.path)
 
-            messages.error(
-                request,
-                "Proof image is required."
-            )
-
-            if next_url:
-                return redirect(
-                    f"{request.path}?next={next_url}"
-                )
-
-            return redirect(
-                'report_user',
-                user_id=reported_user.id
-            )
+        if image:
+            image_url = upload_to_supabase(image)
+            image_name = image.name
 
         UserReport.objects.create(
             user=reported_user,
             reported_by=request.user,
             comments=comments,
-            image=image,
+            image_url=image_url,
+            image_name=image_name,
             status="Pending"
         )
 

@@ -122,6 +122,8 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 SUPABASE_BUCKET = "media"
 
+LOGIN_REDIRECT_URL = 'mainPage' 
+LOGOUT_REDIRECT_URL = 'beginning'
 LOGIN_URL = 'beginning'
 LOGIN_URL = '/user/user-login/'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

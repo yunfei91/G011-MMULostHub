@@ -304,7 +304,7 @@
                             data-location-code="{% if post.post_location %}{{ post.post_location.location_code }}{% endif %}"
                             data-location-name="{% if post.post_location %}{{ post.post_location.location_name }}{% endif %}"
                             data-description="{{ post.post_description }}"
-                            data-images="{% for img in post.sorted_images %}{{ img.image }}|{% endfor %}"
+                            data-images="{% for img in post.sorted_images %}{{ img.image_url }}|{% endfor %}"
 
                             data-post-id="{{ post.id }}"
                             data-status="{{ post.post_status }}"
@@ -410,7 +410,7 @@
                                         <div class="image-wrapper">
 
                                             {% if post.cover_image %}
-                                                <img src="{{ post.cover_image.image }}" alt="Post Image" class="post-image">
+                                                <img src="{{ post.cover_image.image_url }}" alt="Post Image" class="post-image">
                                             {% endif %}
 
                                             {% if post.images.count > 1 %}

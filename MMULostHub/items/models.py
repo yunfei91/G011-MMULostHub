@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 import os
-from utils.supabase import upload_to_supabase
 
 # ('storage name inside sqlite', 'display name on website')
 CATEGORY_CHOICES = [
@@ -46,7 +45,7 @@ class MMULocation (models.Model):
     # Contoh : √ Laptop ✗ Item Obeject 1
     def __str__(self):
         return self.location_name
-    
+
 def post_image_path(instance, filename):
 
     return os.path.join(
@@ -63,17 +62,13 @@ class PostImage(models.Model):
         related_name="images"
     )
 
-    image_url = models.URLField(max_length=500, null=True, blank=True)
+    image_url = models.URLField(
+        max_length=500,
+        null=True,
+        blank=True
+    )
 
     order = models.PositiveIntegerField(default=0)
-
-    def save(self, *args, **kwargs):
-
-        if self.image and hasattr(self.image, "read"):
-            url = upload_to_supabase(self.image)
-            self.image = url
-
-        super().save(*args, **kwargs)
 
 # Lost and Found Post Model  
 class Post (models.Model):
@@ -138,6 +133,6 @@ class Post (models.Model):
         return f"{self.post_type}: {self.post_itemcategory}"
 
 # yt added
-    @property
-    def sorted_images(self):
-        return self.images.all().order_by("order")
+@property
+def sorted_images(self):
+    return self.images.all().order_by("order")

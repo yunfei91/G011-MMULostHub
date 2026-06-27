@@ -9,6 +9,9 @@ from django.urls import reverse
 from .models import ChatRoom, Message
 from user.models import Profile
 
+# yf added to link supabase (real server)
+from utils.supabase import upload_to_supabase
+
 # yt added
 # Prevent browser cache, user cannot press back to access previous page
 from django.views.decorators.cache import never_cache 
@@ -108,8 +111,12 @@ def chat_room(request, room_id):
 
         message_type = 'text'
 
+        file_url = None
+        file_name = None
+
         if uploaded_file:
-            file_name = uploaded_file.name.lower()
+            file_url = upload_to_supabase(uploaded_file)
+            file_name = uploaded_file.name
             extension  = os.path.splitext(file_name)[1]
 
             if extension in ['.jpg', '.jpeg', '.png', '.gif']:
@@ -124,13 +131,14 @@ def chat_room(request, room_id):
             else:
                 message_type = 'file'
 
-        if content or uploaded_file:
+        if content or file_url:
             Message.objects.create(
                 room=room,
                 sender=request.user,
                 content=content,
                 message_type=message_type,
-                file=uploaded_file
+                file_url=file_url,
+                file_name=file_name
             )
 
         if next_url:
