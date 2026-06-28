@@ -386,22 +386,19 @@ def check_email(request):
 # ======================================================
 import resend
 from django.conf import settings
-import os
-
-RESEND_API_KEY = os.getenv("RESEND_API_KEY")
-resend.api_key = settings.RESEND_API_KEY
 
 def send_otp_email(email, otp):
+    resend.api_key = settings.RESEND_API_KEY
+
     resend.Emails.send({
-        "from": "www.mmulosthub.me", 
-        "to": email,
+        "from": "LostHub <noreply@mmulosthub.me>",
+        "to": [email],
         "subject": "Your OTP Code",
         "html": f"""
-            <h2>Your OTP Code</h2>
-            <p><b>{otp}</b></p>
+        <h2>Your OTP Code</h2>
+        <p><b>{otp}</b></p>
         """
     })
-
 
 def verify_email(request):
     data = request.session.get('register_data') # Get session data
