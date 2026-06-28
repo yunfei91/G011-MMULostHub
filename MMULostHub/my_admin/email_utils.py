@@ -6,7 +6,7 @@ resend.api_key = settings.RESEND_API_KEY
 
 def send_email(to_email, subject, html):
     resend.Emails.send({
-        "from": "MMU LostHub <noreply@mmulosthub.me>",
+        "from": "MMU LostHub <admin@mmulosthub.me>",
         "to": [to_email],
         "subject": subject,
         "html": html,

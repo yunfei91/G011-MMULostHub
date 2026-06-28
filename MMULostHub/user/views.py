@@ -397,7 +397,7 @@ def send_otp_email(email, otp):
     )
 
     response = resend.Emails.send({
-        "from": "MMU LostHub <noreply@mmulosthub.me>",
+        "from": "MMU LostHub <admin@mmulosthub.me>",
         "to": [email],
         "subject": "Your OTP Code",
         "html": html,
