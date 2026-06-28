@@ -386,18 +386,23 @@ def check_email(request):
 # ======================================================
 import resend
 from django.conf import settings
+from django.template.loader import render_to_string
 
 def send_otp_email(email, otp):
     resend.api_key = settings.RESEND_API_KEY
 
+    html = render_to_string(
+        "emails/otp_email.html",
+        {
+            "otp": otp,
+        }
+    )
+
     resend.Emails.send({
-        "from": "LostHub <noreply@mmulosthub.me>",
+        "from": "MMU LostHub <noreply@mmulosthub.me>",
         "to": [email],
         "subject": "Your OTP Code",
-        "html": f"""
-        <h2>Your OTP Code</h2>
-        <p><b>{otp}</b></p>
-        """
+        "html": html,
     })
 
 def verify_email(request):

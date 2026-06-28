@@ -1,116 +1,114 @@
-from django.core.mail import send_mail 
+import resend
 from django.conf import settings
 
+resend.api_key = settings.RESEND_API_KEY
+
+
+def send_email(to_email, subject, html):
+    resend.Emails.send({
+        "from": "MMU LostHub <noreply@mmulosthub.me>",
+        "to": [to_email],
+        "subject": subject,
+        "html": html,
+    })
 
 # Feedback Email
 def send_feedback_confirmation(email):
-    subject = "MMU LostHub - Feedback Review Notification"
+    send_email(
+        email,
+        "MMU LostHub - Feedback Review Notification",
+        """
+        <h2>Dear User,</h2>
 
-    message = (
-        "Dear User,\n\n"
-        "Your feedback submitted to MMU LostHub has been reviewed by our admin team.\n\n"
-        "Thank you for helping us improve the platform.\n\n"
-        "Best regards,\n"
-        "MMU LostHub Team\n"
-        "This is an automated email. Please do not reply."
-    )
+        <p>Your feedback submitted to MMU LostHub has been reviewed by our admin team.</p>
 
-    send_mail(
-        subject,
-        message,
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-        fail_silently=False,
+        <p>Thank you for helping us improve the platform.</p>
+
+        <br>
+
+        <p>Best regards,<br>
+        MMU LostHub Team</p>
+        """
     )
 
 
 # Report Email
 def send_report_confirmation(email, category):
-    subject = "MMU LostHub - Report Status Update"
+    send_email(
+        email,
+        "MMU LostHub - Report Status Update",
+        f"""
+        <h2>Dear User,</h2>
 
-    message = (
-        f"Dear User,\n\n"
-        f"Your report regarding '{category}' has been reviewed and processed by our admin team.\n\n"
-        f"Thank you for helping us maintain a safe and reliable platform.\n\n"
-        f"Best regards,\n"
-        f"MMU LostHub Team\n"
-        f"This is an automated email. Please do not reply."
-    )
+        <p>Your report regarding <b>{category}</b> has been reviewed and processed by our admin team.</p>
 
-    send_mail(
-        subject,
-        message,
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-        fail_silently=False,
+        <p>Thank you for helping us maintain a safe and reliable platform.</p>
+
+        <br>
+
+        <p>Best regards,<br>
+        MMU LostHub Team</p>
+        """
     )
 
 # User Report Verified Email
 def send_user_report_verified_email(email):
+    send_email(
+        email,
+        "MMU LostHub - Account Verification Required",
+        """
+        <h2>Dear User,</h2>
 
-    subject = "MMU LostHub - Account Verification Required"
+        <p>Your account has been reported.</p>
 
-    message = (
-        "Dear User,\n\n"
-        "Your account has been reported.\n\n"
-        "You are required to reverify your account again in your profile page.\n\n"
-        "Please complete the verification process to continue using MMU Lost Hub.\n\n"
-        "Best regards,\n"
-        "MMU LostHub Team\n"
-        "This is an automated email. Please do not reply."
+        <p>You are required to reverify your account again in your profile page.</p>
+
+        <p>Please complete the verification process to continue using MMU LostHub.</p>
+
+        <br>
+
+        <p>Best regards,<br>
+        MMU LostHub Team</p>
+        """
     )
-
-    send_mail(
-        subject,
-        message,
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-        fail_silently=False,
-    )
-
 
 # Report Rejected Email
 def send_report_rejected_email(email):
+    send_email(
+        email,
+        "MMU LostHub - Report Rejected",
+        """
+        <h2>Dear User,</h2>
 
-    subject = "MMU LostHub - Report Rejected"
+        <p>Your submitted report has been reviewed by our admin team.</p>
 
-    message = (
-        "Dear User,\n\n"
-        "Your submitted report has been reviewed by our admin team.\n\n"
-        "Unfortunately, the report was rejected because it does not violate our platform policies.\n\n"
-        "Thank you for helping us maintain the platform.\n\n"
-        "Best regards,\n"
-        "MMU LostHub Team\n"
-        "This is an automated email. Please do not reply."
-    )
+        <p>Unfortunately, the report was rejected because it does not violate our platform policies.</p>
 
-    send_mail(
-        subject,
-        message,
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-        fail_silently=False,
+        <p>Thank you for helping us maintain the platform.</p>
+
+        <br>
+
+        <p>Best regards,<br>
+        MMU LostHub Team</p>
+        """
     )
 
 
 # Account Deleted Email
 def send_account_deleted_email(email):
+    send_email(
+        email,
+        "MMU LostHub - Account Disabled",
+        """
+        <h2>Dear User,</h2>
 
-    subject = "MMU LostHub - Account Disabled"
+        <p>Your MMU LostHub account has been disabled by the admin team.</p>
 
-    message = (
-        "Dear User,\n\n"
-        "Your MMU LostHub account has been disabled by the admin team.\n\n"
-        "If you believe this was a mistake, please email us.\n\n"
-        "Best regards,\n"
-        "MMU LostHub Team\n"
-        "This is an automated email. Please do not reply."
-    )
+        <p>If you believe this was a mistake, please contact us.</p>
 
-    send_mail(
-        subject,
-        message,
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-        fail_silently=False,
+        <br>
+
+        <p>Best regards,<br>
+        MMU LostHub Team</p>
+        """
     )
