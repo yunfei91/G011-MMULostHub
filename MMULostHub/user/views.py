@@ -393,17 +393,18 @@ def send_otp_email(email, otp):
 
     html = render_to_string(
         "email/otp_email.html",
-        {
-            "otp": otp,
-        }
+        {"otp": otp}
     )
 
-    resend.Emails.send({
+    response = resend.Emails.send({
         "from": "MMU LostHub <noreply@mmulosthub.me>",
         "to": [email],
         "subject": "Your OTP Code",
         "html": html,
     })
+
+    print("Resend response:", response)
+    return response
 
 def verify_email(request):
     data = request.session.get('register_data') # Get session data
