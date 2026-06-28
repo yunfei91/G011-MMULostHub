@@ -392,7 +392,7 @@ def send_otp_email(email, otp):
     resend.api_key = settings.RESEND_API_KEY
 
     html = render_to_string(
-        "emails/otp_email.html",
+        "email/otp_email.html",
         {
             "otp": otp,
         }
