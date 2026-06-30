@@ -345,22 +345,24 @@ function openPost(el) { // el=this connection
         statusBtn.classList.add("popup-status-claimed");
     }
 
-    // Check post owner for can click or not
-    if (
-        String(ownerId) == String(CURRENT_USER_ID) && status == "open"
-    ) {
+    if (status == "open") {
         statusBtn.style.cursor = "pointer";
-    }
-    else{
-        statusBtn.style.cursor = "none";
+    } else {
+        statusBtn.style.cursor = "default";
     }
 
-    //  Click status button
     statusBtn.onclick = function () {
+        if (String(ownerId) !== String(CURRENT_USER_ID)) {
+            showError("You are not allowed to change others user's post status");
+            return;
+        }
 
-        if (
-            String(ownerId) !== String(CURRENT_USER_ID) || status !== "open"
-        ) {
+        if (status === "returned" || status === "claimed") {
+            showError("You have changed your post status");
+            return;
+        }
+
+        if (status !== "open") {
             return;
         }
 
