@@ -1186,6 +1186,27 @@
                 </div>
             </div>
 
+            <!-- ====================================== -->
+            <!--           YF-MESSAGE POPUP             -->
+            <!-- ====================================== -->
+            <div id="messagePopup" class="message-popup">
+
+                <div class="message-box">
+
+                    <h3 id="messageTitle"></h3>
+
+                    <p id="messageText"></p>
+
+                    <div class="popup-buttons">
+
+                        <button id="messageBtn">OK</button>
+
+                        <button id="messageCancelBtn">Cancel</button>
+
+                    </div>
+                </div>
+            </div>
+
             <!-- ================================================== -->
             <!--       YF - Delete Post Confirmation Modal          -->
             <!-- ================================================== -->
@@ -1727,6 +1748,11 @@
             // Validate post status before update
             function triggerStatusChange(event, postId, currentStatus) {
                 event.stopPropagation();
+
+                if (currentStatus === "returned" || currentStatus === "claimed") {
+                    showError("You have changed your post status");
+                    return;
+                }
 
                 // Only allow updates for open posts
                 if (currentStatus !== "open") {

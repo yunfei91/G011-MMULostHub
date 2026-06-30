@@ -1934,3 +1934,80 @@ footer{
     background: rgba(46, 125, 50, 0.10);
     border: 1px solid rgba(46, 125, 50, 0.25);
 }
+
+/* ========================= */
+/*        MSGS POPUP         */
+/* ========================= */
+.message-popup{
+    display:none;
+
+    position:fixed;
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:30000;
+}
+
+.message-box h3{
+    font-family: 'Slackey';
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
+}
+
+.message-box p{
+    text-align: center;
+    font-family: 'Sansation';
+    font-size: 15px;
+}
+
+/* ----- ERROR & SUCCESS ----- */
+.popup-error .message-box,
+.popup-success .message-box{
+
+    width: 220px;
+    padding: 12px 20px;
+
+    border-radius: 12px;
+    opacity: 1;
+
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+
+    animation: popupIn 0.25s ease;
+
+}
+
+/* ----- ERROR POPUP ----- */
+.popup-error .message-box{
+    color: #150105;
+    background: rgba(203, 146, 156, 0.8);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(176, 0, 32, 0.25);
+}
+
+.popup-error h3{
+    color: #3f0913;
+}
+
+/* ----- SUCCESS POPUP ----- */
+.popup-success .message-box{
+    color: #294521;
+    background: rgba(182, 214, 184, 0.8);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(46, 125, 50, 0.25);
+}
+
+.popup-success h3{
+    color: rgb(6, 50, 9);
+}
