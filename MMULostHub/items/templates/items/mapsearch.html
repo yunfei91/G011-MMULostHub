@@ -594,22 +594,18 @@
             <!--              POST STATUS CHANGE POPUP              -->
             <!-- ================================================== -->
             <div id="statusPopup" class="status-popup-modal">
-
                 <div class="status-popup-box">
-
                     <p> Set post as COMPLETED? </p>
-
-                    <button id="statusConfirmBtn">
-                        Confirm
-                    </button>
-
-                    <button id="statusCancelBtn">
-                        Cancel
-                    </button>
-
+                    <form id="status_form" method="POST">
+                        {% csrf_token %}
+                        <div class = "status-popup-btn">
+                            <button type="button" id="statusConfirmBtn">Confirm</button>
+                            <button type="button" id="statusCancelBtn">Cancel</button>
+                        </div>
+                    </form>
                 </div>
-
             </div>
+
 
             <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
             <!--            yt - LOGOUT POPUP CONFIMATION           -->
